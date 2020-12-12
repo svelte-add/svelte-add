@@ -16,8 +16,6 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**svelte-add-tailwindcss**](https://github.com/babichjacob/svelte-add-tailwindcss): Add TailwindCSS to your SvelteKit project
 
-*Create an [issue](https://github.com/babichjacob/svelte-adders/issues) or [pull request](https://github.com/babichjacob/svelte-adders/pulls) to add your project to this list or brainstorm ideas for a new one.*
-
 ## 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
 
@@ -36,6 +34,14 @@ npx use-preset babichjacob/svelte-add-firebase-hosting
 ```
 
 So, to exclude a feature you weren't using that was still included in the boilerplate anyway, *don't* run its corresponding command. Suppose you only wanted PostCSS and to host on Firebase, then drop the `svelte-add-tailwindcss` and `svelte-add-graphql` commands.
+
+## 🎁 Contributing
+This is a community project! Here are some ways you can help:
+* Battle test (combinations of) adders to make sure they're always composable and find other edge cases, bugs, etc.
+* Fix known issues and missing features in an adder per the open issues on its repository.
+* Read [this repository's open issues](https://github.com/babichjacob/svelte-adders/issues) to talk about ideas for new adders.
+* If you're ready to make a new adder, try using an existing adder's repository as a template [and change it up to make it add the functionality you want](https://usepreset.dev/).
+* Create a [pull request](https://github.com/babichjacob/svelte-adders/pulls) to add your project to this list.
 
 ---
 
