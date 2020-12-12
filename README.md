@@ -23,7 +23,7 @@ To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-templat
 
 ```sh
 # Use the official SvelteKit template
-npm init svelte@next  # Say yes to TypeScript preprocessing
+npm init svelte@next  # Say yes to TypeScript preprocessing and select plain CSS
 
 npx use-preset babichjacob/svelte-add-postcss
 npx use-preset babichjacob/svelte-add-tailwindcss
