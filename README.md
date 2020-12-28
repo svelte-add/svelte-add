@@ -8,13 +8,13 @@ They are all *composable*, meaning that it should always be possible to run one 
 ## 🧰 SvelteKit
 [SvelteKit is an alpha project now](https://svelte.dev/blog/whats-the-deal-with-sveltekit), but work is starting now so that there are good integrations for when it enters beta.
 
-* [**svelte-add-firebase-hosting**](https://github.com/babichjacob/svelte-add-firebase-hosting): Add hosting on Firebase to your SvelteKit project
+* [**svelte-add/firebase-hosting**](https://github.com/svelte-add/firebase-hosting): Add hosting on Firebase to your SvelteKit project
 
-* [**svelte-add-graphql**](https://github.com/babichjacob/svelte-add-graphql): Add a GraphQL server to your SvelteKit project
+* [**svelte-add/graphql**](https://github.com/svelte-add/graphql): Add a GraphQL server to your SvelteKit project
 
-* [**svelte-add-postcss**](https://github.com/babichjacob/svelte-add-postcss): Add PostCSS to your SvelteKit project
+* [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your SvelteKit project
 
-* [**svelte-add-tailwindcss**](https://github.com/babichjacob/svelte-add-tailwindcss): Add Tailwind CSS to your SvelteKit project
+* [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
 
 ## 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
@@ -23,12 +23,12 @@ To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-templat
 # Use the official SvelteKit template
 npm init svelte@next  # Say yes to TypeScript preprocessing and select plain CSS
 
-npx use-preset babichjacob/svelte-add-postcss
-npx use-preset babichjacob/svelte-add-tailwindcss
+npx use-preset svelte-add/postcss
+npx use-preset svelte-add/tailwindcss
 
-npx use-preset babichjacob/svelte-add-graphql
+npx use-preset svelte-add/graphql
 
-npx use-preset babichjacob/svelte-add-firebase-hosting
+npx use-preset svelte-add/firebase-hosting
 # Actually, there's a limitation for right now that server functions like a GraphQL server
 # aren't supported by svelte-add-firebase-hosting, but that could be solved later!
 ```
@@ -39,9 +39,9 @@ So, to exclude a feature you weren't using that was still included in the boiler
 This is a community project! Here are some ways you can help:
 * Battle test (combinations of) adders to make sure they're always composable and find other edge cases, bugs, etc.
 * Fix known issues and missing features in an adder per the open issues on its repository.
-* Read [this repository's open issues](https://github.com/babichjacob/svelte-adders/issues) to talk about ideas for new adders.
+* Read [this repository's open issues](https://github.com/svelte-add/svelte-adders/issues) to talk about ideas for new adders.
 * If you're ready to make a new adder, try using an existing adder's repository as a template [and change it up to make it add the functionality you want](https://usepreset.dev/).
-* Create a [pull request](https://github.com/babichjacob/svelte-adders/pulls) to add your project to this list.
+* Create a [pull request](https://github.com/svelte-add/svelte-adders/pulls) to add your project to this list.
 
 ---
 
