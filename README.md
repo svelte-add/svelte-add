@@ -23,12 +23,12 @@ To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-templat
 # Use the official SvelteKit template
 npm init svelte@next  # Say yes to TypeScript preprocessing and select plain CSS
 
-npx use-preset svelte-add/postcss
-npx use-preset svelte-add/tailwindcss
+npx apply svelte-add/postcss
+npx apply svelte-add/tailwindcss
 
-npx use-preset svelte-add/graphql
+npx apply svelte-add/graphql
 
-npx use-preset svelte-add/firebase-hosting
+npx apply svelte-add/firebase-hosting
 # Actually, there's a limitation for right now that server functions like a GraphQL server
 # aren't supported by svelte-add/firebase-hosting, but that could be solved later!
 ```
