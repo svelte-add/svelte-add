@@ -12,6 +12,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**svelte-add/graphql**](https://github.com/svelte-add/graphql): Add a GraphQL server to your SvelteKit project
 
+* [**svelte-add/mdsvex**](https://github.com/svelte-add/mdsvex): Add mdsvex to your SvelteKit project
+
 * [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your SvelteKit project
 
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
