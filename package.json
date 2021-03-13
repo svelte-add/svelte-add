@@ -1,0 +1,27 @@
+{
+  "name": "svelte-add",
+  "version": "0.0.1-next",
+  "description": "Add functionality to Svelte projects",
+  "author": "",
+  "keywords": [
+    "svelte",
+    "sveltekit",
+    "svelte-kit",
+    "svelte-add",
+    "svelte-adders"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svelte-add/svelte-adders.git"
+  },
+  "bugs": {
+    "url": "https://github.com/svelte-add/svelte-adders/issues"
+  },
+  "homepage": "https://github.com/svelte-add/svelte-adders",
+  "type": "module",
+  "bin": "index.cjs",
+  "dependencies": {
+    "apply": "^0.2.13"
+  }
+}
