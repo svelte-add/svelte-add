@@ -8,6 +8,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 ## 🧰 SvelteKit
 [SvelteKit is an alpha project now](https://svelte.dev/blog/whats-the-deal-with-sveltekit), but work is starting now so that there are good integrations for when it enters beta.
 
+* [**manuel3108/svelte-add-bulma**](https://github.com/manuel3108/svelte-add-bulma): Add Bulma to your SvelteKit project
+
 * [**svelte-add/firebase-hosting**](https://github.com/svelte-add/firebase-hosting): Add hosting on Firebase to your SvelteKit project
 
 * [**svelte-add/graphql**](https://github.com/svelte-add/graphql): Add a GraphQL server to your SvelteKit project
@@ -17,8 +19,6 @@ They are all *composable*, meaning that it should always be possible to run one 
 * [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your SvelteKit project
 
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
-
-* [**manuel3108/svelte-add-bulma**](https://github.com/manuel3108/svelte-add-bulma): Add Bulma to your SvelteKit project
 
 ## 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
