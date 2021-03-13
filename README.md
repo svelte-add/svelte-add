@@ -18,6 +18,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
 
+* [**manuel3108/svelte-add-bulma**](https://github.com/manuel3108/svelte-add-bulma): Add Bulma to your SvelteKit project
+
 ## 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
 
