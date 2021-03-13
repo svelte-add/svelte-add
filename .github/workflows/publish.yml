@@ -22,7 +22,8 @@ jobs:
       - uses: pnpm/action-setup@v1.2.1
         with:
           version: 5.18.x
-      - run: pnpm install
+      # pnpm bug: must be on master branch to publish
+      - run: git checkout -b master
       - run: pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
