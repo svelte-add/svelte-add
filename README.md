@@ -8,7 +8,7 @@ They are all *composable*, meaning that it should always be possible to run one 
 ## 🧰 SvelteKit
 [SvelteKit is an alpha project now](https://svelte.dev/blog/whats-the-deal-with-sveltekit), but work is starting now so that there are good integrations for when it enters beta.
 
-* [**manuel3108/svelte-add-bulma**](https://github.com/manuel3108/svelte-add-bulma): Add Bulma to your SvelteKit project
+* [**svelte-add/bulma**](https://github.com/svelte-add/bulma): Add Bulma to your SvelteKit project
 
 * [**svelte-add/firebase-hosting**](https://github.com/svelte-add/firebase-hosting): Add hosting on Firebase to your SvelteKit project
 
