@@ -24,7 +24,7 @@ jobs:
           version: 5.18.x
       # pnpm bug: must be on master branch to publish
       - run: git checkout -b master
-      - run: pnpm ci
+      - run: pnpm install
       - run: pnpm check
       - run: pnpm publish
         env:
