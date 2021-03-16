@@ -20,13 +20,10 @@
     "url": "https://github.com/svelte-add/svelte-adders/issues"
   },
   "homepage": "https://github.com/svelte-add/svelte-adders",
-  "type": "module",
   "bin": {
+    "apply": "index.js",
     "svelte-add": "index.js"
   },
-  "files": [
-    "index.js"
-  ],
   "dependencies": {
     "apply": "^0.2.13"
   },
