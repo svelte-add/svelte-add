@@ -26,7 +26,7 @@
     "apply": "^0.2.13"
   },
   "scripts": {
-    "check": "tsc --project jsconfig.json --noEmit"
+    "check": "tsc --project jsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^14.14.34",
