@@ -2,11 +2,11 @@
 	"compilerOptions": {
 		"checkJs": true,
 		"noEmit": true,
-		"noImplicitAny": true,
+		"strict": true,
 		"target": "es2020",
 		"module": "es2020",
-		
+		"moduleResolution": "node"
 	},
-	"include": ["./**/*.js"],
+	"include": ["./**/*.js", "./**/*.d.ts"],
 	"exclude": ["node_modules"]
 }

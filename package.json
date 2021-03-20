@@ -1,6 +1,6 @@
 {
   "name": "svelte-add",
-  "version": "0.0.1-beta-1",
+  "version": "0.0.1-beta-2",
   "description": "Add functionality to Svelte projects",
   "author": "",
   "keywords": [
@@ -20,18 +20,20 @@
     "url": "https://github.com/svelte-add/svelte-adders/issues"
   },
   "homepage": "https://github.com/svelte-add/svelte-adders",
-  "bin": {
-    "apply": "index.js",
-    "svelte-add": "index.js"
-  },
+  "type": "commonjs",
+  "bin": "index.js",
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
+    "@poppinss/cliui": "^2.2.0",
     "apply": "^0.2.13"
   },
   "scripts": {
     "check": "tsc --project jsconfig.json"
   },
   "devDependencies": {
-    "@types/node": "^14.14.34",
+    "@types/node": "^14.14.35",
     "typescript": "^4.2.3"
   }
 }
