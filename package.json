@@ -1,6 +1,6 @@
 {
   "name": "svelte-add",
-  "version": "0.0.1-beta-5",
+  "version": "0.0.1-beta-6",
   "description": "Add functionality to Svelte projects",
   "author": "",
   "keywords": [
@@ -21,8 +21,7 @@
   },
   "homepage": "https://github.com/svelte-add/svelte-adders",
   "bin": {
-    "apply": "index.js",
-    "svelte-add": "index.js"
+    "apply": "index.js"
   },
   "dependencies": {
     "@poppinss/cliui": "^2.2.0",
