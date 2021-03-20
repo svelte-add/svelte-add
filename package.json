@@ -1,6 +1,6 @@
 {
   "name": "svelte-add",
-  "version": "0.0.1-beta-7",
+  "version": "0.0.1-beta-8",
   "description": "Add functionality to Svelte projects",
   "author": "",
   "keywords": [
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/svelte-add/svelte-adders",
   "bin": {
+    "_": "index.js",
     "svelte-add": "index.js"
   },
   "dependencies": {
