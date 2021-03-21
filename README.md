@@ -20,16 +20,7 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
 
-## ⚡️ Vite
-Some Svelte Adders also work for Svelte projects using Vite without SvelteKit:
-
-* [**svelte-add/mdsvex**](https://github.com/svelte-add/mdsvex): Add mdsvex to your Vite-powered Svelte app
-
-* [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your Vite-powered Svelte app
-
-* [**svelte-add/tailwindcss**](https://github.com/svelte-add/postcss): Add Tailwind CSS to your Vite-powered Svelte app
-
-## 💡 Example
+### 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
 
 ```sh
@@ -47,6 +38,24 @@ npx svelte-add firebase-hosting
 ```
 
 So, to exclude a feature you weren't using that was still included in the boilerplate anyway, *don't* run its corresponding command. Suppose you only wanted PostCSS and to host on Firebase, then drop the `tailwindcss` and `graphql` additions.
+
+## ⚡️ Vite
+Some Svelte Adders also work for Svelte projects using Vite without SvelteKit:
+
+* [**svelte-add/mdsvex**](https://github.com/svelte-add/mdsvex): Add mdsvex to your Vite-powered Svelte app
+
+* [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your Vite-powered Svelte app
+
+* [**svelte-add/tailwindcss**](https://github.com/svelte-add/postcss): Add Tailwind CSS to your Vite-powered Svelte app
+
+## 🗑 Excluding examples
+To demonstrate how the functionality they add works, most adders include examples you might not need if you're already familiar with the tool involved. You can give the `--exclude-examples` option to the adder command to keep things minimal:
+
+```sh
+npx svelte-add mdsvex --exclude-examples
+```
+
+Or you can delete the extra files after the fact.
 
 ## 🎁 Contributing
 This is a community project! Here are some ways you can help:
