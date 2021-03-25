@@ -6,8 +6,6 @@ This is a community project of commands to add particular functionality to Svelt
 They are all *composable*, meaning that it should always be possible to run one after running any other command without something breaking (ideally). This should put an end to the boilerplate problem: too much or too little is included.
 
 ## 🧰 SvelteKit
-[SvelteKit is an alpha project now](https://svelte.dev/blog/whats-the-deal-with-sveltekit), but work is starting now so that there are good integrations for when it enters beta.
-
 * [**svelte-add/bulma**](https://github.com/svelte-add/bulma): Add Bulma to your SvelteKit project
 
 * [**svelte-add/firebase-hosting**](https://github.com/svelte-add/firebase-hosting): Add hosting on Firebase to your SvelteKit project
@@ -20,6 +18,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
 
+* [**svelte-add/windicss**](https://github.com/svelte-add/windicss): Add Windi CSS to your SvelteKit project
+
 ### 💡 Example
 To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
 
@@ -27,7 +27,6 @@ To migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-templat
 # Use the official SvelteKit template
 npm init svelte@next  # Say yes to TypeScript preprocessing and select plain CSS
 
-npx svelte-add postcss
 npx svelte-add tailwindcss
 
 npx svelte-add graphql
@@ -37,7 +36,7 @@ npx svelte-add firebase-hosting
 # aren't supported by svelte-add/firebase-hosting, but that could be solved later!
 ```
 
-So, to exclude a feature you weren't using that was still included in the boilerplate anyway, *don't* run its corresponding command. Suppose you only wanted PostCSS and to host on Firebase, then drop the `tailwindcss` and `graphql` additions.
+So, to exclude a feature you weren't using that was still included in the boilerplate anyway, *don't* run its corresponding command. Suppose you only wanted PostCSS and to host on Firebase, then drop the `graphql` addition and replace `tailwindcss` with `postcss`.
 
 ## ⚡️ Vite
 Some Svelte Adders also work for Svelte projects using Vite without SvelteKit:
@@ -46,7 +45,9 @@ Some Svelte Adders also work for Svelte projects using Vite without SvelteKit:
 
 * [**svelte-add/postcss**](https://github.com/svelte-add/postcss): Add PostCSS to your Vite-powered Svelte app
 
-* [**svelte-add/tailwindcss**](https://github.com/svelte-add/postcss): Add Tailwind CSS to your Vite-powered Svelte app
+* [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your Vite-powered Svelte app
+
+* [**svelte-add/windicss**](https://github.com/svelte-add/windicss): Add Windi CSS to your Vite-powered Svelte app
 
 ## 🗑 Excluding examples
 To demonstrate how the functionality they add works, most adders include examples you might not need if you're already familiar with the tool involved. You can give the `--exclude-examples` option to the adder command to keep things minimal:
