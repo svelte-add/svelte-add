@@ -8,6 +8,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 ## 🧰 SvelteKit
 * [**svelte-add/bulma**](https://github.com/svelte-add/bulma): Add Bulma to your SvelteKit project
 
+* [**leftium/coffeescript-adder**](https://github.com/Leftium/coffeescript-adder): Add CoffeeScript to your SvelteKit project
+
 * [**svelte-add/firebase-hosting**](https://github.com/svelte-add/firebase-hosting): Add hosting on Firebase to your SvelteKit project
 
 * [**svelte-add/graphql**](https://github.com/svelte-add/graphql): Add a GraphQL server to your SvelteKit project
