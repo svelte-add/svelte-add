@@ -20,6 +20,8 @@ They are all *composable*, meaning that it should always be possible to run one 
 
 * [**leftium/pug-adder**](https://github.com/Leftium/pug-adder): Add Pug to your SvelteKit project
 
+* [**joshnuss/svelte-supabase**](https://github.com/joshnuss/svelte-supabase): Add Supabase to your SvelteKit project
+
 * [**svelte-add/tailwindcss**](https://github.com/svelte-add/tailwindcss): Add Tailwind CSS to your SvelteKit project
 
 * [**svelte-add/windicss**](https://github.com/svelte-add/windicss): Add Windi CSS to your SvelteKit project
