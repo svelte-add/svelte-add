@@ -68,7 +68,7 @@ Or you can delete the extra files after the fact.
 This is a community project! Here are some ways you can help:
 * Battle test (combinations of) adders to make sure they're always composable and find other edge cases, bugs, etc.
 * Fix known issues and missing features in an adder per the open issues on its repository.
-* Read [this repository's open issues](https://github.com/svelte-add/svelte-adders/issues) to talk about ideas for new adders.
+* Read [this repository's open issues](https://github.com/svelte-add/svelte-adders/issues) to talk about [ideas for new adders](https://github.com/svelte-add/svelte-add/issues?q=is%3Aissue+is%3Aopen+label%3A%22make+a+new+adder%22).
 * If you're ready to make a new adder, try using an existing adder's repository as a template [and change it up to make it add the functionality you want](https://usepreset.dev/).
 * Create a [pull request](https://github.com/svelte-add/svelte-adders/pulls) to add your project to this list.
 
