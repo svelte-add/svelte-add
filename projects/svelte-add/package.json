@@ -1,6 +1,5 @@
 {
-  "name": "@svelte-add/workspace-root",
-  "private": true,
+  "name": "svelte-add",
   "version": "2021.04.19.00",
   "description": "Add functionality to Svelte projects",
   "author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
@@ -19,11 +18,13 @@
     "url": "https://github.com/svelte-add/svelte-add/issues"
   },
   "homepage": "https://github.com/svelte-add/svelte-add",
-  "scripts": {
-    "check": "tsc --project jsconfig.json"
+  "type": "commonjs",
+  "bin": {
+    "index": "index.js",
+    "svelte-add": "index.js"
   },
-  "devDependencies": {
-    "@types/node": "^14.14.41",
-    "typescript": "^4.2.4"
+  "dependencies": {
+    "@poppinss/cliui": "^2.2.1",
+    "apply": "^0.2.13"
   }
 }
