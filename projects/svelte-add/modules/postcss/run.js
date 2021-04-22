@@ -1,3 +1,1 @@
-module.exports = {
-    compatibility: "svelte-add/postcss",
-};
+export const compatibility = "svelte-add/postcss";

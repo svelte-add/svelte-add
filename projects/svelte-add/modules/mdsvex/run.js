@@ -1,3 +1,1 @@
-module.exports = {
-    compatibility: "svelte-add/mdsvex",
-};
+export const compatibility = "svelte-add/mdsvex";

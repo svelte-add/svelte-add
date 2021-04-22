@@ -1,18 +1,20 @@
-module.exports = {
-    /**
-     * @param {object} param0
-     * @param {string[]} param0.args
-     * @param {string} param0.adder
-     * @param {string} param0.index
-     * @param {string} param0.node
-     * @return {void} 
-     */
-    applyPreset({ args, adder, index, node }) {
-        if (!adder.includes("/")) adder = `svelte-add/${adder}`;
-        if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 
-        process.argv = [node, index, adder, ...args];
+/**
+ * @param {object} param0
+ * @param {string[]} param0.args
+ * @param {string} param0.preset
+ * @param {string} param0.index
+ * @param {string} param0.node
+ * @return {void} 
+ */
+export const applyPreset = ({ args, preset, index, node }) => {
+    if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
 
-        require("apply/bin/run");
-    }
+    process.argv = [node, index, preset, ...args];
+
+    const run = "apply/bin/run";
+    delete require.cache[require.resolve(run)];
+    require(run);
 };

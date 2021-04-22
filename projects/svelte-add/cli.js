@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-const { logger } = require("@poppinss/cliui");
+import { logger } from "@poppinss/cliui";
 
 const [node, index, adder, ...args] = process.argv;
 
@@ -24,5 +23,13 @@ if (!adder) {
     process.exit(0);
 }
 
-const { applyPreset } = require("./compatibility");
-applyPreset({ args, adder, index, node });
+const main = async () => {
+    const run = await import(`./modules/${adder}/run.js`);
+
+    if (run.compatibility) {
+        const { applyPreset } = await import("./compatibility.js");
+        applyPreset({ args, preset: run.compatibility, index, node });
+    }
+}
+
+main();

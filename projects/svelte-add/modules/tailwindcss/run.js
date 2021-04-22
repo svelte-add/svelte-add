@@ -1,3 +1,1 @@
-module.exports = {
-    compatibility: "svelte-add/tailwindcss",
-};
+export const compatibility = "svelte-add/tailwindcss";

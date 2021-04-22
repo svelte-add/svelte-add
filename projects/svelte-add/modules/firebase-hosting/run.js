@@ -1,3 +1,1 @@
-module.exports = {
-    compatibility: "svelte-add/firebase-hosting",
-};
+export const compatibility = "svelte-add/firebase-hosting";

@@ -1,30 +1,41 @@
 {
-  "name": "svelte-add",
-  "version": "2021.04.19.00",
-  "description": "Add functionality to Svelte projects",
-  "author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
-  "keywords": [
-    "svelte",
-    "sveltekit",
-    "svelte-kit",
-    "svelte-add"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/svelte-add/svelte-add.git"
-  },
-  "bugs": {
-    "url": "https://github.com/svelte-add/svelte-add/issues"
-  },
-  "homepage": "https://github.com/svelte-add/svelte-add",
-  "type": "commonjs",
-  "bin": {
-    "index": "index.js",
-    "svelte-add": "index.js"
-  },
-  "dependencies": {
-    "@poppinss/cliui": "^2.2.1",
-    "apply": "^0.2.13"
-  }
+	"name": "svelte-add",
+	"version": "2021.04.19.00",
+	"description": "Add functionality to Svelte projects",
+	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
+	"keywords": [
+		"svelte",
+		"sveltekit",
+		"svelte-kit",
+		"svelte-add"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/svelte-add/svelte-add.git"
+	},
+	"bugs": {
+		"url": "https://github.com/svelte-add/svelte-add/issues"
+	},
+	"homepage": "https://github.com/svelte-add/svelte-add",
+	"files": [
+		"cli.cjs"
+	],
+	"type": "module",
+	"bin": {
+		"index": "cli.cjs",
+		"svelte-add": "cli.cjs"
+	},
+	"scripts": {
+		"prepare": "rollup -c"
+	},
+	"dependencies": {
+		"@poppinss/cliui": "^2.2.1",
+		"apply": "^0.2.13"
+	},
+	"devDependencies": {
+		"@rollup/plugin-dynamic-import-vars": "^1.1.1",
+		"esbuild": "^0.11.12",
+		"rollup": "^2.45.2"
+	}
 }
