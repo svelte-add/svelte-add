@@ -73,7 +73,10 @@ This is a community project! Here are some ways you can help:
 - Read [this repository's open issues](https://github.com/svelte-add/svelte-add/issues) to talk about [ideas for new adders](https://github.com/svelte-add/svelte-add/issues?q=is%3Aissue+is%3Aopen+label%3A%22make+a+new+adder%22).
 - Create a [pull request](https://github.com/svelte-add/svelte-add/pulls) to add your project to this list.
 
----
+## 🙏 Attribution
+`svelte-add` takes (or will take) inspiration from existing projects:
+* [`snowpack-start`](https://github.com/awu43/snowpack-start)
+* [`use-preset`](https://usepreset.dev/)
 
 _Repository preview image generated with [GitHub Social Preview](https://social-preview.pqt.dev/)_
 
