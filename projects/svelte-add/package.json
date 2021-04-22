@@ -30,8 +30,10 @@
 		"prepare": "rollup -c"
 	},
 	"dependencies": {
-		"@poppinss/cliui": "^2.2.1",
-		"apply": "^0.2.13"
+		"apply": "^0.2.13",
+		"kleur": "^4.1.4",
+		"mri": "^1.1.6",
+		"prompts": "^2.4.1"
 	},
 	"devDependencies": {
 		"@rollup/plugin-dynamic-import-vars": "^1.1.1",

@@ -12,17 +12,21 @@ importers:
     specifiers: {}
   projects/svelte-add:
     dependencies:
-      '@poppinss/cliui': 2.2.1
       apply: 0.2.13
+      kleur: 4.1.4
+      mri: 1.1.6
+      prompts: 2.4.1
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.45.2
       esbuild: 0.11.12
       rollup: 2.45.2
     specifiers:
-      '@poppinss/cliui': ^2.2.1
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
       apply: ^0.2.13
       esbuild: ^0.11.12
+      kleur: ^4.1.4
+      mri: ^1.1.6
+      prompts: ^2.4.1
       rollup: ^2.45.2
 lockfileVersion: 5.2
 packages:
@@ -700,6 +704,12 @@ packages:
       graceful-fs: 4.2.6
     resolution:
       integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==
+  /kleur/3.0.3:
+    dev: false
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
   /kleur/4.1.4:
     dev: false
     engines:
@@ -760,6 +770,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-A/78XjoX2EmNvppVWEhM2oGk3x4lLxnkEA4jTbaK97QKSDjkIoOsKQlfylt/d3kKKi596Qy3NP5XrXJ6fZIC9Q==
+  /mri/1.1.6:
+    dev: false
+    engines:
+      node: '>=4'
+    resolution:
+      integrity: sha512-oi1b3MfbyGa7FJMP9GmLTttni5JoICpYBRlq+x5V16fZbLsnL9N3wFqqIm/nIG43FjUFkFh9Epzp/kzUGUnJxQ==
   /ms/2.1.2:
     dev: false
     resolution:
@@ -845,6 +861,15 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=
+  /prompts/2.4.1:
+    dependencies:
+      kleur: 3.0.3
+      sisteransi: 1.0.5
+    dev: false
+    engines:
+      node: '>= 6'
+    resolution:
+      integrity: sha512-EQyfIuO2hPDsX1L/blblV+H7I0knhgAd82cVneCwcdND9B8AuCDuRcBH6yIcG4dFzlOUqbazQqwGjx5xmsNLuQ==
   /pump/3.0.0:
     dependencies:
       end-of-stream: 1.4.4
@@ -931,6 +956,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-CORjrfirWMEGbJAxaXDH/PjZVOeATeG2bkafM9DsLVcFkbF9sXQGIIpEI6FeyXpvUsFK69T/pa4+4FKY9TUJMQ==
+  /sisteransi/1.0.5:
+    dev: false
+    resolution:
+      integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
   /slash/3.0.0:
     dev: true
     engines:

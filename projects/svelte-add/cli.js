@@ -1,7 +1,4 @@
-import { logger } from "@poppinss/cliui";
-
-const [node, index, adder, ...args] = process.argv;
-
+import colors from "kleur";
 
 const css = [
     ["postcss", ["tailwindcss"]],
@@ -17,13 +14,15 @@ const deploy = [
     ["firebase-hosting", []],
 ];
 
-if (!adder) {
-    // TODO: show the interactive menus instead
-    logger.error(`No adder was specified. Read ${logger.colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
-    process.exit(0);
-}
-
 const main = async () => {
+    const [node, index, adder, ...args] = process.argv;
+
+    if (!adder) {
+        // TODO: show the interactive menus instead
+        console.error(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
+        process.exit(0);
+    }
+    
     const run = await import(`./modules/${adder}/run.js`);
 
     if (run.compatibility) {
