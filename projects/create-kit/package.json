@@ -1,26 +1,38 @@
 {
-  "name": "@svelte-add/create-kit",
-  "version": "2021.04.22.01",
-  "description": "Create a SvelteKit app with extra integrations",
-  "author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
-  "keywords": [
-    "svelte",
-    "sveltekit",
-    "svelte-kit",
-    "svelte-add"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/svelte-add/svelte-add.git"
-  },
-  "bugs": {
-    "url": "https://github.com/svelte-add/svelte-add/issues"
-  },
-  "homepage": "https://github.com/svelte-add/svelte-add",
-  "type": "commonjs",
-  "bin": {
-    "index": "index.js",
-    "svelte-add-create-kit": "index.js"
-  }
+	"name": "@svelte-add/create-kit",
+	"version": "2021.4.2-2.2",
+	"description": "Create a SvelteKit app with extra integrations",
+	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
+	"keywords": [
+		"svelte",
+		"sveltekit",
+		"svelte-kit",
+		"svelte-add"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/svelte-add/svelte-add.git"
+	},
+	"bugs": {
+		"url": "https://github.com/svelte-add/svelte-add/issues"
+	},
+	"homepage": "https://github.com/svelte-add/svelte-add",
+	"files": [
+		"cli.cjs"
+	],
+	"type": "module",
+	"bin": {
+		"index": "cli.cjs",
+		"svelte-add-create-kit": "cli.cjs"
+	},
+	"scripts": {
+		"prepare": "rollup -c"
+	},
+	"devDependencies": {
+		"rollup": "^2.45.2"
+	},
+	"dependencies": {
+		"svelte-add": "workspace:*"
+	}
 }
