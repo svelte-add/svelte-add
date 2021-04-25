@@ -33,14 +33,12 @@ importers:
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.45.2
       '@types/mri': 1.1.0
-      esbuild: 0.11.14
       rollup: 2.45.2
     specifiers:
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
       '@types/mri': ^1.1.0
       apply: ^0.2.14
       enquirer: ^2.3.6
-      esbuild: ^0.11.14
       kleur: ^4.1.4
       mri: ^1.1.6
       rollup: ^2.45.2
@@ -465,12 +463,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==
-  /esbuild/0.11.14:
-    dev: true
-    hasBin: true
-    requiresBuild: true
-    resolution:
-      integrity: sha512-ejheEPkqhq5y0LM9rG9e+3yDihPtqeeE4NZmG7VQiSGJ3CjO4HvPOHmhhttSksfSztjLAGo2+0/zSIvlqj4JOQ==
   /esbuild/0.8.57:
     dev: false
     hasBin: true
