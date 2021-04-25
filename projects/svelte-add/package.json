@@ -48,7 +48,6 @@
 	"devDependencies": {
 		"@rollup/plugin-dynamic-import-vars": "^1.1.1",
 		"@types/mri": "^1.1.0",
-		"esbuild": "^0.11.14",
 		"rollup": "^2.45.2"
 	}
 }
