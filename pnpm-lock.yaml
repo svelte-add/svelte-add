@@ -7,28 +7,46 @@ importers:
       '@types/node': ^14.14.41
       typescript: ^4.2.4
   projects/create-kit:
-    specifiers: {}
+    dependencies:
+      svelte-add: link:../svelte-add
+    devDependencies:
+      rollup: 2.45.2
+    specifiers:
+      rollup: ^2.45.2
+      svelte-add: workspace:*
   projects/create-vite:
-    specifiers: {}
+    dependencies:
+      '@vitejs/create-app': 2.2.5
+      svelte-add: link:../svelte-add
+    devDependencies:
+      rollup: 2.45.2
+    specifiers:
+      '@vitejs/create-app': ^2.2.5
+      rollup: ^2.45.2
+      svelte-add: workspace:*
   projects/svelte-add:
     dependencies:
-      apply: 0.2.13
+      apply: 0.2.14
+      enquirer: 2.3.6
       kleur: 4.1.4
       mri: 1.1.6
-      prompts: 2.4.1
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.45.2
-      esbuild: 0.11.12
+      '@types/mri': 1.1.0
+      esbuild: 0.11.14
       rollup: 2.45.2
     specifiers:
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
-      apply: ^0.2.13
-      esbuild: ^0.11.12
+      '@types/mri': ^1.1.0
+      apply: ^0.2.14
+      enquirer: ^2.3.6
+      esbuild: ^0.11.14
       kleur: ^4.1.4
       mri: ^1.1.6
-      prompts: ^2.4.1
       rollup: ^2.45.2
 lockfileVersion: 5.2
+overrides:
+  inversify: 5.0.5
 packages:
   /@babel/code-frame/7.12.13:
     dependencies:
@@ -136,6 +154,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
+  /@types/mri/1.1.0:
+    dev: true
+    resolution:
+      integrity: sha512-fMl88ZoZXOB7VKazJ6wUMpZc9QIn+jcigSFRf2K/rrw4DcXn+/uGxlWX8DDlcE7JkwgIZ7BDH+JgxZPlc/Ap3g==
   /@types/node/14.14.41:
     dev: true
     resolution:
@@ -144,6 +166,17 @@ packages:
     dev: false
     resolution:
       integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+  /@vitejs/create-app/2.2.5:
+    dependencies:
+      enquirer: 2.3.6
+      kolorist: 1.4.1
+      minimist: 1.2.5
+    dev: false
+    engines:
+      node: '>=12.0.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-rdon+Z5gcTEfmzIBs+VJNLc0YHx6ba1KPV/EHX+Ul6yN7Orj+wKZYjbdUhzNySU2VPzWP6H6Nl0idrbwD1rsgw==
   /ansi-colors/4.1.1:
     dev: false
     engines:
@@ -180,11 +213,11 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==
-  /apply/0.2.13:
+  /apply/0.2.14:
     dependencies:
       '@poppinss/cliui': 2.2.1
       '@poppinss/prompts': 1.2.1
-      cac: 6.7.2
+      cac: 6.7.3
       cosmiconfig: 7.0.0
       debug: 4.2.0
       deepmerge: 4.2.2
@@ -210,7 +243,7 @@ packages:
       node: '>=12'
     hasBin: true
     resolution:
-      integrity: sha512-Nk3LzvXjZS3r/BEn4u0imGNR28VFkprYkyu0WJysaITxvFIp9BHhQL4+o9MwPwtCXaXKXc2mDFIY7eOXSwSk2w==
+      integrity: sha512-xzUNhXr2Ll1yoDMGtwpJ3CYbow3aTqvoM3nP5BbD2yUs2twVInGFV6nXH6QRlhZBrFC62a9sliYotUBra+W7pw==
   /array-union/2.1.0:
     dev: true
     engines:
@@ -247,12 +280,12 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
-  /cac/6.7.2:
+  /cac/6.7.3:
     dev: false
     engines:
       node: '>=8'
     resolution:
-      integrity: sha512-w0bH1IF9rEjdi0a6lTtlXYT+vBZEJL9oytaXXRdsD68MH6+SrZGOGsu7s2saHQvYXqwo/wBdkW75tt8wFpj+mw==
+      integrity: sha512-ECVqVZh74qgSuZG9YOt2OJPI3wGcf+EwwuF/XIOYqZBD0KZYLtgPWqFPxmDPQ6joxI1nOlvVgRV6VT53Ooyocg==
   /callsites/3.1.0:
     dev: false
     engines:
@@ -432,12 +465,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==
-  /esbuild/0.11.12:
+  /esbuild/0.11.14:
     dev: true
     hasBin: true
     requiresBuild: true
     resolution:
-      integrity: sha512-c8cso/1RwVj+fbDvLtUgSG4ZJQ0y9Zdrl6Ot/GAjyy4pdMCHaFnDMts5gqFnWRPLajWtEnI+3hlET4R9fVoZng==
+      integrity: sha512-ejheEPkqhq5y0LM9rG9e+3yDihPtqeeE4NZmG7VQiSGJ3CjO4HvPOHmhhttSksfSztjLAGo2+0/zSIvlqj4JOQ==
   /esbuild/0.8.57:
     dev: false
     hasBin: true
@@ -704,18 +737,16 @@ packages:
       graceful-fs: 4.2.6
     resolution:
       integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==
-  /kleur/3.0.3:
-    dev: false
-    engines:
-      node: '>=6'
-    resolution:
-      integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
   /kleur/4.1.4:
     dev: false
     engines:
       node: '>=6'
     resolution:
       integrity: sha512-8QADVssbrFjivHWQU7KkMgptGTl6WAcSdlbBPY4uNF+mWr6DGcKrvY2w4FQJoXch7+fKMjj0dRrL75vk3k23OA==
+  /kolorist/1.4.1:
+    dev: false
+    resolution:
+      integrity: sha512-jucnNxW4qfamxkbT4hCLRk/WyAQD/aS0KIkY8z5VoQI5K9QF65nj7vTeuFcySO7eibxPQwVWM+mby1Hm9TyokQ==
   /lines-and-columns/1.1.6:
     dev: false
     resolution:
@@ -766,6 +797,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
+  /minimist/1.2.5:
+    dev: false
+    resolution:
+      integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
   /module-alias/2.2.2:
     dev: false
     resolution:
@@ -861,15 +896,6 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=
-  /prompts/2.4.1:
-    dependencies:
-      kleur: 3.0.3
-      sisteransi: 1.0.5
-    dev: false
-    engines:
-      node: '>= 6'
-    resolution:
-      integrity: sha512-EQyfIuO2hPDsX1L/blblV+H7I0knhgAd82cVneCwcdND9B8AuCDuRcBH6yIcG4dFzlOUqbazQqwGjx5xmsNLuQ==
   /pump/3.0.0:
     dependencies:
       end-of-stream: 1.4.4
@@ -956,10 +982,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-CORjrfirWMEGbJAxaXDH/PjZVOeATeG2bkafM9DsLVcFkbF9sXQGIIpEI6FeyXpvUsFK69T/pa4+4FKY9TUJMQ==
-  /sisteransi/1.0.5:
-    dev: false
-    resolution:
-      integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==
   /slash/3.0.0:
     dev: true
     engines:
