@@ -20,16 +20,14 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
 		"cli.cjs",
-		"index.js",
-		"compatibility.js"
+		"cli.js",
+		"compatibility.js",
+		"index.js"
 	],
 	"type": "module",
 	"exports": {
 		".": {
 			"import": "./index.js"
-		},
-		"./compatibility": {
-			"import": "./compatibility.js"
 		}
 	},
 	"bin": {
