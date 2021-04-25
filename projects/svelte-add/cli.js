@@ -1,34 +1,31 @@
-import colors from "kleur";
-
-const css = [
-    ["postcss", ["tailwindcss"]],
-    ["scss", ["bulma"]],
-];
-
-const other = [
-    ["graphql-server", []],
-    ["mdsvex", []],
-]
-
-const deploy = [
-    ["firebase-hosting", []],
-];
+import { applyPreset } from "./compatibility";
 
 const main = async () => {
-    const [node, index, adder, ...args] = process.argv;
+	const [node, index, addersJoined, ...args] = process.argv;
 
-    if (!adder) {
-        // TODO: show the interactive menus instead
-        console.error(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
-        process.exit(0);
-    }
-    
-    const run = await import(`./modules/${adder}/run.js`);
+	if (!addersJoined) {
+		// TODO: show the interactive menus instead
+		
+		const colors = (await import("kleur")).default;
+		console.error(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
+		process.exit(0);
+	}
 
-    if (run.compatibility) {
-        const { applyPreset } = await import("./compatibility.js");
-        applyPreset({ args, preset: run.compatibility, index, node });
-    }
-}
+	const adders = addersJoined.split("+");
+
+	for (const adder of adders) {
+		if (adder.includes("/")) {
+			applyPreset({ args, preset: adder, index, node });
+		} else {
+			const run = await import(`./adders/${adder}/run.js`);
+			
+			if (run.compatibility) {
+				applyPreset({ args, preset: run.compatibility, index, node });
+			} else {
+				// TODO: run the core adder
+			}
+		}
+	}
+};
 
 main();
