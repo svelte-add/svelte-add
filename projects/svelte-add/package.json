@@ -19,6 +19,7 @@
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
+		"adders/**/*.js",
 		"cli.cjs",
 		"cli.js",
 		"compatibility.js",
