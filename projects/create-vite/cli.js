@@ -5,6 +5,7 @@ const main = async () => {
 
     const choices = await getChoices({
         args: process.argv.slice(2),
+        promptMissing: true,
     });
 
     // TODO: make proper use of choices
