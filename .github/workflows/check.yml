@@ -3,6 +3,8 @@ name: Check every commit and pull request
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 jobs:
   check:
