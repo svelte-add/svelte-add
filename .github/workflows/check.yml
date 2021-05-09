@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  publish:
+  check:
     strategy:
       matrix:
         node-version: [14.16.1, 16.1.0]
