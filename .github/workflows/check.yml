@@ -1,15 +1,14 @@
-name: Publish to NPM every tag (i.e. new version)
+name: Check every commit and pull request
 
 on:
+  pull_request:
   push:
-    tags:
-      - '*'
 
 jobs:
   publish:
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [14.16.1, 16.1.0]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -24,6 +23,3 @@ jobs:
           version: 6.2.x
       - run: pnpm install
       - run: pnpm check
-      - run: pnpm -r publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
