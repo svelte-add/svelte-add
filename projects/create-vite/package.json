@@ -29,10 +29,10 @@
 		"prepare": "rollup -c"
 	},
 	"devDependencies": {
-		"rollup": "^2.47.0"
+		"rollup": "^2.48.0"
 	},
 	"dependencies": {
-		"@vitejs/create-app": "^2.2.5",
+		"@vitejs/create-app": "^2.3.1",
 		"svelte-add": "workspace:*"
 	}
 }

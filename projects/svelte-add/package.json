@@ -39,20 +39,20 @@
 		"prepare": "rollup -c"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^4.22.1",
+		"@typescript-eslint/typescript-estree": "^4.24.0",
 		"acorn": "^8.2.4",
-		"apply": "^0.2.15",
+		"apply": "^0.2.16",
 		"enquirer": "^2.3.6",
 		"estree-walker": "^3.0.0",
 		"kleur": "^4.1.4",
 		"mri": "^1.1.6",
-		"postcss": "^8.2.14",
+		"postcss": "^8.3.0",
 		"posthtml": "^0.15.2",
 		"recast": "^0.20.4"
 	},
 	"devDependencies": {
 		"@rollup/plugin-dynamic-import-vars": "^1.1.1",
 		"@types/mri": "^1.1.0",
-		"rollup": "^2.47.0"
+		"rollup": "^2.48.0"
 	}
 }
