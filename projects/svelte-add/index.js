@@ -1,8 +1,7 @@
 import { exec, spawn } from "child_process";
 import { readdir, readFile as fsReadFile } from "fs/promises";
 import mri from "mri";
-import { resolve } from "path";
-import { join } from "path/posix";
+import { join, resolve } from "path";
 import { promisify } from "util";
 
 /**
