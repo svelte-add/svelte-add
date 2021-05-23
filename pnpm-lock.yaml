@@ -64,8 +64,8 @@ importers:
 
   projects/test:
     specifiers:
-      '@svelte-add/create-kit': workspace:^2021.5.2-3.0
-      '@svelte-add/create-vite': workspace:^2021.5.2-3.0
+      '@svelte-add/create-kit': workspace:*
+      '@svelte-add/create-vite': workspace:*
       autoprefixer: ^10.2.5
       cssnano: ^5.0.4
       postcss: ^8.3.0
