@@ -29,7 +29,7 @@
 		"prepare": "rollup -c"
 	},
 	"devDependencies": {
-		"rollup": "^2.48.0"
+		"rollup": "^2.49.0"
 	},
 	"dependencies": {
 		"@vitejs/create-app": "^2.3.1",
