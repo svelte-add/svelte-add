@@ -19,6 +19,7 @@
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
+		"__init.js",
 		"cli.cjs"
 	],
 	"type": "module",
@@ -30,7 +31,7 @@
 		"prepare": "rollup -c"
 	},
 	"devDependencies": {
-		"rollup": "^2.47.0"
+		"rollup": "^2.49.0"
 	},
 	"dependencies": {
 		"svelte-add": "workspace:*"

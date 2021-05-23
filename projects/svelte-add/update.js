@@ -21,6 +21,7 @@ import { readFile } from "./index.js";
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ existed: boolean, text: string }): Promise<{ text: string }>} param0.content
+ * @returns {Promise<void>}
  */
 export const updateFile = async ({ path, content }) => {
     const { existed, text } = await readFile({ path });
@@ -56,6 +57,7 @@ export const updateFile = async ({ path, content }) => {
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ existed: boolean, acorn: import("acorn").Node, typescriptEstree: import("@typescript-eslint/typescript-estree").AST<{}> }): Promise<{ acorn: import("acorn").Node } | { typescriptEstree: import("@typescript-eslint/typescript-estree").AST<{}> }>} param0.script
+ * @returns {Promise<void>}
  */
 export const updateJavaScript = async ({ path, script }) => {
     updateFile({
@@ -108,6 +110,7 @@ export const updateJavaScript = async ({ path, script }) => {
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ existed: boolean, typescriptEstree: import("@typescript-eslint/typescript-estree").AST<{}> }): Promise<{ typescriptEstree: import("@typescript-eslint/typescript-estree").AST<{}> }>} param0.script
+ * @returns {Promise<void>}
  */
 export const updateTypeScript = async ({ path, script }) => {
     updateFile({
@@ -162,9 +165,9 @@ export const updateTypeScript = async ({ path, script }) => {
  *     },
  * })
  * 
- * @param {*} param0 
+ * @param {object} param0
+ * @returns {Promise<void>}
  */
 export const updateSvelte = async ({ }) => {
 	
 };
-

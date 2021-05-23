@@ -10,5 +10,5 @@
 		"target": "es2020",
 	},
 	"include": ["./**/*.js", "./**/*.d.ts"],
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules", "projects/test/_outputs"]
 }
