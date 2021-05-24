@@ -26,6 +26,20 @@ const main = async () => {
 		exit(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
 	}
 
+	// TODO: should this be overrideable?
+	let preferredNpx = "npx";
+	if (environment.npx.pnpx) preferredNpx = "pnpx";
+	
+	// TODO: ask what package manager if multiple options
+	// (getChoices)
+	let preferredPackageManager = "npm";
+	if (environment.packageManagers.pnpm) preferredPackageManager = "pnpm";
+
+	if (process.platform === "win32") {
+		preferredNpx += ".cmd";
+		preferredPackageManager += ".cmd";
+	}
+
 	const adders = addersJoined.split("+");
 
 	for (const adder of adders) {
@@ -57,6 +71,7 @@ const main = async () => {
 			adder,
 			cwd,
 			environment,
+			npx: preferredNpx,
 			// TODO: option parsing
 			options: {},
 		});

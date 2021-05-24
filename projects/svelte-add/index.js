@@ -102,8 +102,14 @@ const packageManagerDetectors = {
 	"yarn": "yarn --version", // TODO: is that right??
 }
 
+const npxDetectors = {
+	"npx": "npx --version",
+	"pnpx": "pnpx --version",
+}
+
 /**
  * @typedef {keyof typeof packageManagerDetectors} PackageManager
+ * @typedef {keyof typeof npxDetectors} NPX
  * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler 
  * 
  * @typedef {Object} Environment
@@ -111,15 +117,24 @@ const packageManagerDetectors = {
  * @property {import("./package-versions").Dependencies} dependencies
  * @property {import("./package-versions").Dependencies} devDependencies
  * @property {boolean} empty
- * @property {Record<PackageManager, boolean>} packageManagers
  * @property {boolean} kit
+ * @property {Record<NPX, boolean>} npx
+ * @property {Record<PackageManager, boolean>} packageManagers
+ * @property {typeof process.platform} platform
  *
  * @param {object} param0
  * @param {string} param0.cwd
  * @returns {Promise<Environment>}
  */
 export const getEnvironment = async ({ cwd }) => {
-	const packageManagers = Object.fromEntries(await Promise.all(Object.entries(packageManagerDetectors).map(async ([name, command]) => {
+	const platform = process.platform;
+
+	/**
+	 * @template {string} Tool
+	 * @param {Record<Tool, string>} detectors
+	 * @returns {Promise<Record<Tool, boolean>>}
+	 */
+	const getAvailable = async (detectors) => Object.fromEntries(await Promise.all(Object.entries(detectors).map(async ([name, command]) => {
 		try {
 			await promisify(exec)(command);
 		} catch {
@@ -127,6 +142,8 @@ export const getEnvironment = async ({ cwd }) => {
 		}
 		return [name, true];
 	})));
+
+	const [npx, packageManagers] = await Promise.all([getAvailable(npxDetectors), getAvailable(packageManagerDetectors)]);
 
 	const files = await readdir(cwd);
 
@@ -137,7 +154,9 @@ export const getEnvironment = async ({ cwd }) => {
 			dependencies: {},
 			empty: true,
 			kit: false,
+			npx,
 			packageManagers,
+			platform,
 		}
 	}
 
@@ -177,7 +196,9 @@ export const getEnvironment = async ({ cwd }) => {
 		devDependencies,
 		empty: false,
 		kit,
+		npx,
 		packageManagers,
+		platform,
 	};
 };
 
@@ -186,7 +207,7 @@ export const getEnvironment = async ({ cwd }) => {
 /**
  * @param {object} param0
  * @param {string} param0.path
- * @returns Promise<{ existed: boolean, text: string }>
+ * @returns {Promise<{ existed: boolean, text: string }>}
  */
 export const readFile = async ({ path }) => {
 	let existed = true;
@@ -246,7 +267,7 @@ export const detect = async ({ cwd, environment, heuristics }) => Object.fromEnt
  * @property {string} preset
  *
  * @param {ApplyPresetArg} param0
- * @return {Promise<void>}
+ * @returns {Promise<void>}
  */
 export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve, reject) => {
 	if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
@@ -267,7 +288,7 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
 /** 
  * @template Options
  * @typedef {Object} AdderRunArg
- * @property {function(Omit<ApplyPresetArg, "cwd">): ReturnType<typeof applyPreset>} applyPreset
+ * @property {function(Omit<ApplyPresetArg, "cwd" | "npx">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
  * @property {Options} options
  */
@@ -285,16 +306,17 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
  * @param {string} param0.adder
  * @param {string} param0.cwd
  * @param {Environment} param0.environment
+ * @param {string} param0.npx
  * @param {Options} param0.options
- * @return {Promise<void>}
+ * @returns {Promise<void>}
  */
-export const runAdder = async ({ adder, cwd, environment, options }) => {
+export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 	/** @type {{ run: AdderRun<Options> }} */
 	const { run } = await import(`./adders/${adder}/__run.js`);
 
 	await run({
 		applyPreset({ ...args }) {
-			return applyPreset({ ...args, cwd });
+			return applyPreset({ ...args, cwd, npx });
 		},
 		environment,
 		options,
