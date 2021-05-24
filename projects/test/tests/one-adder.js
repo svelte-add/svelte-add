@@ -45,6 +45,8 @@ for (const [app, init] of Object.entries(initializers)) {
 				adder,
 				cwd: output,
 				environment,
+				// TODO: fix so tests can be run on Windows
+				npx: "pnpx",
 				options: {},
 			});
 
