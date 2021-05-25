@@ -39,7 +39,7 @@
 		"prepare": "rollup -c"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^4.24.0",
+		"@typescript-eslint/typescript-estree": "^4.25.0",
 		"acorn": "^8.2.4",
 		"enquirer": "^2.3.6",
 		"estree-walker": "^3.0.0",
