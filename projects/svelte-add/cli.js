@@ -9,7 +9,7 @@ const exit = (text) => {
 
 const main = async () => {
 	console.log(colors.bold("➕ Svelte Add"));
-	console.log(colors.yellow("The project directory you're giving to this command cannot be determined to be guaranteed fresh. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template."));
+	console.log(colors.yellow("The project directory you're giving to this command cannot be guaranteed to be fresh. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template."));
 
 	const cwd = process.cwd();
 
@@ -47,12 +47,22 @@ const main = async () => {
 		console.log(colors.bold(adder));
 
 		if (adder.includes("/")) {
-			await applyPreset({ args, cwd, npx: environment.packageManagers.pnpm ? "pnpx" : "npx", preset: adder });
+			await applyPreset({ args, cwd, npx: preferredNpx, preset: adder });
+			console.log(`${colors.green(` ✅ has been set up, but because it's a non-core adder, cannot be determined to have been set up correctly.`)}\nCreate or find an existing issue at ${colors.cyan(`https://github.com/${adder}/issues`)} if this is wrong.`);
 			continue;
 		}
 
-		/** @type {{ heuristics: import(".").Heuristic[] }} */ 
-		const { heuristics } = await import(`./adders/${adder}/__detect.js`);
+		/** @type {import(".").Heuristic[]} */ 
+		let heuristics = [];
+		
+		// TODO: make detection / pre run checks happen in a batch rather than before each adder
+		try {
+			({ heuristics } = await import(`./adders/${adder}/__detect.js`));
+		} catch (e) {
+			if (e.code === "ERR_MODULE_NOT_FOUND") exit(`${colors.red(`  ❌ doesn't exist as an adder.`)} Have you spelled it correctly?\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
+
+			throw e;
+		}
 		
 		const preRunCheck = await detect({ cwd, environment, heuristics });
 		

@@ -2,7 +2,7 @@ import { exec, spawn } from "child_process";
 import { readdir, readFile as fsReadFile } from "fs/promises";
 import mri from "mri";
 import { join, resolve } from "path";
-import { promisify } from "util";
+import { inspect, promisify } from "util";
 
 /**
  * @typedef {"javascript" | "typescript" | "coffeescript"} Script
@@ -278,10 +278,29 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
 		timeout: 20000,
 	});
 
-	subprocess.on("close", (code) => {
-		if (code === 0) resolve(undefined);
+	let body = "";
 
-		reject(code);
+	subprocess.stderr.on("data", (chunk) => {
+		body += chunk;
+	});
+
+	subprocess.stderr.on("end", () => {
+		if (body === "") {
+			resolve(undefined);
+			return;
+		}
+
+		if (body.includes("remote: Repository not found.")) {
+			reject(new Error(`The ${inspect(preset)} preset does not exist on GitHub. Have you spelled it correctly?`));
+			return;
+		}
+
+		if (body.includes("[ error ]  Could not clone")) {
+			reject(new Error(`The ${inspect(preset)} preset could not be cloned. Is git installed?`));
+			return;	
+		}
+
+		reject(new Error(body));
 	});
 });
 
