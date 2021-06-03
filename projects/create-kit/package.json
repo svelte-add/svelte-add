@@ -31,7 +31,7 @@
 		"prepare": "rollup -c"
 	},
 	"devDependencies": {
-		"rollup": "^2.49.0"
+		"rollup": "^2.50.6"
 	},
 	"dependencies": {
 		"svelte-add": "workspace:*"
