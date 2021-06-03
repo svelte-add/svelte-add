@@ -11,15 +11,15 @@ export const heuristics = [
 	{
 		description: "`firebase.json` exists",
 		async detector({ readFile }) {
-			const { existed } = await readFile({ path: "/firebase.json" });
-			return existed;
+			const { exists } = await readFile({ path: "/firebase.json" });
+			return exists;
 		},
 	},
 	{
 		description: "`.firebaserc` exists",
 		async detector({ readFile }) {
-			const { existed } = await readFile({ path: "/.firebaserc" });
-			return existed;
+			const { exists } = await readFile({ path: "/.firebaserc" });
+			return exists;
 		},
 	},
 ];

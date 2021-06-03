@@ -21,9 +21,9 @@ export const heuristics = [
 				return true;
 			};
 
-			if (app.existed) {
+			if (app.exists) {
 				return bulmaIsProbablyImported(app.text);
-			} else if (global.existed) {
+			} else if (global.exists) {
 				return bulmaIsProbablyImported(global.text);
 			}
 

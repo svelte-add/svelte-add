@@ -18,7 +18,7 @@ export const heuristics = [
 			const js = await readFile({ path: "/src/routes/graphql.js" });
 			const ts = await readFile({ path: "/src/routes/graphql.ts" });
 
-			return js.existed || ts.existed;
+			return js.exists || ts.exists;
 		},
 	},
 ];

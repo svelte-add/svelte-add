@@ -21,9 +21,9 @@ export const heuristics = [
 				return true;
 			};
 
-			if (js.existed) {
+			if (js.exists) {
 				return preprocessIsProbablySetup(js.text);
-			} else if (cjs.existed) {
+			} else if (cjs.exists) {
 				return preprocessIsProbablySetup(cjs.text);
 			}
 
@@ -36,7 +36,7 @@ export const heuristics = [
 			const cjs = await readFile({ path: "/mdsvex.config.cjs" });
 			const js = await readFile({ path: "/mdsvex.config.js" });
 
-			return cjs.existed || js.existed;
+			return cjs.exists || js.exists;
 		},
 	},
 ];
