@@ -22,14 +22,14 @@ export const heuristics = [
 			const preprocessIsProbablySetup = (text) => {
 				if (!text.includes("svelte-preprocess")) return false;
 				if (!text.includes("preprocess:")) return false;
-				if (!text.includes("postcss: true")) return false;
+				if (!text.includes("postcss: true") && !text.includes('"postcss": true') && !text.includes("'postcss': true")) return false;
 
 				return true;
 			};
 
-			if (js.existed) {
+			if (js.exists) {
 				return preprocessIsProbablySetup(js.text);
-			} else if (cjs.existed) {
+			} else if (cjs.exists) {
 				return preprocessIsProbablySetup(cjs.text);
 			}
 
@@ -42,7 +42,23 @@ export const heuristics = [
 			const cjs = await readFile({ path: "/postcss.config.cjs" });
 			const js = await readFile({ path: "/postcss.config.js" });
 
-			return cjs.existed && !js.existed;
+			return cjs.exists && !js.exists;
+		},
+	},
+	{
+		description: "`src/app.postcss` exists",
+		async detector({ readFile }) {
+			const postcss = await readFile({ path: "/src/app.postcss" });
+
+			return postcss.exists;
+		},
+	},
+	{
+		description: "`src/routes/__layout.svelte` imports `src/app.postcss`",
+		async detector({ readFile }) {
+			const { text } = await readFile({ path: "/src/routes/__layout.svelte" });
+			
+			return text.includes("../app.postcss");
 		},
 	},
 ];

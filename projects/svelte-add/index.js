@@ -3,6 +3,8 @@ import { readdir, readFile as fsReadFile } from "fs/promises";
 import mri from "mri";
 import { join, resolve } from "path";
 import { inspect, promisify } from "util";
+import { packageVersions } from "./package-versions.js";
+import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } from "./update.js";
 
 /**
  * @typedef {"javascript" | "typescript" | "coffeescript"} Script
@@ -207,10 +209,10 @@ export const getEnvironment = async ({ cwd }) => {
 /**
  * @param {object} param0
  * @param {string} param0.path
- * @returns {Promise<{ existed: boolean, text: string }>}
+ * @returns {Promise<{ exists: boolean, text: string }>}
  */
 export const readFile = async ({ path }) => {
-	let existed = true;
+	let exists = true;
 	let text = "";
 
 	try {
@@ -218,12 +220,12 @@ export const readFile = async ({ path }) => {
 			encoding: "utf-8",
 		})).toString();
 	} catch (e) {
-		existed = false;
+		exists = false;
 		if (e.code !== "ENOENT") throw e;
 	}
 	
 	return {
-		existed,
+		exists,
 		text,
 	}
 };
@@ -243,21 +245,26 @@ export const readFile = async ({ path }) => {
  */
 
 
-/** 
- * @param {Object} param0
+/**
+ * @param {object} param0
+ * @param {string} param0.adder
  * @param {string} param0.cwd
- * @param {Heuristic[]} param0.heuristics
  * @param {Environment} param0.environment
  * @returns {Promise<Record<Heuristic["description"], boolean>>}
  */
-export const detect = async ({ cwd, environment, heuristics }) => Object.fromEntries(await Promise.all(heuristics.map(async (heuristic) =>
-	[heuristic.description, await heuristic.detector({
-		environment,
-		readFile({ path }) {
-			return readFile({ path: join(cwd, path) });
-		}
-	})]
-)));
+export const detectAdder = async ({ adder, cwd, environment }) => {
+	/** @type {{ heuristics: Heuristic[] }} */
+	const { heuristics } = await import(`./adders/${adder}/__detect.js`);
+
+	return Object.fromEntries(await Promise.all(heuristics.map(async (heuristic) =>
+		[heuristic.description, await heuristic.detector({
+			environment,
+			readFile({ path }) {
+				return readFile({ path: join(cwd, path) });
+			}
+		})]
+	)));
+}
 
 /**
  * @typedef {Object} ApplyPresetArg
@@ -309,7 +316,13 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
  * @typedef {Object} AdderRunArg
  * @property {function(Omit<ApplyPresetArg, "cwd" | "npx">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
+ * @property {function({ dev: boolean, package: keyof typeof packageVersions }): Promise<void>} install
  * @property {Options} options
+ * @property {typeof updateCss} updateCss
+ * @property {typeof updateFile} updateFile
+ * @property {typeof updateJavaScript} updateJavaScript
+ * @property {typeof updateJson} updateJson
+ * @property {typeof updateSvelte} updateSvelte
  */
 
 /**
@@ -338,6 +351,41 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 			return applyPreset({ ...args, cwd, npx });
 		},
 		environment,
+		async install({ dev, package: pkg }) {
+			await updateJson({
+				path: join(cwd, "/package.json"),
+				async json({ obj }) {
+					const version = `^${packageVersions[pkg]}`;
+					
+					if (dev) {
+						obj.devDependencies ??= {};
+						obj.devDependencies[pkg] = version;
+					} else {
+						obj.dependencies ??= {};
+						obj.dependencies[pkg] = version;
+					}
+
+					return {
+						obj,
+					};
+				}
+			})
+		},
 		options,
+		updateCss({ path, ...args }) {
+			return updateCss({ path: join(cwd, path), ...args });
+		},
+		updateFile({ path, ...args }) {
+			return updateFile({ path: join(cwd, path), ...args });
+		},
+		updateJson({ path, ...args }) {
+			return updateJson({ path: join(cwd, path), ...args });
+		},
+		updateJavaScript({ path, ...args }) {
+			return updateJavaScript({ path: join(cwd, path), ...args });
+		},
+		updateSvelte({ path, ...args }) {
+			return updateSvelte({ path: join(cwd, path), ...args });
+		},
 	});
 }
