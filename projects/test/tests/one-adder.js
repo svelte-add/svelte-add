@@ -28,15 +28,12 @@ for (const [app, init] of Object.entries(initializers)) {
 				typescript: false,
 			});
 
-			/** @type {{ heuristics: import("svelte-add").Heuristic[] }} */
-			const { heuristics } = await import(`svelte-add/adders/${adder}/__detect.js`);
-
 			let environment = await getEnvironment({ cwd: output });
 
-			const preRunCheck = await detect({
+			const preRunCheck = await detectAdder({
+				adder,
 				cwd: output,
 				environment,
-				heuristics,
 			});
 
 			assert.ok(Object.values(preRunCheck).every((pass) => !pass), `Somehow, pre-run checks show that the integration is already set up: ${inspect(preRunCheck)}`);
@@ -52,10 +49,10 @@ for (const [app, init] of Object.entries(initializers)) {
 
 			environment = await getEnvironment({ cwd: output });
 
-			const postRunCheck = await detect({
+			const postRunCheck = await detectAdder({
+				adder,
 				cwd: output,
 				environment,
-				heuristics,
 			});
 
 			assert.ok(Object.values(postRunCheck).every(Boolean), `The integration was not set up correctly: ${inspect(postRunCheck)}`);

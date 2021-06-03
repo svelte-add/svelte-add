@@ -1,5 +1,5 @@
 import colors from "kleur";
-import { applyPreset, detect, getEnvironment, runAdder } from "./index.js";
+import { applyPreset, detectAdder, getEnvironment, runAdder } from "./index.js";
 
 /** @param {string} text - The error message to display when exiting */
 const exit = (text) => {
@@ -52,19 +52,20 @@ const main = async () => {
 			continue;
 		}
 
-		/** @type {import(".").Heuristic[]} */ 
-		let heuristics = [];
+		let preRunCheck;
 		
 		// TODO: make detection / pre run checks happen in a batch rather than before each adder
 		try {
-			({ heuristics } = await import(`./adders/${adder}/__detect.js`));
+			preRunCheck = await detectAdder({
+				adder,
+				cwd,
+				environment,
+			});
 		} catch (e) {
 			if (e.code === "ERR_MODULE_NOT_FOUND") exit(`${colors.red(`  ❌ doesn't exist as an adder.`)} Have you spelled it correctly?\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
 			throw e;
 		}
-		
-		const preRunCheck = await detect({ cwd, environment, heuristics });
 		
 		if (Object.values(preRunCheck).every(Boolean)) {
 			console.log(`${colors.green(` ✅ already set up! skipping.`)}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
@@ -88,8 +89,14 @@ const main = async () => {
 
 		// The environment has changed because it now has the integration!
 		environment = await getEnvironment({ cwd });
-		const postRunCheck = await detect({ cwd, environment, heuristics });
+		const postRunCheck = await detectAdder({
+			adder,
+			cwd,
+			environment,
+		});
 
+		// TODO: make detection / post run checks happen in a batch rather than before each adder
+		// This would also detect if one integration overrode another rather than appending to them
 		if (!Object.values(postRunCheck).every(Boolean)) {
 			for (const [description, passed] of Object.entries(postRunCheck)) {
 				if (passed) console.log(colors.green(`  ✅ ${description}`));
