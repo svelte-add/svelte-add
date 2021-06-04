@@ -27,11 +27,6 @@
 		"update.js"
 	],
 	"type": "module",
-	"exports": {
-		".": {
-			"import": "./index.js"
-		}
-	},
 	"bin": {
 		"index": "cli.cjs",
 		"svelte-add": "cli.cjs"
