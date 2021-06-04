@@ -279,7 +279,7 @@ export const detectAdder = async ({ adder, cwd, environment }) => {
 export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve, reject) => {
 	if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
 	
-	const subprocess = spawn(npx, ["--yes", "--ignore-existing", "apply", preset, ...args], {
+	const subprocess = spawn(npx, ["--yes", "use-preset", preset, ...args], {
 		cwd,
 		stdio: "pipe",
 		timeout: 20000,
