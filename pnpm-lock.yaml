@@ -26,6 +26,7 @@ importers:
 
   projects/svelte-add:
     specifiers:
+      '@types/estree': ^0.0.48
       '@types/mri': ^1.1.0
       '@typescript-eslint/typescript-estree': ^4.26.0
       enquirer: ^2.3.6
@@ -49,6 +50,7 @@ importers:
       recast: 0.20.4
       svelte: 3.38.2
     devDependencies:
+      '@types/estree': 0.0.48
       '@types/mri': 1.1.0
 
   projects/test:
@@ -85,6 +87,10 @@ packages:
       '@nodelib/fs.scandir': 2.1.4
       fastq: 1.11.0
     dev: false
+
+  /@types/estree/0.0.48:
+    resolution: {integrity: sha512-LfZwXoGUDo0C3me81HXgkBg5CTQYb6xzEl+fNmbO4JdRiSKQ8A0GD1OBBvKAIsbCUgoyAty7m99GqqMQe784ew==}
+    dev: true
 
   /@types/mri/1.1.0:
     resolution: {integrity: sha512-fMl88ZoZXOB7VKazJ6wUMpZc9QIn+jcigSFRf2K/rrw4DcXn+/uGxlWX8DDlcE7JkwgIZ7BDH+JgxZPlc/Ap3g==}
