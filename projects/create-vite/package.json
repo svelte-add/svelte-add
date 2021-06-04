@@ -18,18 +18,14 @@
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
-		"cli.cjs"
+		"__init.js",
+		"cli.cjs",
+		"cli.js"
 	],
 	"type": "module",
 	"bin": {
 		"index": "cli.cjs",
 		"svelte-add-create-vite": "cli.cjs"
-	},
-	"scripts": {
-		"prepare": "rollup -c"
-	},
-	"devDependencies": {
-		"rollup": "^2.50.6"
 	},
 	"dependencies": {
 		"@vitejs/create-app": "^2.4.1",

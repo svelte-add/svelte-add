@@ -20,10 +20,11 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
 		"adders/**/*.js",
+		"ast.js",
 		"cli.cjs",
 		"cli.js",
-		"compatibility.js",
-		"index.js"
+		"index.js",
+		"update.js"
 	],
 	"type": "module",
 	"exports": {
@@ -34,9 +35,6 @@
 	"bin": {
 		"index": "cli.cjs",
 		"svelte-add": "cli.cjs"
-	},
-	"scripts": {
-		"prepare": "rollup -c"
 	},
 	"dependencies": {
 		"@typescript-eslint/typescript-estree": "^4.26.0",
@@ -51,8 +49,6 @@
 		"svelte": "^3.38.2"
 	},
 	"devDependencies": {
-		"@rollup/plugin-dynamic-import-vars": "^1.1.1",
-		"@types/mri": "^1.1.0",
-		"rollup": "^2.50.6"
+		"@types/mri": "^1.1.0"
 	}
 }

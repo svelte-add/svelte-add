@@ -20,18 +20,13 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
 		"__init.js",
-		"cli.cjs"
+		"cli.cjs",
+		"cli.js"
 	],
 	"type": "module",
 	"bin": {
 		"index": "cli.cjs",
 		"svelte-add-create-kit": "cli.cjs"
-	},
-	"scripts": {
-		"prepare": "rollup -c"
-	},
-	"devDependencies": {
-		"rollup": "^2.50.6"
 	},
 	"dependencies": {
 		"svelte-add": "workspace:*"
