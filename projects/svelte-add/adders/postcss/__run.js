@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { walk } from "estree-walker";
 import { newPostcssAst, newTypeScriptEstreeAst } from "../../ast.js";
 
