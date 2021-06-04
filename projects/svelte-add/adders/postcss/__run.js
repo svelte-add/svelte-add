@@ -2,6 +2,7 @@
 import { walk } from "estree-walker";
 import { newPostcssAst, newTypeScriptEstreeAst } from "../../ast.js";
 
+// TODO: only include autoprefixer and cssnano with examples
 const postcssConfig = `
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
@@ -279,4 +280,8 @@ export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }
 	await install({ dev: true, package: "postcss" });
 	await install({ dev: true, package: "postcss-load-config" });
 	await install({ dev: true, package: "svelte-preprocess" });
+	
+	// TODO: move this to examples only
+	await install({ dev: true, package: "autoprefixer" });
+	await install({ dev: true, package: "cssnano" });
 };
