@@ -358,10 +358,10 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 					const version = `^${packageVersions[pkg]}`;
 					
 					if (dev) {
-						obj.devDependencies ??= {};
+						if (!obj.devDependencies) obj.devDependencies = {};
 						obj.devDependencies[pkg] = version;
 					} else {
-						obj.dependencies ??= {};
+						if (!obj.dependencies) obj.dependencies = {};
 						obj.dependencies[pkg] = version;
 					}
 
