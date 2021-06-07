@@ -7,6 +7,9 @@ const postcssConfig = `
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 
+const mode = process.env.NODE_ENV;
+const dev = mode === "development";
+
 const config = {
 	plugins: [
 		autoprefixer(),
@@ -237,6 +240,17 @@ export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }
 
 	await updateSvelte({
 		path: "/src/routes/__layout.svelte",
+
+		async markup({ posthtml }) {
+			const slot = posthtml.some(node => node.tag === "slot");
+
+			if (!slot) posthtml.push("\n", { tag: "slot" });
+
+			return {
+				posthtml,
+			};
+		},
+
 		async script({ lang, typeScriptEstree }) {
 			/** @type {import("estree").ImportDeclaration | undefined} */
 			let appStylesImport;

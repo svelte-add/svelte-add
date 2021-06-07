@@ -2,7 +2,7 @@ import { unlink, writeFile } from "fs/promises";
 import { preprocess } from "svelte/compiler";
 
 import { readFile } from "./index.js";
-import { newPostcssAst, newTypeScriptEstreeAst, stringifyTypeScriptEstreeAst } from "./ast.js";
+import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast.js";
 
 /**
  * 
@@ -76,7 +76,7 @@ export const updateCss = async ({ path, style }) => {
 			if ("exists" in out) return { exists: false };
 
 			return {
-				text: out.postcss.toString(),
+				text: stringifyPostcssAst(out.postcss),
 			};
 		},
 	})
@@ -156,6 +156,9 @@ export const updateJson = async ({ path, json }) => {
 	})
 };
 
+/** @typedef {"coffee" | "ts" | undefined} ScriptLang */
+/** @typedef {"postcss" | "scss" | undefined} StyleLang */
+
 /**
  * 
  * Example:
@@ -163,6 +166,14 @@ export const updateJson = async ({ path, json }) => {
  *     path: "/path/to/project/src/lib/Counter.svelte",
  *     markup: async ({ posthtml }) => {
  *         // modify the PostHTML (superset of HTML) AST
+ *     },
+ *     moduleScript: async ({ lang, typeScriptEstree }) => {
+ * 
+ *         // modify the TypeScript ESTree AST and return it
+ *         return {
+ *             lang,
+ *             typeScriptEstree,
+ *         };
  *     },
  *     script: async ({ lang, typeScriptEstree }) => {
  * 
@@ -179,56 +190,136 @@ export const updateJson = async ({ path, json }) => {
  * 
  * @param {object} param0
  * @param {string} param0.path
- * TODO: markup and style
- * TODO: typedef lang as js | ts | coffeescript (?)
- * @param {function({ exists: boolean, lang: string, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { lang: string, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} param0.script
+ * @param {function({ exists: boolean, posthtml: ReturnType<typeof newPosthtmlAst> }): Promise<{ exists: false } | { posthtml: ReturnType<typeof newPosthtmlAst> }>} [param0.markup]
+ * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} [param0.moduleScript]
+ * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} [param0.script]
+ * @param {function({ exists: boolean, lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }): Promise<{ exists: false } | { lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }>} [param0.style]
  * @returns {Promise<void>}
  */
-export const updateSvelte = async ({ path, script }) => {
+export const updateSvelte = async ({ path, markup, moduleScript, script, style }) => {
 	await updateFile({
 		path,
-		content: async ({ text }) => {
-			/** @type {string | undefined} */
-			let newScriptLang;
-			// TODO: redo this without the preprocess API because it's not actually a good fit
-			let result = (await preprocess(text, [{
-				async script({ attributes, content }) {
-					
-					const newScript = await script({
-						exists: true,
-						lang: /** @type {string} */ (attributes.lang),
-						typeScriptEstree: newTypeScriptEstreeAst(content),
-					});
+		content: async ({ exists, text }) => {
+			let posthtml = newPosthtmlAst(text);
+			
+			if (markup) {
+				const newMarkup = await markup({ exists, posthtml });
+				if ("exists" in newMarkup) return { exists: false };
 
-					// TODO
-					if ("exists" in newScript) return { code: "" };
+				posthtml = newMarkup.posthtml;
+			}
 
-					newScriptLang = newScript.lang;
+			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			let tagModuleScript;
+			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			let tagScript;
+			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			let tagStyle;
 
-					return {
-						code: stringifyTypeScriptEstreeAst(newScript.typeScriptEstree),
+			for (const node of posthtml) {
+				if (typeof node === "string" || typeof node === "number") continue;
+
+				if (node.tag === "script") {
+					if (node.attrs?.["context"] === "module") {
+						tagModuleScript = node;
+					} else {
+						tagScript = node;
 					}
-				},
-			}])).code;
-
-			if (!newScriptLang) {				
-				const newScript = await script({
-					exists: false,
-					lang: "js",
-					typeScriptEstree: newTypeScriptEstreeAst(""),
-				});
-
-				if ("exists" in newScript) {
-
-				} else {
-					newScriptLang = newScript.lang;
-					const setLang = newScriptLang === "js" ? "" : ` lang="${newScriptLang}"`;
-					result = `<script${setLang}>\n${stringifyTypeScriptEstreeAst(newScript.typeScriptEstree)}\n</script>\n\n${result}`;
+				} else if (node.tag === "style") {
+					tagStyle = node;
 				}
 			}
+
+			/**
+			 * @template {"postcss" | "typeScriptEstree"} ASTArg
+			 * @template {ReturnType<typeof newPostcssAst> | ReturnType<typeof newTypeScriptEstreeAst>} ASTType
+			 * @template {ScriptLang | StyleLang} LangType
+			 * @param {object} param0
+			 * @param {ASTArg} param0.astArg
+			 * @param {boolean} param0.beginning
+			 * @param {import("posthtml-parser").NodeTag | undefined} param0.existingTag
+			 * @param {import("posthtml-parser").NodeTag} param0.newTag
+			 * @param {function(string): ASTType} param0.newAst
+			 * @param {function(ASTType): string} param0.stringify
+			 * @param {any} param0.updater // Was very painful to type and it didn't work anyway
+			 * @returns {Promise<import("posthtml-parser").NodeTag | undefined>}
+			 */
+			const modify = async ({ astArg, beginning, existingTag, newAst, newTag, stringify, updater }) => {
+				/** @type {LangType} */
+				const lang = (existingTag?.attrs?.lang);
+				const content = existingTag?.content;
+				const text = Array.isArray(content) ? content.join("") : (content?.toString() ?? "");
+
+				const newBlock = await updater({
+					exists: existingTag !== undefined,
+					lang,
+					[astArg]: newAst(text),
+				});
+
+				if ("exists" in newBlock) {
+					if (existingTag) posthtml.splice(posthtml.indexOf(existingTag, 1));
+
+					return undefined;
+				}
+
+				if (!existingTag) {
+					existingTag = newTag;
+
+					if (beginning) posthtml.unshift(existingTag);
+					else posthtml.push(existingTag);
+				}
+
+				if (!existingTag.attrs) existingTag.attrs = {};
+
+				if (newBlock.lang) existingTag.attrs.lang = newBlock.lang;
+				else delete existingTag.attrs.lang;
+
+				existingTag.content = stringify(newBlock[astArg]);
+
+				return existingTag;
+			}
+
+			if (script) tagScript = await modify({
+				astArg: "typeScriptEstree",
+				beginning: true,
+				existingTag: tagScript,
+				newAst: newTypeScriptEstreeAst,
+				newTag: {
+					tag: "script",
+				},
+				stringify: stringifyTypeScriptEstreeAst,
+				updater: script,
+			});
+
+			if (moduleScript) tagModuleScript = await modify({
+				astArg: "typeScriptEstree",
+				beginning: true,
+				existingTag: tagModuleScript,
+				newAst: newTypeScriptEstreeAst,
+				newTag: {
+					tag: "script",
+					attrs: {
+						context: "module",
+					}
+				},
+				stringify: stringifyTypeScriptEstreeAst,
+				updater: moduleScript,
+			});
+
+			if (style) tagStyle = await modify({
+				astArg: "postcss",
+				beginning: true,
+				existingTag: tagStyle,
+				newAst: newPostcssAst,
+				newTag: {
+					tag: "style",
+				},
+				stringify: stringifyPostcssAst,
+				updater: style,
+			});
 			
 			return {
-				text: result,
+				text: stringifyPosthtmlAst(posthtml),
 			};
 		},
 	})

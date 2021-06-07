@@ -1,5 +1,7 @@
 import { parse as typeScriptEstreeParse } from "@typescript-eslint/typescript-estree";
 import { parse as postcssParse } from "postcss";
+import posthtmlParserImport from "posthtml-parser";
+import posthtmlRenderImport from "posthtml-render";
 import { parse as recastParse, print as recastPrint } from "recast";
 
 
@@ -8,6 +10,46 @@ import { parse as recastParse, print as recastPrint } from "recast";
  * @returns {import("postcss").Root}
  */
 export const newPostcssAst = (text) => postcssParse(text);
+
+/**
+ * @param {import("postcss").Root} ast
+ * @returns {string}
+ */
+export const stringifyPostcssAst = (ast) => ast.toString();
+
+
+/**
+ * @callback PosthtmlParser
+ * @param {string} html
+ * @param {import("posthtml-parser").Options} [options]
+ * @returns {import("posthtml-parser").Node[]}
+ */
+const posthtmlParserNamespace = /** @type {any} */ (posthtmlParserImport);
+/** @type {PosthtmlParser} */
+const posthtmlParser = posthtmlParserNamespace.default;
+
+/**
+ * @param {string} text
+ * @returns {ReturnType<typeof posthtmlParser>}
+ */
+export const newPosthtmlAst = (text) => posthtmlParser(text);
+
+
+/**
+ * @callback PosthtmlRender
+ * @param {import("posthtml-parser").Node[]} tree
+ * @param {unknown} [options]
+ * @returns {string}
+ */
+const posthtmlRenderNamespace = /** @type {any} */ (posthtmlRenderImport);
+/** @type {PosthtmlRender} */
+const posthtmlRender = posthtmlRenderNamespace.default;
+
+/**
+ * @param {ReturnType<typeof posthtmlParser>} ast
+ * @returns {string}
+ */
+export const stringifyPosthtmlAst = (ast) => posthtmlRender(ast);
 
 
 // TODO: did I have to invent these types or did they already exist??
