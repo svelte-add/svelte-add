@@ -66,6 +66,20 @@ const menu = {
 	],
 };
 
+/** @type {Record<string, string[]>} */
+export const adderDependencies = {};
+for (const [_section, items] of Object.entries(menu)) {
+	for (const [parent, children] of items) {
+		adderDependencies[parent] = [];
+
+		for (const child of children) {
+			if (!(child in adderDependencies)) adderDependencies[child] = [];
+
+			adderDependencies[child].push(parent);
+		}
+	}
+}
+
 /**
  * Parses the given arguments and prompts for missing selections
  * @param {object} param0
