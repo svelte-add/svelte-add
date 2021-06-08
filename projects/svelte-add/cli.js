@@ -48,6 +48,13 @@ const main = async () => {
 	const addersToCheck = [];
 	for (const adder of adders) {
 		const dependencies = adderDependencies[adder];
+
+		if (!dependencies) {
+			console.log();
+			console.log(colors.bold(adder));
+			exit(`${colors.red(`  ❌ doesn't exist as an adder.`)} Have you spelled it correctly?\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
+		}
+
 		for (const dependency of dependencies) {
 			// Move dependencies to the front such that
 			// tailwindcss+postcss is rewritten as postcss+tailwindcss
