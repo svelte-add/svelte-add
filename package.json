@@ -1,7 +1,7 @@
 {
 	"name": "@svelte-add/workspace-root",
 	"private": true,
-	"version": "2021.6.0-8.0",
+	"version": "2021.6.0-8.1",
 	"description": "Add functionality to Svelte projects",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
