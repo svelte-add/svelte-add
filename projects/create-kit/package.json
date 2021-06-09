@@ -25,8 +25,7 @@
 	],
 	"type": "module",
 	"bin": {
-		"index": "cli.cjs",
-		"svelte-add-create-kit": "cli.cjs"
+		"create-kit": "cli.cjs"
 	},
 	"dependencies": {
 		"svelte-add": "workspace:*"

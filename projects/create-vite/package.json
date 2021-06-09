@@ -24,8 +24,7 @@
 	],
 	"type": "module",
 	"bin": {
-		"index": "cli.cjs",
-		"svelte-add-create-vite": "cli.cjs"
+		"create-vite": "cli.cjs"
 	},
 	"dependencies": {
 		"@vitejs/create-app": "^2.4.2",

@@ -34,7 +34,6 @@
 		}
 	},
 	"bin": {
-		"index": "cli.cjs",
 		"svelte-add": "cli.cjs"
 	},
 	"dependencies": {
