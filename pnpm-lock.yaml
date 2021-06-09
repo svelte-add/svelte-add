@@ -35,9 +35,8 @@ importers:
       mri: ^1.1.6
       postcss: ^8.3.0
       posthtml-parser: ^0.9.0
-      posthtml-render: ^2.0.3
+      posthtml-render: ^2.0.4
       recast: ^0.20.4
-      svelte: ^3.38.2
       typescript: ^4.3.2
     dependencies:
       '@typescript-eslint/typescript-estree': 4.26.1_typescript@4.3.2
@@ -47,9 +46,8 @@ importers:
       mri: 1.1.6
       postcss: 8.3.0
       posthtml-parser: 0.9.0
-      posthtml-render: 2.0.3
+      posthtml-render: 2.0.4
       recast: 0.20.4
-      svelte: 3.38.2
       typescript: 4.3.2
     devDependencies:
       '@types/estree': 0.0.48
@@ -408,9 +406,9 @@ packages:
       htmlparser2: 6.1.0
     dev: false
 
-  /posthtml-render/2.0.3:
-    resolution: {integrity: sha512-5DUBp+gDFNkBzHeSQp0UbuIGpD5HxfhW9mDmSB1eO7zZ26bX/XuYA16t+cosW+HoSzcF3FoMDRy5fWbg5G3c5Q==}
-    engines: {node: '>=10'}
+  /posthtml-render/2.0.4:
+    resolution: {integrity: sha512-ae9MlVnFF9OgDSw2/iR8GR2n6r9UMaMVU+xbTRix4VCyELzsLXUCeANQjIehxo1jweIxaI5v5k2xeJyJdW8REA==}
+    engines: {node: '>=12'}
     dev: false
 
   /prompts/2.4.1:
@@ -478,11 +476,6 @@ packages:
   /source-map/0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
-    dev: false
-
-  /svelte/3.38.2:
-    resolution: {integrity: sha512-q5Dq0/QHh4BLJyEVWGe7Cej5NWs040LWjMbicBGZ+3qpFWJ1YObRmUDZKbbovddLC9WW7THTj3kYbTOFmU9fbg==}
-    engines: {node: '>= 8'}
     dev: false
 
   /to-regex-range/5.0.1:

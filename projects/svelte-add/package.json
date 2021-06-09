@@ -45,7 +45,7 @@
 		"mri": "^1.1.6",
 		"postcss": "^8.3.0",
 		"posthtml-parser": "^0.9.0",
-		"posthtml-render": "^2.0.3",
+		"posthtml-render": "^2.0.4",
 		"recast": "^0.20.4",
 		"typescript": "^4.3.2"
 	},
