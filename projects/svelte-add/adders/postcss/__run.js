@@ -39,7 +39,29 @@ const updateSvelteConfig = (svelteConfigAst, cjs) => {
 	walk(svelteConfigAst, {
 		enter(node) {
 			if (cjs) {
-				// TODO
+				if (node.type !== "VariableDeclarator") return;
+
+				/** @type {import("estree").VariableDeclarator} */
+				const declarator = (node);
+				
+				if (declarator.id.type !== "Identifier") return;
+				/** @type {import("estree").Identifier} */
+				const identifier = (declarator.id);
+				
+				if (declarator.init.type !== "CallExpression") return;
+				/** @type {import("estree").CallExpression} */
+				const callExpression = (declarator.init);
+
+				if (callExpression.callee.type !== "Identifier") return;
+				/** @type {import("estree").Identifier} */
+				const callee = (callExpression.callee);
+
+				if (callee.name !== "require") return;
+
+				if (callExpression.arguments[0].type !== "Literal") return;
+				if (callExpression.arguments[0].value !== "svelte-preprocess") return;
+
+				sveltePreprocessImportedAs = identifier.name;
 			} else {
 				if (node.type !== "ImportDeclaration") return;
 
@@ -57,10 +79,38 @@ const updateSvelteConfig = (svelteConfigAst, cjs) => {
 
 	// Add a svelte-preprocess import if it's not there
 	if (!sveltePreprocessImportedAs) {
+		sveltePreprocessImportedAs = "preprocess";
 		if (cjs) {
-			// TODO
+			/** @type {import("estree").VariableDeclaration} */
+			const requireSveltePreprocessAst = {
+				type: "VariableDeclaration",
+				declarations: [
+					{
+						type: "VariableDeclarator",
+						id: {
+							type: "Identifier",
+							name: sveltePreprocessImportedAs,
+						},
+						init: {
+							type: "CallExpression",
+							callee: {
+								type: "Identifier",
+								name: "require",
+							},
+							arguments: [
+								{
+									type: "Literal",
+									value: "svelte-preprocess",
+								},
+							]
+						}
+					}
+				],
+				kind: "const",
+			};
+
+			svelteConfigAst.program.body.unshift(requireSveltePreprocessAst);
 		} else {
-			sveltePreprocessImportedAs = "preprocess";
 			const importSveltePreprocessAst = newTypeScriptEstreeAst(`import ${sveltePreprocessImportedAs} from 'svelte-preprocess';`);
 			svelteConfigAst.program.body.unshift(importSveltePreprocessAst.program.body[0]);
 		}
@@ -70,9 +120,20 @@ const updateSvelteConfig = (svelteConfigAst, cjs) => {
 	/** @type {import("estree").ObjectExpression | undefined} */
 	let configObject;
 	walk(svelteConfigAst, {
-		enter(node) {
+		enter(node, parent) {
 			if (cjs) {
-				// TODO
+				if (node.type !== "AssignmentExpression") return;
+				/** @type {import("estree").AssignmentExpression} */
+				const assignmentExpression = (node);
+
+				if (assignmentExpression.left.type !== "MemberExpression") return;
+				/** @type {import("estree").MemberExpression} */
+				const memberExpression = (assignmentExpression.left);
+
+				if (memberExpression.object.name !== "module") return;
+				if (memberExpression.property.name !== "exports") return;
+				
+				configObject = assignmentExpression.right;
 			} else {
 				if (node.type !== "ExportDefaultDeclaration") return;
 				
@@ -100,7 +161,41 @@ const updateSvelteConfig = (svelteConfigAst, cjs) => {
 		},
 	});
 
-	if (!configObject) throw new Error("this doesn't work yet (and it's not your fault)");
+	if (!configObject) {
+		if (cjs) {
+			configObject = {
+				type: "ObjectExpression",
+				properties: [],
+			}
+
+			/** @type {import("estree").ExpressionStatement} */
+			const exportConfig = {
+				type: "ExpressionStatement",
+				expression: {
+					type: "AssignmentExpression",
+					operator: "=",
+					left: {
+						type: "MemberExpression",
+						object: {
+							type: "Identifier",
+							name: "module",
+						},
+						property: {
+							type: "Identifier",
+							name: "exports",
+						},
+						computed: false,
+						optional: false,
+					},
+					right: configObject,
+				}
+			};
+
+			svelteConfigAst.program.body.push(exportConfig)
+		} else {
+			// TODO
+		}
+	}
 	
 	// Try to find preprocess config
 	/** @type {import("estree").Property | undefined} */
@@ -180,7 +275,7 @@ const updateSvelteConfig = (svelteConfigAst, cjs) => {
 
 
 /** @type {import("../..").AdderRun<{}>} */
-export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }) => {
+export const run = async ({ environment, install, updateCss, updateJavaScript, updateSvelte }) => {
 	await updateJavaScript({
 		path: "/postcss.config.cjs",
 		async script({ typeScriptEstree }) {
@@ -208,7 +303,9 @@ export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }
 	await updateJavaScript({
 		path: "/svelte.config.cjs",
 		async script({ exists, typeScriptEstree }) {
-			if (!exists) return { exists: false };
+			if (!exists) {
+				if (environment.kit || environment.bundler !== "vite") return { exists: false };
+			}
 			
 			return {
 				typeScriptEstree: updateSvelteConfig(typeScriptEstree, true),
@@ -238,7 +335,39 @@ export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }
 		}
 	});
 
-	await updateSvelte({
+	const updateOrAddAppStylesImport = ({ typeScriptEstree, inputs, output }) => {
+		/** @type {import("estree").ImportDeclaration | undefined} */
+		let appStylesImport;
+
+		walk(typeScriptEstree, {
+			enter(node) {
+				if (node.type !== "ImportDeclaration") return;
+
+				/** @type {import("estree").ImportDeclaration} */
+				const importDeclaration = (node);
+				
+				if (!inputs.includes(importDeclaration.source.value)) return;
+
+				appStylesImport = importDeclaration;
+			}
+		});
+
+		if (!appStylesImport) {
+			appStylesImport = {
+				type: "ImportDeclaration",
+				source: {
+					type: "Literal",
+					value: output,
+				},
+				specifiers: [],
+			}
+			typeScriptEstree.program.body.unshift(appStylesImport);
+		}
+
+		appStylesImport.source.value = output;
+	};
+
+	if (environment.kit) await updateSvelte({
 		path: "/src/routes/__layout.svelte",
 
 		async markup({ posthtml }) {
@@ -252,44 +381,35 @@ export const run = async ({ install, updateCss, updateJavaScript, updateSvelte }
 		},
 
 		async script({ lang, typeScriptEstree }) {
-			/** @type {import("estree").ImportDeclaration | undefined} */
-			let appStylesImport;
+			updateOrAddAppStylesImport({ typeScriptEstree, inputs: ["../app.css"], output: "../app.postcss" });
 
-			walk(typeScriptEstree, {
-				enter(node) {
-					if (node.type !== "ImportDeclaration") return;
-
-					/** @type {import("estree").ImportDeclaration} */
-					const importDeclaration = (node);
-					
-					if (importDeclaration.source.value !== "../app.css" && importDeclaration.source.value !== "../app.postcss") return;
-
-					appStylesImport = importDeclaration;
-				}
-			});
-
-
-
-			if (!appStylesImport) {
-				appStylesImport = {
-					type: "ImportDeclaration",
-					source: {
-						type: "Literal",
-						value: "../app.css",
-					},
-					specifiers: [],
-				}
-				typeScriptEstree.program.body.unshift(appStylesImport);
-			}
-
-			appStylesImport.source.value = "../app.postcss";
-			
 			return {
 				lang,
 				typeScriptEstree,
 			};
 		},
 	});
+	else {
+		await updateJavaScript({
+			path: "/src/main.js",
+			async script({ exists, typeScriptEstree }) {
+				if (!exists) return { exists: false };
+
+				updateOrAddAppStylesImport({ typeScriptEstree, inputs: ["./app.css"], output: "./app.postcss" });
+				return { typeScriptEstree };
+			}
+		});
+
+		await updateJavaScript({
+			path: "/src/main.ts",
+			async script({ exists, typeScriptEstree }) {
+				if (!exists) return { exists: false };
+
+				updateOrAddAppStylesImport({ typeScriptEstree, inputs: ["./app.css"], output: "./app.postcss" });
+				return { typeScriptEstree };
+			}
+		});
+	}
 
 	await install({ dev: true, package: "postcss" });
 	await install({ dev: true, package: "postcss-load-config" });

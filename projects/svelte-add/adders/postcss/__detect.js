@@ -54,11 +54,19 @@ export const heuristics = [
 		},
 	},
 	{
-		description: "`src/routes/__layout.svelte` imports `src/app.postcss`",
-		async detector({ readFile }) {
-			const { text } = await readFile({ path: "/src/routes/__layout.svelte" });
-			
-			return text.includes("../app.postcss");
+		description: "The main file (`src/routes/__layout.svelte` for SvelteKit, `src/main.js` or `src/main.ts` for Vite) imports `src/app.postcss`",
+		async detector({ environment, readFile }) {
+			if (environment.kit) {
+				const { text } = await readFile({ path: "/src/routes/__layout.svelte" });
+				
+				return text.includes("../app.postcss");
+			}
+
+			const ts = await readFile({ path: "/src/main.ts" });
+			if (ts.exists) return ts.text.includes("./app.postcss");
+
+			const js = await readFile({ path: "/src/main.js" });
+			return js.text.includes("./app.postcss");
 		},
 	},
 ];
