@@ -1,5 +1,5 @@
-import { unlink, writeFile } from "fs/promises";
-import { preprocess } from "svelte/compiler";
+import { mkdir, unlink, writeFile } from "fs/promises";
+import { parse } from "path";
 
 import { readFile } from "./index.js";
 import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast.js";
@@ -29,7 +29,7 @@ export const updateFile = async ({ path, content }) => {
 		exists,
 		text,
 	});
-
+	
 	if ("exists" in out) {
 		try {
 			await unlink(path);
@@ -38,6 +38,10 @@ export const updateFile = async ({ path, content }) => {
 		}
 		return;
 	}
+	
+	await mkdir(parse(path).dir, {
+		recursive: true,
+	});
 
 	await writeFile(path, out.text, {
 		encoding: "utf-8",
