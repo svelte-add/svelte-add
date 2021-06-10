@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/create-vite",
-	"version": "2021.6.0-9.1",
+	"version": "2021.6.0-9.2",
 	"description": "Create a Vite-powered Svelte app with extra integrations",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
