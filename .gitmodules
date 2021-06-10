@@ -1,0 +1,3 @@
+[submodule "projects/svelte-add/adders/postcss"]
+	path = projects/svelte-add/adders/postcss
+	url = https://github.com/svelte-add/postcss
