@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v2
-      - run: git submodule update --remote --merge
+      - uses: textbook/git-checkout-submodule-action@master
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
