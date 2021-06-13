@@ -33,9 +33,9 @@ importers:
       estree-walker: ^3.0.0
       kleur: ^4.1.4
       mri: ^1.1.6
-      postcss: ^8.3.0
+      postcss: ^8.3.2
       posthtml-parser: ^0.9.0
-      posthtml-render: ^2.0.4
+      posthtml-render: ^2.0.6
       recast: ^0.20.4
       typescript: ^4.3.2
     dependencies:
@@ -44,9 +44,9 @@ importers:
       estree-walker: 3.0.0
       kleur: 4.1.4
       mri: 1.1.6
-      postcss: 8.3.0
+      postcss: 8.3.2
       posthtml-parser: 0.9.0
-      posthtml-render: 2.0.4
+      posthtml-render: 2.0.6
       recast: 0.20.4
       typescript: 4.3.2
     devDependencies:
@@ -158,7 +158,7 @@ packages:
     resolution: {integrity: sha512-O0yuUDnZeQDL+ncNGlJ78BiO4jnYI3bvMsD5prT0/nsgijG/LpNBIr63gTjVTNsiGkgQhiyCShTgxt8oXOrklA==}
     engines: {node: '>=4'}
     dependencies:
-      tslib: 2.2.0
+      tslib: 2.3.0
     dev: false
 
   /braces/3.0.2:
@@ -324,6 +324,10 @@ packages:
       is-extglob: 2.1.1
     dev: false
 
+  /is-json/2.0.1:
+    resolution: {integrity: sha1-a+Fm0USCihMdaGiRuYPfYsOUkf8=}
+    dev: false
+
   /is-number/7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
@@ -390,8 +394,8 @@ packages:
     engines: {node: '>=8.6'}
     dev: false
 
-  /postcss/8.3.0:
-    resolution: {integrity: sha512-+ogXpdAjWGa+fdYY5BQ96V/6tAo+TdSSIMP5huJBIygdWwKtVoB5JWZ7yUd4xZ8r+8Kvvx4nyg/PQ071H4UtcQ==}
+  /postcss/8.3.2:
+    resolution: {integrity: sha512-y1FK/AWdZlBF5lusS5j5l4/vF67+vQZt1SXPVJ32y1kRGDQyrs1zk32hG1cInRTu14P0V+orPz+ifwW/7rR4bg==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       colorette: 1.2.2
@@ -406,9 +410,11 @@ packages:
       htmlparser2: 6.1.0
     dev: false
 
-  /posthtml-render/2.0.4:
-    resolution: {integrity: sha512-ae9MlVnFF9OgDSw2/iR8GR2n6r9UMaMVU+xbTRix4VCyELzsLXUCeANQjIehxo1jweIxaI5v5k2xeJyJdW8REA==}
+  /posthtml-render/2.0.6:
+    resolution: {integrity: sha512-AvjM4yfEtjhbpZdtLOWfnezgojEtgeejSxrjTAvfr5phXjPcZQyB5QiOvYeU+rrTF0u+eqqlJrs8HS3nrPexGQ==}
     engines: {node: '>=12'}
+    dependencies:
+      is-json: 2.0.1
     dev: false
 
   /prompts/2.4.1:
@@ -430,7 +436,7 @@ packages:
       ast-types: 0.14.2
       esprima: 4.0.1
       source-map: 0.6.1
-      tslib: 2.2.0
+      tslib: 2.3.0
     dev: false
 
   /reusify/1.0.4:
@@ -494,8 +500,8 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: false
 
-  /tslib/2.2.0:
-    resolution: {integrity: sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==}
+  /tslib/2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
     dev: false
 
   /tsutils/3.21.0_typescript@4.3.2:
