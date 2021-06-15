@@ -18,6 +18,7 @@ By the way, you currently need to be on [the latest version of Node 14 or 16](ht
 ## 🪄 Built-in integration adders
 In theory, these adders are the most likely to work correctly. While `svelte-add` is being rewritten, very few adders will be on this list:
 * [**PostCSS**](https://github.com/svelte-add/postcss)
+* [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
 
 ## 📨  External integration adders
 `svelte-add` is currently being rewritten, so most integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
@@ -28,7 +29,6 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 * [**mdsvex**](https://github.com/svelte-add/mdsvex)
 * [**Pug**](https://github.com/Leftium/pug-adder)
 * [**Supabase**](https://github.com/joshnuss/svelte-supabase)
-* [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
 
 ## 🧰 Creating a SvelteKit app with integrations
 The preferred way to add integrations to a SvelteKit app is to start a new one, choosing the ones you want:
