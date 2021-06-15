@@ -20,7 +20,8 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
 		"adders/**/*.js",
-		"ast.js",
+		"ast-io.js",
+		"ast-tools.js",
 		"cli.cjs",
 		"cli.js",
 		"index.js",
