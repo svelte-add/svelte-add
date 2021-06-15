@@ -2,7 +2,7 @@ import { mkdir, unlink, writeFile } from "fs/promises";
 import { parse } from "path";
 
 import { readFile } from "./index.js";
-import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast.js";
+import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
 
 /**
  * 
@@ -101,7 +101,7 @@ export const updateCss = async ({ path, style }) => {
  * 
  * @param {object} param0
  * @param {string} param0.path
- * @param {function({ exists: boolean, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} param0.script
+ * @param {function({ exists: boolean, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { typeScriptEstree: import("./ast-io.js").RecastAST }>} param0.script
  * @returns {Promise<void>}
  */
 export const updateJavaScript = async ({ path, script }) => {
@@ -195,8 +195,8 @@ export const updateJson = async ({ path, json }) => {
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, posthtml: ReturnType<typeof newPosthtmlAst> }): Promise<{ exists: false } | { posthtml: ReturnType<typeof newPosthtmlAst> }>} [param0.markup]
- * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} [param0.moduleScript]
- * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: ReturnType<typeof newTypeScriptEstreeAst> }>} [param0.script]
+ * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }>} [param0.moduleScript]
+ * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }>} [param0.script]
  * @param {function({ exists: boolean, lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }): Promise<{ exists: false } | { lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }>} [param0.style]
  * @returns {Promise<void>}
  */
@@ -236,7 +236,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 
 			/**
 			 * @template {"postcss" | "typeScriptEstree"} ASTArg
-			 * @template {ReturnType<typeof newPostcssAst> | ReturnType<typeof newTypeScriptEstreeAst>} ASTType
+			 * @template {ReturnType<typeof newPostcssAst> | import("./ast-io.js").RecastAST} ASTType
 			 * @template {ScriptLang | StyleLang} LangType
 			 * @param {object} param0
 			 * @param {ASTArg} param0.astArg
