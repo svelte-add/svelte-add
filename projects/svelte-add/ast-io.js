@@ -6,13 +6,14 @@ import { parse as recastParse, print as recastPrint } from "recast";
 
 
 /**
+ * @typedef {import("postcss").Root} PostCSSAst
  * @param {string} text
- * @returns {import("postcss").Root}
+ * @returns {PostCSSAst}
  */
 export const newPostcssAst = (text) => postcssParse(text);
 
 /**
- * @param {import("postcss").Root} ast
+ * @param {PostCSSAst} ast
  * @returns {string}
  */
 export const stringifyPostcssAst = (ast) => ast.toString();
