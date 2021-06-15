@@ -330,7 +330,7 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
  * @typedef {Object} AdderRunArg
  * @property {function(Omit<ApplyPresetArg, "cwd" | "npx">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
- * @property {function({ dev: boolean, package: keyof typeof packageVersions }): Promise<void>} install
+ * @property {function({ prod?: boolean, package: keyof typeof packageVersions }): Promise<void>} install
  * @property {Options} options
  * @property {typeof updateCss} updateCss
  * @property {typeof updateFile} updateFile
@@ -365,18 +365,18 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 			return applyPreset({ ...args, cwd, npx });
 		},
 		environment,
-		async install({ dev, package: pkg }) {
+		async install({ prod = false, package: pkg }) {
 			await updateJson({
 				path: join(cwd, "/package.json"),
 				async json({ obj }) {
-					const version = `^${packageVersions[pkg]}`;
+					const version = packageVersions[pkg];
 					
-					if (dev) {
-						if (!obj.devDependencies) obj.devDependencies = {};
-						obj.devDependencies[pkg] = version;
-					} else {
+					if (prod) {
 						if (!obj.dependencies) obj.dependencies = {};
 						obj.dependencies[pkg] = version;
+					} else {
+						if (!obj.devDependencies) obj.devDependencies = {};
+						obj.devDependencies[pkg] = version;
 					}
 
 					return {
