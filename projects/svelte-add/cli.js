@@ -1,5 +1,18 @@
 import colors from "kleur";
-import { adderDependencies, applyPreset, detectAdder, getEnvironment, runAdder } from "./index.js";
+import mri from "mri";
+import { inspect } from "util";
+import { adderDependencies, applyPreset, detectAdder, getAdderOptions, getEnvironment, readFile, runAdder } from "./index.js";
+
+// Show the package version to make debugging easier
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
+let [year, month, day, iteration] = pkg.version.split(".");
+if (month.length === 1) month = "0" + month;
+day = day.replace("-", "");
+if (day.length === 1) day = "0" + day;
+if (iteration.length === 1) iteration = "0" + iteration;
+const version = `${year}.${month}.${day}.${iteration}`;
 
 /** @param {string} text - The error message to display when exiting */
 const exit = (text) => {
@@ -8,9 +21,7 @@ const exit = (text) => {
 }
 
 const main = async () => {
-	console.log(colors.bold("➕ Svelte Add"));
-	console.log(colors.yellow("The project directory you're giving to this command cannot be determined to be guaranteed fresh — maybe it is, maybe it isn't. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template."));
-
+	console.log(`${colors.bold("➕ Svelte Add")} (Version ${version})`);
 	const cwd = process.cwd();
 
 	let environment = await getEnvironment({ cwd });
@@ -18,13 +29,17 @@ const main = async () => {
 	if (environment.empty) exit(`${colors.red("There is no valid Svelte project in this directory because it's empty, so svelte-add cannot run.")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 	if (environment.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
-	const [_node, _index, addersJoined, ...args] = process.argv;
+	const args = process.argv.slice(2);
+	const { _: addersSeparated, ...parsedArgs } = mri(args);
+	const addersJoined = addersSeparated.join("+");
+	
+	// TODO: show the interactive menus instead
+	if (!addersJoined) exit(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
 
-	if (!addersJoined) {
-		// TODO: show the interactive menus instead
-		
-		exit(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
-	}
+	const addersAndPresets = addersJoined.split("+");
+	const presets = addersAndPresets.filter(adderOrPreset => adderOrPreset.includes("/"));
+	const adders = addersAndPresets.filter(adderOrPreset => !adderOrPreset.includes("/"));
+
 
 	// TODO: should this be overrideable?
 	let preferredNpx = "npx";
@@ -40,9 +55,7 @@ const main = async () => {
 		preferredPackageManager += ".cmd";
 	}
 
-	const addersAndPresets = addersJoined.split("+");
-	const presets = addersAndPresets.filter(adderOrPreset => adderOrPreset.includes("/"));
-	const adders = addersAndPresets.filter(adderOrPreset => !adderOrPreset.includes("/"));
+	console.log("The project directory you're giving to this command cannot be determined to be guaranteed fresh — maybe it is, maybe it isn't. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template.");
 
 	/** @type {string[]} */
 	const addersToCheck = [];
@@ -56,6 +69,7 @@ const main = async () => {
 		}
 
 		for (const dependency of dependencies) {
+			// TODO / note: this will be rendered unnecessary by `getChoices`:
 			// Move dependencies to the front such that
 			// tailwindcss+postcss is rewritten as postcss+tailwindcss
 			if (addersToCheck.includes(dependency)) addersToCheck.splice(addersToCheck.indexOf(dependency), 1);
@@ -65,11 +79,59 @@ const main = async () => {
 		if (!addersToCheck.includes(adder)) addersToCheck.push(adder);
 	}
 
+	// Shorthand so that npx svelte-add tailwindcss --jit
+	// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-jit
+	// (since that's just redundant)
+	if (adders.length === 1) {
+		const adderPrefix = `${adders[0]}-`;
+		for (const [arg, value] of Object.entries(parsedArgs)) {
+			if (arg.startsWith(adderPrefix)) continue;
+			parsedArgs[`${adderPrefix}${arg}`] = value;
+			delete parsedArgs[arg];
+		}
+	}
+
+	/** @type {Record<string, Record<string, any>>} */
+	const optionsForAdder = {};
+	for (const adder of addersToCheck) {
+		const options = await getAdderOptions({ adder });
+		const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
+		
+		optionsForAdder[adder] = { ...defaults };
+
+		const adderPrefix = `${adder}-`;
+		for (const [arg, value] of Object.entries(parsedArgs)) {
+			if (!arg.startsWith(adderPrefix)) {
+				if (arg in defaults) exit(colors.red(``))
+				continue;
+			}
+			
+			const option = arg.slice(adderPrefix.length);
+			
+			if (!(option in defaults)) exit(colors.red(`${inspect(option)} is not a valid option for the ${adder} adder: ${Object.keys(defaults).length === 0 ? "it doesn't accept any options." : `it accepts ${inspect(Object.keys(defaults))} as options.`}`));
+			
+			if (typeof defaults[option] === "boolean") {
+				if (value === "true" || value === true) optionsForAdder[adder][option] = true;
+				else if (value === "false" || value === false) optionsForAdder[adder][option] = false;
+				else exit(colors.red(`${inspect(value)} is not a valid value for the ${adder} adder's ${inspect(option)} option because it needs to be a boolean (true or false)`));
+			} else if (typeof defaults[option] === "string") {
+				optionsForAdder[adder][option] = value;
+			} else {
+				exit(`${colors.red(`svelte-add currently doesn't support non-boolean and non-string arguments`)}: the ${adder} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} with the full command output.`);
+			}
+
+			delete parsedArgs[`${adderPrefix}${option}`];
+		}
+	}
+
+	const remainingArgs = Object.keys(parsedArgs);
+	if (remainingArgs.length !== 0) console.warn(colors.yellow(`\n${inspect(parsedArgs)} were passed as arguments but none of the adders specified (${inspect(addersToCheck)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them to make this warning go away.`));
+
 	for (const preset of presets) {
 		console.log();
 		console.log(colors.bold(preset));
 		await applyPreset({ args, cwd, npx: preferredNpx, preset });
-		console.log(`${colors.green(` ✅ has been set up, but because it's a non-core adder, cannot be determined to have been set up correctly.`)}\nCreate or find an existing issue at ${colors.cyan(`https://github.com/${preset}/issues`)} if this is wrong.`);
+		console.log(`${colors.green(` ✅ has been set up, but because it's an external integration adder, cannot be determined to have been set up correctly.`)}\nCreate or find an existing issue at ${colors.cyan(`https://github.com/${preset}/issues`)} if this is wrong.`);
 	}
 
 	// Running presets has changed the environment
@@ -113,7 +175,6 @@ const main = async () => {
 		addersToRun.push(adder);
 	}
 	
-
 	for (const adder of addersToRun) {
 		try {
 			await runAdder({
@@ -121,8 +182,7 @@ const main = async () => {
 				cwd,
 				environment,
 				npx: preferredNpx,
-				// TODO: option parsing
-				options: {},
+				options: optionsForAdder[adder],
 			});
 		} catch (e) {
 			console.log();

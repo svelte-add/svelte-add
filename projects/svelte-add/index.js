@@ -10,7 +10,7 @@ import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } fro
  * @typedef {"javascript" | "typescript" | "coffeescript"} Script
  * @typedef {"css" | "postcss" | "scss"} StyleLanguage
  * @typedef {"bulma" | "tailwindcss"} StyleFramework
- * @typedef {"graphql-server" | "mdsvex"} Other
+ * @typedef {"graphql-server" | "imagetools" | "mdsvex"} Other
  * @typedef {"eslint" | "jest" | "prettier"} Quality
  * @typedef {"firebase-hosting"} Deploy
  * @typedef {"demos-yes" | "demos-no"} Demos
@@ -50,6 +50,7 @@ const menu = {
 	],
 	other: [
 		["graphql-server", []],
+		["imagetools", []],
 		["mdsvex", []],
 	],
 	quality: [
@@ -81,26 +82,13 @@ for (const [_section, items] of Object.entries(menu)) {
 }
 
 /**
- * Parses the given arguments and prompts for missing selections
+ * Sorts out the given adders into categories (or prompts for them if needed)
  * @param {object} param0
- * @param {string[]} param0.args
- * @param {boolean} param0.promptMissing
+ * @param {string[]} param0.adders
  * @returns {Promise<Choices>}
  */
-export const getChoices = async ({ args, promptMissing }) => {
-	const passed = mri(args, {
-		alias: {
-			"add": "adders",
-			"adder": "adders",
-			"using": "adders",
-			"with": "adders",
-		}
-	});
-
-	const adders = passed.adders?.split("+") ?? [];
-
+export const getChoices = async ({ adders }) => {
 	// TODO
-	console.log({ adders, passed });
 	return {
 		script: "javascript",
 		styleLanguage: "css",
@@ -345,6 +333,27 @@ export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve,
  * @param {AdderRunArg<Options>} param0
  * @returns {Promise<void>}
  */
+
+/**
+ * @template NameToType
+ * @typedef {{
+ *   [name in keyof NameToType]: {
+ *     default: NameToType[name];
+ *     description: string;
+ *   }
+ * }} AdderOptions
+ */
+
+/**
+ * @param {object} param0
+ * @param {string} param0.adder
+ * @returns {Promise<AdderOptions<any>>}
+ */
+export const getAdderOptions = async ({ adder }) => {
+	const { options } = await import(`./adders/${adder}/__metadata.js`);
+
+	return options;
+};
 
 /**
  * @template Options
