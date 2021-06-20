@@ -1,5 +1,9 @@
+/** @typedef {{ project: string }} Options */
+
+/** @type {import("../..").AdderOptions<Options>} */
 export const options = {
-    "project": {
+    project: {
         description: "What is your Firebase project's ID, according to https://console.firebase.google.com/ ?",
+        default: "",
     }
 };
