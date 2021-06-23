@@ -5,9 +5,9 @@ import { readFile } from "./index.js";
 import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
 
 /**
- * 
+ *
  * Example:
- * await updateFile({ 
+ * await updateFile({
  *     path: "/path/to/project/.gitignore",
  *     content: async ({ exists, text }) => {
  *         // modify the passed text
@@ -16,7 +16,7 @@ import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcss
  *         };
  *     },
  * })
- * 
+ *
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, text: string }): Promise<{ exists: false } | { text: string }>} param0.content
@@ -29,7 +29,7 @@ export const updateFile = async ({ path, content }) => {
 		exists,
 		text,
 	});
-	
+
 	if ("exists" in out) {
 		try {
 			await unlink(path);
@@ -38,7 +38,7 @@ export const updateFile = async ({ path, content }) => {
 		}
 		return;
 	}
-	
+
 	await mkdir(parse(path).dir, {
 		recursive: true,
 	});
@@ -49,9 +49,9 @@ export const updateFile = async ({ path, content }) => {
 };
 
 /**
- * 
+ *
  * Example:
- * await updateCss({ 
+ * await updateCss({
  *     path: "/path/to/project/src/app.postcss",
  *     script: async ({ exists, postcss }) => {
  *         // modify the PostCSS AST and return it
@@ -60,7 +60,7 @@ export const updateFile = async ({ path, content }) => {
  *         };
  *     },
  * })
- * 
+ *
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, postcss: ReturnType<typeof newPostcssAst> }): Promise<{ exists: false } | { postcss: ReturnType<typeof newPostcssAst> }>} param0.style
@@ -83,13 +83,13 @@ export const updateCss = async ({ path, style }) => {
 				text: stringifyPostcssAst(out.postcss),
 			};
 		},
-	})
+	});
 };
 
 /**
- * 
+ *
  * Example:
- * await updateJavaScript({ 
+ * await updateJavaScript({
  *     path: "/path/to/project/tailwind.config.cjs",
  *     script: async ({ exists, typeScriptEstree }) => {
  *         // modify the TypeScript ESTree AST and return it
@@ -98,7 +98,7 @@ export const updateCss = async ({ path, style }) => {
  *         };
  *     },
  * })
- * 
+ *
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { typeScriptEstree: import("./ast-io.js").RecastAST }>} param0.script
@@ -125,9 +125,9 @@ export const updateJavaScript = async ({ path, script }) => {
 };
 
 /**
- * 
+ *
  * Example:
- * await updateJson({ 
+ * await updateJson({
  *     path: "/path/to/project/firebase.json",
  *     json: async ({ exists, obj }) => {
  *         // modify the JSON and return it
@@ -136,7 +136,7 @@ export const updateJavaScript = async ({ path, script }) => {
  *         };
  *     },
  * })
- * 
+ *
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, obj: any }): Promise<{ obj: any }>} param0.json
@@ -157,22 +157,22 @@ export const updateJson = async ({ path, json }) => {
 				text: JSON.stringify(out.obj, null, "\t"),
 			};
 		},
-	})
+	});
 };
 
 /** @typedef {"coffee" | "ts" | undefined} ScriptLang */
 /** @typedef {"postcss" | "scss" | undefined} StyleLang */
 
 /**
- * 
+ *
  * Example:
- * await updateSvelte({ 
+ * await updateSvelte({
  *     path: "/path/to/project/src/lib/Counter.svelte",
  *     markup: async ({ posthtml }) => {
  *         // modify the PostHTML (superset of HTML) AST
  *     },
  *     moduleScript: async ({ lang, typeScriptEstree }) => {
- * 
+ *
  *         // modify the TypeScript ESTree AST and return it
  *         return {
  *             lang,
@@ -180,7 +180,7 @@ export const updateJson = async ({ path, json }) => {
  *         };
  *     },
  *     script: async ({ lang, typeScriptEstree }) => {
- * 
+ *
  *         // modify the TypeScript ESTree AST and return it
  *         return {
  *             lang,
@@ -191,7 +191,7 @@ export const updateJson = async ({ path, json }) => {
  *         // modify the PostCSS (superset of CSS) AST
  *     },
  * })
- * 
+ *
  * @param {object} param0
  * @param {string} param0.path
  * @param {function({ exists: boolean, posthtml: ReturnType<typeof newPosthtmlAst> }): Promise<{ exists: false } | { posthtml: ReturnType<typeof newPosthtmlAst> }>} [param0.markup]
@@ -205,7 +205,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 		path,
 		content: async ({ exists, text }) => {
 			let posthtml = newPosthtmlAst(text);
-			
+
 			if (markup) {
 				const newMarkup = await markup({ exists, posthtml });
 				if ("exists" in newMarkup) return { exists: false };
@@ -250,9 +250,10 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 			 */
 			const modify = async ({ astArg, beginning, existingTag, newAst, newTag, stringify, updater }) => {
 				/** @type {LangType} */
+				// prettier-ignore
 				const lang = (existingTag?.attrs?.lang);
 				const content = existingTag?.content;
-				const text = Array.isArray(content) ? content.join("") : (content?.toString() ?? "");
+				const text = Array.isArray(content) ? content.join("") : content?.toString() ?? "";
 
 				const newBlock = await updater({
 					exists: existingTag !== undefined,
@@ -281,50 +282,53 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 				existingTag.content = stringify(newBlock[astArg]);
 
 				return existingTag;
-			}
+			};
 
-			if (script) tagScript = await modify({
-				astArg: "typeScriptEstree",
-				beginning: true,
-				existingTag: tagScript,
-				newAst: newTypeScriptEstreeAst,
-				newTag: {
-					tag: "script",
-				},
-				stringify: stringifyTypeScriptEstreeAst,
-				updater: script,
-			});
+			if (script)
+				tagScript = await modify({
+					astArg: "typeScriptEstree",
+					beginning: true,
+					existingTag: tagScript,
+					newAst: newTypeScriptEstreeAst,
+					newTag: {
+						tag: "script",
+					},
+					stringify: stringifyTypeScriptEstreeAst,
+					updater: script,
+				});
 
-			if (moduleScript) tagModuleScript = await modify({
-				astArg: "typeScriptEstree",
-				beginning: true,
-				existingTag: tagModuleScript,
-				newAst: newTypeScriptEstreeAst,
-				newTag: {
-					tag: "script",
-					attrs: {
-						context: "module",
-					}
-				},
-				stringify: stringifyTypeScriptEstreeAst,
-				updater: moduleScript,
-			});
+			if (moduleScript)
+				tagModuleScript = await modify({
+					astArg: "typeScriptEstree",
+					beginning: true,
+					existingTag: tagModuleScript,
+					newAst: newTypeScriptEstreeAst,
+					newTag: {
+						tag: "script",
+						attrs: {
+							context: "module",
+						},
+					},
+					stringify: stringifyTypeScriptEstreeAst,
+					updater: moduleScript,
+				});
 
-			if (style) tagStyle = await modify({
-				astArg: "postcss",
-				beginning: true,
-				existingTag: tagStyle,
-				newAst: newPostcssAst,
-				newTag: {
-					tag: "style",
-				},
-				stringify: stringifyPostcssAst,
-				updater: style,
-			});
-			
+			if (style)
+				tagStyle = await modify({
+					astArg: "postcss",
+					beginning: true,
+					existingTag: tagStyle,
+					newAst: newPostcssAst,
+					newTag: {
+						tag: "style",
+					},
+					stringify: stringifyPostcssAst,
+					updater: style,
+				});
+
 			return {
 				text: stringifyPosthtmlAst(posthtml),
 			};
 		},
-	})
+	});
 };

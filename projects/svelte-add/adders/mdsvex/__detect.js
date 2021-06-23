@@ -11,7 +11,7 @@ export const heuristics = [
 		async detector({ readFile }) {
 			const js = await readFile({ path: "/svelte.config.js" });
 			const cjs = await readFile({ path: "/svelte.config.cjs" });
-			
+
 			/** @param {string} text */
 			const preprocessIsProbablySetup = (text) => {
 				if (!text.includes("mdsvex")) return false;

@@ -13,7 +13,7 @@ export const heuristics = [
 		async detector({ readFile }) {
 			const app = await readFile({ path: "/src/app.scss" });
 			const global = await readFile({ path: "/src/global.scss" });
-			
+
 			/** @param {string} text */
 			const bulmaIsProbablyImported = (text) => {
 				if (!text.includes("bulma")) return false;

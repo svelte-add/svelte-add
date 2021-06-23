@@ -13,7 +13,6 @@ const addersToTest = Object.keys(adderDependencies);
 
 for (const [app, init] of Object.entries(initializers)) {
 	for (const adderToTest of addersToTest) {
-
 		/** @type {string[]} */
 		const addersToCheck = [];
 		const dependencies = adderDependencies[adderToTest];
@@ -26,7 +25,7 @@ for (const [app, init] of Object.entries(initializers)) {
 			addersToCheck.unshift(dependency);
 		}
 		if (!addersToCheck.includes(adderToTest)) addersToCheck.push(adderToTest);
-		
+
 		test(`${adderToTest} being used on ${app} (without demos)`, async () => {
 			const output = `_outputs/${app}_${adderToTest}`;
 			await rm(output, {
@@ -54,7 +53,10 @@ for (const [app, init] of Object.entries(initializers)) {
 					cwd: output,
 					environment,
 				});
-				assert.ok(Object.values(preRunCheck).every((pass) => !pass), `Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`);
+				assert.ok(
+					Object.values(preRunCheck).every((pass) => !pass),
+					`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
+				);
 				addersToRun.push(adderToCheck);
 			}
 
@@ -64,7 +66,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					cwd: output,
 					environment,
 					npx: "pnpx",
-					options: { jit: true },
+					options: {},
 				});
 				environment = await getEnvironment({ cwd: output });
 			}
@@ -77,7 +79,7 @@ for (const [app, init] of Object.entries(initializers)) {
 				});
 				assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
 			}
-		})
+		});
 	}
 }
 

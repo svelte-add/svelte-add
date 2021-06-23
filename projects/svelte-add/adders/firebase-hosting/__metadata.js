@@ -2,8 +2,8 @@
 
 /** @type {import("../..").AdderOptions<Options>} */
 export const options = {
-    project: {
-        description: "What is your Firebase project's ID, according to https://console.firebase.google.com/ ?",
-        default: "",
-    }
+	project: {
+		description: "What is your Firebase project's ID, according to https://console.firebase.google.com/ ?",
+		default: "",
+	},
 };

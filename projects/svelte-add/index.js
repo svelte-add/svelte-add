@@ -1,6 +1,5 @@
 import { exec, spawn } from "child_process";
 import { readdir, readFile as fsReadFile } from "fs/promises";
-import mri from "mri";
 import { join, resolve } from "path";
 import { inspect, promisify } from "util";
 import { packageVersions } from "./package-versions.js";
@@ -12,7 +11,7 @@ import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } fro
  * @typedef {"bulma" | "tailwindcss"} StyleFramework
  * @typedef {"graphql-server" | "imagetools" | "mdsvex"} Other
  * @typedef {"eslint" | "jest" | "prettier"} Quality
- * @typedef {"firebase-hosting"} Deploy
+ * @typedef {"deploy-manual" | "firebase-hosting"} Deploy
  * @typedef {"demos-yes" | "demos-no"} Demos
  */
 
@@ -58,9 +57,7 @@ const menu = {
 		["jest", []],
 		["prettier", []],
 	],
-	deploy: [
-		["firebase-hosting", []],
-	],
+	deploy: [["firebase-hosting", []]],
 	demos: [
 		["demos-yes", []],
 		["demos-no", []],
@@ -69,7 +66,7 @@ const menu = {
 
 /** @type {Record<string, string[]>} */
 export const adderDependencies = {};
-for (const [_section, items] of Object.entries(menu)) {
+for (const items of Object.values(menu)) {
 	for (const [parent, children] of items) {
 		adderDependencies[parent] = [];
 
@@ -97,25 +94,25 @@ export const getChoices = async ({ adders }) => {
 		quality: [],
 		deploy: undefined,
 		demos: "demos-yes",
-	}
+	};
 };
 
 const packageManagerDetectors = {
-	"npm": "npm --version",
-	"pnpm": "pnpm --version",
-	"yarn": "yarn --version", // TODO: is that right??
-}
+	npm: "npm --version",
+	pnpm: "pnpm --version",
+	yarn: "yarn --version", // TODO: is that right??
+};
 
 const npxDetectors = {
-	"npx": "npx --version",
-	"pnpx": "pnpx --version",
-}
+	npx: "npx --version",
+	pnpx: "pnpx --version",
+};
 
 /**
  * @typedef {keyof typeof packageManagerDetectors} PackageManager
  * @typedef {keyof typeof npxDetectors} NPX
- * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler 
- * 
+ * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler
+ *
  * @typedef {Object} Environment
  * @property {Bundler | undefined} bundler
  * @property {import("./package-versions").Dependencies} dependencies
@@ -138,14 +135,19 @@ export const getEnvironment = async ({ cwd }) => {
 	 * @param {Record<Tool, string>} detectors
 	 * @returns {Promise<Record<Tool, boolean>>}
 	 */
-	const getAvailable = async (detectors) => Object.fromEntries(await Promise.all(Object.entries(detectors).map(async ([name, command]) => {
-		try {
-			await promisify(exec)(command);
-		} catch {
-			return [name, false];
-		}
-		return [name, true];
-	})));
+	const getAvailable = async (detectors) =>
+		Object.fromEntries(
+			await Promise.all(
+				Object.entries(detectors).map(async ([name, command]) => {
+					try {
+						await promisify(exec)(command);
+					} catch {
+						return [name, false];
+					}
+					return [name, true];
+				})
+			)
+		);
 
 	const [npx, packageManagers] = await Promise.all([getAvailable(npxDetectors), getAvailable(packageManagerDetectors)]);
 
@@ -161,7 +163,7 @@ export const getEnvironment = async ({ cwd }) => {
 			npx,
 			packageManagers,
 			platform,
-		}
+		};
 	}
 
 	const packageJson = await readFile({
@@ -206,8 +208,6 @@ export const getEnvironment = async ({ cwd }) => {
 	};
 };
 
-
-
 /**
  * @param {object} param0
  * @param {string} param0.path
@@ -218,34 +218,35 @@ export const readFile = async ({ path }) => {
 	let text = "";
 
 	try {
-		text = (await fsReadFile(path, {
-			encoding: "utf-8",
-		})).toString();
+		text = (
+			await fsReadFile(path, {
+				encoding: "utf-8",
+			})
+		).toString();
 	} catch (e) {
 		exists = false;
 		if (e.code !== "ENOENT") throw e;
 	}
-	
+
 	return {
 		exists,
 		text,
-	}
+	};
 };
 
 /**
  * @typedef {Object} DetectorArg
  * @property {Environment} environment
  * @property {typeof readFile} readFile
- * 
+ *
  * @callback Detector
  * @param {DetectorArg} param0
  * @returns {Promise<boolean>}
- * 
+ *
  * @typedef {Object} Heuristic
  * @property {string} description - The message to display to explain
  * @property {Detector} detector
  */
-
 
 /**
  * @param {object} param0
@@ -258,15 +259,20 @@ export const detectAdder = async ({ adder, cwd, environment }) => {
 	/** @type {{ heuristics: Heuristic[] }} */
 	const { heuristics } = await import(`./adders/${adder}/__detect.js`);
 
-	return Object.fromEntries(await Promise.all(heuristics.map(async (heuristic) =>
-		[heuristic.description, await heuristic.detector({
-			environment,
-			readFile({ path }) {
-				return readFile({ path: join(cwd, path) });
-			}
-		})]
-	)));
-}
+	return Object.fromEntries(
+		await Promise.all(
+			heuristics.map(async (heuristic) => [
+				heuristic.description,
+				await heuristic.detector({
+					environment,
+					readFile({ path }) {
+						return readFile({ path: join(cwd, path) });
+					},
+				}),
+			])
+		)
+	);
+};
 
 /**
  * @typedef {Object} ApplyPresetArg
@@ -278,42 +284,43 @@ export const detectAdder = async ({ adder, cwd, environment }) => {
  * @param {ApplyPresetArg} param0
  * @returns {Promise<void>}
  */
-export const applyPreset = ({ args, cwd, npx, preset }) => new Promise((resolve, reject) => {
-	if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
-	
-	const subprocess = spawn(npx, ["--yes", "--package", "use-preset", "apply", preset, ...args], {
-		cwd,
-		stdio: "pipe",
-		timeout: 20000,
+export const applyPreset = ({ args, cwd, npx, preset }) =>
+	new Promise((resolve, reject) => {
+		if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
+
+		const subprocess = spawn(npx, ["--yes", "--package", "use-preset", "apply", preset, ...args], {
+			cwd,
+			stdio: "pipe",
+			timeout: 20000,
+		});
+
+		let body = "";
+
+		subprocess.stderr.on("data", (chunk) => {
+			body += chunk;
+		});
+
+		subprocess.stderr.on("end", () => {
+			if (body === "") {
+				resolve(undefined);
+				return;
+			}
+
+			if (body.includes("remote: Repository not found.")) {
+				reject(new Error(`The ${inspect(preset)} preset does not exist on GitHub. Have you spelled it correctly?`));
+				return;
+			}
+
+			if (body.includes("[ error ]  Could not clone")) {
+				reject(new Error(`The ${inspect(preset)} preset could not be cloned. Is git installed?`));
+				return;
+			}
+
+			reject(new Error(body));
+		});
 	});
 
-	let body = "";
-
-	subprocess.stderr.on("data", (chunk) => {
-		body += chunk;
-	});
-
-	subprocess.stderr.on("end", () => {
-		if (body === "") {
-			resolve(undefined);
-			return;
-		}
-
-		if (body.includes("remote: Repository not found.")) {
-			reject(new Error(`The ${inspect(preset)} preset does not exist on GitHub. Have you spelled it correctly?`));
-			return;
-		}
-
-		if (body.includes("[ error ]  Could not clone")) {
-			reject(new Error(`The ${inspect(preset)} preset could not be cloned. Is git installed?`));
-			return;	
-		}
-
-		reject(new Error(body));
-	});
-});
-
-/** 
+/**
  * @template Options
  * @typedef {Object} AdderRunArg
  * @property {function(Omit<ApplyPresetArg, "cwd" | "npx">): ReturnType<typeof applyPreset>} applyPreset
@@ -379,7 +386,7 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 				path: join(cwd, "/package.json"),
 				async json({ obj }) {
 					const version = packageVersions[pkg];
-					
+
 					if (prod) {
 						if (!obj.dependencies) obj.dependencies = {};
 						obj.dependencies[pkg] = version;
@@ -391,8 +398,8 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 					return {
 						obj,
 					};
-				}
-			})
+				},
+			});
 		},
 		options,
 		updateCss({ path, ...args }) {
@@ -411,4 +418,4 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 			return updateSvelte({ path: join(cwd, path), ...args });
 		},
 	});
-}
+};

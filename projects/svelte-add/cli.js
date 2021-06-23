@@ -1,7 +1,7 @@
 import colors from "kleur";
 import mri from "mri";
 import { inspect } from "util";
-import { adderDependencies, applyPreset, detectAdder, getAdderOptions, getEnvironment, readFile, runAdder } from "./index.js";
+import { adderDependencies, applyPreset, detectAdder, getAdderOptions, getEnvironment, runAdder } from "./index.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -18,33 +18,32 @@ const version = `${year}.${month}.${day}.${iteration}`;
 const exit = (text) => {
 	console.error(text);
 	process.exit(1);
-}
+};
 
 const main = async () => {
 	console.log(`${colors.bold("➕ Svelte Add")} (Version ${version})`);
 	const cwd = process.cwd();
 
 	let environment = await getEnvironment({ cwd });
-	
+
 	if (environment.empty) exit(`${colors.red("There is no valid Svelte project in this directory because it's empty, so svelte-add cannot run.")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 	if (environment.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
 	const args = process.argv.slice(2);
 	const { _: addersSeparated, ...parsedArgs } = mri(args);
 	const addersJoined = addersSeparated.join("+");
-	
+
 	// TODO: show the interactive menus instead
 	if (!addersJoined) exit(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
 
 	const addersAndPresets = addersJoined.split("+");
-	const presets = addersAndPresets.filter(adderOrPreset => adderOrPreset.includes("/"));
-	const adders = addersAndPresets.filter(adderOrPreset => !adderOrPreset.includes("/"));
-
+	const presets = addersAndPresets.filter((adderOrPreset) => adderOrPreset.includes("/"));
+	const adders = addersAndPresets.filter((adderOrPreset) => !adderOrPreset.includes("/"));
 
 	// TODO: should this be overrideable?
 	let preferredNpx = "npx";
 	if (environment.npx.pnpx) preferredNpx = "pnpx";
-	
+
 	// TODO: ask what package manager if multiple options
 	// (getChoices)
 	let preferredPackageManager = "npm";
@@ -96,20 +95,20 @@ const main = async () => {
 	for (const adder of addersToCheck) {
 		const options = await getAdderOptions({ adder });
 		const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
-		
+
 		optionsForAdder[adder] = { ...defaults };
 
 		const adderPrefix = `${adder}-`;
 		for (const [arg, value] of Object.entries(parsedArgs)) {
 			if (!arg.startsWith(adderPrefix)) {
-				if (arg in defaults) exit(colors.red(``))
+				if (arg in defaults) exit(colors.red(``));
 				continue;
 			}
-			
+
 			const option = arg.slice(adderPrefix.length);
-			
+
 			if (!(option in defaults)) exit(colors.red(`${inspect(option)} is not a valid option for the ${adder} adder: ${Object.keys(defaults).length === 0 ? "it doesn't accept any options." : `it accepts ${inspect(Object.keys(defaults))} as options.`}`));
-			
+
 			if (typeof defaults[option] === "boolean") {
 				if (value === "true" || value === true) optionsForAdder[adder][option] = true;
 				else if (value === "false" || value === false) optionsForAdder[adder][option] = false;
@@ -141,7 +140,7 @@ const main = async () => {
 	const addersToRun = [];
 	for (const adder of addersToCheck) {
 		let preRunCheck;
-		
+
 		try {
 			preRunCheck = await detectAdder({
 				adder,
@@ -151,12 +150,12 @@ const main = async () => {
 		} catch (e) {
 			console.log();
 			console.log(colors.bold(adder));
-			
+
 			if (e.code === "ERR_MODULE_NOT_FOUND") exit(`${colors.red(`  ❌ doesn't exist as an adder.`)} Have you spelled it correctly?\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
 			throw e;
 		}
-		
+
 		if (Object.values(preRunCheck).every(Boolean)) {
 			console.log();
 			console.log(colors.bold(adder));
@@ -174,7 +173,7 @@ const main = async () => {
 
 		addersToRun.push(adder);
 	}
-	
+
 	for (const adder of addersToRun) {
 		try {
 			await runAdder({
@@ -187,7 +186,7 @@ const main = async () => {
 		} catch (e) {
 			console.log();
 			console.log(colors.bold(adder));
-			
+
 			throw e;
 		}
 

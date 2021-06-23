@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import { mkdir } from "fs/promises";
 
 /**
- * @param {number} ms 
+ * @param {number} ms
  * @returns {Promise<undefined>}
  */
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,8 +14,8 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const isValidPackageName = (projectName) => /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(projectName);
 
 /**
- * 
- * @param {Object} param0 
+ *
+ * @param {Object} param0
  * @param {boolean} param0.demo
  * @param {string} param0.dir
  * @param {boolean} param0.eslint
@@ -23,7 +23,7 @@ const isValidPackageName = (projectName) => /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[
  * @param {boolean} param0.prettier
  * @param {boolean} param0.typescript
  */
-export const fresh = async ({ demo, dir, eslint, packageManager, prettier, typescript }) => {
+export const fresh = async ({ dir, packageManager, typescript }) => {
 	await mkdir(dir, {
 		recursive: true,
 	});
@@ -41,17 +41,16 @@ export const fresh = async ({ demo, dir, eslint, packageManager, prettier, types
 		subprocess.on("error", (code) => reject(new Error(`${code}`)));
 	});
 
-	
 	/** @param {string} content */
 	const waitForWrite = async (content) => {
 		// TODO: this is good enough until https://github.com/sveltejs/kit/pull/1231#issuecomment-827037397
 		await wait(300);
 		subprocess.stdin.write(content);
-	}
+	};
 
 	await wait(2000);
 	if (!isValidPackageName(dir)) await waitForWrite("\n\n");
-	
+
 	subprocess.stdin.end();
 	await initialization;
 };

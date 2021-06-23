@@ -1,7 +1,7 @@
 import { walk } from "estree-walker";
 
 /**
- * 
+ *
  * @param {object} param0
  * @param {boolean} param0.cjs
  * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
@@ -13,21 +13,22 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 
 	/** @type {import("estree").ObjectExpression | undefined} */
 	let configObjectExpression;
-	
+
 	// Try to find the exported config object
 	walk(typeScriptEstree, {
 		enter(node) {
 			if (cjs) {
 				if (node.type !== "AssignmentExpression") return;
 				/** @type {import("estree").AssignmentExpression} */
-				const assignmentExpression = (node);
+				// prettier-ignore
+				const assignmentExpression = (node)
 
 				const assigningTo = assignmentExpression.left;
 				if (assigningTo.type !== "MemberExpression") return;
-				
+
 				if (assigningTo.object.type !== "Identifier") return;
 				if (assigningTo.object.name !== "module") return;
-				
+
 				if (assigningTo.property.type !== "Identifier") return;
 				if (assigningTo.property.name !== "exports") return;
 
@@ -39,25 +40,25 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 				}
 			} else {
 				if (node.type !== "ExportDefaultDeclaration") return;
-				
+
 				/** @type {import("estree").ExportDefaultDeclaration} */
-				const exportDefault = (node);
-				
+				// prettier-ignore
+				const exportDefault = (node)
+
 				const exportDefaultDeclaration = exportDefault.declaration;
-				
+
 				if (exportDefaultDeclaration.type !== "Identifier") return;
 				configObjectVariable = exportDefaultDeclaration.name;
 			}
 		},
 	});
-	
 
 	if (!configObjectExpression) {
 		if (!configObjectVariable) {
 			configObjectExpression = {
 				type: "ObjectExpression",
 				properties: [],
-			}
+			};
 
 			configObjectVariable = "config";
 
@@ -72,7 +73,7 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 							name: configObjectVariable,
 						},
 						init: configObjectExpression,
-					}
+					},
 				],
 				kind: "const",
 			};
@@ -103,7 +104,7 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 							type: "Identifier",
 							name: configObjectVariable,
 						},
-					}
+					},
 				};
 
 				typeScriptEstree.program.body.push(exportConfig);
@@ -119,10 +120,11 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 				if (node.type !== "VariableDeclarator") return;
 
 				/** @type {import("estree").VariableDeclarator} */
-				const variableDeclarator = (node);
+				// prettier-ignore
+				const variableDeclarator = (node)
 
 				if (variableDeclarator.id.type === "Identifier" && variableDeclarator.id.name === configObjectVariable) {
-					const init = (variableDeclarator.init);
+					const init = variableDeclarator.init;
 					if (!init) return;
 					if (init.type !== "ObjectExpression") return;
 					configObjectExpression = init;

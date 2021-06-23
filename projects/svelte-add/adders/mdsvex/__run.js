@@ -1,5 +1,5 @@
-/** @type {import("../..").AdderRun<{}>} */
-export const run = async ({ applyPreset, environment, options }) => {
+/** @type {import("../..").AdderRun<import("./__metadata.js").Options>} */
+export const run = async ({ applyPreset }) => {
 	// TODO: built-in implementation
 	await applyPreset({
 		args: [],

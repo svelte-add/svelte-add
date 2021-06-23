@@ -1,4 +1,4 @@
-name: Check every commit and pull request
+name: Lint and check every commit and pull request
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ jobs:
   check:
     strategy:
       matrix:
-        node-version: [14.16.1, 16.1.0]
+        node-version: [14.17.1, 16.3.0]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -25,4 +25,5 @@ jobs:
         with:
           version: 6.2.x
       - run: pnpm install
+      - run: pnpm lint
       - run: pnpm check
