@@ -109,8 +109,14 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 
 				typeScriptEstree.program.body.push(exportConfig);
 			} else {
-				if (!configObjectExpression) throw new Error("TODO: make this work");
-				const exportConfig = {};
+				/** @type {import("estree").ExportDefaultDeclaration} */
+				const exportConfig = {
+					"type": "ExportDefaultDeclaration",
+					declaration: {
+						type: "Identifier",
+						name: configObjectVariable,
+					}
+				};
 				typeScriptEstree.program.body.push(exportConfig);
 			}
 		}
