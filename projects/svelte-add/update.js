@@ -285,6 +285,8 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 			};
 
 			if (script)
+				// TODO: add to html if needed
+				// eslint-disable-next-line no-unused-vars
 				tagScript = await modify({
 					astArg: "typeScriptEstree",
 					beginning: true,
@@ -298,6 +300,8 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 				});
 
 			if (moduleScript)
+				// TODO: add to html if needed
+				// eslint-disable-next-line no-unused-vars
 				tagModuleScript = await modify({
 					astArg: "typeScriptEstree",
 					beginning: true,
@@ -314,6 +318,8 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 				});
 
 			if (style)
+				// TODO: add to html if needed
+				// eslint-disable-next-line no-unused-vars
 				tagStyle = await modify({
 					astArg: "postcss",
 					beginning: true,

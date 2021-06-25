@@ -51,6 +51,8 @@ const main = async () => {
 
 	if (process.platform === "win32") {
 		preferredNpx += ".cmd";
+		// TODO: use
+		// eslint-disable-next-line no-unused-vars
 		preferredPackageManager += ".cmd";
 	}
 

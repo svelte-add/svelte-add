@@ -84,8 +84,9 @@ for (const items of Object.values(menu)) {
  * @param {string[]} param0.adders
  * @returns {Promise<Choices>}
  */
+// TODO
+// eslint-disable-next-line no-unused-vars
 export const getChoices = async ({ adders }) => {
-	// TODO
 	return {
 		script: "javascript",
 		styleLanguage: "css",

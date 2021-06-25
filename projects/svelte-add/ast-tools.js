@@ -111,11 +111,11 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 			} else {
 				/** @type {import("estree").ExportDefaultDeclaration} */
 				const exportConfig = {
-					"type": "ExportDefaultDeclaration",
+					type: "ExportDefaultDeclaration",
 					declaration: {
 						type: "Identifier",
 						name: configObjectVariable,
-					}
+					},
 				};
 				typeScriptEstree.program.body.push(exportConfig);
 			}
