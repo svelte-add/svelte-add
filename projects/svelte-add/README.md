@@ -19,6 +19,7 @@ By the way, you currently need to be on [the latest version of Node 14 or 16](ht
 
 In theory, these adders are the most likely to work correctly. While `svelte-add` is being rewritten, very few adders will be on this list:
 
+- [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
 - [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
 
@@ -30,7 +31,6 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 - [**CoffeeScript**](https://github.com/Leftium/coffeescript-adder)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
 - [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
-- [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
 
