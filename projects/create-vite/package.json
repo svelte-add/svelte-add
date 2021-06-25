@@ -27,7 +27,6 @@
 		"create-vite": "cli.cjs"
 	},
 	"dependencies": {
-		"@vitejs/create-app": "^2.4.3",
 		"svelte-add": "workspace:*"
 	}
 }
