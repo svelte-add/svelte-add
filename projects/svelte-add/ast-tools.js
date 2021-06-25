@@ -150,11 +150,15 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
  * @param {boolean} param0.cjs
  * @param {string} param0.package
  * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
- * @returns {string | undefined}
+ * @returns {{ default: string | undefined, named: Record<string, string>, require: string | undefined }}
  */
 export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 	/** @type {string | undefined} */
-	let packageImportedAs;
+	let defaultImportedAs;
+	/** @type {string | undefined} */
+	let requiredAs;
+	/** @type {Record<string, string>} */
+	const named = {};
 
 	walk(typeScriptEstree, {
 		enter(node) {
@@ -180,7 +184,7 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 				if (callExpression.arguments[0].type !== "Literal") return;
 				if (callExpression.arguments[0].value !== pkg) return;
 
-				packageImportedAs = identifier.name;
+				requiredAs = identifier.name;
 			} else {
 				if (node.type !== "ImportDeclaration") return;
 
@@ -191,37 +195,70 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 				if (importDeclaration.source.value !== pkg) return;
 
 				for (const specifier of importDeclaration.specifiers) {
-					if (specifier.type === "ImportDefaultSpecifier") packageImportedAs = specifier.local.name;
+					if (specifier.type === "ImportDefaultSpecifier") defaultImportedAs = specifier.local.name;
+					if (specifier.type === "ImportSpecifier") named[specifier.imported.name] = specifier.local.name;
 				}
 			}
 		},
 	});
 
-	return packageImportedAs;
+	return {
+		default: defaultImportedAs,
+		named,
+		require: requiredAs,
+	};
 };
 
 /**
- *
  * @param {object} param0
- * @param {string} param0.all
  * @param {boolean} param0.cjs
- * @param {string} param0.default
+ * @param {string} [param0.default]
+ * @param {Record<string, string>} [param0.named]
  * @param {string} param0.package
+ * @param {string} [param0.require]
  * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
  * @returns {void}
  */
-export const addImport = ({ all, cjs, default: default_, package: pkg, typeScriptEstree }) => {
+export const addImport = ({ cjs, default: default_, named, package: pkg, require, typeScriptEstree }) => {
 	if (cjs) {
+		/** @type {import("estree").VariableDeclarator["id"]} */
+		// prettier-ignore
+		let id = ({});
+
+		if (require)
+			id = {
+				type: "Identifier",
+				name: require,
+			};
+
+		if (named) {
+			id = {
+				type: "ObjectPattern",
+				properties: Object.entries(named).map(([exportedAs, importAs]) => ({
+					type: "Property",
+					computed: false,
+					key: {
+						type: "Identifier",
+						name: exportedAs,
+					},
+					kind: "init",
+					method: false,
+					shorthand: exportedAs === importAs,
+					value: {
+						type: "Identifier",
+						name: importAs,
+					},
+				})),
+			};
+		}
+
 		/** @type {import("estree").VariableDeclaration} */
 		const requirePackageAst = {
 			type: "VariableDeclaration",
 			declarations: [
 				{
 					type: "VariableDeclarator",
-					id: {
-						type: "Identifier",
-						name: all,
-					},
+					id,
 					init: {
 						type: "CallExpression",
 						// @ts-ignore - I am not sure why this is typed wrongly (?)
@@ -244,6 +281,32 @@ export const addImport = ({ all, cjs, default: default_, package: pkg, typeScrip
 
 		typeScriptEstree.program.body.unshift(requirePackageAst);
 	} else {
+		/** @type {import("estree").ImportDeclaration["specifiers"]} */
+		const specifiers = [];
+
+		if (default_)
+			specifiers.push({
+				type: "ImportDefaultSpecifier",
+				local: {
+					type: "Identifier",
+					name: default_,
+				},
+			});
+
+		for (const [exportedAs, importAs] of Object.entries(named ?? {})) {
+			specifiers.push({
+				type: "ImportSpecifier",
+				imported: {
+					type: "Identifier",
+					name: exportedAs,
+				},
+				local: {
+					type: "Identifier",
+					name: importAs,
+				},
+			});
+		}
+
 		/** @type {import("estree").ImportDeclaration} */
 		const importPackageAst = {
 			type: "ImportDeclaration",
@@ -251,15 +314,7 @@ export const addImport = ({ all, cjs, default: default_, package: pkg, typeScrip
 				type: "Literal",
 				value: pkg,
 			},
-			specifiers: [
-				{
-					type: "ImportDefaultSpecifier",
-					local: {
-						type: "Identifier",
-						name: default_,
-					},
-				},
-			],
+			specifiers,
 		};
 
 		typeScriptEstree.program.body.unshift(importPackageAst);
@@ -304,16 +359,13 @@ export const getPreprocessArray = ({ configObject }) => {
 	}
 
 	if (preprocessConfig.value.type !== "ArrayExpression") {
+		if (preprocessConfig.value.type !== "CallExpression") throw new TypeError("preprocess settings were expected to be a function call");
 		// Convert preprocess config from a single function call to an array e.x. [svelte-preprocess()]
 		/** @type {import("estree").ArrayExpression} */
 		const preprocessArray = {
 			type: "ArrayExpression",
-			elements: [],
+			elements: [preprocessConfig.value],
 		};
-		if (preprocessConfig.value.type !== "CallExpression") throw new TypeError("preprocess settings were expected to be a function call");
-		/** @type {import("estree").CallExpression} */
-		const preprocessConfigValue = preprocessConfig.value;
-		preprocessArray.elements.push(preprocessConfigValue);
 		preprocessConfig.value = preprocessArray;
 	}
 
