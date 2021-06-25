@@ -21,7 +21,7 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"scripts": {
 		"check": "tsc --project jsconfig.json",
-		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
+		"lint": "prettier --check . && eslint --max-warnings 0 --ignore-path .gitignore .",
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
