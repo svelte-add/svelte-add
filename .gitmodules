@@ -4,3 +4,6 @@
 [submodule "projects/svelte-add/adders/tailwindcss"]
 	path = projects/svelte-add/adders/tailwindcss
 	url = https://github.com/svelte-add/tailwindcss
+[submodule "projects/svelte-add/adders/mdsvex"]
+	path = projects/svelte-add/adders/mdsvex
+	url = https://github.com/svelte-add/mdsvex
