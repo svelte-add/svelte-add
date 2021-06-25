@@ -121,6 +121,7 @@ const npxDetectors = {
  * @property {boolean} kit
  * @property {Record<NPX, boolean>} npx
  * @property {Record<PackageManager, boolean>} packageManagers
+ * @property {"commonjs" | "module" | undefined} packageType
  * @property {typeof process.platform} platform
  *
  * @param {object} param0
@@ -162,6 +163,7 @@ export const getEnvironment = async ({ cwd }) => {
 			kit: false,
 			npx,
 			packageManagers,
+			packageType: undefined,
 			platform,
 		};
 	}
@@ -171,6 +173,8 @@ export const getEnvironment = async ({ cwd }) => {
 	});
 
 	const pkg = JSON.parse(packageJson.text || "{}");
+
+	const packageType = pkg.type;
 
 	/** @type {import("./package-versions").Dependencies} */
 	const dependencies = pkg.dependencies ?? {};
@@ -204,6 +208,7 @@ export const getEnvironment = async ({ cwd }) => {
 		kit,
 		npx,
 		packageManagers,
+		packageType,
 		platform,
 	};
 };
