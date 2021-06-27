@@ -21,6 +21,7 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
+- [**SCSS**](https://github.com/svelte-add/scss)
 - [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
 
 ## 📨 External integration adders
