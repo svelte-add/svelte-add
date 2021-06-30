@@ -1,3 +1,5 @@
+export const name = "Hosting on Firebase";
+
 /** @typedef {{ project: string }} Options */
 
 /** @type {import("../..").AdderOptions<Options>} */

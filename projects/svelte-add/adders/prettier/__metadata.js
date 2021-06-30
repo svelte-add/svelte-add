@@ -1,4 +1,4 @@
-export const name = "GraphQL server (powered by graphql-helix)";
+export const name = "Prettier";
 
 /** @typedef {{}} Options */
 

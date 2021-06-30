@@ -7,33 +7,38 @@ import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } fro
 
 /**
  * @typedef {"javascript" | "typescript" | "coffeescript"} Script
- * @typedef {"css" | "postcss" | "scss"} StyleLanguage
- * @typedef {"bulma" | "tailwindcss"} StyleFramework
+ * @typedef {"css" | "postcss" | "sass" | "scss"} StyleLanguage
+ * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
  * @typedef {"graphql-server" | "imagetools" | "mdsvex"} Other
  * @typedef {"eslint" | "jest" | "prettier"} Quality
- * @typedef {"deploy-manual" | "firebase-hosting"} Deploy
- * @typedef {"demos-yes" | "demos-no"} Demos
+ * @typedef {"firebase-hosting"} Deploy
+ * @typedef {Deploy | "deploy-manual"} DeployMenuItem
+ * @typedef {"demos-yes" | "demos-no"} DemosMenuItem
  */
 
 /**
  * @typedef {Object} Choices
+ * @property {string[]} presets
  * @property {Script} script
  * @property {StyleLanguage} styleLanguage
  * @property {StyleFramework | undefined} styleFramework
  * @property {Other[]} other
  * @property {Quality[]} quality
  * @property {Deploy | undefined} deploy
- * @property {Demos} demos
+ * @property {boolean} demos
+ * @property {Record<string, Record<string, any>>} adderOptions
+ * @property {string} npx
+ * @property {string} packageManager
  */
 
 /**
  * @type {{
- * 		script: [Script, never[]][]
+ * 		script: [Script, []][]
  * 		style: [StyleLanguage, StyleFramework[]][]
- * 		other: [Other, never[]][]
- * 		quality: [Quality, never[]][]
- * 		deploy: [Deploy, never[]][]
- * 		demos: [Demos, never[]][]
+ * 		other: [Other, []][]
+ * 		quality: [Quality, []][]
+ * 		deploy: [DeployMenuItem, []][]
+ * 		demos: [DemosMenuItem, []][]
  * }}
  */
 const menu = {
@@ -45,7 +50,8 @@ const menu = {
 	style: [
 		["css", []],
 		["postcss", ["tailwindcss"]],
-		["scss", ["bulma"]],
+		["sass", []],
+		["scss", ["bootstrap", "bulma"]],
 	],
 	other: [
 		["graphql-server", []],
@@ -57,51 +63,176 @@ const menu = {
 		["jest", []],
 		["prettier", []],
 	],
-	deploy: [["firebase-hosting", []]],
+	deploy: [
+		["firebase-hosting", []],
+		["deploy-manual", []],
+	],
 	demos: [
 		["demos-yes", []],
 		["demos-no", []],
 	],
 };
 
-/** @type {Record<string, string[]>} */
-export const adderDependencies = {};
-for (const items of Object.values(menu)) {
-	for (const [parent, children] of items) {
-		adderDependencies[parent] = [];
+const scriptsAvailable = menu.script.map(([script]) => script);
+const styleLanguagesAvailable = menu.style.map(([styleLanguage]) => styleLanguage);
 
-		for (const child of children) {
-			if (!(child in adderDependencies)) adderDependencies[child] = [];
+/** @type {Record<StyleFramework, StyleLanguage>} */
+// prettier-ignore
+const styleFrameworksToLanguage = (Object.fromEntries(menu.style.flatMap(([styleLanguage, styleFrameworks]) => styleFrameworks.map((styleFramework) => [styleFramework, styleLanguage]))));
 
-			adderDependencies[child].push(parent);
-		}
-	}
-}
+const othersAvailable = menu.other.map(([other]) => other);
+const qualitiesAvailable = menu.quality.map(([quality]) => quality);
+const deploysAvailable = menu.deploy.map(([deploy]) => deploy);
 
 /**
  * Sorts out the given adders into categories (or prompts for them if needed)
  * @param {object} param0
- * @param {string[]} param0.adders
+ * @param {string[]} param0.addersAndPresets
+ * @param {Environment} param0.environment
+ * @param {Record<string, any>} param0.parsedArgs
  * @returns {Promise<Choices>}
  */
-// TODO
-// eslint-disable-next-line no-unused-vars
-export const getChoices = async ({ adders }) => {
+export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) => {
+	/** @type {Script} */
+	let script;
+
+	const scriptsPassed = scriptsAvailable.filter((script) => addersAndPresets.includes(script));
+
+	if (scriptsPassed.length === 0) script = "javascript";
+	else if (scriptsPassed.length === 1) script = scriptsPassed[0];
+	else throw new Error(`too many script languages specified: ${inspect(scriptsPassed)}`);
+
+	/** @type {StyleFramework | undefined} */
+	let styleFramework;
+
+	/** @type {StyleFramework[]} */
+	// prettier-ignore
+	const styleFrameworksPassed = (Object.keys(styleFrameworksToLanguage).filter((styleFramework) => addersAndPresets.includes(styleFramework)));
+	if (styleFrameworksPassed.length === 0) styleFramework = undefined;
+	else if (styleFrameworksPassed.length === 1) styleFramework = styleFrameworksPassed[0];
+	else throw new Error(`too many style frameworks specified: ${inspect(styleFrameworksPassed)}`);
+
+	/** @type {StyleLanguage} */
+	let styleLanguage;
+
+	const styleLanguagesPassed = styleLanguagesAvailable.filter((styleLanguage) => addersAndPresets.includes(styleLanguage));
+	if (styleLanguagesPassed.length === 0) {
+		if (styleFramework) styleLanguage = styleFrameworksToLanguage[styleFramework];
+		else styleLanguage = "css";
+	} else if (styleLanguagesPassed.length === 1) {
+		if (styleFramework) {
+			styleLanguage = styleFrameworksToLanguage[styleFramework];
+			if (styleLanguagesPassed[0] !== styleLanguage) throw new Error(`wrong style language passed (expected ${styleLanguage} because ${styleFramework} was selected as a framework) but was given ${styleFrameworksPassed[0]}`);
+		} else styleLanguage = styleLanguagesPassed[0];
+	} else throw new Error(`too many style languages specified: ${inspect(styleLanguagesPassed)}`);
+
+	let packageManager = "npm";
+	if (environment.packageManagers.yarn) packageManager = "yarn";
+	else if (environment.packageManagers.pnpm) packageManager = "pnpm";
+
+	let npx = "npx";
+	if (environment.npx.pnpx) npx = "pnpx";
+	if (environment.platform === "win32") {
+		npx += ".cmd";
+		packageManager += ".cmd";
+	}
+
+	const other = othersAvailable.filter((other) => addersAndPresets.includes(other));
+	const quality = qualitiesAvailable.filter((other) => addersAndPresets.includes(other));
+
+	/** @type {Deploy | undefined} */
+	let deploy;
+
+	const deploysPassed = deploysAvailable.filter((deploy) => addersAndPresets.includes(deploy));
+
+	if (deploysPassed.length === 0) deploy = undefined;
+	else if (deploysPassed.length === 1) {
+		if (deploysPassed[0] === "deploy-manual") deploy = undefined;
+		else deploy = deploysPassed[0];
+	} else throw new Error(`too many deployment targets specified: ${inspect(deploysPassed)}`);
+
+	// TODO: add option / flag for this
+	const demos = false;
+
+	// Options parsing
+
+	const parsedArgsCopy = { ...parsedArgs };
+
+	// Shorthand so that npx svelte-add tailwindcss --jit
+	// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-jit
+	// (since that's just redundant)
+	if (addersAndPresets.length === 1) {
+		const adderPrefix = `${addersAndPresets[0]}-`;
+		for (const [arg, value] of Object.entries(parsedArgsCopy)) {
+			if (arg.startsWith(adderPrefix)) continue;
+			parsedArgsCopy[`${adderPrefix}${arg}`] = value;
+			delete parsedArgsCopy[arg];
+		}
+	}
+
+
+	/** @type {Record<string, Record<string, any>>} */
+	const adderOptions = {};
+	for (const adder of addersAndPresets) {
+		/** @type {AdderOptions<any>} */
+		let options;
+		try {
+			({ options } = await getAdderMetadata({ adder }));
+		} catch (e) {
+			if (e.code === "ERR_MODULE_NOT_FOUND") continue;
+			else throw e;
+		}
+		const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
+
+		adderOptions[adder] = { ...defaults };
+
+		const adderPrefix = `${adder}-`;
+		for (const [arg, value] of Object.entries(parsedArgsCopy)) {
+			if (!arg.startsWith(adderPrefix)) {
+				if (arg in defaults) throw new Error(`TODO: why is this an error?`);
+				continue;
+			}
+
+			const option = arg.slice(adderPrefix.length);
+
+			if (!(option in defaults)) throw new Error(`${inspect(option)} is not a valid option for the ${adder} adder: ${Object.keys(defaults).length === 0 ? "it doesn't accept any options." : `it accepts ${inspect(Object.keys(defaults))} as options.`}`);
+
+			if (typeof defaults[option] === "boolean") {
+				if (value === "true" || value === true) adderOptions[adder][option] = true;
+				else if (value === "false" || value === false) adderOptions[adder][option] = false;
+				else throw new Error(`${inspect(value)} is not a valid value for the ${adder} adder's ${inspect(option)} option because it needs to be a boolean (true or false)`);
+			} else if (typeof defaults[option] === "string") {
+				adderOptions[adder][option] = value;
+			} else {
+				throw new Error(`svelte-add currently doesn't support non-boolean and non-string arguments: the ${adder} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at "https://github.com/svelte-add/svelte-add/issues" with the full command output.`);
+			}
+
+			delete parsedArgsCopy[`${adderPrefix}${option}`];
+		}
+	}
+
+	const remainingArgs = Object.keys(parsedArgsCopy);
+	if (remainingArgs.length !== 0) throw new Error(`${inspect(parsedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(addersAndPresets)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
+
 	return {
-		script: "javascript",
-		styleLanguage: "css",
-		styleFramework: undefined,
-		other: [],
-		quality: [],
-		deploy: undefined,
-		demos: "demos-yes",
+		presets: addersAndPresets.filter((adderOrPreset) => adderOrPreset.includes("/")),
+		script,
+		styleLanguage,
+		styleFramework,
+		other,
+		quality,
+		deploy,
+		demos,
+		adderOptions,
+		packageManager,
+		npx,
 	};
 };
 
 const packageManagerDetectors = {
 	npm: "npm --version",
 	pnpm: "pnpm --version",
-	yarn: "yarn --version", // TODO: is that right??
+	yarn: "yarn --version",
 };
 
 const npxDetectors = {
@@ -153,7 +284,12 @@ export const getEnvironment = async ({ cwd }) => {
 
 	const [npx, packageManagers] = await Promise.all([getAvailable(npxDetectors), getAvailable(packageManagerDetectors)]);
 
-	const files = await readdir(cwd);
+	let files = [];
+	try {
+		files = await readdir(cwd);
+	} catch (e) {
+		if (e.code !== "ENOENT") throw e;
+	}
 
 	if (files.length === 0) {
 		return {
@@ -360,12 +496,10 @@ export const applyPreset = ({ args, cwd, npx, preset }) =>
 /**
  * @param {object} param0
  * @param {string} param0.adder
- * @returns {Promise<AdderOptions<any>>}
+ * @returns {Promise<{ name: string, options: AdderOptions<any> }>}
  */
-export const getAdderOptions = async ({ adder }) => {
-	const { options } = await import(`./adders/${adder}/__metadata.js`);
-
-	return options;
+export const getAdderMetadata = async ({ adder }) => {
+	return await import(`./adders/${adder}/__metadata.js`);
 };
 
 /**
