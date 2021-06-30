@@ -170,7 +170,6 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 		}
 	}
 
-
 	/** @type {Record<string, Record<string, any>>} */
 	const adderOptions = {};
 	for (const adder of addersAndPresets) {

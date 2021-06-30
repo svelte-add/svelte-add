@@ -90,12 +90,11 @@ const main = async () => {
 		} else if (Object.values(preRunCheck).some(Boolean)) {
 			addersToRepair.add(adder);
 		}
-
 	}
 
 	for (const adder of adders) {
 		if (addersToSkip.has(adder)) continue;
-		
+
 		try {
 			await runAdder({
 				adder,
