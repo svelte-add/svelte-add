@@ -8,8 +8,8 @@ import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
 const initializers = { svelteKit, vite };
-// Replace this with the specific adder(s) to test, e.x. ["tailwindcss"]
-const addersToTest = Object.keys(adderDependencies);
+// Replace this with the specific adder(s) to test
+const addersToTest = ["tailwindcss"];
 
 for (const [app, init] of Object.entries(initializers)) {
 	for (const adderToTest of addersToTest) {
