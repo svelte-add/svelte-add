@@ -3,7 +3,7 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { adderDependencies, detectAdder, getEnvironment, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, runAdder } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
@@ -13,19 +13,6 @@ const addersToTest = Object.keys(adderDependencies);
 
 for (const [app, init] of Object.entries(initializers)) {
 	for (const adderToTest of addersToTest) {
-		/** @type {string[]} */
-		const addersToCheck = [];
-		const dependencies = adderDependencies[adderToTest];
-
-		for (const dependency of dependencies) {
-			// Move dependencies to the front such that
-			// tailwindcss+postcss is rewritten as postcss+tailwindcss
-			if (addersToCheck.includes(dependency)) addersToCheck.splice(addersToCheck.indexOf(dependency), 1);
-
-			addersToCheck.unshift(dependency);
-		}
-		if (!addersToCheck.includes(adderToTest)) addersToCheck.push(adderToTest);
-
 		test(`${adderToTest} being used on ${app} (without demos)`, async () => {
 			const output = `_outputs/${app}_${adderToTest}`;
 			await rm(output, {
@@ -33,16 +20,28 @@ for (const [app, init] of Object.entries(initializers)) {
 				force: true,
 			});
 
+			let environment = await getEnvironment({ cwd: output });
+
+			const choices = await getChoices({ addersAndPresets: [adderToTest], environment, parsedArgs: {} });
+
+			/** @type {string[]} */
+			const addersToCheck = [];
+			if (choices.script !== "javascript") addersToCheck.push(choices.script);
+			if (choices.styleLanguage !== "css") addersToCheck.push(choices.styleLanguage);
+			if (choices.styleFramework) addersToCheck.push(choices.styleFramework);
+			addersToCheck.push(...choices.other);
+			addersToCheck.push(...choices.quality);
+
 			await init({
-				demo: false,
+				demo: choices.demos,
 				dir: output,
-				eslint: false,
-				packageManager: "pnpm",
-				prettier: false,
-				typescript: false,
+				eslint: choices.quality.includes("eslint"),
+				packageManager: choices.packageManager,
+				prettier: choices.quality.includes("prettier"),
+				typescript: choices.script === "typescript",
 			});
 
-			let environment = await getEnvironment({ cwd: output });
+			environment = await getEnvironment({ cwd: output });
 
 			/** @type {string[]} */
 			const addersToRun = [];
@@ -54,7 +53,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					environment,
 				});
 				assert.ok(
-					Object.values(preRunCheck).every((pass) => !pass),
+					Object.values(preRunCheck).some((pass) => !pass),
 					`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
 				);
 				addersToRun.push(adderToCheck);
@@ -65,8 +64,8 @@ for (const [app, init] of Object.entries(initializers)) {
 					adder: adderToRun,
 					cwd: output,
 					environment,
-					npx: "pnpx",
-					options: {},
+					npx: choices.npx,
+					options: choices.adderOptions[adderToRun],
 				});
 				environment = await getEnvironment({ cwd: output });
 			}
