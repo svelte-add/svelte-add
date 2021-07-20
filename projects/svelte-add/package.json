@@ -38,7 +38,7 @@
 		"svelte-add": "cli.cjs"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^4.28.1",
+		"@typescript-eslint/typescript-estree": "^4.28.4",
 		"enquirer": "^2.3.6",
 		"estree-walker": "^3.0.0",
 		"kleur": "^4.1.4",
@@ -47,10 +47,10 @@
 		"posthtml-parser": "^0.9.0",
 		"posthtml-render": "^2.0.6",
 		"recast": "^0.20.4",
-		"typescript": "^4.3.4"
+		"typescript": "^4.3.5"
 	},
 	"devDependencies": {
-		"@types/estree": "^0.0.48",
-		"@types/mri": "^1.1.0"
+		"@types/estree": "^0.0.50",
+		"@types/mri": "^1.1.1"
 	}
 }

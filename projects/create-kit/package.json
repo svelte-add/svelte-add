@@ -28,6 +28,8 @@
 		"create-kit": "cli.cjs"
 	},
 	"dependencies": {
+		"kleur": "^4.1.4",
+		"mri": "^1.1.6",
 		"svelte-add": "workspace:*"
 	}
 }
