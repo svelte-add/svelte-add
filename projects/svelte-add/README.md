@@ -3,17 +3,15 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 
-  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/vite --with typescript+tailwindcss` (**NOTE: This is not implemented yet.**)
+  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit --with typescript+tailwindcss`
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
-  `svelte-add`'s "tutorials" are one step: `npx svelte-add graphql-server`
+  `svelte-add`'s "tutorials" are one step: `npx svelte-add@latest graphql-server`
 
 - You have to rely on the maintainer keeping the template updated as the tools it uses change and the official Svelte app template it was built on changes.
 
   `svelte-add`'s app initializers are always built on top of the latest version of the official Svelte app templates. Of course it still needs to be maintained as tools change (like Tailwind JIT or the future rewrite of mdsvex), but because it is in a central location and contributed to by many people, problems are found quickly, and fixes are for everyone—not just one specific template.
-
-By the way, you currently need to be on [the latest version of Node 14 or 16](https://github.com/svelte-add/svelte-add/issues/41) to use `svelte-add`.
 
 ## 🪄 Built-in integration adders
 
@@ -45,13 +43,17 @@ npm init @svelte-add/kit
 # Follow the prompts to select the integrations you want
 ```
 
-At the time of writing, this is not implemented, so see the "Adding one integration at a time" section for the existing, mostly working, way to add integrations.
-
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-# NOTE: This is not implemented yet.
-npm init @svelte-add/kit --with typescript+tailwindcss+prettier --tailwindcss-jit
+npm init --yes @svelte-add/kit --with tailwindcss --tailwindcss-jit
+```
+
+Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
+
+```sh
+npm init --yes @svelte-add/kit my-new-app --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+# NOTE: The Hosting on Firebase adder doesn't support this yet.
 ```
 
 ## ⚡️ Creating a Vite-powered Svelte app with integrations
@@ -70,7 +72,7 @@ If you have a favorite setup, you can recreate it without having to provide any 
 
 ```sh
 # NOTE: This is not implemented yet.
-npm init @svelte-add/vite --with bulma+mdsvex
+npm init --yes @svelte-add/vite --with bulma+mdsvex
 ```
 
 ## 🧩 Adding one integration at a time
@@ -82,42 +84,18 @@ Ideally, you can `svelte-add` an integration any time after app initialization:
 npm init svelte@next
 
 # Then realized you want to write your styles in PostCSS
-npx svelte-add postcss
+npx svelte-add@latest postcss
 ```
 
 but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite—once they have been implemented) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
 
-Reminder: you currently need to be on [the latest version of Node 14 or 16](https://github.com/svelte-add/svelte-add/issues/41) to use `svelte-add`.
-
 Adders should all be _composable_, meaning that it should always be possible to run one after another without something breaking:
 
 ```sh
-npx svelte-add Leftium/coffeescript-adder
-npx svelte-add mdsvex
+npx svelte-add@latest Leftium/coffeescript-adder
+npx svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
-
-Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, these commands can be run to recreate all the functionality:
-
-```sh
-# Use the official SvelteKit app template
-npm init svelte@next
-# Select the skeleton template or demo app depending on your knowledge of SvelteKit
-# Select TypeScript
-# Say yes to ESLint and Prettier
-
-npx svelte-add tailwindcss --jit
-
-npx svelte-add graphql-server
-
-
-# Suppose you did some more work on your app then realized you need a place to deploy it
-npx svelte-add firebase-hosting
-```
-
-So, to exclude a feature you weren't using that was still included in the boilerplate anyway, _don't_ run its corresponding command. Suppose you only wanted PostCSS and to host on Firebase, then drop the `graphql-server` addition and replace `tailwindcss --jit` with `postcss`.
-
-Again, it is best to use the app initializer described in "Creating a SvelteKit app with integrations" for this, but it has not been programmed yet, so this is the nearest equivalent.
 
 ## 🧓 Support for Elder.js
 
