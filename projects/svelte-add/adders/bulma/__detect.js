@@ -1,6 +1,4 @@
-/**
- * @type {import("../..").Heuristic[]}
- */
+/** @type {import("../..").Heuristic[]} */
 export const heuristics = [
 	{
 		description: "`bulma` is installed",
