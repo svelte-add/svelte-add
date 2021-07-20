@@ -1,6 +1,6 @@
 import { exec, spawn } from "child_process";
 import { readdir, readFile as fsReadFile } from "fs/promises";
-import { join, resolve } from "path";
+import { join } from "path";
 import { inspect, promisify } from "util";
 import { packageVersions } from "./package-versions.js";
 import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } from "./update.js";
@@ -29,6 +29,7 @@ import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } fro
  * @property {Record<string, Record<string, any>>} adderOptions
  * @property {string} npx
  * @property {string} packageManager
+ * @property {boolean} install
  */
 
 /**
@@ -213,6 +214,9 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 	const remainingArgs = Object.keys(parsedArgsCopy);
 	if (remainingArgs.length !== 0) throw new Error(`${inspect(parsedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(addersAndPresets)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
 
+	// TODO: add option for this
+	const install = true;
+
 	return {
 		presets: addersAndPresets.filter((adderOrPreset) => adderOrPreset.includes("/")),
 		script,
@@ -225,6 +229,7 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 		adderOptions,
 		packageManager,
 		npx,
+		install,
 	};
 };
 
@@ -305,7 +310,7 @@ export const getEnvironment = async ({ cwd }) => {
 	}
 
 	const packageJson = await readFile({
-		path: resolve(cwd, "package.json"),
+		path: join(cwd, "/package.json"),
 	});
 
 	const pkg = JSON.parse(packageJson.text || "{}");
