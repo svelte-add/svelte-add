@@ -32,6 +32,7 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 - [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
+- [**Jest**](https://github.com/rossyman/svelte-add-jest)
 
 ## 🧰 Creating a SvelteKit app with integrations
 
