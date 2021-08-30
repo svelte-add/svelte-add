@@ -1,6 +1,55 @@
 import { walk } from "estree-walker";
 
 /**
+ * @param {object} param0
+ * @param {import("estree").ObjectExpression} param0.object
+ * @param {string} param0.property
+ * @returns {import("estree").Property | undefined}
+ */
+export const getProperty = ({ object, property: propertyName }) => {
+	/** @type {import("estree").Property | undefined} */
+	let matchingProperty;
+	for (const property of object.properties) {
+		if (property.type !== "Property") continue;
+		if (property.key.type !== "Identifier") continue;
+		if (property.key.name !== propertyName) continue;
+
+		matchingProperty = property;
+	}
+
+	return matchingProperty;
+};
+
+/**
+ * @param {object} param0
+ * @param {import("estree").ObjectExpression} param0.object
+ * @param {string} param0.property
+ * @param {import("estree").Expression} param0.value
+ * @returns {void}
+ */
+export const setPropertyValue = ({ object, property, value }) => {
+	let matchingProperty = getProperty({ object, property });
+	if (matchingProperty) {
+		matchingProperty.value = value;
+	} else {
+		matchingProperty = {
+			type: "Property",
+			computed: false,
+			key: {
+				type: "Identifier",
+				name: "plugins",
+			},
+			kind: "init",
+			method: false,
+			shorthand: false,
+			value,
+		};
+
+		object.properties.push(matchingProperty);
+	}
+};
+
+/*
  *
  * @param {object} param0
  * @param {boolean} param0.cjs
@@ -145,7 +194,6 @@ export const getConfigObject = ({ cjs, typeScriptEstree }) => {
 };
 
 /**
- *
  * @param {object} param0
  * @param {boolean} param0.cjs
  * @param {string} param0.package
@@ -167,7 +215,7 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 
 				/** @type {import("estree").VariableDeclarator} */
 				// prettier-ignore
-				const declarator = (node)
+				const declarator = (node);
 
 				if (declarator.id.type !== "Identifier") return;
 				const identifier = declarator.id;
@@ -322,7 +370,6 @@ export const addImport = ({ cjs, default: default_, named, package: pkg, require
 };
 
 /**
- *
  * @param {object} param0
  * @param {import("estree").ObjectExpression} param0.configObject
  * @returns {import("estree").ArrayExpression}
