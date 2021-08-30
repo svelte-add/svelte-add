@@ -49,8 +49,26 @@ export const setPropertyValue = ({ object, property, value }) => {
 	}
 };
 
-/*
- *
+/**
+ * @template {import("estree").Expression} Default
+ * @param {object} param0
+ * @param {Default} param0.default
+ * @param {import("estree").ObjectExpression} param0.object
+ * @param {string} param0.property
+ * @returns {import("estree").Expression}
+ */
+export const setDefault = ({ default: defaultValue, object, property }) => {
+	const matchingProperty = getProperty({ object, property });
+
+	if (matchingProperty && matchingProperty.value.type !== "ArrayPattern" && matchingProperty.value.type !== "AssignmentPattern" && matchingProperty.value.type !== "ObjectPattern" && matchingProperty.value.type !== "RestElement") {
+		return matchingProperty.value;
+	} else {
+		setPropertyValue({ object, property, value: defaultValue });
+	}
+	return defaultValue;
+};
+
+/**
  * @param {object} param0
  * @param {boolean} param0.cjs
  * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
