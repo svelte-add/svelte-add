@@ -133,7 +133,7 @@ export const getChoices = async ({ addersAndPresets, environment, install, parse
 	let packageManager = "npm";
 	if (environment.packageManagers.pnpm) packageManager = "pnpm";
 	else if (environment.packageManagers.yarn) packageManager = "yarn";
-	
+
 	/** @type {NPX} */
 	let npx = "npx";
 	if (environment.npxs.pnpx) npx = "pnpx";
@@ -333,12 +333,12 @@ const getAvailable = async ({ platform, tools }) =>
 				// prettier-ignore
 				const toolTypeSafe = (tool);
 				const command = getToolCommand({ platform, tool: toolTypeSafe, tools });
-				
+
 				/** @type {any} */
 				const toolData = tools[toolTypeSafe];
 				/** @type {string} */
 				const detect = toolData.detect;
-				
+
 				try {
 					await promisify(exec)(`${command} ${detect}`);
 				} catch {
@@ -371,7 +371,7 @@ export const getEnvironment = async ({ cwd }) => {
 	const platform = process.platform;
 
 	const [npxsAvailable, packageManagersAvailable] = await Promise.all([getAvailable({ platform, tools: npxs }), getAvailable({ platform, tools: packageManagers })]);
-	
+
 	let files = [];
 	try {
 		files = await readdir(cwd);

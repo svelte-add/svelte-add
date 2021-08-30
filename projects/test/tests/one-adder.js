@@ -32,7 +32,7 @@ for (const [app, init] of Object.entries(initializers)) {
 			if (choices.styleFramework) addersToCheck.push(choices.styleFramework);
 			addersToCheck.push(...choices.other);
 			addersToCheck.push(...choices.quality);
-			
+
 			await init({
 				demo: choices.demos,
 				dir: output,
