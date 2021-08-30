@@ -3,7 +3,7 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { detectAdder, getChoices, getEnvironment, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, getToolCommand, packageManagers, runAdder } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
@@ -22,7 +22,8 @@ for (const [app, init] of Object.entries(initializers)) {
 
 			let environment = await getEnvironment({ cwd: output });
 
-			const choices = await getChoices({ addersAndPresets: [adderToTest], environment, parsedArgs: {} });
+			const choices = await getChoices({ addersAndPresets: [adderToTest], environment, install: false, parsedArgs: {} });
+			const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
 
 			/** @type {string[]} */
 			const addersToCheck = [];
@@ -31,13 +32,14 @@ for (const [app, init] of Object.entries(initializers)) {
 			if (choices.styleFramework) addersToCheck.push(choices.styleFramework);
 			addersToCheck.push(...choices.other);
 			addersToCheck.push(...choices.quality);
-
+			
 			await init({
 				demo: choices.demos,
 				dir: output,
 				eslint: choices.quality.includes("eslint"),
-				packageManager: choices.packageManager,
+				packageManagerCommand,
 				prettier: choices.quality.includes("prettier"),
+				runningTests: true,
 				typescript: choices.script === "typescript",
 			});
 

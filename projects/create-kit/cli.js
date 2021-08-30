@@ -1,12 +1,11 @@
 import colors from "kleur";
 import mri from "mri";
 import { resolve } from "path";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, runAdder } from "svelte-add";
+import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getToolCommand, installDependencies, packageManagers, runAdder } from "svelte-add";
 import { fresh } from "./__init.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
-import { spawn } from "child_process";
 import { inspect } from "util";
 const require = createRequire(import.meta.url);
 const pkg = require("./package.json");
@@ -27,7 +26,7 @@ const main = async () => {
 	console.log(`${colors.bold("➕ Svelte Add's SvelteKit app initializer")} (Version ${version})`);
 
 	const args = process.argv.slice(2);
-	const { _: output, with: addersJoined, ...parsedArgs } = mri(args);
+	const { _: output, install = true, with: addersJoined, ...parsedArgs } = mri(args);
 	const addersAndPresets = addersJoined.split("+");
 
 	if (output.length > 1) exit(`${colors.red("TODO: explain this error.")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
@@ -41,21 +40,23 @@ const main = async () => {
 	const choices = await getChoices({
 		addersAndPresets,
 		environment,
+		install,
 		parsedArgs,
 	});
+
+	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
 
 	await fresh({
 		demo: choices.demos,
 		dir: cwd,
 		eslint: choices.quality.includes("eslint"),
-		packageManager: choices.packageManager,
+		packageManagerCommand,
 		prettier: choices.quality.includes("prettier"),
+		runningTests: false,
 		typescript: choices.script === "typescript",
 	});
 
-	/** @type {string[]} */
 	const features = [choices.script, choices.styleLanguage, ...(choices.styleFramework ? [choices.styleFramework] : []), ...choices.other, ...choices.quality, ...(choices.deploy ? [choices.deploy] : [])];
-
 	const adders = features.filter((feature) => !["css", "eslint", "javascript", "prettier", "typescript"].includes(feature));
 
 	/** @type {string[]} */
@@ -123,40 +124,17 @@ const main = async () => {
 
 	workingFeatures.push(...choices.presets);
 
-	if (choices.install)
-		await new Promise((resolve, reject) => {
-			const subprocess = spawn(choices.packageManager, ["install"], {
-				cwd,
-				stdio: "pipe",
-				timeout: 90000,
-			});
-
-			let body = "";
-
-			subprocess.stderr.on("data", (chunk) => {
-				body += chunk;
-			});
-
-			subprocess.stderr.on("end", () => {
-				if (body === "") {
-					resolve(undefined);
-					return;
-				}
-
-				reject(new Error(body));
-			});
-		});
+	if (choices.install) await installDependencies({ cwd, packageManagerCommand });
 
 	console.log(colors.green(`🪄 Your ${workingFeatures.join(" + ")} SvelteKit app is ready!`));
 
-	if (choices.install) {
-		console.log(`  1. cd ${output}`);
-		console.log(`  2. ${choices.packageManager} run dev -- --open  # start developing with a browser open`);
-	} else {
-		console.log(`  1. cd ${output}`);
-		console.log(`  2. ${choices.packageManager} install`);
-		console.log(`  3. ${choices.packageManager} run dev -- --open  # start developing with a browser open`);
-	}
+	/** @type {string[]} */
+	const steps = [];
+	if (output.length !== 0) steps.push(`cd ${output}`);
+	if (!choices.install) steps.push(`${choices.packageManager} install`);
+	steps.push(`${choices.packageManager} run dev -- --open  # start developing with a browser open`);
+
+	for (const [index, step] of steps.entries()) console.log(`  ${index + 1}. ${step}`);
 };
 
 main();

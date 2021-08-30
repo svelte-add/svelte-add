@@ -19,16 +19,18 @@ const isValidPackageName = (projectName) => /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[
  * @param {boolean} param0.demo
  * @param {string} param0.dir
  * @param {boolean} param0.eslint
- * @param {string} param0.packageManager
+ * @param {string} param0.packageManagerCommand
  * @param {boolean} param0.prettier
+ * @param {boolean} param0.runningTests
  * @param {boolean} param0.typescript
  */
-export const fresh = async ({ dir, packageManager, typescript }) => {
-	await mkdir(dir, {
-		recursive: true,
-	});
+export const fresh = async ({ dir, packageManagerCommand, runningTests, typescript }) => {
+	await mkdir(dir, { recursive: true });
 
-	const subprocess = spawn(packageManager, ["init", "@vitejs/app", dir, "--", "--template", typescript ? "svelte-ts" : "svelte"], {
+	const command = runningTests ? "pnpx" : packageManagerCommand;
+	const leadingArgs = runningTests ? ["--yes", "--package", "create-vite", "create-vite"] : ["init", "vite", "--"];
+
+	const subprocess = spawn(command, [...leadingArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"], {
 		stdio: "pipe",
 		timeout: 8000,
 	});

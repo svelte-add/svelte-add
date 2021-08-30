@@ -27,8 +27,8 @@ import { updateCss, updateFile, updateJavaScript, updateJson, updateSvelte } fro
  * @property {Deploy | undefined} deploy
  * @property {boolean} demos
  * @property {Record<string, Record<string, any>>} adderOptions
- * @property {string} npx
- * @property {string} packageManager
+ * @property {NPX} npx
+ * @property {PackageManager} packageManager
  * @property {boolean} install
  */
 
@@ -90,10 +90,11 @@ const deploysAvailable = menu.deploy.map(([deploy]) => deploy);
  * @param {object} param0
  * @param {string[]} param0.addersAndPresets
  * @param {Environment} param0.environment
+ * @param {boolean} param0.install
  * @param {Record<string, any>} param0.parsedArgs
  * @returns {Promise<Choices>}
  */
-export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) => {
+export const getChoices = async ({ addersAndPresets, environment, install, parsedArgs }) => {
 	/** @type {Script} */
 	let script;
 
@@ -127,16 +128,15 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 		} else styleLanguage = styleLanguagesPassed[0];
 	} else throw new Error(`too many style languages specified: ${inspect(styleLanguagesPassed)}`);
 
+	// TODO: add option for this
+	/** @type {PackageManager} */
 	let packageManager = "npm";
-	if (environment.packageManagers.yarn) packageManager = "yarn";
-	else if (environment.packageManagers.pnpm) packageManager = "pnpm";
-
+	if (environment.packageManagers.pnpm) packageManager = "pnpm";
+	else if (environment.packageManagers.yarn) packageManager = "yarn";
+	
+	/** @type {NPX} */
 	let npx = "npx";
-	if (environment.npx.pnpx) npx = "pnpx";
-	if (environment.platform === "win32") {
-		npx += ".cmd";
-		packageManager += ".cmd";
-	}
+	if (environment.npxs.pnpx) npx = "pnpx";
 
 	const other = othersAvailable.filter((other) => addersAndPresets.includes(other));
 	const quality = qualitiesAvailable.filter((other) => addersAndPresets.includes(other));
@@ -204,7 +204,7 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 			} else if (typeof defaults[option] === "string") {
 				adderOptions[adder][option] = value;
 			} else {
-				throw new Error(`svelte-add currently doesn't support non-boolean and non-string arguments: the ${adder} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at "https://github.com/svelte-add/svelte-add/issues" with the full command output.`);
+				throw new Error(`svelte-add currently doesn't support non-boolean-non-string arguments: the ${adder} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at "https://github.com/svelte-add/svelte-add/issues" with the full command output.`);
 			}
 
 			delete parsedArgsCopy[`${adderPrefix}${option}`];
@@ -213,9 +213,6 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 
 	const remainingArgs = Object.keys(parsedArgsCopy);
 	if (remainingArgs.length !== 0) throw new Error(`${inspect(parsedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(addersAndPresets)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
-
-	// TODO: add option for this
-	const install = true;
 
 	return {
 		presets: addersAndPresets.filter((adderOrPreset) => adderOrPreset.includes("/")),
@@ -233,20 +230,126 @@ export const getChoices = async ({ addersAndPresets, environment, parsedArgs }) 
 	};
 };
 
-const packageManagerDetectors = {
-	npm: "npm --version",
-	pnpm: "pnpm --version",
-	yarn: "yarn --version",
+export const packageManagers = {
+	npm: {
+		command: {
+			win32: "npm.cmd",
+		},
+		detect: "--version",
+		install: "install",
+	},
+	pnpm: {
+		command: {
+			win32: "pnpm.cmd",
+		},
+		detect: "--version",
+		install: "install",
+	},
+	yarn: {
+		command: {
+			win32: "yarn.cmd",
+		},
+		detect: "--version",
+		install: "install",
+	},
 };
 
-const npxDetectors = {
-	npx: "npx --version",
-	pnpx: "pnpx --version",
+const npxs = {
+	npx: {
+		command: {
+			win32: "npx.cmd",
+		},
+		detect: "--version",
+	},
+	pnpx: {
+		command: {
+			win32: "pnpx.cmd",
+		},
+		detect: "--version",
+	},
 };
 
 /**
- * @typedef {keyof typeof packageManagerDetectors} PackageManager
- * @typedef {keyof typeof npxDetectors} NPX
+ * @param {object} param0
+ * @param {NPX} param0.npx
+ * @param {NodeJS.Platform} param0.platform
+ * @returns {string}
+ */
+export const getNpxCommand = ({ npx, platform }) => {
+	/** @type {string} */
+	let packageManagerCommand = npx;
+	if (platform in npxs[npx].command) {
+		/** @type {keyof typeof npxs[npx]["command"]} */
+		// prettier-ignore
+		const platformTypeSafe = (platform);
+		packageManagerCommand = npxs[npx].command[platformTypeSafe];
+	}
+	return packageManagerCommand;
+};
+
+/**
+ * @typedef {typeof packageManagers} PackageManagers
+ * @typedef {keyof PackageManagers} PackageManager
+ 
+ * @typedef {typeof npxs} NPXs
+ * @typedef {keyof NPXs} NPX
+ * 
+ * @typedef {NPXs | PackageManagers} Tools
+ * @typedef {NPX | PackageManager} Tool
+ */
+
+/**
+ * @template {NPXs | PackageManagers} ToolsType
+ * @param {object} param0
+ * @param {keyof ToolsType} param0.tool
+ * @param {ToolsType} param0.tools
+ * @param {NodeJS.Platform} param0.platform
+ * @returns {string}
+ */
+export const getToolCommand = ({ platform, tool, tools }) => {
+	/** @type {string} */
+	// prettier-ignore
+	let packageManagerCommand = (tool);
+	/** @type {any} */
+	const toolData = tools[tool];
+	if (platform in toolData.command) {
+		packageManagerCommand = toolData.command[platform];
+	}
+	return packageManagerCommand;
+};
+
+/**
+ * @template {NPXs | PackageManagers} ToolsType
+ * @param {object} param0
+ * @param {NodeJS.Platform} param0.platform
+ * @param {ToolsType} param0.tools
+ * @returns {Promise<Record<Tool, boolean>>}
+ */
+const getAvailable = async ({ platform, tools }) =>
+	Object.fromEntries(
+		await Promise.all(
+			Object.keys(tools).map(async (tool) => {
+				/** @type {keyof ToolsType} */
+				// prettier-ignore
+				const toolTypeSafe = (tool);
+				const command = getToolCommand({ platform, tool: toolTypeSafe, tools });
+				
+				/** @type {any} */
+				const toolData = tools[toolTypeSafe];
+				/** @type {string} */
+				const detect = toolData.detect;
+				
+				try {
+					await promisify(exec)(`${command} ${detect}`);
+				} catch {
+					return [tool, false];
+				}
+				return [tool, true];
+			})
+		)
+	);
+
+/**
  * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler
  *
  * @typedef {Object} Environment
@@ -255,10 +358,10 @@ const npxDetectors = {
  * @property {import("./package-versions").Dependencies} devDependencies
  * @property {boolean} empty
  * @property {boolean} kit
- * @property {Record<NPX, boolean>} npx
+ * @property {Record<NPX, boolean>} npxs
  * @property {Record<PackageManager, boolean>} packageManagers
  * @property {"commonjs" | "module" | undefined} packageType
- * @property {typeof process.platform} platform
+ * @property {NodeJS.Platform} platform
  *
  * @param {object} param0
  * @param {string} param0.cwd
@@ -267,27 +370,8 @@ const npxDetectors = {
 export const getEnvironment = async ({ cwd }) => {
 	const platform = process.platform;
 
-	/**
-	 * @template {string} Tool
-	 * @param {Record<Tool, string>} detectors
-	 * @returns {Promise<Record<Tool, boolean>>}
-	 */
-	const getAvailable = async (detectors) =>
-		Object.fromEntries(
-			await Promise.all(
-				Object.entries(detectors).map(async ([name, command]) => {
-					try {
-						await promisify(exec)(command);
-					} catch {
-						return [name, false];
-					}
-					return [name, true];
-				})
-			)
-		);
-
-	const [npx, packageManagers] = await Promise.all([getAvailable(npxDetectors), getAvailable(packageManagerDetectors)]);
-
+	const [npxsAvailable, packageManagersAvailable] = await Promise.all([getAvailable({ platform, tools: npxs }), getAvailable({ platform, tools: packageManagers })]);
+	
 	let files = [];
 	try {
 		files = await readdir(cwd);
@@ -302,8 +386,8 @@ export const getEnvironment = async ({ cwd }) => {
 			dependencies: {},
 			empty: true,
 			kit: false,
-			npx,
-			packageManagers,
+			npxs: npxsAvailable,
+			packageManagers: packageManagersAvailable,
 			packageType: undefined,
 			platform,
 		};
@@ -347,8 +431,8 @@ export const getEnvironment = async ({ cwd }) => {
 		devDependencies,
 		empty: false,
 		kit,
-		npx,
-		packageManagers,
+		npxs: npxsAvailable,
+		packageManagers: packageManagersAvailable,
 		packageType,
 		platform,
 	};
@@ -563,3 +647,34 @@ export const runAdder = async ({ adder, cwd, environment, npx, options }) => {
 		},
 	});
 };
+
+/**
+ * @param {object} param0
+ * @param {string} param0.cwd
+ * @param {string} param0.packageManagerCommand
+ * @returns {Promise<void>}
+ */
+export const installDependencies = ({ cwd, packageManagerCommand }) =>
+	new Promise((resolve, reject) => {
+		// TODO: check the map and get install from there
+		const subprocess = spawn(packageManagerCommand, ["install"], {
+			cwd,
+			stdio: "pipe",
+			timeout: 90000,
+		});
+
+		let body = "";
+
+		subprocess.stderr.on("data", (chunk) => {
+			body += chunk;
+		});
+
+		subprocess.stderr.on("end", () => {
+			if (body === "") {
+				resolve(undefined);
+				return;
+			}
+
+			reject(new Error(body));
+		});
+	});

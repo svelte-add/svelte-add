@@ -1,6 +1,6 @@
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, runAdder } from "./index.js";
+import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getToolCommand, installDependencies, packageManagers, runAdder } from "./index.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -29,7 +29,7 @@ const main = async () => {
 	if (environment.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
 	const args = process.argv.slice(2);
-	const { _: addersSeparated, ...parsedArgs } = mri(args);
+	const { _: addersSeparated, install = false, ...parsedArgs } = mri(args);
 	const addersJoined = addersSeparated.join("+");
 	const addersAndPresets = addersJoined.split("+");
 
@@ -38,7 +38,7 @@ const main = async () => {
 
 	console.log("The project directory you're giving to this command cannot be determined to be guaranteed fresh — maybe it is, maybe it isn't. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template.");
 
-	const choices = await getChoices({ addersAndPresets, environment, parsedArgs });
+	const choices = await getChoices({ addersAndPresets, environment, install, parsedArgs });
 
 	/** @type {string[]} */
 	const adders = [];
@@ -144,6 +144,12 @@ const main = async () => {
 			console.log(colors.bold(name));
 			console.log(`${colors.green(addersToRepair.has(adder) ? ` ✅ successfully set up and repaired (it looks like it was in a broken setup before this command was run)!` : ` ✅ successfully set up!`)}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 		}
+	}
+
+	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
+	if (choices.install) await installDependencies({ cwd, packageManagerCommand });
+	else {
+		// TODO: print message instructing
 	}
 };
 

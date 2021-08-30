@@ -8,17 +8,17 @@ import { spawn } from "child_process";
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- *
  * @param {Object} param0
  * @param {boolean} param0.demo
  * @param {string} param0.dir
  * @param {boolean} param0.eslint
- * @param {string} param0.packageManager
+ * @param {string} param0.packageManagerCommand
  * @param {boolean} param0.prettier
+ * @param {boolean} param0.runningTests
  * @param {boolean} param0.typescript
  */
-export const fresh = async ({ demo, dir, eslint, packageManager, prettier, typescript }) => {
-	const subprocess = spawn(packageManager, ["init", "svelte@next", dir], {
+export const fresh = async ({ demo, dir, eslint, packageManagerCommand, prettier, typescript }) => {
+	const subprocess = spawn(packageManagerCommand, ["init", "svelte@next", dir], {
 		stdio: "pipe",
 		timeout: 8000,
 	});
