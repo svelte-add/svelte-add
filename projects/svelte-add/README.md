@@ -3,7 +3,7 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 
-  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit --with typescript+tailwindcss`
+  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit -- --with typescript+tailwindcss`
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
@@ -47,13 +47,13 @@ npm init @svelte-add/kit
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit --with tailwindcss --tailwindcss-jit
+npm init --yes @svelte-add/kit -- --with tailwindcss --tailwindcss-jit
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
 
 ```sh
-npm init --yes @svelte-add/kit my-new-app --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+npm init --yes @svelte-add/kit my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
 # NOTE: The Hosting on Firebase adder doesn't support this yet.
 ```
 
