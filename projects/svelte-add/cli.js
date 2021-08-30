@@ -72,7 +72,7 @@ const main = async () => {
 				cwd,
 				environment,
 			});
-		} catch (e) {
+		} catch (/** @type {any} */ e) {
 			console.log();
 			console.log(colors.bold(adder));
 

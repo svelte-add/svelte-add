@@ -178,7 +178,7 @@ export const getChoices = async ({ addersAndPresets, environment, install, parse
 		let options;
 		try {
 			({ options } = await getAdderMetadata({ adder }));
-		} catch (e) {
+		} catch (/** @type {any} */ e) {
 			if (e.code === "ERR_MODULE_NOT_FOUND") continue;
 			else throw e;
 		}
@@ -375,7 +375,7 @@ export const getEnvironment = async ({ cwd }) => {
 	let files = [];
 	try {
 		files = await readdir(cwd);
-	} catch (e) {
+	} catch (/** @type {any} */ e) {
 		if (e.code !== "ENOENT") throw e;
 	}
 
@@ -453,7 +453,7 @@ export const readFile = async ({ path }) => {
 				encoding: "utf-8",
 			})
 		).toString();
-	} catch (e) {
+	} catch (/** @type {any} */ e) {
 		exists = false;
 		if (e.code !== "ENOENT") throw e;
 	}

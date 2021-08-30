@@ -33,7 +33,7 @@ export const updateFile = async ({ path, content }) => {
 	if ("exists" in out) {
 		try {
 			await unlink(path);
-		} catch (e) {
+		} catch (/** @type {any} */ e) {
 			if (e.code !== "ENOENT") throw e;
 		}
 		return;
