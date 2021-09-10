@@ -30,30 +30,29 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 - [**CoffeeScript**](https://github.com/Leftium/coffeescript-adder)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
 - [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
+- [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
-- [**Jest**](https://github.com/rossyman/svelte-add-jest)
 
 ## 🧰 Creating a SvelteKit app with integrations
 
 The preferred way to add integrations to a SvelteKit app is to start a new one, choosing the ones you want:
 
 ```sh
-# NOTE: This is not implemented yet.
-npm init @svelte-add/kit
+npm init @svelte-add/kit@latest
 # Follow the prompts to select the integrations you want
 ```
 
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit -- --with tailwindcss --tailwindcss-jit
+npm init --yes @svelte-add/kit@latest -- --with tailwindcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
 
 ```sh
-npm init --yes @svelte-add/kit my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+npm init --yes @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
 # NOTE: The Hosting on Firebase adder doesn't support this yet.
 ```
 
@@ -63,7 +62,7 @@ The preferred way to add integrations to a Vite-powered Svelte app is to start a
 
 ```sh
 # NOTE: This is not implemented yet.
-npm init @svelte-add/vite
+npm init @svelte-add/vite@latest
 # Follow the prompts to select the integrations you want
 ```
 
@@ -73,7 +72,7 @@ If you have a favorite setup, you can recreate it without having to provide any 
 
 ```sh
 # NOTE: This is not implemented yet.
-npm init --yes @svelte-add/vite --with bulma+mdsvex
+npm init --yes @svelte-add/vite@latest -- --with bulma+mdsvex
 ```
 
 ## 🧩 Adding one integration at a time
@@ -88,7 +87,7 @@ npm init svelte@next
 npx svelte-add@latest postcss
 ```
 
-but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite—once they have been implemented) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
+but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
 
 Adders should all be _composable_, meaning that it should always be possible to run one after another without something breaking:
 
@@ -136,6 +135,7 @@ MIT
 `svelte-add` takes inspiration from existing projects:
 
 - [`snowpack-start`](https://github.com/awu43/snowpack-start)
+- [`stackmix`](https://github.com/roxiness/stackmix)
 - [`use-preset`](https://usepreset.dev/)
 
 _Repository preview image generated with [GitHub Social Preview](https://social-preview.pqt.dev/)_
