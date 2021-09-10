@@ -2,8 +2,8 @@
 export const heuristics = [
 	{
 		description: "`prettier` is installed",
-		async detector({ environment }) {
-			return "prettier" in environment.dependencies || "prettier" in environment.devDependencies;
+		async detector({ folderInfo }) {
+			return "prettier" in folderInfo.dependencies || "prettier" in folderInfo.devDependencies;
 		},
 	},
 	{

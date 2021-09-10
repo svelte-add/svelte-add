@@ -1,12 +1,11 @@
 import colors from "kleur";
 import mri from "mri";
-import { resolve } from "path";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getToolCommand, installDependencies, packageManagers, runAdder } from "svelte-add";
+import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, getToolCommand, installDependencies, npxs, packageManagers, runAdder } from "svelte-add";
 import { fresh } from "./__init.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
-import { inspect } from "util";
+import { resolve } from "path";
 const require = createRequire(import.meta.url);
 const pkg = require("./package.json");
 let [year, month, day, iteration] = pkg.version.split(".");
@@ -16,55 +15,52 @@ if (day.length === 1) day = "0" + day;
 if (iteration.length === 1) iteration = "0" + iteration;
 const version = `${year}.${month}.${day}.${iteration}`;
 
-/** @param {string} text - The error message to display when exiting */
-const exit = (text) => {
-	console.error(text);
-	process.exit(1);
-};
-
 const main = async () => {
 	console.log(`${colors.bold("➕ Svelte Add's SvelteKit app initializer")} (Version ${version})`);
 
+	const cwd = resolve(process.cwd());
+
 	const args = process.argv.slice(2);
-	const { _: output, install = true, with: addersJoined, ...parsedArgs } = mri(args);
-	const addersAndPresets = addersJoined.split("+");
+	const { _: passedOutput, demos: passedDemos, install: passedInstall, with: passedAddersAndPresetsJoined, ...passedArgs } = mri(args);
+	const passedPackageManager = passedArgs["package-manager"];
+	delete passedArgs["package-manager"];
+	const passedAddersAndPresets = passedAddersAndPresetsJoined === undefined ? undefined : passedAddersAndPresetsJoined.split("+");
 
-	if (output.length > 1) exit(`${colors.red("TODO: explain this error.")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
-
-	const cwd = resolve(process.cwd(), ...output);
-
-	let environment = await getEnvironment({ cwd });
-
-	if (!environment.empty) exit(`${colors.red(`${inspect(output[0])} isn't an empty directory, so the app initializer shouldn't run.`)}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
-
-	const choices = await getChoices({
-		addersAndPresets,
+	const environment = await getEnvironment();
+	const { adderOptions, demos, deploy, givenProjectDirectory, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
+		passedAddersAndPresets,
+		defaultDemos: true,
+		defaultInstall: true,
+		outputFolderMustBe: false,
 		environment,
-		install,
-		parsedArgs,
+		passedArgs,
+		passedDemos,
+		passedInstall,
+		passedOutput,
+		passedPackageManager,
 	});
-
-	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
+	const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
+	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
 
 	await fresh({
-		demo: choices.demos,
-		dir: cwd,
-		eslint: choices.quality.includes("eslint"),
+		demo: demos,
+		dir: projectDirectory,
+		eslint: quality.includes("eslint"),
 		packageManagerCommand,
-		prettier: choices.quality.includes("prettier"),
+		prettier: quality.includes("prettier"),
 		runningTests: false,
-		typescript: choices.script === "typescript",
+		typescript: script === "typescript",
 	});
 
-	const features = [choices.script, choices.styleLanguage, ...(choices.styleFramework ? [choices.styleFramework] : []), ...choices.other, ...choices.quality, ...(choices.deploy ? [choices.deploy] : [])];
+	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
 	const adders = features.filter((feature) => !["css", "eslint", "javascript", "prettier", "typescript"].includes(feature));
 
 	/** @type {string[]} */
 	const workingFeatures = [];
 
-	for (const preset of choices.presets) {
+	for (const preset of presets) {
 		try {
-			await applyPreset({ args, cwd, npx: choices.npx, preset });
+			await applyPreset({ args, projectDirectory, npxCommand, preset });
 		} catch (e) {
 			console.log();
 			console.log(colors.bold(preset));
@@ -73,17 +69,17 @@ const main = async () => {
 		}
 	}
 
-	// Running presets has changed the environment
-	environment = await getEnvironment({ cwd });
+	let folderInfo = await getFolderInfo({ projectDirectory });
 
 	for (const adder of adders) {
 		try {
 			await runAdder({
 				adder,
-				cwd,
+				projectDirectory,
 				environment,
-				npx: choices.npx,
-				options: choices.adderOptions[adder],
+				folderInfo,
+				npxCommand,
+				options: adderOptions[adder],
 			});
 		} catch (e) {
 			const { name } = await getAdderMetadata({ adder });
@@ -94,15 +90,15 @@ const main = async () => {
 			throw e;
 		}
 
-		// The environment has changed because it now has the integration!
-		environment = await getEnvironment({ cwd });
+		// The folder info has changed because it now has the integration!
+		folderInfo = await getFolderInfo({ projectDirectory });
 	}
 
 	for (const feature of features) {
 		const postRunCheck = await detectAdder({
 			adder: feature,
-			cwd,
-			environment,
+			projectDirectory,
+			folderInfo,
 		});
 
 		if (!Object.values(postRunCheck).every(Boolean)) {
@@ -122,17 +118,18 @@ const main = async () => {
 		}
 	}
 
-	workingFeatures.push(...choices.presets);
+	workingFeatures.push(...presets);
 
-	if (choices.install) await installDependencies({ cwd, packageManagerCommand });
+	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
 
 	console.log(colors.green(`🪄 Your ${workingFeatures.join(" + ")} SvelteKit app is ready!`));
 
 	/** @type {string[]} */
 	const steps = [];
-	if (output.length !== 0) steps.push(`cd ${output}`);
-	if (!choices.install) steps.push(`${choices.packageManager} install`);
-	steps.push(`${choices.packageManager} run dev -- --open  # start developing with a browser open`);
+	if (projectDirectory !== cwd) steps.push(`cd ${givenProjectDirectory}`);
+	// TODO: use tool map to show the correct install and script running commands
+	if (!install) steps.push(`${packageManager} install`);
+	steps.push(`${packageManager} run dev -- --open  # start developing with a browser open`);
 
 	for (const [index, step] of steps.entries()) console.log(`  ${index + 1}. ${step}`);
 };

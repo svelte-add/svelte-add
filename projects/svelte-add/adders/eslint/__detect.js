@@ -2,8 +2,8 @@
 export const heuristics = [
 	{
 		description: "`eslint` is installed",
-		async detector({ environment }) {
-			return "eslint" in environment.dependencies || "eslint" in environment.devDependencies;
+		async detector({ folderInfo }) {
+			return "eslint" in folderInfo.dependencies || "eslint" in folderInfo.devDependencies;
 		},
 	},
 	{

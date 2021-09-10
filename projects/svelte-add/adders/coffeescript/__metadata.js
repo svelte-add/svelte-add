@@ -1,4 +1,4 @@
-export const name = "GraphQL server";
+export const name = "CoffeeScript";
 
 /** @typedef {{}} Options */
 

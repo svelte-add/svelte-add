@@ -3,7 +3,7 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { detectAdder, getChoices, getEnvironment, getToolCommand, packageManagers, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, getFolderInfo, getToolCommand, npxs, packageManagers, runAdder } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
@@ -13,74 +13,84 @@ const addersToTest = ["tailwindcss"];
 
 for (const [app, init] of Object.entries(initializers)) {
 	for (const adderToTest of addersToTest) {
-		test(`${adderToTest} being used on ${app} (without demos)`, async () => {
-			const output = `_outputs/${app}_${adderToTest}`;
-			await rm(output, {
-				recursive: true,
-				force: true,
+		for (const defaultDemos of [false, true]) {
+			test(`${adderToTest} being used on ${app} (with demos: ${defaultDemos})`, async () => {
+				const output = `_outputs/${app}_${adderToTest}_${defaultDemos}`;
+				await rm(output, {
+					recursive: true,
+					force: true,
+				});
+
+				const environment = await getEnvironment();
+
+				const { adderOptions, demos, deploy, npx, other, packageManager, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
+					defaultDemos,
+					defaultInstall: false,
+					environment,
+					outputFolderMustBe: false,
+					passedAddersAndPresets: [adderToTest],
+					passedArgs: {},
+					passedDemos: undefined,
+					passedInstall: undefined,
+					passedOutput: [output],
+					passedPackageManager: "pnpm",
+				});
+				const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
+				const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
+
+				const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
+				const addersToCheck = features.filter((feature) => !["css", "javascript"].includes(feature));
+
+				await init({
+					demo: demos,
+					dir: output,
+					eslint: quality.includes("eslint"),
+					packageManagerCommand,
+					prettier: quality.includes("prettier"),
+					runningTests: true,
+					typescript: script === "typescript",
+				});
+
+				let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
+
+				/** @type {string[]} */
+				const addersToRun = [];
+
+				for (const adderToCheck of addersToCheck) {
+					const preRunCheck = await detectAdder({
+						adder: adderToCheck,
+						folderInfo,
+						projectDirectory: output,
+					});
+					assert.ok(
+						Object.values(preRunCheck).some((pass) => !pass),
+						`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
+					);
+					addersToRun.push(adderToCheck);
+				}
+
+				for (const adderToRun of addersToRun) {
+					await runAdder({
+						adder: adderToRun,
+						environment,
+						folderInfo,
+						npxCommand,
+						options: adderOptions[adderToRun],
+						projectDirectory: output,
+					});
+					folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
+				}
+
+				for (const adderToCheck of addersToCheck) {
+					const postRunCheck = await detectAdder({
+						adder: adderToCheck,
+						projectDirectory: output,
+						folderInfo,
+					});
+					assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
+				}
 			});
-
-			let environment = await getEnvironment({ cwd: output });
-
-			const choices = await getChoices({ addersAndPresets: [adderToTest], environment, install: false, parsedArgs: {} });
-			const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
-
-			/** @type {string[]} */
-			const addersToCheck = [];
-			if (choices.script !== "javascript") addersToCheck.push(choices.script);
-			if (choices.styleLanguage !== "css") addersToCheck.push(choices.styleLanguage);
-			if (choices.styleFramework) addersToCheck.push(choices.styleFramework);
-			addersToCheck.push(...choices.other);
-			addersToCheck.push(...choices.quality);
-
-			await init({
-				demo: choices.demos,
-				dir: output,
-				eslint: choices.quality.includes("eslint"),
-				packageManagerCommand,
-				prettier: choices.quality.includes("prettier"),
-				runningTests: true,
-				typescript: choices.script === "typescript",
-			});
-
-			environment = await getEnvironment({ cwd: output });
-
-			/** @type {string[]} */
-			const addersToRun = [];
-
-			for (const adderToCheck of addersToCheck) {
-				const preRunCheck = await detectAdder({
-					adder: adderToCheck,
-					cwd: output,
-					environment,
-				});
-				assert.ok(
-					Object.values(preRunCheck).some((pass) => !pass),
-					`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
-				);
-				addersToRun.push(adderToCheck);
-			}
-
-			for (const adderToRun of addersToRun) {
-				await runAdder({
-					adder: adderToRun,
-					cwd: output,
-					environment,
-					npx: choices.npx,
-					options: choices.adderOptions[adderToRun],
-				});
-				environment = await getEnvironment({ cwd: output });
-			}
-
-			for (const adderToCheck of addersToCheck) {
-				const postRunCheck = await detectAdder({
-					adder: adderToCheck,
-					cwd: output,
-					environment,
-				});
-				assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
-			}
-		});
+		}
 	}
 }
 

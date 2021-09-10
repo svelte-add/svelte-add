@@ -2,8 +2,8 @@
 export const heuristics = [
 	{
 		description: "`typescript` is installed",
-		async detector({ environment }) {
-			return "typescript" in environment.dependencies || "typescript" in environment.devDependencies;
+		async detector({ folderInfo }) {
+			return "typescript" in folderInfo.dependencies || "typescript" in folderInfo.devDependencies;
 		},
 	},
 	{

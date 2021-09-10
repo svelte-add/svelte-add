@@ -1,6 +1,6 @@
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getToolCommand, installDependencies, packageManagers, runAdder } from "./index.js";
+import { applyPreset, detectAdder, exit, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, getToolCommand, installDependencies, npxs, packageManagers, runAdder } from "./index.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -13,50 +13,44 @@ if (day.length === 1) day = "0" + day;
 if (iteration.length === 1) iteration = "0" + iteration;
 const version = `${year}.${month}.${day}.${iteration}`;
 
-/** @param {string} text - The error message to display when exiting */
-const exit = (text) => {
-	console.error(text);
-	process.exit(1);
-};
-
 const main = async () => {
 	console.log(`${colors.bold("➕ Svelte Add")} (Version ${version})`);
-	const cwd = process.cwd();
-
-	let environment = await getEnvironment({ cwd });
-
-	if (environment.empty) exit(`${colors.red("There is no valid Svelte project in this directory because it's empty, so svelte-add cannot run.")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
-	if (environment.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 
 	const args = process.argv.slice(2);
-	const { _: addersSeparated, install = false, ...parsedArgs } = mri(args);
-	const addersJoined = addersSeparated.join("+");
-	const addersAndPresets = addersJoined.split("+");
+	const { _: passedAddersAndPresetsSeparated, demos: passedDemos, install: passedInstall, ...passedArgs } = mri(args);
+	const passedPackageManager = passedArgs["package-manager"];
+	delete passedArgs["package-manager"];
+	const passedAddersAndPresetsJoined = passedAddersAndPresetsSeparated.join("+");
+	const passedAddersAndPresets = passedAddersAndPresetsJoined === "" ? undefined : passedAddersAndPresetsJoined.split("+");
 
-	// TODO: show the interactive menus instead
-	if (!addersJoined) exit(`${colors.red("No adder was specified.")}\nRead ${colors.cyan("https://github.com/svelte-add/svelte-add")} to see available adders and usage.`);
+	const environment = await getEnvironment();
+	const { adderOptions, deploy, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
+		passedAddersAndPresets,
+		defaultDemos: false,
+		defaultInstall: false,
+		outputFolderMustBe: true,
+		environment,
+		passedArgs,
+		passedDemos,
+		passedInstall,
+		passedOutput: passedAddersAndPresets ? ["."] : [],
+		passedPackageManager,
+	});
 
 	console.log("The project directory you're giving to this command cannot be determined to be guaranteed fresh — maybe it is, maybe it isn't. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template.");
 
-	const choices = await getChoices({ addersAndPresets, environment, install, parsedArgs });
+	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
+	const adders = features.filter((feature) => !["css", "javascript"].includes(feature));
 
-	/** @type {string[]} */
-	const adders = [];
-	if (choices.script !== "javascript") adders.push(choices.script);
-	if (choices.styleLanguage !== "css") adders.push(choices.styleLanguage);
-	if (choices.styleFramework) adders.push(choices.styleFramework);
-	adders.push(...choices.other);
-	adders.push(...choices.quality);
-
-	for (const preset of choices.presets) {
+	const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
+	for (const preset of presets) {
 		console.log();
 		console.log(colors.bold(preset));
-		await applyPreset({ args, cwd, npx: choices.npx, preset });
+		await applyPreset({ args, projectDirectory, npxCommand, preset });
 		console.log(`${colors.green(` ✅ has been set up, but because it's an external integration adder, cannot be determined to have been set up correctly.`)}\nCreate or find an existing issue at ${colors.cyan(`https://github.com/${preset}/issues`)} if this is wrong.`);
 	}
 
-	// Running presets has changed the environment
-	environment = await getEnvironment({ cwd });
+	let folderInfo = await getFolderInfo({ projectDirectory });
 
 	/** @type {Set<string>} */
 	const addersToRepair = new Set();
@@ -69,8 +63,8 @@ const main = async () => {
 		try {
 			preRunCheck = await detectAdder({
 				adder,
-				cwd,
-				environment,
+				projectDirectory,
+				folderInfo,
 			});
 		} catch (/** @type {any} */ e) {
 			console.log();
@@ -98,10 +92,11 @@ const main = async () => {
 		try {
 			await runAdder({
 				adder,
-				cwd,
+				projectDirectory,
 				environment,
-				npx: choices.npx,
-				options: choices.adderOptions[adder],
+				folderInfo,
+				npxCommand,
+				options: adderOptions[adder],
 			});
 		} catch (e) {
 			const { name } = await getAdderMetadata({ adder });
@@ -112,15 +107,15 @@ const main = async () => {
 			throw e;
 		}
 
-		// The environment has changed because it now has the integration!
-		environment = await getEnvironment({ cwd });
+		// The folder info has changed because it now has the integration!
+		folderInfo = await getFolderInfo({ projectDirectory });
 	}
 
 	for (const adder of adders) {
 		const postRunCheck = await detectAdder({
 			adder,
-			cwd,
-			environment,
+			projectDirectory,
+			folderInfo,
 		});
 
 		if (!Object.values(postRunCheck).every(Boolean)) {
@@ -146,8 +141,8 @@ const main = async () => {
 		}
 	}
 
-	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: choices.packageManager, tools: packageManagers });
-	if (choices.install) await installDependencies({ cwd, packageManagerCommand });
+	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
+	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
 	else {
 		// TODO: print message instructing
 	}

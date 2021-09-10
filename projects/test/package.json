@@ -15,7 +15,7 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"type": "module",
 	"scripts": {
-		"test": "uvu"
+		"test": "uvu tests"
 	},
 	"devDependencies": {
 		"@svelte-add/create-kit": "workspace:*",

@@ -39,14 +39,14 @@
 		"svelte-add": "cli.cjs"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^4.30.0",
-		"enquirer": "^2.3.6",
+		"@typescript-eslint/typescript-estree": "^4.31.0",
 		"estree-walker": "^3.0.0",
 		"kleur": "^4.1.4",
 		"mri": "^1.1.6",
 		"postcss": "^8.3.6",
 		"posthtml-parser": "^0.9.1",
 		"posthtml-render": "^2.0.6",
+		"prompts": "^2.4.1",
 		"recast": "^0.20.5",
 		"typescript": "4.3.5"
 	},

@@ -2,14 +2,14 @@
 export const heuristics = [
 	{
 		description: "`graphql` is installed",
-		async detector({ environment }) {
-			return "graphql" in environment.dependencies || "graphql" in environment.devDependencies;
+		async detector({ folderInfo }) {
+			return "graphql" in folderInfo.dependencies || "graphql" in folderInfo.devDependencies;
 		},
 	},
 	{
 		description: "`graphql-helix` is installed",
-		async detector({ environment }) {
-			return "graphql-helix" in environment.dependencies || "graphql-helix" in environment.devDependencies;
+		async detector({ folderInfo }) {
+			return "graphql-helix" in folderInfo.dependencies || "graphql-helix" in folderInfo.devDependencies;
 		},
 	},
 	{

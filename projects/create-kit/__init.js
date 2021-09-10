@@ -23,11 +23,17 @@ export const fresh = async ({ demo, dir, eslint, packageManagerCommand, prettier
 		timeout: 8000,
 	});
 
-	subprocess.on("close", (code) => {
-		if (code !== 0) throw new Error(`${code}`);
+	let body = "";
+
+	subprocess.stderr.on("data", (chunk) => {
+		body += chunk;
 	});
-	subprocess.on("error", (code) => {
-		throw new Error(`${code}`);
+
+	subprocess.on("close", (code) => {
+		if (code !== 0) throw new Error(body);
+	});
+	subprocess.on("error", () => {
+		throw new Error(body);
 	});
 
 	/** @param {string} content */
@@ -51,4 +57,7 @@ export const fresh = async ({ demo, dir, eslint, packageManagerCommand, prettier
 	await waitForWrite("\n");
 
 	subprocess.stdin.end();
+
+	// TODO: for some reason the initializer isn't finished instantly?!
+	await wait(300);
 };

@@ -1,11 +1,12 @@
-export const name = "Hosting on Firebase";
+export const name = "Firebase Hosting";
 
 /** @typedef {{ project: string }} Options */
 
 /** @type {import("../..").AdderOptions<Options>} */
 export const options = {
 	project: {
-		description: "What is your Firebase project's ID, according to https://console.firebase.google.com/ ?",
+		context: "You can find it at https://console.firebase.google.com/",
+		question: "What is your Firebase project's ID?",
 		default: "",
 	},
 };
