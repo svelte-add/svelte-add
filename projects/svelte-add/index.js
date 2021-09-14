@@ -648,8 +648,7 @@ export const getEnvironment = async () => {
 /**
  * @typedef {Object} FolderInfo
  * @property {Bundler | undefined} bundler
- * @property {import("./package-versions").Dependencies} dependencies
- * @property {import("./package-versions").Dependencies} devDependencies
+ * @property {import("./package-versions").Dependencies} allDependencies
  * @property {boolean} empty
  * @property {boolean} kit
  * @property {"commonjs" | "module" | undefined} packageType
@@ -668,9 +667,8 @@ export const getFolderInfo = async ({ projectDirectory }) => {
 
 	if (files.length === 0) {
 		return {
+			allDependencies: {},
 			bundler: undefined,
-			devDependencies: {},
-			dependencies: {},
 			empty: true,
 			kit: false,
 			packageType: undefined,
@@ -704,9 +702,8 @@ export const getFolderInfo = async ({ projectDirectory }) => {
 	else if ("webpack" in allDependencies) bundler = "webpack";
 
 	return {
+		allDependencies,
 		bundler,
-		dependencies,
-		devDependencies,
 		empty: false,
 		kit,
 		packageType,

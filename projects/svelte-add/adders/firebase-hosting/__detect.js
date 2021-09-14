@@ -5,7 +5,7 @@ export const heuristics = [
 	{
 		description: "`firebase-tools` is installed",
 		async detector({ folderInfo }) {
-			return "firebase-tools" in folderInfo.dependencies || "firebase-tools" in folderInfo.devDependencies;
+			return "firebase-tools" in folderInfo.allDependencies;
 		},
 	},
 	{

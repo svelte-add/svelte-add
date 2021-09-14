@@ -3,7 +3,7 @@ export const heuristics = [
 	{
 		description: "`typescript` is installed",
 		async detector({ folderInfo }) {
-			return "typescript" in folderInfo.dependencies || "typescript" in folderInfo.devDependencies;
+			return "typescript" in folderInfo.allDependencies;
 		},
 	},
 	{

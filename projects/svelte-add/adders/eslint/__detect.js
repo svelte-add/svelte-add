@@ -3,7 +3,7 @@ export const heuristics = [
 	{
 		description: "`eslint` is installed",
 		async detector({ folderInfo }) {
-			return "eslint" in folderInfo.dependencies || "eslint" in folderInfo.devDependencies;
+			return "eslint" in folderInfo.allDependencies;
 		},
 	},
 	{

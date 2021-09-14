@@ -3,7 +3,7 @@ export const heuristics = [
 	{
 		description: "`bulma` is installed",
 		async detector({ folderInfo }) {
-			return "bulma" in folderInfo.dependencies || "bulma" in folderInfo.devDependencies;
+			return "bulma" in folderInfo.allDependencies;
 		},
 	},
 	{
