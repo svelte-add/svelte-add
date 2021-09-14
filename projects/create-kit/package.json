@@ -29,7 +29,7 @@
 	},
 	"dependencies": {
 		"kleur": "^4.1.4",
-		"mri": "^1.1.6",
+		"mri": "^1.2.0",
 		"svelte-add": "workspace:*"
 	}
 }
