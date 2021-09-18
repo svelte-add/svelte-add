@@ -57,6 +57,8 @@ const main = async () => {
 
 	/** @type {string[]} */
 	const workingFeatures = [];
+	/** @type {string[]} */
+	const failedFeatures = [];
 
 	for (const preset of presets) {
 		try {
@@ -64,6 +66,8 @@ const main = async () => {
 		} catch (e) {
 			console.log();
 			console.log(colors.bold(preset));
+
+			failedFeatures.push(preset);
 
 			throw e;
 		}
@@ -86,6 +90,8 @@ const main = async () => {
 
 			console.log();
 			console.log(colors.bold(name));
+
+			failedFeatures.push(name);
 
 			throw e;
 		}
@@ -112,6 +118,8 @@ const main = async () => {
 			}
 
 			console.error(`\n${colors.red(`  ❌ was supposed to be set up for you but it appears not to have been?! (see above)`)}\nThis is definitely not supposed to happen, so please create or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} with the full command output.`);
+
+			failedFeatures.push(name);
 		} else {
 			const { name } = await getAdderMetadata({ adder: feature });
 			workingFeatures.push(name);
@@ -123,6 +131,10 @@ const main = async () => {
 	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
 
 	console.log(colors.green(`🪄 Your ${workingFeatures.join(" + ")} SvelteKit app is ready!`));
+
+	if (failedFeatures.length > 0) {
+		console.log(colors.red(`❌ Could not identify correct installation of ${failedFeatures.join(" + ")}. \nThis is definitely not supposed to happen, so please create or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} with the full command output.`));
+	}
 
 	/** @type {string[]} */
 	const steps = [];
