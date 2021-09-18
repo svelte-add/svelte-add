@@ -126,6 +126,12 @@ This is a community project! Here are some ways you can help:
 - Read this repository's open issues to talk about [ideas for new adders](https://github.com/svelte-add/svelte-add/issues?q=is%3Aissue+is%3Aopen+label%3A%22wait+for+big+rewrite+before+making+a+new+adder%22).
 - Create a [pull request](https://github.com/svelte-add/svelte-add/pulls) to add your adder to the external integration adders list. Most !
 
+### Setup
+
+- `git clone --recurse-submodules https://github.com/svelte-add/svelte-add` (make sure to clone submodules)
+- `pnpm install` (make sure that you have installed `pnpm` before, see https://pnpm.io/installation#using-npm)
+- Get started coding
+
 ## 📄 License
 
 MIT
