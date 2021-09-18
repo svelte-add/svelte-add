@@ -7,6 +7,7 @@ export const packageVersions = {
 	sass: "^1.39.2",
 	"svelte-preprocess": "^4.9.4",
 	tailwindcss: "^2.2.15",
+	bulma: "^0.9.3",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */

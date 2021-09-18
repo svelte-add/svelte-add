@@ -17,6 +17,7 @@ This is a community project to easily add integrations and other functionality t
 
 In theory, these adders are the most likely to work correctly. While `svelte-add` is being rewritten, very few adders will be on this list:
 
+- [**Bulma**](https://github.com/svelte-add/bulma)
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
 - [**SCSS**](https://github.com/svelte-add/scss)
@@ -26,7 +27,6 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 `svelte-add` is currently being rewritten, so most integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
-- [**Bulma**](https://github.com/svelte-add/bulma)
 - [**CoffeeScript**](https://github.com/Leftium/coffeescript-adder)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
 - [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
