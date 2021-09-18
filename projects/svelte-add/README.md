@@ -17,6 +17,7 @@ This is a community project to easily add integrations and other functionality t
 
 In theory, these adders are the most likely to work correctly. While `svelte-add` is being rewritten, very few adders will be on this list:
 
+- [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)

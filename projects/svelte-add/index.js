@@ -16,7 +16,7 @@ export const exit = (text) => {
 /**
  * @typedef {"javascript" | "typescript"} Script
  * @typedef {"css" | "postcss" | "scss"} StyleLanguage
- * @typedef {"bulma" | "tailwindcss"} StyleFramework
+ * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
  * @typedef {"graphql-server" | "mdsvex"} Other
  * @typedef {"eslint" | "prettier"} Quality
  * @typedef {"firebase-hosting"} Deploy
@@ -35,23 +35,18 @@ const deploys = ["firebase-hosting"];
 
 /** @type {Record<StyleFramework, StyleLanguage>} */
 const styleLanguageForFramework = {
+	bootstrap: "scss",
 	bulma: "scss",
 	tailwindcss: "postcss",
 };
 
 /** @type {Record<StyleLanguage, StyleFramework[]>} */
-const styleFrameworksForLanguage = (() => {
-	/** @type {any} */
-	const obj = {};
-
-	for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
-		if (obj[language] === undefined) obj[language] = [];
-
-		obj[language].push(framework);
-	}
-
-	return obj;
-})();
+// prettier-ignore
+const styleFrameworksForLanguage = (/** @type {any} */ ({}));
+for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
+	if (styleFrameworksForLanguage[language] === undefined) styleFrameworksForLanguage[language] = [];
+	styleFrameworksForLanguage[language].push(/** @type {StyleFramework} */ (framework));
+}
 
 /**
  * @typedef {Object} Choices

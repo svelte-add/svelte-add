@@ -1,3 +1,12 @@
+[submodule "projects/svelte-add/adders/bootstrap"]
+	path = projects/svelte-add/adders/bootstrap
+	url = https://github.com/svelte-add/bootstrap
+[submodule "projects/svelte-add/adders/bulma"]
+	path = projects/svelte-add/adders/bulma
+	url = https://github.com/svelte-add/bulma
+[submodule "projects/svelte-add/adders/mdsvex"]
+	path = projects/svelte-add/adders/mdsvex
+	url = https://github.com/svelte-add/mdsvex
 [submodule "projects/svelte-add/adders/postcss"]
 	path = projects/svelte-add/adders/postcss
 	url = https://github.com/svelte-add/postcss
@@ -7,9 +16,3 @@
 [submodule "projects/svelte-add/adders/tailwindcss"]
 	path = projects/svelte-add/adders/tailwindcss
 	url = https://github.com/svelte-add/tailwindcss
-[submodule "projects/svelte-add/adders/mdsvex"]
-	path = projects/svelte-add/adders/mdsvex
-	url = https://github.com/svelte-add/mdsvex
-[submodule "projects/svelte-add/adders/bulma"]
-	path = projects/svelte-add/adders/bulma
-	url = https://github.com/svelte-add/bulma
