@@ -10,6 +10,6 @@
 [submodule "projects/svelte-add/adders/mdsvex"]
 	path = projects/svelte-add/adders/mdsvex
 	url = https://github.com/svelte-add/mdsvex
-[submodule ".\\projects\\svelte-add\\adders\\bulma"]
-	path = .\\projects\\svelte-add\\adders\\bulma
+[submodule "projects/svelte-add/adders/bulma"]
+	path = projects/svelte-add/adders/bulma
 	url = https://github.com/svelte-add/bulma
