@@ -6,7 +6,7 @@ import { addImport, findImport, getConfigExpression, getPreprocessArray, getSvel
  * @param {object} param0
  * @param {import(".").FolderInfo} param0.folderInfo
  * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
- * @param {function(import("estree").ObjectExpression): void} param0.mutateViteConfig
+ * @param {function(import("estree").ObjectExpression, ReturnType<typeof import("./ast-io.js").newTypeScriptEstreeAst>, boolean): void} param0.mutateViteConfig
  */
 export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateViteConfig }) => {
 	if (folderInfo.kit) {
@@ -40,7 +40,7 @@ export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateVit
 
 				if (viteConfigObject.type !== "ObjectExpression") throw new Error("vite in kit in Svelte config must be an object");
 
-				mutateViteConfig(viteConfigObject);
+				mutateViteConfig(viteConfigObject, typeScriptEstree, cjs);
 
 				return {
 					typeScriptEstree,
@@ -54,11 +54,11 @@ export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateVit
 				const viteConfigObjectOrCall = getConfigExpression({ cjs: false, typeScriptEstree });
 
 				if (viteConfigObjectOrCall.type === "ObjectExpression") {
-					mutateViteConfig(viteConfigObjectOrCall);
+					mutateViteConfig(viteConfigObjectOrCall, typeScriptEstree, false);
 				} else if (viteConfigObjectOrCall.type === "CallExpression") {
 					const configObject = viteConfigObjectOrCall.arguments[0];
 					if (configObject.type !== "ObjectExpression") throw new Error("argument passed to vite defineConfig needs to be an object");
-					mutateViteConfig(configObject);
+					mutateViteConfig(configObject, typeScriptEstree, false);
 				} else {
 					throw new Error("vite config needs to be an object or defineConfig called on an object");
 				}
@@ -72,16 +72,13 @@ export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateVit
 };
 
 /**
+ *
  * @param {object} param0
- * @param {string} param0.extension
  * @param {import(".").FolderInfo} param0.folderInfo
  * @param {function(import("estree").ObjectExpression): void} param0.mutateSveltePreprocessArgs
- * @param {string} param0.stylesHint
- * @param {import(".").AdderRunArg<any>["updateCss"]} param0.updateCss
  * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
- * @param {import(".").AdderRunArg<any>["updateSvelte"]} param0.updateSvelte
  */
-export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, updateCss, updateJavaScript, updateSvelte, mutateSveltePreprocessArgs }) => {
+export const updateSveltePreprocessArgs = async ({ folderInfo, mutateSveltePreprocessArgs, updateJavaScript }) => {
 	const cjs = folderInfo.packageType !== "module";
 	await updateJavaScript({
 		path: cjs ? "/svelte.config.cjs" : "/svelte.config.js",
@@ -107,6 +104,24 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 				typeScriptEstree,
 			};
 		},
+	});
+};
+
+/**
+ * @param {object} param0
+ * @param {string} param0.extension
+ * @param {import(".").FolderInfo} param0.folderInfo
+ * @param {function(import("estree").ObjectExpression): void} param0.mutateSveltePreprocessArgs
+ * @param {string} param0.stylesHint
+ * @param {import(".").AdderRunArg<any>["updateCss"]} param0.updateCss
+ * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
+ * @param {import(".").AdderRunArg<any>["updateSvelte"]} param0.updateSvelte
+ */
+export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, updateCss, updateJavaScript, updateSvelte, mutateSveltePreprocessArgs }) => {
+	await updateSveltePreprocessArgs({
+		folderInfo,
+		mutateSveltePreprocessArgs,
+		updateJavaScript,
 	});
 
 	await updateCss({
