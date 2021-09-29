@@ -124,23 +124,29 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 		updateJavaScript,
 	});
 
+	/** @param {ReturnType<typeof import("./ast-io").newPostcssAst>} newCss */
+	const addStyleHint = (newCss) => {
+		newCss.prepend(
+			new Comment({
+				text: stylesHint,
+			})
+		);
+	};
+
 	await updateCss({
 		path: "/src/app.css",
-		async style({ postcss: appCss }) {
+		async style({ postcss: oldCss }) {
+			if (extension === "css") {
+				addStyleHint(oldCss);
+				return { postcss: oldCss };
+			}
+
 			await updateCss({
 				path: `/src/app.${extension}`,
-				async style({ postcss: appNewStyleLanguage }) {
-					appNewStyleLanguage.prepend(appCss);
-
-					appNewStyleLanguage.prepend(
-						new Comment({
-							text: stylesHint,
-						})
-					);
-
-					return {
-						postcss: appNewStyleLanguage,
-					};
+				async style({ postcss: newCss }) {
+					newCss.prepend(oldCss);
+					addStyleHint(newCss);
+					return { postcss: newCss };
 				},
 			});
 
