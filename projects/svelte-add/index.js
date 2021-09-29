@@ -231,7 +231,7 @@ export const getChoices = async ({ defaultDemos, defaultInstall, environment, ou
 		if (passedDemos === true || passedDemos === "true") demos = true;
 		else if (passedDemos === false || passedDemos === "false") demos = false;
 		else if (passedDemos !== undefined) throw new Error(`unexpected value for demos ${inspect(passedDemos)}`);
-		
+
 		packageManager = passedPackageManager ?? defaultPackageManager;
 
 		if (passedPackageManager == "pnpm") npx = "pnpx";
