@@ -76,8 +76,8 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  * @param {boolean} param0.outputFolderMustBe
  * @param {string[] | undefined} param0.passedAddersAndPresets
  * @param {Record<string, any>} param0.passedArgs
- * @param {boolean | undefined} param0.passedDemos
- * @param {boolean | undefined} param0.passedInstall
+ * @param {string | boolean | undefined} param0.passedDemos
+ * @param {string | boolean | undefined} param0.passedInstall
  * @param {readonly string[]} param0.passedOutput
  * @param {PackageManager | undefined} param0.passedPackageManager
  * @returns {Promise<Choices>}
@@ -227,15 +227,21 @@ export const getChoices = async ({ defaultDemos, defaultInstall, environment, ou
 
 		presets = addersAndPresetsList.filter((adderOrPreset) => adderOrPreset.includes("/"));
 
-		demos = passedDemos ?? defaultDemos;
-
+		demos = defaultDemos;
+		if (passedDemos === true || passedDemos === "true") demos = true;
+		else if (passedDemos === false || passedDemos === "false") demos = false;
+		else if (passedDemos !== undefined) throw new Error(`unexpected value for demos ${inspect(passedDemos)}`);
+		
 		packageManager = passedPackageManager ?? defaultPackageManager;
 
 		if (passedPackageManager == "pnpm") npx = "pnpx";
 		else if (passedPackageManager == "npm") npx = "npx";
 		else npx = defaultNpx;
 
-		install = passedInstall ?? defaultInstall;
+		install = defaultInstall;
+		if (passedInstall === true || passedInstall === "true") install = true;
+		else if (passedInstall === false || passedInstall === "false") install = false;
+		else if (passedInstall !== undefined) throw new Error(`unexpected value for install ${inspect(passedInstall)}`);
 
 		const remainingArgs = Object.keys(passedArgsCopy);
 		if (remainingArgs.length !== 0) throw new Error(`${inspect(passedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(passedAddersAndPresets)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
