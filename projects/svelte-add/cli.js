@@ -144,7 +144,8 @@ const main = async () => {
 	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
 	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
 	else {
-		// TODO: print message instructing
+		console.log();
+		console.log(`${colors.yellow("Run")} ${packageManager} install ${colors.yellow("to install new dependencies before starting your app.")}`);
 	}
 };
 
