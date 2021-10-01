@@ -19,6 +19,7 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 - [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
+- [**CoffeeScript**](https://github.com/svelte-add/coffeescript)
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
 - [**SCSS**](https://github.com/svelte-add/scss)
@@ -28,7 +29,6 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 `svelte-add` is currently being rewritten, so most integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
-- [**CoffeeScript**](https://github.com/Leftium/coffeescript-adder)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
 - [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
@@ -47,7 +47,7 @@ npm init @svelte-add/kit@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit@latest -- --with tailwindcss+mdsvex
+npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
@@ -84,8 +84,8 @@ Ideally, you can `svelte-add` an integration any time after app initialization:
 # Suppose you started a SvelteKit project
 npm init svelte@next
 
-# Then realized you want to write your styles in PostCSS
-npx svelte-add@latest postcss
+# Then realized you want to write your styles in SCSS
+npx svelte-add@latest scss
 ```
 
 but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
@@ -93,7 +93,7 @@ but there are practically infinite scenarios that an automated tool like this ca
 Adders should all be _composable_, meaning that it should always be possible to run one after another without something breaking:
 
 ```sh
-npx svelte-add@latest Leftium/coffeescript-adder
+npx svelte-add@latest coffeescript
 npx svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
