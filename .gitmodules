@@ -4,6 +4,9 @@
 [submodule "projects/svelte-add/adders/bulma"]
 	path = projects/svelte-add/adders/bulma
 	url = https://github.com/svelte-add/bulma
+[submodule "projects/svelte-add/adders/coffeescript"]
+	path = projects/svelte-add/adders/coffeescript
+	url = https://github.com/svelte-add/coffeescript
 [submodule "projects/svelte-add/adders/mdsvex"]
 	path = projects/svelte-add/adders/mdsvex
 	url = https://github.com/svelte-add/mdsvex
