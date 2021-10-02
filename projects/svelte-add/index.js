@@ -830,7 +830,7 @@ export const applyPreset = ({ args, projectDirectory, npxCommand, preset }) =>
  * @property {function(Omit<ApplyPresetArg, "projectDirectory" | "npxCommand">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
  * @property {FolderInfo} folderInfo
- * @property {function({ prod?: boolean, package: keyof typeof packageVersions }): Promise<void>} install
+ * @property {function({ prod?: boolean, package: keyof typeof packageVersions, versionOverride?: string }): Promise<void>} install
  * @property {Options} options
  * @property {typeof updateCss} updateCss
  * @property {typeof updateFile} updateFile
@@ -887,11 +887,11 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 		},
 		environment,
 		folderInfo,
-		async install({ prod = false, package: pkg }) {
+		async install({ prod = false, package: pkg, versionOverride }) {
 			await updateJson({
 				path: join(projectDirectory, "/package.json"),
 				async json({ obj }) {
-					const version = packageVersions[pkg];
+					const version = versionOverride ?? packageVersions[pkg];
 
 					if (prod) {
 						if (!obj.dependencies) obj.dependencies = {};
