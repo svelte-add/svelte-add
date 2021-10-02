@@ -15,7 +15,7 @@ This is a community project to easily add integrations and other functionality t
 
 ## 🪄 Built-in integration adders
 
-In theory, these adders are the most likely to work correctly. While `svelte-add` is being rewritten, very few adders will be on this list:
+In theory, these adders are the most likely to work correctly:
 
 - [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
@@ -27,7 +27,7 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 ## 📨 External integration adders
 
-`svelte-add` is currently being rewritten, so most integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
+`svelte-add` is currently being rewritten, so many integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
 - [**Firebase Hosting**](https://github.com/svelte-add/firebase-hosting)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
@@ -47,7 +47,7 @@ npm init @svelte-add/kit@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex
+npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex --demos false
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
@@ -124,14 +124,18 @@ This is a community project! Here are some ways you can help:
 
 - Battle test (combinations of) adders to make sure they're always composable and find other edge cases, bugs, etc.
 - Fix known issues and missing features in an adder per the open issues in this repository (if it's built-in) or its repository (if it's external).
-- Read this repository's open issues to talk about [ideas for new adders](https://github.com/svelte-add/svelte-add/issues?q=is%3Aissue+is%3Aopen+label%3A%22wait+for+big+rewrite+before+making+a+new+adder%22).
-- Create a [pull request](https://github.com/svelte-add/svelte-add/pulls) to add your adder to the external integration adders list. Most !
+- Read this repository's open issues to talk about [ideas for new adders](https://github.com/svelte-add/svelte-add/issues?q=is%3Aissue+is%3Aopen+label%3A%22make+a+new+adder%22).
+- Create a [pull request](https://github.com/svelte-add/svelte-add/pulls) to add your adder to the external integration adders list. Most adders will be rewritten built-in to `svelte-add` given enough time!
 
-### Setup
+### 🧪 Developing Locally
 
-- `git clone --recurse-submodules https://github.com/svelte-add/svelte-add` (make sure to clone submodules)
-- `pnpm install` (make sure that you have installed `pnpm` before, see https://pnpm.io/installation#using-npm)
-- Get started coding
+1. Clone the monorepo with submodules: `git clone --recurse-submodules https://github.com/svelte-add/svelte-add`
+2. Install dependencies: `pnpm install` (make sure that you have [installed `pnpm` before](https://pnpm.io/installation#using-npm))
+3. Make changes to the project and verify them with:
+
+   - `pnpm -w lint` (usually fixable with `pnpm -w format`)
+   - `pnpm -w check`
+   - `pnpm -r test`. Modify `projects/test/tests/one-adder.js` with the right adder to test.
 
 ## 📄 License
 
@@ -141,9 +145,9 @@ MIT
 
 `svelte-add` takes inspiration from existing projects:
 
+- [Preset](https://preset.dev/)
 - [`snowpack-start`](https://github.com/awu43/snowpack-start)
 - [`stackmix`](https://github.com/roxiness/stackmix)
-- [`use-preset`](https://usepreset.dev/)
 
 _Repository preview image generated with [GitHub Social Preview](https://social-preview.pqt.dev/)_
 
