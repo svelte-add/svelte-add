@@ -29,8 +29,8 @@ In theory, these adders are the most likely to work correctly. While `svelte-add
 
 `svelte-add` is currently being rewritten, so most integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
+- [**Firebase Hosting**](https://github.com/svelte-add/firebase-hosting)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server)
-- [**Hosting on Firebase**](https://github.com/svelte-add/firebase-hosting)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
@@ -54,7 +54,7 @@ Here's a more complete example: to migrate from [`sapper-firebase-typescript-gra
 
 ```sh
 npm init --yes @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
-# NOTE: The Hosting on Firebase adder doesn't support this yet.
+# NOTE: The Firebase Hosting adder doesn't support this yet.
 ```
 
 ## ⚡️ Creating a Vite-powered Svelte app with integrations
