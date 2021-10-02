@@ -242,3 +242,102 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 		}
 	}
 };
+
+/**
+ * @param {object} param0
+ * @param {string} param0.packageName
+ * @param {import(".").FolderInfo} param0.folderInfo
+ * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
+ */
+export const addSvelteAdapter = async ({ packageName, folderInfo, updateJavaScript }) => {
+	const cjs = folderInfo.packageType !== "module";
+
+	/**
+	 * @param {object} param0
+	 * @param {string} param0.packageName
+	 * @param {boolean} param0.cjs
+	 * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
+	 */
+	const updateAdapter = ({ typeScriptEstree, cjs, packageName }) => {
+		let adapterImportedAs = findImport({ cjs, package: packageName, typeScriptEstree }).default;
+
+		// Add an adapter import if it's not there
+		if (!adapterImportedAs) {
+			adapterImportedAs = "adapter";
+			addImport({ cjs, package: packageName, default: adapterImportedAs, typeScriptEstree });
+		}
+
+		// get the svelte config object
+		const svelteConfigObject = getConfigExpression({ cjs, typeScriptEstree });
+		if (svelteConfigObject.type !== "ObjectExpression") throw new Error("Svelte config must be an object");
+
+		// get the kit property
+		/** @type {import("estree").Property | undefined} */
+		let kitProperty;
+		for (const property of svelteConfigObject.properties) {
+			if (property.type !== "Property") continue;
+			if (property.key.type !== "Identifier") continue;
+			if (property.key.name === "kit") kitProperty = property;
+		}
+
+		if (!kitProperty) throw new Error("Kit config must be present");
+		if (kitProperty.value.type !== "ObjectExpression") throw new Error("Kit config must be an object");
+
+		// get the content of the kit property
+		/** @type {import("estree").ObjectExpression | undefined} */
+		const kitObjectExpression = kitProperty.value;
+
+		/** @type {import("estree").Property | undefined} */
+		let adapterProperty;
+		for (const property of kitObjectExpression.properties) {
+			if (property.type !== "Property") continue;
+			if (property.key.type !== "Identifier") continue;
+			if (property.key.name === "adapter") adapterProperty = property;
+		}
+
+		// Add the adapter property to the kit object if missing
+		if (!adapterProperty) {
+			/** @type {import("estree").CallExpression} */
+			const adapterCallExpression = {
+				type: "CallExpression",
+				// @ts-ignore - I am not sure why this is typed wrongly (?)
+				arguments: [],
+				callee: {
+					type: "Identifier",
+					name: adapterImportedAs,
+				},
+				optional: false,
+			};
+
+			/** @type {import("estree").Identifier} */
+			const adapterIdentifier = {
+				type: "Identifier",
+				name: "adapter",
+			};
+
+			/** @type {import("estree").Property} */
+			const adapterProperty = {
+				type: "Property",
+				value: adapterCallExpression,
+				key: adapterIdentifier,
+				shorthand: false,
+				computed: false,
+				method: false,
+				kind: "init",
+			};
+
+			kitObjectExpression.properties.push(adapterProperty);
+		}
+
+		return typeScriptEstree;
+	};
+
+	await updateJavaScript({
+		path: cjs ? "/svelte.config.cjs" : "/svelte.config.js",
+		async script({ typeScriptEstree }) {
+			return {
+				typeScriptEstree: updateAdapter({ typeScriptEstree, cjs, packageName }),
+			};
+		},
+	});
+};

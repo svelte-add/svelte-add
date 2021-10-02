@@ -11,6 +11,7 @@ export const packageVersions = {
 	"svelte-preprocess": "^4.9.5",
 	tailwindcss: "^2.2.16",
 	"vite-plugin-coffee": "^2.2.1",
+	"@sveltejs/adapter-static": "^1.0.0-next.20",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */
