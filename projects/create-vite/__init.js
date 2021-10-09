@@ -19,16 +19,18 @@ const isValidPackageName = (projectName) => /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[
  * @param {boolean} param0.demo
  * @param {string} param0.dir
  * @param {boolean} param0.eslint
- * @param {string} param0.packageManagerCommand
+ * @param {string} param0.packageManager
+ * @param {NodeJS.Platform} param0.platform
  * @param {boolean} param0.prettier
  * @param {boolean} param0.runningTests
  * @param {boolean} param0.typescript
  */
-export const fresh = async ({ dir, packageManagerCommand, runningTests, typescript }) => {
+export const fresh = async ({ dir, packageManager, platform, runningTests, typescript }) => {
 	await mkdir(dir, { recursive: true });
 
-	const command = runningTests ? "pnpx" : packageManagerCommand;
+	let command = runningTests ? "pnpx" : packageManager;
 	const leadingArgs = runningTests ? ["--yes", "--package", "create-vite", "create-vite"] : ["init", "vite", "--"];
+	if (platform === "win32") command += ".cmd";
 
 	const subprocess = spawn(command, [...leadingArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"], {
 		stdio: "pipe",

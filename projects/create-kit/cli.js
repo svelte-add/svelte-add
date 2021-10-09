@@ -1,6 +1,6 @@
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, getToolCommand, installDependencies, npxs, packageManagers, runAdder } from "svelte-add";
+import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "svelte-add";
 import { fresh } from "./__init.js";
 
 // Show the package version to make debugging easier
@@ -39,14 +39,12 @@ const main = async () => {
 		passedOutput,
 		passedPackageManager,
 	});
-	const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
-	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
 
 	await fresh({
 		demo: demos,
 		dir: projectDirectory,
 		eslint: quality.includes("eslint"),
-		packageManagerCommand,
+		packageManager,
 		prettier: quality.includes("prettier"),
 		runningTests: false,
 		typescript: script === "typescript",
@@ -62,7 +60,7 @@ const main = async () => {
 
 	for (const preset of presets) {
 		try {
-			await applyPreset({ args, projectDirectory, npxCommand, preset });
+			await applyPreset({ args, platform: environment.platform, projectDirectory, npx, preset });
 		} catch (e) {
 			console.log();
 			console.log(colors.bold(preset));
@@ -82,7 +80,7 @@ const main = async () => {
 				projectDirectory,
 				environment,
 				folderInfo,
-				npxCommand,
+				npx,
 				options: adderOptions[adder],
 			});
 		} catch (e) {
@@ -128,7 +126,7 @@ const main = async () => {
 
 	workingFeatures.push(...presets);
 
-	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
+	if (install) await installDependencies({ packageManager, platform: environment.platform, projectDirectory });
 
 	console.log(colors.green(`🪄 Your ${workingFeatures.join(" + ")} SvelteKit app is ready!`));
 
@@ -139,8 +137,10 @@ const main = async () => {
 	/** @type {string[]} */
 	const steps = [];
 	if (projectDirectory !== cwd) steps.push(`cd ${givenProjectDirectory}`);
-	// TODO: use tool map to show the correct install and script running commands
-	if (!install) steps.push(`${packageManager} install`);
+	if (!install) {
+		const [command, commandArgs] = packageManagers[packageManager].install;
+		steps.push(`${command} ${commandArgs.join(" ")}`);
+	}
 	steps.push(`${packageManager} run dev -- --open  # start developing with a browser open`);
 
 	for (const [index, step] of steps.entries()) console.log(`  ${index + 1}. ${step}`);

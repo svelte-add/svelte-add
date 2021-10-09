@@ -1,6 +1,6 @@
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, exit, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, getToolCommand, installDependencies, npxs, packageManagers, runAdder } from "./index.js";
+import { applyPreset, detectAdder, exit, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -42,11 +42,10 @@ const main = async () => {
 	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
 	const adders = features.filter((feature) => !["css", "javascript"].includes(feature));
 
-	const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
 	for (const preset of presets) {
 		console.log();
 		console.log(colors.bold(preset));
-		await applyPreset({ args, projectDirectory, npxCommand, preset });
+		await applyPreset({ args, platform: environment.platform, projectDirectory, npx, preset });
 		console.log(`${colors.green(` ✅ has been set up, but because it's an external integration adder, cannot be determined to have been set up correctly.`)}\nCreate or find an existing issue at ${colors.cyan(`https://github.com/${preset}/issues`)} if this is wrong.`);
 	}
 
@@ -92,11 +91,11 @@ const main = async () => {
 		try {
 			await runAdder({
 				adder,
-				projectDirectory,
 				environment,
 				folderInfo,
-				npxCommand,
+				npx,
 				options: adderOptions[adder],
+				projectDirectory,
 			});
 		} catch (e) {
 			const { name } = await getAdderMetadata({ adder });
@@ -141,11 +140,12 @@ const main = async () => {
 		}
 	}
 
-	const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
-	if (install) await installDependencies({ projectDirectory, packageManagerCommand });
+	if (install) await installDependencies({ packageManager, platform: environment.platform, projectDirectory });
 	else {
+		const [command, commandArgs] = packageManagers[packageManager].install;
+
 		console.log();
-		console.log(`${colors.yellow("Run")} ${packageManager} install ${colors.yellow("to install new dependencies before starting your app.")}`);
+		console.log(`${colors.yellow("Run")} ${command} ${commandArgs.join(" ")} ${colors.yellow("to install new dependencies before starting your app.")}`);
 	}
 };
 

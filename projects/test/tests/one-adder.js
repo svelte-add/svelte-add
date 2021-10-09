@@ -3,7 +3,7 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { detectAdder, getChoices, getEnvironment, getFolderInfo, getToolCommand, npxs, packageManagers, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, getFolderInfo, runAdder } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
@@ -35,8 +35,6 @@ for (const [app, init] of Object.entries(initializers)) {
 					passedOutput: [output],
 					passedPackageManager: "pnpm",
 				});
-				const npxCommand = getToolCommand({ platform: environment.platform, tool: npx, tools: npxs });
-				const packageManagerCommand = getToolCommand({ platform: environment.platform, tool: packageManager, tools: packageManagers });
 
 				const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
 				const addersToCheck = features.filter((feature) => !["css", "javascript"].includes(feature));
@@ -45,7 +43,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					demo: demos,
 					dir: output,
 					eslint: quality.includes("eslint"),
-					packageManagerCommand,
+					packageManager,
 					prettier: quality.includes("prettier"),
 					runningTests: true,
 					typescript: script === "typescript",
@@ -74,7 +72,7 @@ for (const [app, init] of Object.entries(initializers)) {
 						adder: adderToRun,
 						environment,
 						folderInfo,
-						npxCommand,
+						npx,
 						options: adderOptions[adderToRun],
 						projectDirectory: output,
 					});

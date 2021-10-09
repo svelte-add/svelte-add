@@ -505,117 +505,62 @@ export const getChoices = async ({ defaultDemos, defaultInstall, environment, ou
 	};
 };
 
+/**
+ * @template {string} Tool
+ * @template {any} Extensions
+ * @typedef {Record<Tool, {
+ *     detect: [string, string[]],
+ * } & Extensions>} Tools
+ */
+
+/** @typedef {"npm" | "pnpm" | "yarn"} PackageManager */
+/** @type {Tools<PackageManager, {install: [string, string[]], init: [string, string[]]}>} */
 export const packageManagers = {
 	npm: {
-		command: {
-			win32: "npm.cmd",
-		},
-		detect: "--version",
-		install: "install",
+		detect: ["npm", ["--version"]],
+		install: ["npm", ["install"]],
+		init: ["npm", ["init"]],
 	},
 	pnpm: {
-		command: {
-			win32: "pnpm.cmd",
-		},
-		detect: "--version",
-		install: "install",
+		detect: ["pnpm", ["--version"]],
+		install: ["pnpm", ["install"]],
+		init: ["pnpm", ["init"]],
 	},
 	yarn: {
-		command: {
-			win32: "yarn.cmd",
-		},
-		detect: "--version",
-		install: "install",
+		detect: ["yarn", ["--version"]],
+		install: ["yarn", ["install"]],
+		init: ["npm", ["init"]],
 	},
 };
 
+/** @typedef {"npx" | "pnpx"} NPX */
+/** @type {Tools<NPX, {}>} */
 export const npxs = {
 	npx: {
-		command: {
-			win32: "npx.cmd",
-		},
-		detect: "--version",
+		detect: ["npx", ["--version"]],
 	},
 	pnpx: {
-		command: {
-			win32: "pnpx.cmd",
-		},
-		detect: "--version",
+		detect: ["pnpx", ["--version"]],
 	},
 };
 
 /**
- * @param {object} param0
- * @param {NPX} param0.npx
- * @param {NodeJS.Platform} param0.platform
- * @returns {string}
- */
-export const getNpxCommand = ({ npx, platform }) => {
-	/** @type {string} */
-	let packageManagerCommand = npx;
-	if (platform in npxs[npx].command) {
-		/** @type {keyof typeof npxs[npx]["command"]} */
-		// prettier-ignore
-		const platformTypeSafe = (platform);
-		packageManagerCommand = npxs[npx].command[platformTypeSafe];
-	}
-	return packageManagerCommand;
-};
-
-/**
- * @typedef {typeof packageManagers} PackageManagers
- * @typedef {keyof PackageManagers} PackageManager
- 
- * @typedef {typeof npxs} NPXs
- * @typedef {keyof NPXs} NPX
- * 
- * @typedef {NPXs | PackageManagers} Tools
- * @typedef {NPX | PackageManager} Tool
- */
-
-/**
- * @template {NPXs | PackageManagers} ToolsType
- * @param {object} param0
- * @param {keyof ToolsType} param0.tool
- * @param {ToolsType} param0.tools
- * @param {NodeJS.Platform} param0.platform
- * @returns {string}
- */
-export const getToolCommand = ({ platform, tool, tools }) => {
-	/** @type {string} */
-	// prettier-ignore
-	let packageManagerCommand = (tool);
-	/** @type {any} */
-	const toolData = tools[tool];
-	if (platform in toolData.command) {
-		packageManagerCommand = toolData.command[platform];
-	}
-	return packageManagerCommand;
-};
-
-/**
- * @template {NPXs | PackageManagers} ToolsType
+ * @template {string} Tool
  * @param {object} param0
  * @param {NodeJS.Platform} param0.platform
- * @param {ToolsType} param0.tools
+ * @param {Tools<Tool, {}>} param0.tools
  * @returns {Promise<Record<Tool, boolean>>}
  */
 const getAvailable = async ({ platform, tools }) =>
 	Object.fromEntries(
 		await Promise.all(
-			Object.keys(tools).map(async (tool) => {
-				/** @type {keyof ToolsType} */
-				// prettier-ignore
-				const toolTypeSafe = (tool);
-				const command = getToolCommand({ platform, tool: toolTypeSafe, tools });
-
-				/** @type {any} */
-				const toolData = tools[toolTypeSafe];
-				/** @type {string} */
-				const detect = toolData.detect;
+			/** @type {Tool[]} */ (Object.keys(tools)).map(async (tool) => {
+				const toolData = tools[tool];
+				let [command, commandArgs] = toolData.detect;
+				if (platform === "win32") command += ".cmd";
 
 				try {
-					await promisify(exec)(`${command} ${detect}`);
+					await promisify(exec)(`${command} ${commandArgs.join(" ")}`);
 				} catch {
 					return [tool, false];
 				}
@@ -625,8 +570,6 @@ const getAvailable = async ({ platform, tools }) =>
 	);
 
 /**
- * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler
- *
  * @typedef {Object} Environment
  * @property {Record<NPX, boolean>} npxs
  * @property {Record<PackageManager, boolean>} packageManagers
@@ -647,6 +590,8 @@ export const getEnvironment = async () => {
 };
 
 /**
+ * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler
+ *
  * @typedef {Object} FolderInfo
  * @property {Bundler | undefined} bundler
  * @property {import("./package-versions").Dependencies} allDependencies
@@ -780,19 +725,22 @@ export const detectAdder = async ({ adder, projectDirectory, folderInfo }) => {
 /**
  * @typedef {Object} ApplyPresetArg
  * @property {string[]} args
+ * @property {NodeJS.Platform} platform
  * @property {string} projectDirectory
- * @property {string} npxCommand
+ * @property {NPX} npx
  * @property {string} preset
  *
  * @param {ApplyPresetArg} param0
  * @returns {Promise<void>}
  */
-export const applyPreset = ({ args, projectDirectory, npxCommand, preset }) =>
+export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =>
 	new Promise((resolve, reject) => {
 		if (!args.includes("--no-ssh")) args = [...args, "--no-ssh"];
 
-		// TODO: use npxCommand instead
-		const subprocess = spawn(npxCommand, ["--yes", "--package", "use-preset", "apply", preset, ...args], {
+		let command = npx;
+		if (platform === "win32") command += ".cmd";
+
+		const subprocess = spawn(command, ["--yes", "--package", "use-preset", "apply", preset, ...args], {
 			cwd: projectDirectory,
 			stdio: "pipe",
 			timeout: 20000,
@@ -827,7 +775,7 @@ export const applyPreset = ({ args, projectDirectory, npxCommand, preset }) =>
 /**
  * @template Options
  * @typedef {Object} AdderRunArg
- * @property {function(Omit<ApplyPresetArg, "projectDirectory" | "npxCommand">): ReturnType<typeof applyPreset>} applyPreset
+ * @property {function(Omit<ApplyPresetArg, "npx" | "platform" | "projectDirectory">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
  * @property {FolderInfo} folderInfo
  * @property {function({ prod?: boolean, package: keyof typeof packageVersions, versionOverride?: string }): Promise<void>} install
@@ -873,17 +821,17 @@ export const getAdderMetadata = async ({ adder }) => {
  * @param {string} param0.projectDirectory
  * @param {Environment} param0.environment
  * @param {FolderInfo} param0.folderInfo
- * @param {string} param0.npxCommand
+ * @param {NPX} param0.npx
  * @param {Options} param0.options
  * @returns {Promise<void>}
  */
-export const runAdder = async ({ adder, projectDirectory, environment, folderInfo, npxCommand, options }) => {
+export const runAdder = async ({ adder, projectDirectory, environment, folderInfo, npx, options }) => {
 	/** @type {{ run: AdderRun<Options> }} */
 	const { run } = await import(`./adders/${adder}/__run.js`);
 
 	await run({
 		applyPreset({ ...args }) {
-			return applyPreset({ ...args, projectDirectory, npxCommand });
+			return applyPreset({ ...args, platform: environment.platform, projectDirectory, npx });
 		},
 		environment,
 		folderInfo,
@@ -928,14 +876,17 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 
 /**
  * @param {object} param0
+ * @param {PackageManager} param0.packageManager
+ * @param {NodeJS.Platform} param0.platform
  * @param {string} param0.projectDirectory
- * @param {string} param0.packageManagerCommand
  * @returns {Promise<void>}
  */
-export const installDependencies = ({ projectDirectory, packageManagerCommand }) =>
+export const installDependencies = ({ packageManager, platform, projectDirectory }) =>
 	new Promise((resolve, reject) => {
-		// TODO: check the map and get install from there
-		const subprocess = spawn(packageManagerCommand, ["install"], {
+		let [command, commandArgs] = packageManagers[packageManager].install;
+		if (platform === "win32") command += ".cmd";
+
+		const subprocess = spawn(command, commandArgs, {
 			cwd: projectDirectory,
 			stdio: "pipe",
 			timeout: 90000,
@@ -947,12 +898,9 @@ export const installDependencies = ({ projectDirectory, packageManagerCommand })
 			body += chunk;
 		});
 
-		subprocess.stderr.on("end", () => {
-			if (body === "") {
-				resolve(undefined);
-				return;
-			}
-
-			reject(new Error(body));
+		subprocess.on("close", (code) => {
+			if (code !== 0) reject(new Error(`${code} ${body}`));
+			else resolve(undefined);
 		});
+		subprocess.on("error", (code) => reject(new Error(`${code} ${body}`)));
 	});

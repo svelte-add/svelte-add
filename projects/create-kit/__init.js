@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
+import { packageManagers } from "svelte-add";
 
 /**
- *
  * @param {number} ms
  * @returns {Promise<undefined>}
  */
@@ -12,13 +12,17 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {boolean} param0.demo
  * @param {string} param0.dir
  * @param {boolean} param0.eslint
- * @param {string} param0.packageManagerCommand
+ * @param {import("svelte-add").PackageManager} param0.packageManager
+ * @param {NodeJS.Platform} param0.platform
  * @param {boolean} param0.prettier
  * @param {boolean} param0.runningTests
  * @param {boolean} param0.typescript
  */
-export const fresh = async ({ demo, dir, eslint, packageManagerCommand, prettier, typescript }) => {
-	const subprocess = spawn(packageManagerCommand, ["init", "svelte@next", dir], {
+export const fresh = async ({ demo, dir, eslint, packageManager, platform, prettier, typescript }) => {
+	let [command, commandArgs] = packageManagers[packageManager].init;
+	if (platform === "win32") command += ".cmd";
+
+	const subprocess = spawn(command, [...commandArgs, "svelte@next", dir], {
 		stdio: "pipe",
 		timeout: 8000,
 	});
@@ -58,6 +62,6 @@ export const fresh = async ({ demo, dir, eslint, packageManagerCommand, prettier
 
 	subprocess.stdin.end();
 
-	// TODO: for some reason the initializer isn't finished instantly?!
+	// Give files a chance to reach the filesystem
 	await wait(300);
 };
