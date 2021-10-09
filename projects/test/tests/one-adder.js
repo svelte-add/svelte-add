@@ -13,9 +13,9 @@ const addersToTest = ["tailwindcss"];
 
 for (const [app, init] of Object.entries(initializers)) {
 	for (const adderToTest of addersToTest) {
-		for (const defaultDemos of [false, true]) {
-			test(`${adderToTest} being used on ${app} (with demos: ${defaultDemos})`, async () => {
-				const output = `_outputs/${app}_${adderToTest}_${defaultDemos}`;
+		for (const passedDemos of [false, true]) {
+			test(`${adderToTest} being used on ${app} (with demos: ${passedDemos})`, async () => {
+				const output = `_outputs/${app}_${adderToTest}_${passedDemos}`;
 				await rm(output, {
 					recursive: true,
 					force: true,
@@ -24,14 +24,13 @@ for (const [app, init] of Object.entries(initializers)) {
 				const environment = await getEnvironment();
 
 				const { adderOptions, demos, deploy, npx, other, packageManager, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
-					defaultDemos,
 					defaultInstall: false,
 					environment,
 					outputFolderMustBe: false,
 					passedAddersAndPresets: [adderToTest],
 					passedArgs: {},
-					passedDemos: undefined,
-					passedInstall: undefined,
+					passedDemos,
+					passedInstall: false,
 					passedOutput: [output],
 					passedPackageManager: "pnpm",
 				});

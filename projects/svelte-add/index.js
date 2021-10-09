@@ -70,7 +70,6 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
 /**
  * Sorts out the given adders into categories (or prompts for them if needed)
  * @param {object} param0
- * @param {boolean} param0.defaultDemos
  * @param {boolean} param0.defaultInstall
  * @param {Environment} param0.environment
  * @param {boolean} param0.outputFolderMustBe
@@ -82,7 +81,7 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  * @param {PackageManager | undefined} param0.passedPackageManager
  * @returns {Promise<Choices>}
  */
-export const getChoices = async ({ defaultDemos, defaultInstall, environment, outputFolderMustBe, passedAddersAndPresets, passedArgs, passedDemos, passedInstall, passedOutput, passedPackageManager }) => {
+export const getChoices = async ({ defaultInstall, environment, outputFolderMustBe, passedAddersAndPresets, passedArgs, passedDemos, passedInstall, passedOutput, passedPackageManager }) => {
 	const interactive = passedAddersAndPresets === undefined && Object.keys(passedArgs).length === 0 && passedInstall === undefined && passedOutput.length === 0;
 
 	if (passedOutput.length > 1) exit("TODO: explain this error.");
@@ -227,7 +226,7 @@ export const getChoices = async ({ defaultDemos, defaultInstall, environment, ou
 
 		presets = addersAndPresetsList.filter((adderOrPreset) => adderOrPreset.includes("/"));
 
-		demos = defaultDemos;
+		demos = false;
 		if (passedDemos === true || passedDemos === "true") demos = true;
 		else if (passedDemos === false || passedDemos === "false") demos = false;
 		else if (passedDemos !== undefined) throw new Error(`unexpected value for demos ${inspect(passedDemos)}`);
@@ -423,7 +422,7 @@ export const getChoices = async ({ defaultDemos, defaultInstall, environment, ou
 					value: true,
 				},
 			],
-			initial: defaultDemos ? 1 : 0,
+			initial: 1,
 			message: "Do you want example and demonstration code added to your app to demonstrate how to use the tools you've selected?",
 			name: "demos",
 			type: "select",

@@ -29,7 +29,6 @@ const main = async () => {
 	const environment = await getEnvironment();
 	const { adderOptions, demos, deploy, givenProjectDirectory, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
 		passedAddersAndPresets,
-		defaultDemos: true,
 		defaultInstall: true,
 		outputFolderMustBe: false,
 		environment,
