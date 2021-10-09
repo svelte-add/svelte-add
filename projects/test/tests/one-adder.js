@@ -44,6 +44,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					dir: output,
 					eslint: quality.includes("eslint"),
 					packageManager,
+					platform: environment.platform,
 					prettier: quality.includes("prettier"),
 					runningTests: true,
 					typescript: script === "typescript",

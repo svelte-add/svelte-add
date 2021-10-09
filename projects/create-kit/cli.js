@@ -45,6 +45,7 @@ const main = async () => {
 		dir: projectDirectory,
 		eslint: quality.includes("eslint"),
 		packageManager,
+		platform: environment.platform,
 		prettier: quality.includes("prettier"),
 		runningTests: false,
 		typescript: script === "typescript",
