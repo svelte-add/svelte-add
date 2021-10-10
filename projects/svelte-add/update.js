@@ -1,8 +1,12 @@
 import { mkdir, unlink, writeFile } from "fs/promises";
-import { parse } from "path";
+import { dirname, parse } from "path";
+import prettier from "prettier";
+import { fileURLToPath } from "url";
 
 import { readFile } from "./index.js";
 import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
+
+const svelteAddPackageDirectory = dirname(fileURLToPath(import.meta.url));
 
 /**
  *
@@ -43,7 +47,14 @@ export const updateFile = async ({ path, content }) => {
 		recursive: true,
 	});
 
-	await writeFile(path, out.text, {
+	const options = await prettier.resolveConfig(path);
+	const formatted = prettier.format(out.text, {
+		...options,
+		filepath: path,
+		pluginSearchDirs: [svelteAddPackageDirectory],
+	});
+
+	await writeFile(path, formatted, {
 		encoding: "utf-8",
 	});
 };

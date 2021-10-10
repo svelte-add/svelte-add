@@ -27,7 +27,7 @@
 	"devDependencies": {
 		"@types/node": "^16.10.3",
 		"@types/prompts": "^2.0.14",
-		"eslint": "^7.32.0",
+		"eslint": "^8.0.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-only-warn": "^1.0.3",
 		"prettier": "^2.4.1",
