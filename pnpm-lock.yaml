@@ -20,7 +20,7 @@ importers:
       prettier: 2.4.1
       typescript: 4.4.3
 
-  projects/create-kit:
+  projects/app-initializer-tools:
     specifiers:
       kleur: ^4.1.4
       mri: ^1.2.0
@@ -30,10 +30,20 @@ importers:
       mri: 1.2.0
       svelte-add: link:../svelte-add
 
-  projects/create-vite:
+  projects/create-kit:
     specifiers:
+      '@svelte-add/app-initializer-tools': workspace:*
       svelte-add: workspace:*
     dependencies:
+      '@svelte-add/app-initializer-tools': link:../app-initializer-tools
+      svelte-add: link:../svelte-add
+
+  projects/create-vite:
+    specifiers:
+      '@svelte-add/app-initializer-tools': workspace:*
+      svelte-add: workspace:*
+    dependencies:
+      '@svelte-add/app-initializer-tools': link:../app-initializer-tools
       svelte-add: link:../svelte-add
 
   projects/svelte-add:

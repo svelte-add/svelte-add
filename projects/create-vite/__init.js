@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import { mkdir } from "fs/promises";
+import { packageManagers } from "svelte-add";
 
 /**
  * @param {number} ms
@@ -13,36 +14,39 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 const isValidPackageName = (projectName) => /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(projectName);
 
-/**
- *
- * @param {Object} param0
- * @param {boolean} param0.demo
- * @param {string} param0.dir
- * @param {boolean} param0.eslint
- * @param {string} param0.packageManager
- * @param {NodeJS.Platform} param0.platform
- * @param {boolean} param0.prettier
- * @param {boolean} param0.runningTests
- * @param {boolean} param0.typescript
- */
+/** @type {import("@svelte-add/app-initializer-tools").Initializer} */
 export const fresh = async ({ dir, packageManager, platform, runningTests, typescript }) => {
 	await mkdir(dir, { recursive: true });
 
-	let command = runningTests ? "pnpx" : packageManager;
-	const leadingArgs = runningTests ? ["--yes", "--package", "create-vite", "create-vite"] : ["init", "vite", "--"];
+	let [command, commandArgs] = packageManagers[packageManager].init;
+
+	if (runningTests) {
+		command = "pnpx";
+		commandArgs = ["--yes", "--package", "create-vite", "create-vite"];
+	} else {
+		commandArgs.push("vite", "--");
+	}
 	if (platform === "win32") command += ".cmd";
 
-	const subprocess = spawn(command, [...leadingArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"], {
+	const subprocess = spawn(command, [...commandArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"], {
 		stdio: "pipe",
 		timeout: 8000,
 	});
 
 	const initialization = new Promise((resolve, reject) => {
+		let body = "";
+
+		subprocess.stderr.on("data", (chunk) => {
+			body += chunk;
+		});
+
 		subprocess.on("close", (code) => {
-			if (code !== 0) reject(new Error(`${code}`));
+			if (code !== 0) reject(new Error(body));
 			else resolve(undefined);
 		});
-		subprocess.on("error", (code) => reject(new Error(`${code}`)));
+		subprocess.on("error", () => {
+			reject(new Error(body));
+		});
 	});
 
 	/** @param {string} content */

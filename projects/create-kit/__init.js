@@ -7,17 +7,7 @@ import { packageManagers } from "svelte-add";
  */
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/**
- * @param {Object} param0
- * @param {boolean} param0.demo
- * @param {string} param0.dir
- * @param {boolean} param0.eslint
- * @param {import("svelte-add").PackageManager} param0.packageManager
- * @param {NodeJS.Platform} param0.platform
- * @param {boolean} param0.prettier
- * @param {boolean} param0.runningTests
- * @param {boolean} param0.typescript
- */
+/** @type {import("@svelte-add/app-initializer-tools").Initializer} */
 export const fresh = async ({ demo, dir, eslint, packageManager, platform, prettier, typescript }) => {
 	let [command, commandArgs] = packageManagers[packageManager].init;
 	if (platform === "win32") command += ".cmd";

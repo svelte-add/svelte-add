@@ -1,5 +1,11 @@
+import { setup } from "@svelte-add/app-initializer-tools";
+import { fresh } from "./__init.js";
+
 const main = async () => {
-	console.error("creating a vite-powered svelte app like this doesn't work yet");
+	await setup({
+		applicationFramework: "Vite-powered Svelte",
+		fresh,
+	});
 };
 
 main();

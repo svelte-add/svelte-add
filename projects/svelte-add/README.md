@@ -3,7 +3,7 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 
-  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit -- --with typescript+tailwindcss`
+  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit@latest`
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
@@ -47,7 +47,7 @@ npm init @svelte-add/kit@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex --demos false
+npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
@@ -62,17 +62,13 @@ npm init --yes @svelte-add/kit@latest my-new-app -- --with firebase-hosting+type
 The preferred way to add integrations to a Vite-powered Svelte app is to start a new one, choosing the ones you want:
 
 ```sh
-# NOTE: This is not implemented yet.
 npm init @svelte-add/vite@latest
 # Follow the prompts to select the integrations you want
 ```
 
-At the time of writing, this is not implemented, so see the "Adding one integration at a time" section for the existing, mostly working, way to add integrations.
-
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-# NOTE: This is not implemented yet.
 npm init --yes @svelte-add/vite@latest -- --with bulma+mdsvex
 ```
 
@@ -97,6 +93,16 @@ npx svelte-add@latest coffeescript
 npx svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
+
+## ⚙️ Options
+
+- the output directory when initializing a Svelte app.
+- `demos` (default `false`): whether or not to include demonstration code to teach about the integrations and application framework used.
+- `install` (default `true` if initializing a Svelte app, otherwise `false`): whether or not to automatically install dependencies after adding integrations.
+- `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when initializing a Svelte app or installing dependencies.
+- `with` (default `javascript+css`): the features (adders and built-in options like `eslint`, `prettier`, and `typescript`) to initialize the Svelte app with.
+
+The specific adders you're using might have their own options, so see their `README` for that information. For example, [the Tailwind CSS adder](https://github.com/svelte-add/tailwindcss) takes a `v3` option.
 
 ## 🧓 Support for Elder.js
 
