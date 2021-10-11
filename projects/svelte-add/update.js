@@ -51,7 +51,8 @@ export const updateFile = async ({ path, content }) => {
 	const formatted = prettier.format(out.text, {
 		...options,
 		filepath: path,
-		pluginSearchDirs: [svelteAddPackageDirectory],
+		// TODO: fix this (uncommenting makes it work when testing but not work in production (and vice versa))
+		// pluginSearchDirs: [svelteAddPackageDirectory],
 	});
 
 	await writeFile(path, formatted, {
