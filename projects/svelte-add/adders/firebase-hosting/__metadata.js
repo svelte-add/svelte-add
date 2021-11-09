@@ -6,7 +6,7 @@ export const name = "Firebase Hosting";
 export const options = {
 	project: {
 		context: "You can find it at https://console.firebase.google.com/",
-		question: "What is your Firebase project's ID?",
 		default: "",
+		question: "What is your Firebase project's ID?",
 	},
 };
