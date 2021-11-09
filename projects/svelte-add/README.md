@@ -7,7 +7,7 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
-  `svelte-add`'s "tutorials" are one step: `npx svelte-add@latest graphql-server`
+  `svelte-add`'s "tutorials" are one step: `npx --yes svelte-add@latest graphql-server`
 
 - You have to rely on the maintainer keeping the template updated as the tools it uses change and the official Svelte app template it was built on changes.
 
@@ -81,7 +81,7 @@ Ideally, you can `svelte-add` an integration any time after app initialization:
 npm init svelte@next
 
 # Then realized you want to write your styles in SCSS
-npx svelte-add@latest scss
+npx --yes svelte-add@latest scss
 ```
 
 but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
@@ -89,8 +89,8 @@ but there are practically infinite scenarios that an automated tool like this ca
 Adders should all be _composable_, meaning that it should always be possible to run one after another without something breaking:
 
 ```sh
-npx svelte-add@latest coffeescript
-npx svelte-add@latest mdsvex
+npx --yes svelte-add@latest coffeescript
+npx --yes svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
 
