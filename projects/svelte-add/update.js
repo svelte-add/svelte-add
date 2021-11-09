@@ -48,12 +48,24 @@ export const updateFile = async ({ path, content }) => {
 	});
 
 	const options = await prettier.resolveConfig(path);
-	const formatted = prettier.format(out.text, {
-		...options,
-		filepath: path,
-		// TODO: fix this (uncommenting makes it work when testing but not work in production (and vice versa))
-		// pluginSearchDirs: [svelteAddPackageDirectory],
-	});
+	let formatted = out.text;
+
+	try {
+		formatted = prettier.format(out.text, {
+			...options,
+			filepath: path,
+		});
+	} catch (e) {
+		try {
+			formatted = prettier.format(out.text, {
+				...options,
+				filepath: path,
+				pluginSearchDirs: [svelteAddPackageDirectory],
+			});
+		} catch (e) {
+			console.debug(e);
+		}
+	}
 
 	await writeFile(path, formatted, {
 		encoding: "utf-8",
@@ -61,7 +73,6 @@ export const updateFile = async ({ path, content }) => {
 };
 
 /**
- *
  * Example:
  * await updateCss({
  *     path: "/path/to/project/src/app.postcss",
