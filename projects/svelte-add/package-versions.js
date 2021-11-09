@@ -9,6 +9,7 @@ export const packageVersions = {
 	"postcss-load-config": "^3.1.0",
 	sass: "^1.42.1",
 	"svelte-preprocess": "^4.9.8",
+	"sveltestrap": "^5.6.3",
 	tailwindcss: "^2.2.16",
 	"vite-plugin-coffee": "^2.2.1",
 };
