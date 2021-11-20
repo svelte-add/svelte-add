@@ -144,7 +144,7 @@ const main = async () => {
 		const [command, commandArgs] = packageManagers[packageManager].install;
 
 		console.log();
-		console.log(`${colors.yellow("Run")} ${command} ${commandArgs.join(" ")} ${colors.yellow("to install new dependencies before starting your app.")}`);
+		console.log(`${colors.yellow("Run")} ${command} ${commandArgs.join(" ")} ${colors.yellow("to install new dependencies, and then reload your IDE before starting your app.")}`);
 	}
 };
 

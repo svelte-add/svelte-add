@@ -160,6 +160,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 	if (!install) {
 		const [command, commandArgs] = packageManagers[packageManager].install;
 		steps.push(`${command} ${commandArgs.join(" ")}`);
+		steps.push("Reload your IDE");
 	}
 	steps.push(`${packageManager} run dev -- --open  # start developing with a browser open`);
 
