@@ -40,9 +40,7 @@ const styleLanguageForFramework = {
 	tailwindcss: "postcss",
 };
 
-/** @type {Record<StyleLanguage, StyleFramework[]>} */
-// prettier-ignore
-const styleFrameworksForLanguage = (/** @type {any} */ ({}));
+const styleFrameworksForLanguage = /** @type {Record<StyleLanguage, StyleFramework[]>} */ ({});
 for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
 	if (styleFrameworksForLanguage[language] === undefined) styleFrameworksForLanguage[language] = [];
 	styleFrameworksForLanguage[language].push(/** @type {StyleFramework} */ (framework));
@@ -255,7 +253,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			adderOptions[adder] = {};
 
 			for (const [option, { context, default: default_, question }] of Object.entries(options)) {
-				const message = `${question}\n${colors.gray(context)}`;
+				const message = `${question}\n${colors.gray(context)}\n`;
 				if (typeof default_ === "boolean") {
 					const { answer } = await prompts({
 						choices: [
@@ -428,9 +426,9 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			type: "select",
 		}));
 
-		/** @type {PackageManager[]} */
-		// prettier-ignore
-		const installedPackageManagers = (Object.entries(environment.packageManagers).filter((packageManagerAndInstalled) => packageManagerAndInstalled[1]).map(([packageManager]) => packageManager));
+		const installedPackageManagers = /** @type {PackageManager[]} */ Object.entries(environment.packageManagers)
+			.filter((packageManagerAndInstalled) => packageManagerAndInstalled[1])
+			.map(([packageManager]) => packageManager);
 		if (installedPackageManagers.length === 1) {
 			({ install } = await prompts({
 				choices: [

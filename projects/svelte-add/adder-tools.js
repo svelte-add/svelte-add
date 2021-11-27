@@ -170,9 +170,7 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 			enter(node) {
 				if (node.type !== "ImportDeclaration") return;
 
-				/** @type {import("estree").ImportDeclaration} */
-				// prettier-ignore
-				const importDeclaration = (node)
+				const importDeclaration = /** @type {import("estree").ImportDeclaration} */ (node);
 
 				if (typeof importDeclaration.source.value !== "string") return;
 

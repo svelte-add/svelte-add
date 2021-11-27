@@ -86,9 +86,7 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 		enter(node) {
 			if (cjs) {
 				if (node.type !== "AssignmentExpression") return;
-				/** @type {import("estree").AssignmentExpression} */
-				// prettier-ignore
-				const assignmentExpression = (node)
+				const assignmentExpression = /** @type {import("estree").AssignmentExpression} */ (node);
 
 				const assigningTo = assignmentExpression.left;
 				if (assigningTo.type !== "MemberExpression") return;
@@ -108,9 +106,7 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 			} else {
 				if (node.type !== "ExportDefaultDeclaration") return;
 
-				/** @type {import("estree").ExportDefaultDeclaration} */
-				// prettier-ignore
-				const exportDefault = (node);
+				const exportDefault = /** @type {import("estree").ExportDefaultDeclaration} */ (node);
 
 				const exportDefaultDeclaration = exportDefault.declaration;
 
@@ -198,9 +194,7 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 			enter(node) {
 				if (node.type !== "VariableDeclarator") return;
 
-				/** @type {import("estree").VariableDeclarator} */
-				// prettier-ignore
-				const variableDeclarator = (node)
+				const variableDeclarator = /** @type {import("estree").VariableDeclarator} */ (node);
 
 				if (variableDeclarator.id.type === "Identifier" && variableDeclarator.id.name === configObjectVariable) {
 					const init = variableDeclarator.init;
@@ -237,9 +231,7 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 			if (cjs) {
 				if (node.type !== "VariableDeclarator") return;
 
-				/** @type {import("estree").VariableDeclarator} */
-				// prettier-ignore
-				const declarator = (node);
+				const declarator = /** @type {import("estree").VariableDeclarator} */ (node);
 
 				if (declarator.id.type !== "Identifier") return;
 				const identifier = declarator.id;
@@ -260,9 +252,7 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
 			} else {
 				if (node.type !== "ImportDeclaration") return;
 
-				/** @type {import("estree").ImportDeclaration} */
-				// prettier-ignore
-				const importDeclaration = (node)
+				const importDeclaration = /** @type {import("estree").ImportDeclaration} */ (node);
 
 				if (importDeclaration.source.value !== pkg) return;
 
@@ -293,9 +283,7 @@ export const findImport = ({ cjs, package: pkg, typeScriptEstree }) => {
  */
 export const addImport = ({ cjs, default: default_, named, package: pkg, require, typeScriptEstree }) => {
 	if (cjs) {
-		/** @type {import("estree").VariableDeclarator["id"]} */
-		// prettier-ignore
-		let id = ({});
+		let id = /** @type {import("estree").VariableDeclarator["id"]} */ ({});
 
 		if (require)
 			id = {

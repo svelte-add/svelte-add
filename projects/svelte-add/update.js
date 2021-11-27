@@ -272,9 +272,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 			 * @returns {Promise<import("posthtml-parser").NodeTag | undefined>}
 			 */
 			const modify = async ({ astArg, beginning, existingTag, newAst, newTag, stringify, updater }) => {
-				/** @type {LangType} */
-				// prettier-ignore
-				const lang = (existingTag?.attrs?.lang);
+				const lang = /** @type {LangType} */ (existingTag?.attrs?.lang);
 				const content = existingTag?.content;
 				const text = Array.isArray(content) ? content.join("") : content?.toString() ?? "";
 
