@@ -1,4 +1,6 @@
 export const packageVersions = {
+	"@tailwindcss/forms": "^0.3.4",
+	"@tailwindcss/typography": "^0.4.1",
 	autoprefixer: "^10.3.7",
 	bootstrap: "^5.1.3",
 	bulma: "^0.9.3",
