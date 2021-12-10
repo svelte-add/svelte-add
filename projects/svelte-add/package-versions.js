@@ -1,6 +1,6 @@
 export const packageVersions = {
-	"@tailwindcss/forms": "^0.3.4",
-	"@tailwindcss/typography": "^0.4.1",
+	"@tailwindcss/forms": "^0.4.0",
+	"@tailwindcss/typography": "^0.5.0",
 	autoprefixer: "^10.3.7",
 	bootstrap: "^5.1.3",
 	bulma: "^0.9.3",
@@ -12,7 +12,7 @@ export const packageVersions = {
 	sass: "^1.42.1",
 	"svelte-preprocess": "^4.9.8",
 	sveltestrap: "^5.6.3",
-	tailwindcss: "^2.2.16",
+	tailwindcss: "^3.0.0",
 	"vite-plugin-coffee": "^2.2.1",
 };
 

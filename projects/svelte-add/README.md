@@ -102,7 +102,7 @@ npx --yes svelte-add@latest mdsvex
 - `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when initializing a Svelte app or installing dependencies.
 - `with` (default `javascript+css`): the features (adders and built-in options like `eslint`, `prettier`, and `typescript`) to initialize the Svelte app with.
 
-The specific adders you're using might have their own options, so see their `README` for that information. For example, [the Tailwind CSS adder](https://github.com/svelte-add/tailwindcss) takes a `v3` option.
+The specific adders you're using might have their own options, so see their `README` for that information. For example, [the Tailwind CSS adder](https://github.com/svelte-add/tailwindcss) takes a `forms` option and a `typography` option.
 
 ## 🧓 Support for Elder.js
 
