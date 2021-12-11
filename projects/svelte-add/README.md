@@ -110,7 +110,7 @@ No adders currently support Elder.js, but we would like to! If you can help, see
 
 ## 🧭 Support for Routify
 
-No adders currently support Routify. If you can help `svelte-add` support Routify, [create an issue to talk about it](https://github.com/svelte-add/svelte-add/issues).
+No adders currently support Routify. If you can help `svelte-add` support Routify, see [the open issue for it](https://github.com/svelte-add/svelte-add/issues/165).
 
 ## 🌱 Support for Sapper
 
