@@ -24,7 +24,7 @@ export const fresh = async ({ dir, packageManager, platform, runningTests, types
 		command = "pnpx";
 		commandArgs = ["--yes", "--package", "create-vite", "create-vite"];
 	} else {
-		commandArgs.push("vite", "--");
+		commandArgs = [...commandArgs, "--yes", "vite", "--"];
 	}
 	if (platform === "win32") command += ".cmd";
 
@@ -35,6 +35,10 @@ export const fresh = async ({ dir, packageManager, platform, runningTests, types
 
 	const initialization = new Promise((resolve, reject) => {
 		let body = "";
+
+		subprocess.stdout.on("data", (chunk) => {
+			body += chunk;
+		});
 
 		subprocess.stderr.on("data", (chunk) => {
 			body += chunk;

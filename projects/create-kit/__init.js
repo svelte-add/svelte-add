@@ -12,22 +12,31 @@ export const fresh = async ({ demo, dir, eslint, packageManager, platform, prett
 	let [command, commandArgs] = packageManagers[packageManager].init;
 	if (platform === "win32") command += ".cmd";
 
-	const subprocess = spawn(command, [...commandArgs, "svelte@next", dir], {
+	const subprocess = spawn(command, [...commandArgs, "--yes", "svelte@next", dir], {
 		stdio: "pipe",
 		timeout: 8000,
 	});
 
-	let body = "";
+	const initialization = new Promise((resolve, reject) => {
+		let body = "";
 
-	subprocess.stderr.on("data", (chunk) => {
-		body += chunk;
-	});
+		subprocess.stdout.on("data", (chunk) => {
+			body += chunk;
+		});
 
-	subprocess.on("close", (code) => {
-		if (code !== 0) throw new Error(body);
-	});
-	subprocess.on("error", () => {
-		throw new Error(body);
+		subprocess.stderr.on("data", (chunk) => {
+			body += chunk;
+		});
+
+		subprocess.on("close", (code) => {
+			if (code !== 0) reject(new Error(body));
+			else resolve(undefined);
+
+			console.log(body);
+		});
+		subprocess.on("error", () => {
+			reject(new Error(body));
+		});
 	});
 
 	/** @param {string} content */
@@ -37,7 +46,8 @@ export const fresh = async ({ demo, dir, eslint, packageManager, platform, prett
 		subprocess.stdin.write(content);
 	};
 
-	await wait(2000);
+	await wait(4000);
+
 	if (!demo) await waitForWrite("\x1B[B");
 	await waitForWrite("\n");
 
@@ -51,7 +61,5 @@ export const fresh = async ({ demo, dir, eslint, packageManager, platform, prett
 	await waitForWrite("\n");
 
 	subprocess.stdin.end();
-
-	// Give files a chance to reach the filesystem
-	await wait(300);
+	await initialization;
 };
