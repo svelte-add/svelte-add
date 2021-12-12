@@ -17,7 +17,7 @@ export const exit = (text) => {
  * @typedef {"coffeescript" | "javascript" | "typescript"} Script
  * @typedef {"css" | "postcss" | "scss"} StyleLanguage
  * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
- * @typedef {"graphql-server" | "mdsvex"} Other
+ * @typedef {"3d" | "graphql-server" | "mdsvex"} Other
  * @typedef {"eslint" | "prettier"} Quality
  * @typedef {"firebase-hosting"} Deploy
  */
@@ -27,7 +27,7 @@ const scripts = ["javascript", "typescript", "coffeescript"];
 /** @type {StyleLanguage[]} */
 const styleLanguages = ["css", "postcss", "scss"];
 /** @type {Other[]} */
-const others = ["graphql-server", "mdsvex"];
+const others = ["3d", "graphql-server", "mdsvex"];
 /** @type {Quality[]} */
 const qualities = ["eslint", "prettier"];
 /** @type {Deploy[]} */
