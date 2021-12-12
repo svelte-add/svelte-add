@@ -31,8 +31,6 @@ export const fresh = async ({ demo, dir, eslint, packageManager, platform, prett
 		subprocess.on("close", (code) => {
 			if (code !== 0) reject(new Error(body));
 			else resolve(undefined);
-
-			console.log(body);
 		});
 		subprocess.on("error", () => {
 			reject(new Error(body));
