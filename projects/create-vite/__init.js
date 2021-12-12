@@ -51,13 +51,14 @@ export const fresh = async ({ dir, packageManager, platform, runningTests, types
 
 	/** @param {string} content */
 	const waitForWrite = async (content) => {
-		// TODO: this is good enough until https://github.com/sveltejs/kit/pull/1231#issuecomment-827037397
 		await wait(300);
 		subprocess.stdin.write(content);
 	};
 
 	await wait(2000);
-	if (!isValidPackageName(dir)) await waitForWrite("\n\n");
+
+	if (dir === ".") await waitForWrite("svelte-vite-app\n\n");
+	else if (!isValidPackageName(dir)) await waitForWrite("\n\n");
 
 	subprocess.stdin.end();
 	await initialization;
