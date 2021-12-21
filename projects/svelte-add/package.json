@@ -23,7 +23,6 @@
 		"adder-tools.js",
 		"ast-io.js",
 		"ast-tools.js",
-		"cli.cjs",
 		"cli.js",
 		"index.js",
 		"package-versions.js",
@@ -36,7 +35,7 @@
 		}
 	},
 	"bin": {
-		"svelte-add": "cli.cjs"
+		"svelte-add": "cli.js"
 	},
 	"dependencies": {
 		"@typescript-eslint/typescript-estree": "^5.8.0",

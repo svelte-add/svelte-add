@@ -19,12 +19,11 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"files": [
 		"__init.js",
-		"cli.cjs",
 		"cli.js"
 	],
 	"type": "module",
 	"bin": {
-		"create-vite": "cli.cjs"
+		"create-vite": "cli.js"
 	},
 	"dependencies": {
 		"@svelte-add/app-initializer-tools": "workspace:*",
