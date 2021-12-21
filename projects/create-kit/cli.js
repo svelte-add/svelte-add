@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { setup } from "@svelte-add/app-initializer-tools";
 import { fresh } from "./__init.js";
 

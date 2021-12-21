@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import colors from "kleur";
 import mri from "mri";
 import { applyPreset, detectAdder, exit, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
