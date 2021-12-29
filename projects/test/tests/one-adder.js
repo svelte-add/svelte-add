@@ -27,7 +27,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					defaultInstall: false,
 					environment,
 					outputFolderMustBe: false,
-					passedAddersAndPresets: [adderToTest],
+					passedFeatures: [adderToTest],
 					passedArgs: {},
 					passedDemos,
 					passedInstall: false,

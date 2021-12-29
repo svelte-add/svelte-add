@@ -71,7 +71,7 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  * @param {boolean} param0.defaultInstall
  * @param {Environment} param0.environment
  * @param {boolean} param0.outputFolderMustBe
- * @param {string[] | undefined} param0.passedAddersAndPresets
+ * @param {string[] | undefined} param0.passedFeatures
  * @param {Record<string, any>} param0.passedArgs
  * @param {string | boolean | undefined} param0.passedDemos
  * @param {string | boolean | undefined} param0.passedInstall
@@ -79,8 +79,8 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  * @param {PackageManager | undefined} param0.passedPackageManager
  * @returns {Promise<Choices>}
  */
-export const getChoices = async ({ defaultInstall, environment, outputFolderMustBe, passedAddersAndPresets, passedArgs, passedDemos, passedInstall, passedOutput, passedPackageManager }) => {
-	const interactive = passedAddersAndPresets === undefined && Object.keys(passedArgs).length === 0 && passedInstall === undefined && passedOutput.length === 0;
+export const getChoices = async ({ defaultInstall, environment, outputFolderMustBe, passedFeatures, passedArgs, passedDemos, passedInstall, passedOutput, passedPackageManager }) => {
+	const interactive = passedFeatures === undefined && Object.keys(passedArgs).length === 0 && passedInstall === undefined && passedOutput.length === 0;
 
 	if (passedOutput.length > 1) exit("TODO: explain this error.");
 
@@ -138,20 +138,23 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			if (folderInfo.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 		}
 
-		const addersAndPresetsList = passedAddersAndPresets ?? [];
-		const scriptsPassed = scripts.filter((script) => addersAndPresetsList.includes(script));
+		const featuresList = passedFeatures ?? [];
+		const scriptsPassed = scripts.filter((script) => featuresList.includes(script));
 		if (scriptsPassed.length === 0) script = "javascript";
 		else if (scriptsPassed.length === 1) script = scriptsPassed[0];
 		else throw new Error(`too many script languages specified: ${inspect(scriptsPassed)}`);
 
-		const styleFrameworksPassed = /** @type {StyleFramework[]} */ (Object.keys(styleLanguageForFramework)).filter((styleFramework) => addersAndPresetsList.includes(styleFramework));
+		const styleFrameworksPassed = /** @type {StyleFramework[]} */ (Object.keys(styleLanguageForFramework)).filter((styleFramework) => featuresList.includes(styleFramework));
 		if (styleFrameworksPassed.length === 0) styleFramework = undefined;
 		else if (styleFrameworksPassed.length === 1) styleFramework = styleFrameworksPassed[0];
 		else throw new Error(`too many style frameworks specified: ${inspect(styleFrameworksPassed)}`);
 
-		const styleLanguagesPassed = styleLanguages.filter((styleLanguage) => addersAndPresetsList.includes(styleLanguage));
+		const styleLanguagesPassed = styleLanguages.filter((styleLanguage) => featuresList.includes(styleLanguage));
 		if (styleLanguagesPassed.length === 0) {
-			if (styleFramework) styleLanguage = styleLanguageForFramework[styleFramework];
+			if (styleFramework) {
+				styleLanguage = styleLanguageForFramework[styleFramework];
+				featuresList.push(styleLanguage);
+			}
 			else styleLanguage = "css";
 		} else if (styleLanguagesPassed.length === 1) {
 			if (styleFramework) {
@@ -160,10 +163,10 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			} else styleLanguage = styleLanguagesPassed[0];
 		} else throw new Error(`too many style languages specified: ${inspect(styleLanguagesPassed)}`);
 
-		other = others.filter((other) => addersAndPresetsList.includes(other));
-		quality = qualities.filter((other) => addersAndPresetsList.includes(other));
+		other = others.filter((other) => featuresList.includes(other));
+		quality = qualities.filter((other) => featuresList.includes(other));
 
-		const deploysPassed = deploys.filter((deploy) => addersAndPresetsList.includes(deploy));
+		const deploysPassed = deploys.filter((deploy) => featuresList.includes(deploy));
 
 		if (deploysPassed.length === 0) deploy = undefined;
 		else if (deploysPassed.length === 1) deploy = deploysPassed[0];
@@ -175,8 +178,8 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		// Shorthand so that npx svelte-add tailwindcss --jit
 		// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-jit
 		// (since that's just redundant)
-		if (addersAndPresetsList.length === 1) {
-			const adderPrefix = `${addersAndPresetsList[0]}-`;
+		if (featuresList.length === 1) {
+			const adderPrefix = `${featuresList[0]}-`;
 			for (const [arg, value] of Object.entries(passedArgsCopy)) {
 				if (arg.startsWith(adderPrefix)) continue;
 				passedArgsCopy[`${adderPrefix}${arg}`] = value;
@@ -184,7 +187,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			}
 		}
 
-		for (const adder of addersAndPresetsList) {
+		for (const adder of featuresList) {
 			/** @type {AdderOptions<any>} */
 			let options;
 			try {
@@ -222,7 +225,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			}
 		}
 
-		presets = addersAndPresetsList.filter((adderOrPreset) => adderOrPreset.includes("/"));
+		presets = featuresList.filter((adderOrPreset) => adderOrPreset.includes("/"));
 
 		demos = false;
 		if (passedDemos === true || passedDemos === "true") demos = true;
@@ -241,7 +244,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		else if (passedInstall !== undefined) throw new Error(`unexpected value for install ${inspect(passedInstall)}`);
 
 		const remainingArgs = Object.keys(passedArgsCopy);
-		if (remainingArgs.length !== 0) throw new Error(`${inspect(passedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(passedAddersAndPresets)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
+		if (remainingArgs.length !== 0) throw new Error(`${inspect(passedArgsCopy)} were passed as arguments but none of the adders specified (${inspect(passedFeatures)}), nor svelte-add itself, expected them, so they won't be used. Try running the command again without them.`);
 	} else {
 		/**
 		 * @param {object} param0

@@ -41,14 +41,14 @@ export const setup = async ({ applicationFramework, fresh }) => {
 	const cwd = resolve(process.cwd());
 
 	const args = process.argv.slice(2);
-	const { _: passedOutput, demos: passedDemos, install: passedInstall, with: passedAddersAndPresetsJoined, ...passedArgs } = mri(args);
+	const { _: passedOutput, demos: passedDemos, install: passedInstall, with: passedFeaturesJoined, ...passedArgs } = mri(args);
 	const passedPackageManager = passedArgs["package-manager"];
 	delete passedArgs["package-manager"];
-	const passedAddersAndPresets = passedAddersAndPresetsJoined === undefined ? undefined : passedAddersAndPresetsJoined.split("+");
+	const passedFeatures = passedFeaturesJoined === undefined ? undefined : passedFeaturesJoined.split("+");
 
 	const environment = await getEnvironment();
 	const { adderOptions, demos, deploy, givenProjectDirectory, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
-		passedAddersAndPresets,
+		passedFeatures,
 		defaultInstall: true,
 		outputFolderMustBe: false,
 		environment,

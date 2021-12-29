@@ -18,22 +18,22 @@ const main = async () => {
 	console.log(`${colors.bold("➕ Svelte Add")} (Version ${version})`);
 
 	const args = process.argv.slice(2);
-	const { _: passedAddersAndPresetsSeparated, demos: passedDemos, install: passedInstall, ...passedArgs } = mri(args);
+	const { _: passedFeaturesSeparated, demos: passedDemos, install: passedInstall, ...passedArgs } = mri(args);
 	const passedPackageManager = passedArgs["package-manager"];
 	delete passedArgs["package-manager"];
-	const passedAddersAndPresetsJoined = passedAddersAndPresetsSeparated.join("+");
-	const passedAddersAndPresets = passedAddersAndPresetsJoined === "" ? undefined : passedAddersAndPresetsJoined.split("+");
+	const passedFeaturesJoined = passedFeaturesSeparated.join("+");
+	const passedFeatures = passedFeaturesJoined === "" ? undefined : passedFeaturesJoined.split("+");
 
 	const environment = await getEnvironment();
 	const { adderOptions, deploy, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
-		passedAddersAndPresets,
+		passedFeatures,
 		defaultInstall: false,
 		outputFolderMustBe: true,
 		environment,
 		passedArgs,
 		passedDemos,
 		passedInstall,
-		passedOutput: passedAddersAndPresets ? ["."] : [],
+		passedOutput: passedFeatures ? ["."] : [],
 		passedPackageManager,
 	});
 
