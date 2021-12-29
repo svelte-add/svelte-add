@@ -154,8 +154,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			if (styleFramework) {
 				styleLanguage = styleLanguageForFramework[styleFramework];
 				featuresList.push(styleLanguage);
-			}
-			else styleLanguage = "css";
+			} else styleLanguage = "css";
 		} else if (styleLanguagesPassed.length === 1) {
 			if (styleFramework) {
 				styleLanguage = styleLanguageForFramework[styleFramework];
