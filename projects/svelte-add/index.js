@@ -19,7 +19,7 @@ export const exit = (text) => {
  * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
  * @typedef {"3d" | "graphql-server" | "mdsvex"} Other
  * @typedef {"eslint" | "prettier"} Quality
- * @typedef {"firebase-hosting"} Deploy
+ * @typedef {"firebase-hosting" | "github-pages"} Deploy
  */
 
 /** @type {Script[]} */
@@ -31,7 +31,7 @@ const others = ["3d", "graphql-server", "mdsvex"];
 /** @type {Quality[]} */
 const qualities = ["eslint", "prettier"];
 /** @type {Deploy[]} */
-const deploys = ["firebase-hosting"];
+const deploys = ["firebase-hosting", "github-pages"];
 
 /** @type {Record<StyleFramework, StyleLanguage>} */
 const styleLanguageForFramework = {

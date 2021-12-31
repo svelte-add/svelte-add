@@ -13,6 +13,7 @@ export const packageVersions = {
 	tailwindcss: "^3.0.7",
 	three: "^0.135.0",
 	"vite-plugin-coffee": "^2.2.1",
+	"@sveltejs/adapter-static": "^1.0.0-next.20",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */

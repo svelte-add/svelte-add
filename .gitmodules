@@ -22,3 +22,6 @@
 [submodule "projects/svelte-add/adders/tailwindcss"]
 	path = projects/svelte-add/adders/tailwindcss
 	url = https://github.com/svelte-add/tailwindcss
+[submodule ".\\projects\\svelte-add\\adders\\github-pages"]
+	path = .\\projects\\svelte-add\\adders\\github-pages
+	url = https://github.com/manuel3108/svelte-add-github-pages.git
