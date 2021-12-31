@@ -1,4 +1,4 @@
-export const name = "Firebase Hosting";
+export const name = "(out of date) Firebase Hosting";
 
 /** @typedef {{ project: string }} Options */
 
