@@ -779,6 +779,7 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
  * @property {FolderInfo} folderInfo
  * @property {function({ prod?: boolean, package: keyof typeof packageVersions, versionOverride?: string }): Promise<void>} install
  * @property {Options} options
+ * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
  * @property {typeof updateCss} updateCss
  * @property {typeof updateFile} updateFile
  * @property {typeof updateJavaScript} updateJavaScript
@@ -855,6 +856,9 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 			});
 		},
 		options,
+		runCommand({ ...args }) {
+			return runCommand({ cwd: projectDirectory, ...args });
+		},
 		updateCss({ path, ...args }) {
 			return updateCss({ path: join(projectDirectory, path), ...args });
 		},
@@ -875,31 +879,56 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 
 /**
  * @param {object} param0
- * @param {PackageManager} param0.packageManager
- * @param {NodeJS.Platform} param0.platform
- * @param {string} param0.projectDirectory
+ * @param {string[]} param0.command
+ * @param {string} param0.cwd
+ * @param {function({ subprocess: import("child_process").ChildProcessWithoutNullStreams }): Promise<void>} param0.interact
  * @returns {Promise<void>}
  */
-export const installDependencies = ({ packageManager, platform, projectDirectory }) =>
-	new Promise((resolve, reject) => {
-		let [command, commandArgs] = packageManagers[packageManager].install;
-		if (platform === "win32") command += ".cmd";
+export const runCommand = async ({ command, cwd, interact }) => {
+	const [cmd, ...args] = command;
+	const subprocess = spawn(cmd, args, {
+		cwd,
+		stdio: "pipe",
+	});
 
-		const subprocess = spawn(command, commandArgs, {
-			cwd: projectDirectory,
-			stdio: "pipe",
-			timeout: 90000,
-		});
-
+	const successful = new Promise((resolve, reject) => {
 		let body = "";
+
+		subprocess.stdout.on("data", (chunk) => {
+			body += chunk;
+		});
 
 		subprocess.stderr.on("data", (chunk) => {
 			body += chunk;
 		});
 
 		subprocess.on("close", (code) => {
-			if (code !== 0) reject(new Error(`${code} ${body}`));
+			if (code !== 0) reject(new Error(body));
 			else resolve(undefined);
 		});
-		subprocess.on("error", (code) => reject(new Error(`${code} ${body}`)));
+		subprocess.on("error", () => {
+			reject(new Error(body));
+		});
 	});
+
+	await interact({ subprocess });
+	await successful;
+};
+
+/**
+ * @param {object} param0
+ * @param {PackageManager} param0.packageManager
+ * @param {NodeJS.Platform} param0.platform
+ * @param {string} param0.projectDirectory
+ * @returns {Promise<void>}
+ */
+export const installDependencies = async ({ packageManager, platform, projectDirectory }) => {
+	let [command, commandArgs] = packageManagers[packageManager].install;
+	if (platform === "win32") command += ".cmd";
+
+	await runCommand({
+		command: [command, ...commandArgs],
+		cwd: projectDirectory,
+		async interact() {},
+	});
+};

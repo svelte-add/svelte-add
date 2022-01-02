@@ -1,6 +1,5 @@
-import { spawn } from "child_process";
 import { mkdir } from "fs/promises";
-import { packageManagers } from "svelte-add";
+import { packageManagers, runCommand } from "svelte-add";
 
 /**
  * @param {number} ms
@@ -28,42 +27,22 @@ export const fresh = async ({ dir, packageManager, platform, runningTests, types
 	}
 	if (platform === "win32") command += ".cmd";
 
-	const subprocess = spawn(command, [...commandArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"], {
-		stdio: "pipe",
-		timeout: 8000,
+	await runCommand({
+		command: [command, ...commandArgs, dir, "--template", typescript ? "svelte-ts" : "svelte"],
+		cwd: process.cwd(),
+		async interact({ subprocess }) {
+			/** @param {string} content */
+			const waitForWrite = async (content) => {
+				await wait(300);
+				subprocess.stdin.write(content);
+			};
+
+			await wait(2000);
+
+			if (dir === ".") await waitForWrite("svelte-vite-app\n\n");
+			else if (!isValidPackageName(dir)) await waitForWrite("\n\n");
+
+			subprocess.stdin.end();
+		},
 	});
-
-	const initialization = new Promise((resolve, reject) => {
-		let body = "";
-
-		subprocess.stdout.on("data", (chunk) => {
-			body += chunk;
-		});
-
-		subprocess.stderr.on("data", (chunk) => {
-			body += chunk;
-		});
-
-		subprocess.on("close", (code) => {
-			if (code !== 0) reject(new Error(body));
-			else resolve(undefined);
-		});
-		subprocess.on("error", () => {
-			reject(new Error(body));
-		});
-	});
-
-	/** @param {string} content */
-	const waitForWrite = async (content) => {
-		await wait(300);
-		subprocess.stdin.write(content);
-	};
-
-	await wait(2000);
-
-	if (dir === ".") await waitForWrite("svelte-vite-app\n\n");
-	else if (!isValidPackageName(dir)) await waitForWrite("\n\n");
-
-	subprocess.stdin.end();
-	await initialization;
 };
