@@ -1,4 +1,5 @@
 export const packageVersions = {
+	"@sveltejs/adapter-static": "next",
 	"@tailwindcss/forms": "^0.4.0",
 	"@tailwindcss/typography": "^0.5.0",
 	autoprefixer: "^10.4.0",
@@ -6,6 +7,7 @@ export const packageVersions = {
 	bulma: "^0.9.3",
 	coffeescript: "^2.6.1",
 	mdsvex: "^0.9.8",
+	"npm-run-all": "^4.1.5",
 	sass: "^1.45.1",
 	"svelte-preprocess": "^4.10.1",
 	"svelte-cubed": "^0.2.1",
