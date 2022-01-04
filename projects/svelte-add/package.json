@@ -1,6 +1,6 @@
 {
 	"name": "svelte-add",
-	"version": "2022.01.0-3.0",
+	"version": "2022.1.0-3.1",
 	"description": "Add functionality to Svelte projects",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
