@@ -177,8 +177,8 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		// Shorthand so that npx svelte-add tailwindcss --jit
 		// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-jit
 		// (since that's just redundant)
-		if (featuresList.length === 1) {
-			const adderPrefix = `${featuresList[0]}-`;
+		if (passedFeatures && passedFeatures.length === 1) {
+			const adderPrefix = `${passedFeatures[0]}-`;
 			for (const [arg, value] of Object.entries(passedArgsCopy)) {
 				if (arg.startsWith(adderPrefix)) continue;
 				passedArgsCopy[`${adderPrefix}${arg}`] = value;
