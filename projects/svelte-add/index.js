@@ -82,7 +82,7 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
 export const getChoices = async ({ defaultInstall, environment, outputFolderMustBe, passedFeatures, passedArgs, passedDemos, passedInstall, passedOutput, passedPackageManager }) => {
 	const interactive = passedFeatures === undefined && Object.keys(passedArgs).length === 0 && passedInstall === undefined && passedOutput.length === 0;
 
-	if (passedOutput.length > 1) exit("TODO: explain this error.");
+	if (passedOutput.length > 1) exit(`TODO: explain this error. debug info: output ${inspect(passedOutput)} with ${inspect(passedFeatures)}`);
 
 	/** @type {string} */
 	let givenProjectDirectory;
