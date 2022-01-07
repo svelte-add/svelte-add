@@ -63,7 +63,7 @@ export const updateFile = async ({ path, content }) => {
 				pluginSearchDirs: [svelteAddPackageDirectory],
 			});
 		} catch (e) {
-			console.debug(e);
+			// This can fail and we don't really care (it's just formatting)
 		}
 	}
 
