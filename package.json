@@ -25,9 +25,9 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@types/node": "^16.11.17",
+		"@types/node": "^17.0.8",
 		"@types/prompts": "^2.0.14",
-		"eslint": "^8.5.0",
+		"eslint": "^8.6.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-only-warn": "^1.0.3",
 		"prettier": "^2.5.1",
