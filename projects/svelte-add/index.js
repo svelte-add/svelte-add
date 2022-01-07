@@ -66,7 +66,9 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  */
 
 /**
- * Sorts out the given adders into categories (or prompts for them if needed)
+ * Sorts out the given features into categories (or prompts for them if needed),
+ * Sorts out the given arguments into options for those adders (or prompts for them if needed)
+ * Sorts out other arguments into options for svelte-add or its app initializers (or prompts for them if needed)
  * @param {object} param0
  * @param {boolean} param0.defaultInstall
  * @param {Environment} param0.environment
@@ -138,7 +140,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			if (folderInfo.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 		}
 
-		const featuresList = passedFeatures ?? [];
+		const featuresList = passedFeatures ? [...passedFeatures] : [];
 		const scriptsPassed = scripts.filter((script) => featuresList.includes(script));
 		if (scriptsPassed.length === 0) script = "javascript";
 		else if (scriptsPassed.length === 1) script = scriptsPassed[0];
@@ -174,8 +176,8 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		// Options parsing
 		const passedArgsCopy = { ...passedArgs };
 
-		// Shorthand so that npx svelte-add tailwindcss --jit
-		// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-jit
+		// Shorthand so that npx svelte-add tailwindcss --forms
+		// is interpreted the same as npx svelte-add tailwindcss --tailwindcss-forms
 		// (since that's just redundant)
 		if (passedFeatures && passedFeatures.length === 1) {
 			const adderPrefix = `${passedFeatures[0]}-`;
@@ -187,14 +189,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		}
 
 		for (const adder of featuresList) {
-			/** @type {AdderOptions<any>} */
-			let options;
-			try {
-				({ options } = await getAdderMetadata({ adder }));
-			} catch (/** @type {any} */ e) {
-				if (e.code === "ERR_MODULE_NOT_FOUND") continue;
-				else throw e;
-			}
+			const { options } = await getAdderMetadata({ adder });
 			const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
 
 			adderOptions[adder] = { ...defaults };
@@ -202,7 +197,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			const adderPrefix = `${adder}-`;
 			for (const [arg, value] of Object.entries(passedArgsCopy)) {
 				if (!arg.startsWith(adderPrefix)) {
-					if (arg in defaults) throw new Error(`${inspect(arg)} was passed as an option, and the ${adder} adder you chose expects it, but because you selected multiple features (${inspect(passedFeatures)}), it would be flimsy to accept this ambiguity. run the command again but with --${arg} written as --${adderPrefix}-${arg}`);
+					if (arg in defaults) throw new Error(`${inspect(arg)} was passed as an option, and the ${adder} adder you chose expects it, but because you selected multiple features (${inspect(passedFeatures)}), it would be flimsy to accept this ambiguity. run the command again but with --${arg} written as --${adderPrefix}${arg}`);
 					continue;
 				}
 
