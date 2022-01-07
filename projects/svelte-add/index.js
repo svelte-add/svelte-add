@@ -202,7 +202,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			const adderPrefix = `${adder}-`;
 			for (const [arg, value] of Object.entries(passedArgsCopy)) {
 				if (!arg.startsWith(adderPrefix)) {
-					if (arg in defaults) throw new Error(`TODO: why is this an error?`);
+					if (arg in defaults) throw new Error(`${inspect(arg)} was passed as an option, and the ${adder} adder you chose expects it, but because you selected multiple features (${inspect(passedFeatures)}), it would be flimsy to accept this ambiguity. run the command again but with --${arg} written as --${adderPrefix}-${arg}`);
 					continue;
 				}
 
