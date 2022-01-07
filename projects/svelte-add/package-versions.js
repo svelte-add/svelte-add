@@ -8,6 +8,7 @@ export const packageVersions = {
 	coffeescript: "^2.6.1",
 	mdsvex: "^0.9.8",
 	"npm-run-all": "^4.1.5",
+	postcss: "^8.4.5",
 	sass: "^1.45.1",
 	"svelte-preprocess": "^4.10.1",
 	"svelte-cubed": "^0.2.1",
