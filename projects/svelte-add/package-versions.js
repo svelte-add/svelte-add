@@ -2,6 +2,7 @@ export const packageVersions = {
 	"@sveltejs/adapter-static": "next",
 	"@tailwindcss/forms": "^0.4.0",
 	"@tailwindcss/typography": "^0.5.0",
+	"@tauri-apps/api": "^1.0.0-beta.8",
 	autoprefixer: "^10.4.2",
 	bootstrap: "^5.1.3",
 	bulma: "^0.9.3",
