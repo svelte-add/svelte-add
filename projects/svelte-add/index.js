@@ -699,7 +699,7 @@ export const readFile = async ({ path }) => {
  */
 export const detectAdder = async ({ adder, projectDirectory, folderInfo }) => {
 	/** @type {{ heuristics: Heuristic[] }} */
-	const { heuristics } = await import(`./adders/${adder}/__detect.js`);
+	const { heuristics } = await import(`./adders/${adder}/__info.js`);
 
 	return Object.fromEntries(
 		await Promise.all(
@@ -806,7 +806,7 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
  * @returns {Promise<{ name: string, options: AdderOptions<any> }>}
  */
 export const getAdderMetadata = async ({ adder }) => {
-	return await import(`./adders/${adder}/__metadata.js`);
+	return await import(`./adders/${adder}/__info.js`);
 };
 
 /**

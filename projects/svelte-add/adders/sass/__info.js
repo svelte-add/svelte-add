@@ -1,4 +1,4 @@
-export const name = "(out of date) GraphQL server";
+export const name = "(work in progress) Sass";
 
 /** @typedef {{}} Options */
 
