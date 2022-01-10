@@ -38,7 +38,7 @@
 		"svelte-add": "cli.js"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^5.9.0",
+		"@typescript-eslint/typescript-estree": "^5.9.1",
 		"estree-walker": "^3.0.1",
 		"kleur": "^4.1.4",
 		"mri": "^1.2.0",
