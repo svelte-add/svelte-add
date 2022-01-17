@@ -1,6 +1,6 @@
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "svelte-add";
+import { applyPreset, detectAdder, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "svelte-add";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -104,7 +104,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 				options: adderOptions[adder],
 			});
 		} catch (e) {
-			const { name } = await getAdderMetadata({ adder });
+			const { name } = await getAdderInfo({ adder });
 
 			console.log();
 			console.log(colors.bold(name));
@@ -126,7 +126,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		});
 
 		if (!Object.values(postRunCheck).every(Boolean)) {
-			const { name } = await getAdderMetadata({ adder: feature });
+			const { name } = await getAdderInfo({ adder: feature });
 
 			console.log();
 			console.log(colors.bold(name));
@@ -139,7 +139,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 
 			failedFeatures.push(name);
 		} else {
-			const { name } = await getAdderMetadata({ adder: feature });
+			const { name } = await getAdderInfo({ adder: feature });
 			workingFeatures.push(name);
 		}
 	}

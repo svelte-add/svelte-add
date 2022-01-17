@@ -189,7 +189,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		}
 
 		for (const adder of featuresList) {
-			const { options } = await getAdderMetadata({ adder });
+			const { options } = await getAdderInfo({ adder });
 			const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
 
 			adderOptions[adder] = { ...defaults };
@@ -245,7 +245,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		 * @param {string} param0.adder
 		 */
 		const promptForOptions = async ({ adder }) => {
-			const { options } = await getAdderMetadata({ adder });
+			const { options } = await getAdderInfo({ adder });
 
 			adderOptions[adder] = {};
 
@@ -307,7 +307,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		({ script } = await prompts({
 			choices: await Promise.all(
 				scripts.map(async (script) => ({
-					title: (await getAdderMetadata({ adder: script })).name,
+					title: (await getAdderInfo({ adder: script })).name,
 					value: script,
 				}))
 			),
@@ -322,12 +322,12 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				styleLanguages.map(async (styleLanguage) => {
 					/** @type {import("prompts").Choice} */
 					const choice = {
-						title: (await getAdderMetadata({ adder: styleLanguage })).name,
+						title: (await getAdderInfo({ adder: styleLanguage })).name,
 						value: styleLanguage,
 					};
 
 					if (styleFrameworksForLanguage[styleLanguage] !== undefined) {
-						const frameworks = await Promise.all(styleFrameworksForLanguage[styleLanguage].map(async (styleFramework) => (await getAdderMetadata({ adder: styleFramework })).name));
+						const frameworks = await Promise.all(styleFrameworksForLanguage[styleLanguage].map(async (styleFramework) => (await getAdderInfo({ adder: styleFramework })).name));
 						choice.title += colors.gray(` (used by ${frameworks.join(" and ")})`);
 					}
 
@@ -344,12 +344,12 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			({ styleFramework } = await prompts({
 				choices: [
 					{
-						title: `None ${colors.gray(`(write ${(await getAdderMetadata({ adder: styleLanguage })).name} by hand)`)}`,
+						title: `None ${colors.gray(`(write ${(await getAdderInfo({ adder: styleLanguage })).name} by hand)`)}`,
 						value: undefined,
 					},
 					...(await Promise.all(
 						styleFrameworksForLanguage[styleLanguage].map(async (styleFramework) => ({
-							title: (await getAdderMetadata({ adder: styleFramework })).name,
+							title: (await getAdderInfo({ adder: styleFramework })).name,
 							value: styleFramework,
 						}))
 					)),
@@ -364,7 +364,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		({ other } = await prompts({
 			choices: await Promise.all(
 				others.map(async (other) => ({
-					title: (await getAdderMetadata({ adder: other })).name,
+					title: (await getAdderInfo({ adder: other })).name,
 					value: other,
 				}))
 			),
@@ -377,7 +377,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		({ quality } = await prompts({
 			choices: await Promise.all(
 				qualities.map(async (quality) => ({
-					title: (await getAdderMetadata({ adder: quality })).name,
+					title: (await getAdderInfo({ adder: quality })).name,
 					value: quality,
 				}))
 			),
@@ -395,7 +395,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				},
 				...(await Promise.all(
 					deploys.map(async (deploy) => ({
-						title: (await getAdderMetadata({ adder: deploy })).name,
+						title: (await getAdderInfo({ adder: deploy })).name,
 						value: deploy,
 					}))
 				)),
@@ -803,9 +803,9 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
 /**
  * @param {object} param0
  * @param {string} param0.adder
- * @returns {Promise<{ name: string, options: AdderOptions<any> }>}
+ * @returns {Promise<{ name: string, options: AdderOptions<Record<unknown, unknown>> }>}
  */
-export const getAdderMetadata = async ({ adder }) => {
+export const getAdderInfo = async ({ adder }) => {
 	return await import(`./adders/${adder}/__info.js`);
 };
 

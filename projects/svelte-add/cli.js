@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, exit, getAdderMetadata, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
+import { applyPreset, detectAdder, exit, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -75,7 +75,7 @@ const main = async () => {
 		}
 
 		if (Object.values(preRunCheck).every(Boolean)) {
-			const { name } = await getAdderMetadata({ adder });
+			const { name } = await getAdderInfo({ adder });
 			console.log();
 			console.log(colors.bold(name));
 			console.log(`${colors.green(` ✅ already set up! skipping.`)}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
@@ -98,7 +98,7 @@ const main = async () => {
 				projectDirectory,
 			});
 		} catch (e) {
-			const { name } = await getAdderMetadata({ adder });
+			const { name } = await getAdderInfo({ adder });
 
 			console.log();
 			console.log(colors.bold(name));
@@ -118,7 +118,7 @@ const main = async () => {
 		});
 
 		if (!Object.values(postRunCheck).every(Boolean)) {
-			const { name } = await getAdderMetadata({ adder });
+			const { name } = await getAdderInfo({ adder });
 
 			console.log();
 			console.log(colors.bold(name));
@@ -132,7 +132,7 @@ const main = async () => {
 		} else {
 			if (addersToSkip.has(adder)) continue;
 
-			const { name } = await getAdderMetadata({ adder });
+			const { name } = await getAdderInfo({ adder });
 
 			console.log();
 			console.log(colors.bold(name));
