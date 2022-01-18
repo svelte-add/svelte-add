@@ -696,20 +696,11 @@ export const getAdderInfo = async ({ adder }) => {
 	return await import(`./adders/${adder}/__info.js`);
 };
 
-<<<<<<< HEAD
 /**
  * @typedef {Object} GatekeepArg
  * @property {FolderInfo} folderInfo
  * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
  *
-=======
-
-/** 
- * @typedef {Object} GatekeepArg
- * @property {FolderInfo} folderInfo
- * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
- * 
->>>>>>> 3040687f76ebb2fa12c1a5979abf1639042e0ac9
  * @callback Gatekeep
  * @param {GatekeepArg} param0
  * @returns {Promise<{ able: true } | { advice: string }>}
@@ -803,7 +794,6 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
 			reject(new Error(body));
 		});
 	});
-
 
 /**
  * @template Options
