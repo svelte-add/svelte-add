@@ -677,6 +677,36 @@ export const readFile = async ({ path }) => {
 };
 
 /**
+ * @template NameToType
+ * @typedef {{
+ *   [name in keyof NameToType]: {
+ *     context: string;
+ *     default: NameToType[name];
+ *     question: string;
+ *   }
+ * }} AdderOptions
+ */
+
+/**
+ * @param {object} param0
+ * @param {string} param0.adder
+ * @returns {Promise<{ heuristics: Heuristic[], name: string, options: AdderOptions<Record<unknown, unknown>> }>}
+ */
+export const getAdderInfo = async ({ adder }) => {
+	return await import(`./adders/${adder}/__info.js`);
+};
+
+/**
+ * @typedef {Object} GatekeepArg
+ * @property {FolderInfo} folderInfo
+ * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
+ *
+ * @callback Gatekeep
+ * @param {GatekeepArg} param0
+ * @returns {Promise<{ able: true } | { advice: string }>}
+ */
+
+/**
  * @typedef {Object} DetectorArg
  * @property {FolderInfo} folderInfo
  * @property {typeof readFile} readFile
@@ -698,8 +728,7 @@ export const readFile = async ({ path }) => {
  * @returns {Promise<Record<Heuristic["description"], boolean>>}
  */
 export const detectAdder = async ({ adder, projectDirectory, folderInfo }) => {
-	/** @type {{ heuristics: Heuristic[] }} */
-	const { heuristics } = await import(`./adders/${adder}/__info.js`);
+	const { heuristics } = await getAdderInfo({ adder });
 
 	return Object.fromEntries(
 		await Promise.all(
@@ -788,26 +817,6 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
  * @param {AdderRunArg<Options>} param0
  * @returns {Promise<void>}
  */
-
-/**
- * @template NameToType
- * @typedef {{
- *   [name in keyof NameToType]: {
- *     context: string;
- *     default: NameToType[name];
- *     question: string;
- *   }
- * }} AdderOptions
- */
-
-/**
- * @param {object} param0
- * @param {string} param0.adder
- * @returns {Promise<{ name: string, options: AdderOptions<Record<unknown, unknown>> }>}
- */
-export const getAdderInfo = async ({ adder }) => {
-	return await import(`./adders/${adder}/__info.js`);
-};
 
 /**
  * @template Options

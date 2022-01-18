@@ -1,5 +1,10 @@
 export const name = "(out of date) Firebase Hosting";
 
+/** @type {import("../..").Gatekeep} */
+export const gatekeep = async () => {
+	return { able: true };
+};
+
 /** @typedef {{ project: string }} Options */
 
 /** @type {import("../..").AdderOptions<Options>} */
