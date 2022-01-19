@@ -10,6 +10,7 @@ export const packageVersions = {
 	mdsvex: "^0.9.8",
 	"npm-run-all": "^4.1.5",
 	postcss: "^8.4.5",
+	"postcss-load-config": "^3.1.1",
 	sass: "^1.46.0",
 	"svelte-preprocess": "^4.10.1",
 	"svelte-cubed": "^0.2.1",
