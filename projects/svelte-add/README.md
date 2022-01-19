@@ -95,6 +95,36 @@ npx --yes svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
 
+### 🦺 Safely adding integrations and examining changes
+
+Like when making any significant changes to a repository, ensure you have a backup of your project before `svelte-add`ing an integration. 
+
+```sh
+# Create a git commit with the current project state
+git add .
+git commit -m "before adding bootstrap"
+
+# Push it to the remote server
+git push
+# Create another backup if you deem it necessary
+
+# Add an integration
+npx svelte-add@latest bootstrap
+```
+
+If you are curious what changes `svelte-add` made to your code, you can use `git` to examine what changed since the last commit:
+
+```sh
+git add --intent-to-add .
+git diff
+```
+
+And revert it if needed:
+
+```sh
+git reset --hard HEAD
+```
+
 ## ⚙️ Options
 
 - the output directory when initializing a Svelte app.
