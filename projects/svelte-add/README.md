@@ -123,6 +123,7 @@ And revert it if needed:
 
 ```sh
 git reset --hard HEAD
+git clean -fd
 ```
 
 ## ⚙️ Options
