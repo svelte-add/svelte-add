@@ -97,7 +97,7 @@ npx --yes svelte-add@latest mdsvex
 
 ### 🦺 Safely adding integrations and examining changes
 
-Like when making any significant changes to a repository, ensure you have a backup of your project before `svelte-add`ing an integration. 
+Like when making any significant changes to a repository, ensure you have a backup of your project before `svelte-add`ing an integration.
 
 ```sh
 # Create a git commit with the current project state
