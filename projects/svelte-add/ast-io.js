@@ -32,24 +32,24 @@ export const stringifyPosthtmlAst = (ast) => posthtmlRender(ast);
 // TODO: did I have to invent these types or did they already exist??
 
 /**
- * @typedef {Object} Position
+ * @typedef {object} Position
  * @property {number} line
  * @property {number} column
  * @property {number} token
  *
- * @typedef {Object} LOC
+ * @typedef {object} LOC
  * @property {Position} start
  * @property {Position} end
  * @property {unknown} lines
  * @property {number} indent
  * @property {unknown[]} tokens
  *
- * @typedef {Object} Program
+ * @typedef {object} Program
  * @property {unknown[]} body
  * @property {string} sourceType
  * @property {LOC} loc
  *
- * @typedef {Object} RecastASTExtras
+ * @typedef {object} RecastASTExtras
  * @property {string | null} name
  * @property {Program} program
  * @property {LOC} loc

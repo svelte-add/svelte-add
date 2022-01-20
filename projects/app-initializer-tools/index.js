@@ -15,7 +15,7 @@ if (iteration.length === 1) iteration = "0" + iteration;
 const version = `${year}.${month}.${day}.${iteration}`;
 
 /**
- * @typedef {Object} InitializerArg
+ * @typedef {object} InitializerArg
  * @property {boolean} demo
  * @property {string} dir
  * @property {boolean} eslint
