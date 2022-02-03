@@ -28,7 +28,7 @@
 	},
 	"dependencies": {
 		"@svelte-add/app-initializer-tools": "workspace:*",
-		"create-svelte": "^2.0.0-next.114",
+		"create-svelte": "next",
 		"svelte-add": "workspace:*"
 	}
 }

@@ -33,11 +33,11 @@ importers:
   projects/create-kit:
     specifiers:
       '@svelte-add/app-initializer-tools': workspace:*
-      create-svelte: ^2.0.0-next.114
+      create-svelte: next
       svelte-add: workspace:*
     dependencies:
       '@svelte-add/app-initializer-tools': link:../app-initializer-tools
-      create-svelte: 2.0.0
+      create-svelte: 2.0.0-next.114
       svelte-add: link:../svelte-add
 
   projects/create-vite:
@@ -305,9 +305,12 @@ packages:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
     dev: true
 
-  /create-svelte/2.0.0:
-    resolution: {integrity: sha512-VhfKTeT8F0jaQc4qp/79mbhov0crnSDcE2DAXTmq+hDHvxLvYJOZMsQ9NcBFgxlxgG9gbXOE4NyPWQsgwdzKPg==}
+  /create-svelte/2.0.0-next.114:
+    resolution: {integrity: sha512-39Mcc628mMdUHhLNfl9QKWiAXZeo5rJij2smjFhJMfz4ch3cNIqAa00NEKgFqPXkBeJ4ryHNMJ8V1AKr3w4XUg==}
     hasBin: true
+    dependencies:
+      kleur: 4.1.4
+      prompts: 2.4.2
     dev: false
 
   /cross-spawn/7.0.3:
