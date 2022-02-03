@@ -409,7 +409,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 		({ demos } = await prompts({
 			choices: [
 				{
-					title: `No. ${colors.gray(`I am very familiar with the application framework and all the tools I've selected, so I fully understand how to use them without any guidance.`)}`,
+					title: `No. ${colors.gray(`Keep it completely minimal.`)}`,
 					value: false,
 				},
 				{
@@ -418,7 +418,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				},
 			],
 			initial: 1,
-			message: "Do you want example and demonstration code added to your app to demonstrate how to use the tools you've selected?",
+			message: "Do you want example code added to your app to demonstrate how to use the tools you've selected?",
 			name: "demos",
 			type: "select",
 		}));
