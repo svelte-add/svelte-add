@@ -71,17 +71,18 @@ export const setDefault = ({ default: defaultValue, object, property }) => {
 /**
  * @param {object} param0
  * @param {boolean} param0.cjs
+ * @param {import("estree").Expression} param0.defaultValue
+ * @param {string} [param0.defaultVariableName]
  * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
  * @returns {import("estree").Expression}
  */
-export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
+export const setDefaultDefaultExport = ({ cjs, defaultValue, defaultVariableName = "config", typeScriptEstree }) => {
 	/** @type {string | undefined} */
-	let configObjectVariable;
+	let defaultExportVariable;
 
 	/** @type {import("estree").Expression | undefined} */
-	let configExpression;
+	let defaultExportExpression;
 
-	// Try to find the exported config object
 	walk(typeScriptEstree, {
 		enter(node) {
 			if (cjs) {
@@ -99,9 +100,9 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 
 				const assignedTo = assignmentExpression.right;
 				if (assignedTo.type === "Identifier") {
-					configObjectVariable = assignedTo.name;
+					defaultExportVariable = assignedTo.name;
 				} else {
-					configExpression = assignedTo;
+					defaultExportExpression = assignedTo;
 				}
 			} else {
 				if (node.type !== "ExportDefaultDeclaration") return;
@@ -111,25 +112,22 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 				const exportDefaultDeclaration = exportDefault.declaration;
 
 				if (exportDefaultDeclaration.type === "Identifier") {
-					configObjectVariable = exportDefaultDeclaration.name;
+					defaultExportVariable = exportDefaultDeclaration.name;
 				} else {
 					if (exportDefaultDeclaration.type === "VariableDeclaration") throw new Error("?!?! default export is a VariableDeclaration");
 					if (exportDefaultDeclaration.type === "FunctionDeclaration") throw new Error("?!?! default export is a FunctionDeclaration");
 					if (exportDefaultDeclaration.type === "ClassDeclaration") throw new Error("?!?! default export is a ClassDeclaration");
-					configExpression = exportDefaultDeclaration;
+					defaultExportExpression = exportDefaultDeclaration;
 				}
 			}
 		},
 	});
 
-	if (!configExpression) {
-		if (!configObjectVariable) {
-			configExpression = {
-				type: "ObjectExpression",
-				properties: [],
-			};
+	if (!defaultExportExpression) {
+		if (!defaultExportVariable) {
+			defaultExportExpression = defaultValue;
 
-			configObjectVariable = "config";
+			defaultExportVariable = defaultVariableName;
 
 			/** @type {import("estree").VariableDeclaration} */
 			const declareConfig = {
@@ -139,9 +137,9 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 						type: "VariableDeclarator",
 						id: {
 							type: "Identifier",
-							name: configObjectVariable,
+							name: defaultExportVariable,
 						},
-						init: configExpression,
+						init: defaultExportExpression,
 					},
 				],
 				kind: "const",
@@ -171,7 +169,7 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 						},
 						right: {
 							type: "Identifier",
-							name: configObjectVariable,
+							name: defaultExportVariable,
 						},
 					},
 				};
@@ -183,7 +181,7 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 					type: "ExportDefaultDeclaration",
 					declaration: {
 						type: "Identifier",
-						name: configObjectVariable,
+						name: defaultExportVariable,
 					},
 				};
 				typeScriptEstree.program.body.push(exportConfig);
@@ -196,19 +194,18 @@ export const getConfigExpression = ({ cjs, typeScriptEstree }) => {
 
 				const variableDeclarator = /** @type {import("estree").VariableDeclarator} */ (node);
 
-				if (variableDeclarator.id.type === "Identifier" && variableDeclarator.id.name === configObjectVariable) {
+				if (variableDeclarator.id.type === "Identifier" && variableDeclarator.id.name === defaultExportVariable) {
 					const init = variableDeclarator.init;
 					if (!init) return;
-					if (init.type !== "ObjectExpression") return;
-					configExpression = init;
+					defaultExportExpression = init;
 				}
 			},
 		});
 	}
 
-	if (!configExpression) throw new Error(`TODO: make this work`);
+	if (!defaultExportExpression) throw new Error(`TODO: make this work`);
 
-	return configExpression;
+	return defaultExportExpression;
 };
 
 /**

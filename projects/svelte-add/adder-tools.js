@@ -1,6 +1,6 @@
 import { walk } from "estree-walker";
 import { Comment } from "postcss";
-import { addImport, findImport, getConfigExpression, getPreprocessArray, getSveltePreprocessArgs, setDefault } from "./ast-tools.js";
+import { addImport, findImport, setDefaultDefaultExport, getPreprocessArray, getSveltePreprocessArgs, setDefault } from "./ast-tools.js";
 
 /**
  * @param {object} param0
@@ -14,7 +14,14 @@ export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateVit
 		await updateJavaScript({
 			path: cjs ? "/svelte.config.cjs" : "/svelte.config.js",
 			async script({ typeScriptEstree }) {
-				const svelteConfigObject = getConfigExpression({ cjs, typeScriptEstree });
+				const svelteConfigObject = setDefaultDefaultExport({
+					cjs,
+					defaultValue: {
+						type: "ObjectExpression",
+						properties: [],
+					},
+					typeScriptEstree,
+				});
 
 				if (svelteConfigObject.type !== "ObjectExpression") throw new Error("Svelte config must be an object");
 
@@ -51,7 +58,14 @@ export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateVit
 		await updateJavaScript({
 			path: "/vite.config.js",
 			async script({ typeScriptEstree }) {
-				const viteConfigObjectOrCall = getConfigExpression({ cjs: false, typeScriptEstree });
+				const viteConfigObjectOrCall = setDefaultDefaultExport({
+					cjs: false,
+					defaultValue: {
+						type: "ObjectExpression",
+						properties: [],
+					},
+					typeScriptEstree,
+				});
 
 				if (viteConfigObjectOrCall.type === "ObjectExpression") {
 					mutateViteConfig(viteConfigObjectOrCall, typeScriptEstree, false);
@@ -92,7 +106,14 @@ export const updateSveltePreprocessArgs = async ({ folderInfo, mutateSveltePrepr
 				addImport({ require: sveltePreprocessImportedAs, cjs, default: sveltePreprocessImportedAs, package: "svelte-preprocess", typeScriptEstree });
 			}
 
-			const svelteConfigObject = getConfigExpression({ cjs, typeScriptEstree });
+			const svelteConfigObject = setDefaultDefaultExport({
+				cjs,
+				defaultValue: {
+					type: "ObjectExpression",
+					properties: [],
+				},
+				typeScriptEstree,
+			});
 			if (svelteConfigObject.type !== "ObjectExpression") throw new Error("Svelte config must be an object");
 
 			const preprocessArray = getPreprocessArray({ configObject: svelteConfigObject });
