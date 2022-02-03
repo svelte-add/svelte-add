@@ -682,15 +682,26 @@ export const readFile = async ({ path }) => {
  *   [name in keyof NameToType]: {
  *     context: string;
  *     default: NameToType[name];
+ *     descriptionMarkdown: string;
  *     question: string;
  *   }
  * }} AdderOptions
  */
 
 /**
+ * @typedef {object} AdderInfo
+ * @property {string} [emoji]
+ * @property {Gatekeep} gatekeep
+ * @property {Heuristic[]} heuristics
+ * @property {string} name
+ * @property {AdderOptions<Record<string, unknown>>} options
+ * @property {string[]} [usageMarkdown]
+ */
+
+/**
  * @param {object} param0
  * @param {string} param0.adder
- * @returns {Promise<{ heuristics: Heuristic[], name: string, options: AdderOptions<Record<unknown, unknown>> }>}
+ * @returns {Promise<AdderInfo>}
  */
 export const getAdderInfo = async ({ adder }) => {
 	return await import(`./adders/${adder}/__info.js`);

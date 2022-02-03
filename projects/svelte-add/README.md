@@ -175,6 +175,8 @@ This is a community project! Here are some ways you can help:
    - `pnpm -w check`
    - `pnpm -r test`. Modify `projects/test/tests/one-adder.js` with the right adder to test.
 
+4. Generate the `README`s for the new and changed adders with `pnpm -w generate-readmes`
+
 ## 📄 License
 
 MIT
@@ -186,7 +188,5 @@ MIT
 - [Preset](https://preset.dev/)
 - [`snowpack-start`](https://github.com/awu43/snowpack-start)
 - [`stackmix`](https://github.com/roxiness/stackmix)
-
-_Repository preview image generated with [GitHub Social Preview](https://social-preview.pqt.dev/)_
 
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_

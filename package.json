@@ -19,10 +19,12 @@
 		"url": "https://github.com/svelte-add/svelte-add/issues"
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
+	"type": "module",
 	"scripts": {
 		"check": "tsc --project jsconfig.json",
 		"lint": "prettier --check . && eslint --max-warnings 0 --ignore-path .gitignore .",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"generate-readmes": "node generate-readmes.js"
 	},
 	"devDependencies": {
 		"@types/node": "^17.0.8",
