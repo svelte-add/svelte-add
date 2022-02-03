@@ -1,3 +1,4 @@
+import { clearLine, cursorTo } from "readline";
 import colors from "kleur";
 import mri from "mri";
 import { applyPreset, detectAdder, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "svelte-add";
@@ -5,6 +6,7 @@ import { applyPreset, detectAdder, getAdderInfo, getChoices, getEnvironment, get
 // Show the package version to make debugging easier
 import { createRequire } from "module";
 import { resolve } from "path";
+
 const require = createRequire(import.meta.url);
 const pkg = require("./package.json");
 let [year, month, day, iteration] = pkg.version.split(".");
@@ -13,6 +15,18 @@ day = day.replace("-", "");
 if (day.length === 1) day = "0" + day;
 if (iteration.length === 1) iteration = "0" + iteration;
 const version = `${year}.${month}.${day}.${iteration}`;
+
+// Attribution: https://github.com/sindresorhus/cli-spinners
+const spinners = ["🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "];
+let spinner = 0;
+/** @param {string} label */
+const printSpinner = (label) => {
+	cursorTo(process.stdout, 0);
+	process.stdout.write(`${spinners[spinner]} ${label}...`);
+
+	spinner++;
+	if (spinner === spinners.length) spinner = 0;
+};
 
 /**
  * @typedef {object} InitializerArg
@@ -59,6 +73,10 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		passedPackageManager,
 	});
 
+	const handle = setInterval(() => {
+		printSpinner(`Running the official ${applicationFramework} app initializer`);
+	}, 100);
+
 	await fresh({
 		demo: demos,
 		dir: givenProjectDirectory,
@@ -69,6 +87,10 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		runningTests: false,
 		typescript: script === "typescript",
 	});
+
+	clearInterval(handle);
+	clearLine(process.stdout, 0);
+	cursorTo(process.stdout, 0);
 
 	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
 	const adders = features.filter((feature) => !["css", "eslint", "javascript", "prettier", "typescript"].includes(feature));
@@ -146,7 +168,17 @@ export const setup = async ({ applicationFramework, fresh }) => {
 
 	workingFeatures.push(...presets);
 
-	if (install) await installDependencies({ packageManager, platform: environment.platform, projectDirectory });
+	if (install) {
+		const handle = setInterval(() => {
+			printSpinner("Installing dependencies");
+		}, 100);
+
+		await installDependencies({ packageManager, platform: environment.platform, projectDirectory });
+
+		clearInterval(handle);
+		clearLine(process.stdout, 0);
+		cursorTo(process.stdout, 0);
+	}
 
 	console.log(colors.green(`🪄 Your ${workingFeatures.join(" + ")} ${applicationFramework} app is ready!`));
 
