@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/app-initializer-tools",
-	"version": "2022.2.0-3.0",
+	"version": "2022.2.0-3.1",
 	"description": "Tools for svelte-add's app initializers",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
