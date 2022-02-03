@@ -109,7 +109,7 @@ git push
 # Create another backup if you deem it necessary
 
 # Add an integration
-npx svelte-add@latest bootstrap
+npx --yes svelte-add@latest bootstrap
 ```
 
 If you are curious what changes `svelte-add` made to your code, you can use `git` to examine what changed since the last commit:
