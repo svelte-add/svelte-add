@@ -10,6 +10,9 @@
 [submodule "projects/svelte-add/adders/coffeescript"]
 	path = projects/svelte-add/adders/coffeescript
 	url = https://github.com/svelte-add/coffeescript
+[submodule "projects/svelte-add/adders/imagetools"]
+	path = projects/svelte-add/adders/imagetools
+	url = https://github.com/svelte-add/imagetools
 [submodule "projects/svelte-add/adders/mdsvex"]
 	path = projects/svelte-add/adders/mdsvex
 	url = https://github.com/svelte-add/mdsvex
