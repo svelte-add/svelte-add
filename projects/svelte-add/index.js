@@ -287,7 +287,6 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			givenProjectDirectory = ".";
 		} else {
 			({ givenProjectDirectory } = await prompts({
-				initial: "new-svelte-app",
 				message: "What directory should your app be created in?",
 				name: "givenProjectDirectory",
 				type: "text",
