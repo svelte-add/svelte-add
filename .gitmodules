@@ -16,6 +16,9 @@
 [submodule "projects/svelte-add/adders/postcss"]
 	path = projects/svelte-add/adders/postcss
 	url = https://github.com/svelte-add/postcss
+[submodule "projects/svelte-add/adders/sass"]
+	path = projects/svelte-add/adders/sass
+	url = https://github.com/svelte-add/sass
 [submodule "projects/svelte-add/adders/scss"]
 	path = projects/svelte-add/adders/scss
 	url = https://github.com/svelte-add/scss
