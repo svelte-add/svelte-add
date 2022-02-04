@@ -1,4 +1,5 @@
 export const packageVersions = {
+	"@roxi/routify": "next",
 	"@sveltejs/adapter-static": "next",
 	"@tailwindcss/forms": "^0.4.0",
 	"@tailwindcss/typography": "^0.5.0",
