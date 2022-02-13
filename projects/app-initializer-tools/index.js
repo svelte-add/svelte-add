@@ -29,7 +29,7 @@ const printSpinner = (label) => {
 };
 
 /**
- * @typedef {object} InitializerArg
+ * @typedef {Object} InitializerArg
  * @property {boolean} demo
  * @property {string} dir
  * @property {boolean} eslint

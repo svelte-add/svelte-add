@@ -47,7 +47,7 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
 }
 
 /**
- * @typedef {object} Choices
+ * @typedef {Object} Choices
  * @property {string} givenProjectDirectory
  * @property {string} projectDirectory
  * @property {string[]} presets
@@ -563,7 +563,7 @@ const getAvailable = async ({ platform, tools }) =>
 	);
 
 /**
- * @typedef {object} Environment
+ * @typedef {Object} Environment
  * @property {Record<NPX, boolean>} npxs
  * @property {Record<PackageManager, boolean>} packageManagers
  * @property {NodeJS.Platform} platform
@@ -585,7 +585,7 @@ export const getEnvironment = async () => {
 /**
  * @typedef { "rollup" | "snowpack" | "vite" | "webpack"} Bundler
  *
- * @typedef {object} FolderInfo
+ * @typedef {Object} FolderInfo
  * @property {Bundler | undefined} bundler
  * @property {import("./package-versions").Dependencies} allDependencies
  * @property {boolean} empty
@@ -688,7 +688,7 @@ export const readFile = async ({ path }) => {
  */
 
 /**
- * @typedef {object} AdderInfo
+ * @typedef {Object} AdderInfo
  * @property {string} [emoji]
  * @property {Gatekeep} gatekeep
  * @property {Heuristic[]} heuristics
@@ -707,7 +707,7 @@ export const getAdderInfo = async ({ adder }) => {
 };
 
 /**
- * @typedef {object} GatekeepArg
+ * @typedef {Object} GatekeepArg
  * @property {FolderInfo} folderInfo
  * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
  *
@@ -717,7 +717,7 @@ export const getAdderInfo = async ({ adder }) => {
  */
 
 /**
- * @typedef {object} DetectorArg
+ * @typedef {Object} DetectorArg
  * @property {FolderInfo} folderInfo
  * @property {typeof readFile} readFile
  *
@@ -725,7 +725,7 @@ export const getAdderInfo = async ({ adder }) => {
  * @param {DetectorArg} param0
  * @returns {Promise<boolean>}
  *
- * @typedef {object} Heuristic
+ * @typedef {Object} Heuristic
  * @property {string} description - The message to display to explain
  * @property {Detector} detector
  */
@@ -756,7 +756,7 @@ export const detectAdder = async ({ adder, projectDirectory, folderInfo }) => {
 };
 
 /**
- * @typedef {object} ApplyPresetArg
+ * @typedef {Object} ApplyPresetArg
  * @property {string[]} args
  * @property {NodeJS.Platform} platform
  * @property {string} projectDirectory
@@ -807,7 +807,7 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
 
 /**
  * @template Options
- * @typedef {object} AdderRunArg
+ * @typedef {Object} AdderRunArg
  * @property {function(Omit<ApplyPresetArg, "npx" | "platform" | "projectDirectory">): ReturnType<typeof applyPreset>} applyPreset
  * @property {Environment} environment
  * @property {FolderInfo} folderInfo
