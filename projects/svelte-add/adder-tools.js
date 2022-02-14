@@ -1,4 +1,7 @@
+import { Element } from "domhandler";
+import { appendChild, existsOne } from "domutils";
 import { walk } from "estree-walker";
+import { ElementType } from "htmlparser2";
 import { Comment } from "postcss";
 import { addImport, findImport, setDefaultDefaultExport, getPreprocessArray, getSveltePreprocessArgs, setDefault } from "./ast-tools.js";
 
@@ -220,13 +223,18 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 		await updateSvelte({
 			path: "/src/routes/__layout.svelte",
 
-			async markup({ posthtml }) {
-				const slot = posthtml.some((node) => typeof node !== "string" && typeof node !== "number" && node.tag === "slot");
+			async markup({ domhandler }) {
+				const hasSlot = existsOne((tag) => tag.type === ElementType.Tag && tag.tagName === "slot", domhandler.childNodes);
 
-				if (!slot) posthtml.push("\n", { tag: "slot" });
+				if (!hasSlot) {
+					const slot = new Element("slot", {});
+
+					const root = /** @type {import("domhandler").Element}*/ (domhandler);
+					appendChild(root, slot);
+				}
 
 				return {
-					posthtml,
+					domhandler,
 				};
 			},
 

@@ -1,15 +1,21 @@
-import { parse as typeScriptEstreeParse } from "@typescript-eslint/typescript-estree";
-import { parse as postcssParse } from "postcss";
-import { parser as posthtmlParser } from "posthtml-parser";
-import { render as posthtmlRender } from "posthtml-render";
-import { parse as recastParse, print as recastPrint } from "recast";
+import * as typeScriptEstree from "@typescript-eslint/typescript-estree";
+import { parseDocument } from "htmlparser2";
+import * as postcss from "postcss";
+import * as recast from "recast";
+
+import domSerializer from "dom-serializer";
+/**
+ * https://github.com/cheeriojs/dom-serializer/issues/576
+ * @type {import("dom-serializer").default}
+ **/
+const serializeDom = /** @type {any} */ (domSerializer).default;
 
 /**
  * @typedef {import("postcss").Root} PostCSSAst
  * @param {string} text
  * @returns {PostCSSAst}
  */
-export const newPostcssAst = (text) => postcssParse(text);
+export const newPostcssAst = (text) => postcss.parse(text);
 
 /**
  * @param {PostCSSAst} ast
@@ -18,16 +24,17 @@ export const newPostcssAst = (text) => postcssParse(text);
 export const stringifyPostcssAst = (ast) => ast.toString();
 
 /**
+ * @typedef {import("domhandler").Document} DomHandlerAst
  * @param {string} text
- * @returns {ReturnType<typeof posthtmlParser>}
+ * @returns {DomHandlerAst}
  */
-export const newPosthtmlAst = (text) => posthtmlParser(text);
+export const newDomHandlerAst = (text) => parseDocument(text, { recognizeSelfClosing: true });
 
 /**
- * @param {ReturnType<typeof posthtmlParser>} ast
+ * @param {DomHandlerAst} ast
  * @returns {string}
  */
-export const stringifyPosthtmlAst = (ast) => posthtmlRender(ast);
+export const stringifyDomHandlerAst = (ast) => serializeDom(ast);
 
 // TODO: did I have to invent these types or did they already exist??
 
@@ -64,9 +71,9 @@ export const stringifyPosthtmlAst = (ast) => posthtmlRender(ast);
  * @returns {RecastAST}
  */
 export const newTypeScriptEstreeAst = (text) =>
-	recastParse(text, {
+	recast.parse(text, {
 		parser: {
-			parse: typeScriptEstreeParse,
+			parse: typeScriptEstree.parse,
 		},
 	});
 
@@ -74,4 +81,4 @@ export const newTypeScriptEstreeAst = (text) =>
  * @param {RecastAST} typeScriptEstree
  * @returns {string}
  */
-export const stringifyTypeScriptEstreeAst = (typeScriptEstree) => recastPrint(typeScriptEstree).code;
+export const stringifyTypeScriptEstreeAst = (typeScriptEstree) => recast.print(typeScriptEstree).code;

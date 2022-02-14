@@ -1,10 +1,14 @@
 import { mkdir, unlink, writeFile } from "fs/promises";
 import { dirname, parse } from "path";
-import prettier from "prettier";
 import { fileURLToPath } from "url";
 
+import { ElementType } from "htmlparser2";
+import { appendChild, prependChild, removeElement, textContent } from "domutils";
+import { Element, Text } from "domhandler";
+import prettier from "prettier";
+
 import { readFile } from "./index.js";
-import { newPostcssAst, newPosthtmlAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyPosthtmlAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
+import { newPostcssAst, newDomHandlerAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyDomHandlerAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
 
 const svelteAddPackageDirectory = dirname(fileURLToPath(import.meta.url));
 
@@ -217,7 +221,7 @@ export const updateJson = async ({ path, json }) => {
  *
  * @param {object} param0
  * @param {string} param0.path
- * @param {function({ exists: boolean, posthtml: ReturnType<typeof newPosthtmlAst> }): Promise<{ exists: false } | { posthtml: ReturnType<typeof newPosthtmlAst> }>} [param0.markup]
+ * @param {function({ exists: boolean, domhandler: import("./ast-io.js").DomHandlerAst }): Promise<{ exists: false } | { domhandler: import("./ast-io.js").DomHandlerAst }>} [param0.markup]
  * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }>} [param0.moduleScript]
  * @param {function({ exists: boolean, lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }): Promise<{ exists: false } | { lang: ScriptLang, typeScriptEstree: import("./ast-io.js").RecastAST }>} [param0.script]
  * @param {function({ exists: boolean, lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }): Promise<{ exists: false } | { lang: StyleLang, postcss: ReturnType<typeof newPostcssAst> }>} [param0.style]
@@ -227,33 +231,36 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 	await updateFile({
 		path,
 		content: async ({ exists, text }) => {
-			let posthtml = newPosthtmlAst(text);
+			let domhandler = newDomHandlerAst(text);
 
 			if (markup) {
-				const newMarkup = await markup({ exists, posthtml });
+				const newMarkup = await markup({ exists, domhandler });
 				if ("exists" in newMarkup) return { exists: false };
 
-				posthtml = newMarkup.posthtml;
+				domhandler = newMarkup.domhandler;
 			}
 
-			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			/** @type {import("domhandler").Element | undefined} */
 			let tagModuleScript;
-			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			/** @type {import("domhandler").Element | undefined} */
 			let tagScript;
-			/** @type {import("posthtml-parser").NodeTag | undefined} */
+			/** @type {import("domhandler").Element | undefined} */
 			let tagStyle;
 
-			for (const node of posthtml) {
-				if (typeof node === "string" || typeof node === "number") continue;
+			// Only check top level elements
+			for (const node of domhandler.childNodes) {
+				if (node.type === ElementType.Script) {
+					const element = /** @type {import("domhandler").Element} */ (node);
 
-				if (node.tag === "script") {
-					if (node.attrs?.["context"] === "module") {
-						tagModuleScript = node;
+					if (element.attribs["context"] === "module") {
+						tagModuleScript = element;
 					} else {
-						tagScript = node;
+						tagScript = element;
 					}
-				} else if (node.tag === "style") {
-					tagStyle = node;
+				} else if (node.type === ElementType.Style) {
+					const element = /** @type {import("domhandler").Element} */ (node);
+
+					tagStyle = element;
 				}
 			}
 
@@ -264,17 +271,16 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 			 * @param {object} param0
 			 * @param {ASTArg} param0.astArg
 			 * @param {boolean} param0.beginning
-			 * @param {import("posthtml-parser").NodeTag | undefined} param0.existingTag
-			 * @param {import("posthtml-parser").NodeTag} param0.newTag
+			 * @param {import("domhandler").Element | undefined} param0.existingTag
+			 * @param {import("domhandler").Element} param0.newTag
 			 * @param {function(string): ASTType} param0.newAst
 			 * @param {function(ASTType): string} param0.stringify
 			 * @param {any} param0.updater // Was very painful to type and it didn't work anyway
-			 * @returns {Promise<import("posthtml-parser").NodeTag | undefined>}
+			 * @returns {Promise<import("domhandler").Element | undefined>}
 			 */
 			const modify = async ({ astArg, beginning, existingTag, newAst, newTag, stringify, updater }) => {
-				const lang = /** @type {LangType} */ (existingTag?.attrs?.lang);
-				const content = existingTag?.content;
-				const text = Array.isArray(content) ? content.join("") : content?.toString() ?? "";
+				const lang = /** @type {LangType} */ (existingTag?.attribs.lang);
+				const text = existingTag ? textContent(existingTag) : "";
 
 				const newBlock = await updater({
 					exists: existingTag !== undefined,
@@ -283,24 +289,33 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 				});
 
 				if ("exists" in newBlock) {
-					if (existingTag) posthtml.splice(posthtml.indexOf(existingTag, 1));
+					if (existingTag) removeElement(existingTag);
 
 					return undefined;
 				}
 
-				if (!existingTag) {
-					existingTag = newTag;
+				/** @type {import("domhandler").Element} */
+				let tag;
 
-					if (beginning) posthtml.unshift(existingTag);
-					else posthtml.push(existingTag);
+				if (existingTag) {
+					tag = existingTag;
+				} else {
+					tag = newTag;
+
+					const root = /** @type {import("domhandler").Element}*/ (domhandler);
+
+					if (beginning) prependChild(root, tag);
+					else appendChild(root, tag);
 				}
 
-				if (!existingTag.attrs) existingTag.attrs = {};
+				if (newBlock.lang) tag.attribs.lang = newBlock.lang;
+				else delete tag.attribs.lang;
 
-				if (newBlock.lang) existingTag.attrs.lang = newBlock.lang;
-				else delete existingTag.attrs.lang;
+				for (const child of tag.children) {
+					removeElement(child);
+				}
 
-				existingTag.content = stringify(newBlock[astArg]);
+				appendChild(tag, new Text(stringify(newBlock[astArg])));
 
 				return existingTag;
 			};
@@ -313,9 +328,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 					beginning: true,
 					existingTag: tagScript,
 					newAst: newTypeScriptEstreeAst,
-					newTag: {
-						tag: "script",
-					},
+					newTag: new Element("script", {}),
 					stringify: stringifyTypeScriptEstreeAst,
 					updater: script,
 				});
@@ -328,12 +341,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 					beginning: true,
 					existingTag: tagModuleScript,
 					newAst: newTypeScriptEstreeAst,
-					newTag: {
-						tag: "script",
-						attrs: {
-							context: "module",
-						},
-					},
+					newTag: new Element("script", { context: "module" }),
 					stringify: stringifyTypeScriptEstreeAst,
 					updater: moduleScript,
 				});
@@ -346,15 +354,13 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 					beginning: true,
 					existingTag: tagStyle,
 					newAst: newPostcssAst,
-					newTag: {
-						tag: "style",
-					},
+					newTag: new Element("style", {}),
 					stringify: stringifyPostcssAst,
 					updater: style,
 				});
 
 			return {
-				text: stringifyPosthtmlAst(posthtml),
+				text: stringifyDomHandlerAst(domhandler),
 			};
 		},
 	});
