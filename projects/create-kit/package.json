@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/create-kit",
-	"version": "2022.2.0-3.5",
+	"version": "2022.2.1-4.0",
 	"description": "Create a SvelteKit app with extra integrations",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
