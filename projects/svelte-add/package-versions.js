@@ -19,6 +19,18 @@ export const packageVersions = {
 	tailwindcss: "^3.0.12",
 	three: "^0.136.0",
 	"vite-plugin-coffee": "^2.2.1",
+	unocss: "^0.30.4",
+	"@unocss/preset-uno": "^0.30.7",
+	"@unocss/reset": "^0.30.4",
+	"@unocss/preset-attributify": "^0.30.7",
+	"@unocss/preset-icons": "^0.30.7",
+	"@unocss/preset-mini": "^0.30.7",
+	"@unocss/preset-typography": "^0.30.7",
+	"@unocss/preset-web-fonts": "^0.30.7",
+	"@unocss/preset-wind": "^0.30.7",
+	"unocss-preset-chroma": "^0.3.0",
+	"unocss-preset-scalpel": "^1.2.0",
+	"unocss-preset-scrollbar": "^0.0.1-beta.4",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */
