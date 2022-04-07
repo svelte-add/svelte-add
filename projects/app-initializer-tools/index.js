@@ -35,6 +35,7 @@ const printSpinner = (label) => {
  * @property {boolean} eslint
  * @property {import("svelte-add").PackageManager} packageManager
  * @property {NodeJS.Platform} platform
+ * @property {boolean} playwright
  * @property {boolean} prettier
  * @property {boolean} runningTests
  * @property {boolean} typescript
@@ -83,6 +84,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		eslint: quality.includes("eslint"),
 		packageManager,
 		platform: environment.platform,
+		playwright: quality.includes("playwright"),
 		prettier: quality.includes("prettier"),
 		runningTests: false,
 		typescript: script === "typescript",
@@ -93,7 +95,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 	cursorTo(process.stdout, 0);
 
 	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
-	const adders = features.filter((feature) => !["css", "eslint", "javascript", "prettier", "typescript"].includes(feature));
+	const adders = features.filter((feature) => !["css", "eslint", "javascript", "playwright", "prettier", "typescript"].includes(feature));
 
 	/** @type {string[]} */
 	const workingFeatures = [];

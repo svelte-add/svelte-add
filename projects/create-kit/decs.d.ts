@@ -3,6 +3,7 @@ declare module "create-svelte" {
 		name: string;
 		template: "default" | "skeleton";
 		typescript: boolean;
+		playwright: boolean;
 		prettier: boolean;
 		eslint: boolean;
 	};
