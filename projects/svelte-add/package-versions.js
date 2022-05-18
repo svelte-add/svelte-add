@@ -15,7 +15,6 @@ export const packageVersions = {
 	sass: "^1.49.11",
 	"svelte-preprocess": "^4.10.5",
 	"svelte-cubed": "^0.2.1",
-	sveltestrap: "^5.9.0",
 	tailwindcss: "^3.0.23",
 	three: "^0.139.2",
 	"vite-plugin-coffee": "^2.2.1",
