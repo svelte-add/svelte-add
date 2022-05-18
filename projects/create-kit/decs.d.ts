@@ -2,7 +2,7 @@ declare module "create-svelte" {
 	export type Options = {
 		name: string;
 		template: "default" | "skeleton";
-		typescript: boolean;
+		types: "typescript" | "checkjs" | null;
 		playwright: boolean;
 		prettier: boolean;
 		eslint: boolean;
