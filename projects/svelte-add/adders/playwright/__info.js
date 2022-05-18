@@ -24,11 +24,12 @@ export const heuristics = [
 		},
 	},
 	{
-		description: "`playwright.config.js` exists",
+		description: "`playwright.config.js` or `playwright.config.ts` exists",
 		async detector({ readFile }) {
-			const playwrightConfig = await readFile({ path: "/playwright.config.js" });
+			const js = await readFile({ path: "/playwright.config.js" });
+			const ts = await readFile({ path: "/playwright.config.ts" });
 
-			return playwrightConfig.exists;
+			return js.exists || ts.exists;
 		},
 	},
 ];
