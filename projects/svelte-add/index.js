@@ -140,22 +140,20 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			if (folderInfo.bundler === undefined) exit(`${colors.red("There is no valid Svelte project in this directory because there doesn't seem to be a bundler installed (Vite, Rollup, Snowpack, or webpack).")}\nCreate or find an existing issue at ${colors.cyan("https://github.com/svelte-add/svelte-add/issues")} if this is wrong.`);
 		}
 
-		const featuresList = passedFeatures ? [...passedFeatures] : [];
-		const scriptsPassed = scripts.filter((script) => featuresList.includes(script));
+		const scriptsPassed = scripts.filter((script) => passedFeatures?.includes(script));
 		if (scriptsPassed.length === 0) script = "javascript";
 		else if (scriptsPassed.length === 1) script = scriptsPassed[0];
 		else throw new Error(`too many script languages specified: ${inspect(scriptsPassed)}`);
 
-		const styleFrameworksPassed = /** @type {StyleFramework[]} */ (Object.keys(styleLanguageForFramework)).filter((styleFramework) => featuresList.includes(styleFramework));
+		const styleFrameworksPassed = /** @type {StyleFramework[]} */ (Object.keys(styleLanguageForFramework)).filter((styleFramework) => passedFeatures?.includes(styleFramework));
 		if (styleFrameworksPassed.length === 0) styleFramework = undefined;
 		else if (styleFrameworksPassed.length === 1) styleFramework = styleFrameworksPassed[0];
 		else throw new Error(`too many style frameworks specified: ${inspect(styleFrameworksPassed)}`);
 
-		const styleLanguagesPassed = styleLanguages.filter((styleLanguage) => featuresList.includes(styleLanguage));
+		const styleLanguagesPassed = styleLanguages.filter((styleLanguage) => passedFeatures?.includes(styleLanguage));
 		if (styleLanguagesPassed.length === 0) {
 			if (styleFramework) {
 				styleLanguage = styleLanguageForFramework[styleFramework];
-				featuresList.push(styleLanguage);
 			} else styleLanguage = "css";
 		} else if (styleLanguagesPassed.length === 1) {
 			if (styleFramework) {
@@ -164,10 +162,10 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			} else styleLanguage = styleLanguagesPassed[0];
 		} else throw new Error(`too many style languages specified: ${inspect(styleLanguagesPassed)}`);
 
-		other = others.filter((other) => featuresList.includes(other));
-		quality = qualities.filter((other) => featuresList.includes(other));
+		other = others.filter((other) => passedFeatures?.includes(other));
+		quality = qualities.filter((other) => passedFeatures?.includes(other));
 
-		const deploysPassed = deploys.filter((deploy) => featuresList.includes(deploy));
+		const deploysPassed = deploys.filter((deploy) => passedFeatures?.includes(deploy));
 
 		if (deploysPassed.length === 0) deploy = undefined;
 		else if (deploysPassed.length === 1) deploy = deploysPassed[0];
@@ -188,31 +186,32 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			}
 		}
 
-		for (const adder of featuresList) {
-			const { options } = await getAdderInfo({ adder });
+		const featuresList = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
+		for (const feature of featuresList) {
+			const { options } = await getAdderInfo({ adder: feature });
 			const defaults = Object.fromEntries(Object.entries(options).map(([option, data]) => [option, data.default]));
 
-			adderOptions[adder] = { ...defaults };
+			adderOptions[feature] = { ...defaults };
 
-			const adderPrefix = `${adder}-`;
+			const adderPrefix = `${feature}-`;
 			for (const [arg, value] of Object.entries(passedArgsCopy)) {
 				if (!arg.startsWith(adderPrefix)) {
-					if (arg in defaults) throw new Error(`${inspect(arg)} was passed as an option, and the ${adder} adder you chose expects it, but because you selected multiple features (${inspect(passedFeatures)}), it would be flimsy to accept this ambiguity. run the command again but with --${arg} written as --${adderPrefix}${arg}`);
+					if (arg in defaults) throw new Error(`${inspect(arg)} was passed as an option, and the ${feature} adder you chose expects it, but because you selected multiple features (${inspect(passedFeatures)}), it would be flimsy to accept this ambiguity. run the command again but with --${arg} written as --${adderPrefix}${arg}`);
 					continue;
 				}
 
 				const option = arg.slice(adderPrefix.length);
 
-				if (!(option in defaults)) throw new Error(`${inspect(option)} is not a valid option for the ${adder} adder: ${Object.keys(defaults).length === 0 ? "it doesn't accept any options." : `it accepts ${inspect(Object.keys(defaults))} as options.`}`);
+				if (!(option in defaults)) throw new Error(`${inspect(option)} is not a valid option for the ${feature} adder: ${Object.keys(defaults).length === 0 ? "it doesn't accept any options." : `it accepts ${inspect(Object.keys(defaults))} as options.`}`);
 
 				if (typeof defaults[option] === "boolean") {
-					if (value === "true" || value === true) adderOptions[adder][option] = true;
-					else if (value === "false" || value === false) adderOptions[adder][option] = false;
-					else throw new Error(`${inspect(value)} is not a valid value for the ${adder} adder's ${inspect(option)} option because it needs to be a boolean (true or false)`);
+					if (value === "true" || value === true) adderOptions[feature][option] = true;
+					else if (value === "false" || value === false) adderOptions[feature][option] = false;
+					else throw new Error(`${inspect(value)} is not a valid value for the ${feature} adder's ${inspect(option)} option because it needs to be a boolean (true or false)`);
 				} else if (typeof defaults[option] === "string") {
-					adderOptions[adder][option] = value;
+					adderOptions[feature][option] = value;
 				} else {
-					throw new Error(`svelte-add currently doesn't support non-boolean-non-string arguments: the ${adder} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at "https://github.com/svelte-add/svelte-add/issues" with the full command output.`);
+					throw new Error(`svelte-add currently doesn't support non-boolean-non-string arguments: the ${feature} adder expected a ${typeof defaults[option]} for the ${inspect(option)} option\nThis is definitely not supposed to happen, so please create or find an existing issue at "https://github.com/svelte-add/svelte-add/issues" with the full command output.`);
 				}
 
 				delete passedArgsCopy[`${adderPrefix}${option}`];

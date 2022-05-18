@@ -47,7 +47,8 @@ for (const [app, init] of Object.entries(initializers)) {
 					playwright: quality.includes("playwright"),
 					prettier: quality.includes("prettier"),
 					runningTests: true,
-					typescript: script === "typescript",
+					// TODO: prompt for and check if type-checked javascript was chosen
+					types: script === "typescript" ? "typescript" : null,
 				});
 
 				let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });

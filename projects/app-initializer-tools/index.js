@@ -38,7 +38,7 @@ const printSpinner = (label) => {
  * @property {boolean} playwright
  * @property {boolean} prettier
  * @property {boolean} runningTests
- * @property {boolean} typescript
+ * @property {"typescript" | "checkjs" | null} types
  *
  * @callback Initializer
  * @param {InitializerArg} param0
@@ -87,7 +87,8 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		playwright: quality.includes("playwright"),
 		prettier: quality.includes("prettier"),
 		runningTests: false,
-		typescript: script === "typescript",
+		// TODO: prompt for and check if type-checked javascript was chosen
+		types: script === "typescript" ? "typescript" : null,
 	});
 
 	clearInterval(handle);
