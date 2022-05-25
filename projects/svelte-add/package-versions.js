@@ -8,6 +8,7 @@ export const packageVersions = {
 	bootstrap: "^5.1.3",
 	bulma: "^0.9.3",
 	coffeescript: "^2.6.1",
+	daisyui: "^2.15.1",
 	mdsvex: "^0.10.5",
 	"npm-run-all": "^4.1.5",
 	postcss: "^8.4.12",
