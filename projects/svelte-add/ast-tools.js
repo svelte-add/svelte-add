@@ -318,7 +318,6 @@ export const addImport = ({ cjs, default: default_, named, package: pkg, require
 					id,
 					init: {
 						type: "CallExpression",
-						// @ts-ignore - I am not sure why this is typed wrongly (?)
 						arguments: [
 							{
 								type: "Literal",
@@ -450,7 +449,6 @@ export const getSveltePreprocessArgs = ({ preprocessArray, sveltePreprocessImpor
 	if (!sveltePreprocessFunctionCall) {
 		sveltePreprocessFunctionCall = {
 			type: "CallExpression",
-			// @ts-ignore - I am not sure why this is typed wrongly (?)
 			arguments: [],
 			callee: {
 				type: "Identifier",
