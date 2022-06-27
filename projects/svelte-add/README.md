@@ -35,6 +35,7 @@ In theory, these adders are the most likely to work correctly:
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
+- [**Vitest**](https://github.com/davipon/svelte-add-vitest)
 
 ## 🧰 Creating a SvelteKit app with integrations
 
