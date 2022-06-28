@@ -3,7 +3,7 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 
-  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm init @svelte-add/kit@latest`
+  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm create @svelte-add/kit@latest`
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
@@ -21,17 +21,20 @@ In theory, these adders are the most likely to work correctly:
 - [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
 - [**CoffeeScript**](https://github.com/svelte-add/coffeescript)
+- [**Imagetools**](https://github.com/svelte-add/imagetools) (work in progress)
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
+- [**Routify**](https://github.com/svelte-add/routify) (work in progress)
 - [**SCSS**](https://github.com/svelte-add/scss)
 - [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
+- [**Tauri**](https://github.com/svelte-add/tauri) (work in progress)
 
 ## 📨 External integration adders
 
 `svelte-add` is currently being rewritten, so many integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
-- [**Firebase Hosting**](https://github.com/svelte-add/firebase-hosting)
-- [**GraphQL server**](https://github.com/svelte-add/graphql-server)
+- [**Firebase Hosting**](https://github.com/svelte-add/firebase-hosting) (out of date)
+- [**GraphQL server**](https://github.com/svelte-add/graphql-server) (out of date)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
@@ -42,48 +45,71 @@ In theory, these adders are the most likely to work correctly:
 The preferred way to add integrations to a SvelteKit app is to start a new one, choosing the ones you want:
 
 ```sh
-npm init @svelte-add/kit@latest
+npm create @svelte-add/kit@latest
 # Follow the prompts to select the integrations you want
 ```
 
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/kit@latest -- --with postcss+mdsvex
+npm create --yes @svelte-add/kit@latest my-new-svelte-kit-app -- --with postcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
 
 ```sh
-npm init --yes @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+npm create @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
 # NOTE: The Firebase Hosting adder doesn't support this yet.
 ```
+
+### ⚙️ Options
+
+- the output directory
+- `demos` (default `false`): whether or not to include demonstration code to teach about SvelteKit and the integrations selected
+- `install` (default `true`): whether or not to automatically install dependencies after adding integrations
+- `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when initializing a Svelte app or installing dependencies
+- `with` (default `javascript+css`): the features (adders and built-in options like `eslint`, `prettier`, and `typescript`) to initialize the Svelte app with
+
+The specific adders you're using might have their own options, so see their `README` for that information. For example, [the PostCSS adder](https://github.com/svelte-add/postcss) takes an `autoprefixer` option.
 
 ## ⚡️ Creating a Vite-powered Svelte app with integrations
 
 The preferred way to add integrations to a Vite-powered Svelte app is to start a new one, choosing the ones you want:
 
 ```sh
-npm init @svelte-add/vite@latest
+npm create @svelte-add/vite@latest
 # Follow the prompts to select the integrations you want
 ```
 
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm init --yes @svelte-add/vite@latest -- --with bulma+mdsvex
+npm create --yes @svelte-add/vite@latest my-new-svelte-vite-app -- --with bulma+mdsvex
 ```
+
+### ⚙️ Options
+
+- the output directory
+- `demos` (default `false`): whether or not to include demonstration code to teach about Vite and the integrations selected
+- `install` (default `true`): whether or not to automatically install dependencies after adding integrations
+- `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when initializing the Vite-powered Svelte app or installing dependencies
+- `with` (default `javascript+css`): the features (adders and built-in options like `eslint`, `prettier`, and `typescript`) to initialize the Svelte app with
+
+The specific adders you're using might have their own options, so see their `README` for that information. For example, [the Tailwind CSS adder](https://github.com/svelte-add/tailwindcss) takes a `forms` option, a `typography` option, and a `daisyui` option.
 
 ## 🧩 Adding one integration at a time
 
 Ideally, you can `svelte-add` an integration any time after app initialization:
 
 ```sh
-# Suppose you started a SvelteKit project
-npm init svelte@next
+# Suppose you initialized a SvelteKit project
+npm create svelte
+
+# Did some work on the site
 
 # Then realized you want to write your styles in SCSS
 npx --yes svelte-add@latest scss
+# None of your work should've been messed up and SCSS should work (in a perfect world)
 ```
 
 but there are practically infinite scenarios that an automated tool like this cannot expect, so it doesn't always work. For that reason, we recommend choosing integrations with the appropriate app initializer (SvelteKit or Vite) for an instant result and [creating an issue for an eventual fix](https://github.com/svelte-add/svelte-add/issues).
@@ -95,6 +121,15 @@ npx --yes svelte-add@latest coffeescript
 npx --yes svelte-add@latest mdsvex
 # CoffeeScript should still work
 ```
+
+### ⚙️ Options
+
+- the adder(s) to add (e.x. `tailwindcss` or `postcss+mdsvex+graphql-server`)
+- `demos` (default `false`): whether or not to include demonstration code to teach about the integrations added
+- `install` (default `false`): whether or not to automatically install dependencies after adding integrations
+- `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when installing dependencies
+
+The specific adders you're using might have their own options, so see their `README` for that information. For example, [the PostCSS adder](https://github.com/svelte-add/postcss) takes an `autoprefixer` option.
 
 ### 🦺 Safely adding integrations and examining changes
 
@@ -127,16 +162,6 @@ git reset --hard HEAD
 git clean -fd
 ```
 
-## ⚙️ Options
-
-- the output directory when initializing a Svelte app.
-- `demos` (default `false`): whether or not to include demonstration code to teach about the integrations and application framework used.
-- `install` (default `true` if initializing a Svelte app, otherwise `false`): whether or not to automatically install dependencies after adding integrations.
-- `package-manager` (default `pnpm` if installed, then `yarn` if installed, then `npm`): which package manager to use when initializing a Svelte app or installing dependencies.
-- `with` (default `javascript+css`): the features (adders and built-in options like `eslint`, `prettier`, and `typescript`) to initialize the Svelte app with.
-
-The specific adders you're using might have their own options, so see their `README` for that information. For example, [the Tailwind CSS adder](https://github.com/svelte-add/tailwindcss) takes a `forms` option and a `typography` option.
-
 ## 🧓 Support for Elder.js
 
 No adders currently support Elder.js, but we would like to! If you can help, see [the open issue for it](https://github.com/svelte-add/svelte-add/issues/42).
@@ -147,15 +172,15 @@ No adders currently support Routify. If you can help `svelte-add` support Routif
 
 ## 🌱 Support for Sapper
 
-Sapper is a legacy project, so `svelte-add` will (probably) never support it.
+Sapper is no longer maintained. Use SvelteKit (see the "Creating a SvelteKit app with integrations" section).
 
 ## 🏔 Support for Snowpack
 
-Snowpack is a very similar project to Vite, so we recommend using Vite if possible (see the "Creating a Vite app with integrations" section). If you can help `svelte-add` support Snowpack, [create an issue to talk about it](https://github.com/svelte-add/svelte-add/issues).
+Snowpack is no longer actively maintained, so we recommend using Vite if possible (see the "Creating a Vite-powered Svelte app with integrations" section).
 
-## 🌐 Support for Svelte with webpack or Rollup
+## 🌐 Support for webpack or Rollup
 
-I personally expect that almost everyone can transition away from these traditional bundlers to Vite without loss of functionality, so there is no planned support for webpack- or Rollup-powered Svelte apps. See the "Creating a Vite app with integrations" section for the recommended approach.
+There is no planned support for webpack- or Rollup-powered Svelte apps because Vite supersedes them. See the "Creating a Vite-powered Svelte app with integrations" section for the recommended approach.
 
 ## 🎁 Contributing
 
