@@ -1,5 +1,5 @@
 {
-	"endOfLine": "crlf",
+	"endOfLine": "auto",
 	"useTabs": true,
 	"singleQuote": false,
 	"printWidth": 99999
