@@ -33,7 +33,7 @@ importers:
   projects/create-kit:
     specifiers:
       '@svelte-add/app-initializer-tools': workspace:*
-      create-svelte: next
+      create-svelte: ^2.0.0-next.143
       svelte-add: workspace:*
     dependencies:
       '@svelte-add/app-initializer-tools': link:../app-initializer-tools
