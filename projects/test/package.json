@@ -21,6 +21,6 @@
 		"@svelte-add/create-kit": "workspace:*",
 		"@svelte-add/create-vite": "workspace:*",
 		"svelte-add": "workspace:*",
-		"uvu": "^0.5.4"
+		"uvu": "^0.5.6"
 	}
 }

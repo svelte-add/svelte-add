@@ -3,12 +3,7 @@ import { parseDocument } from "htmlparser2";
 import * as postcss from "postcss";
 import * as recast from "recast";
 
-import domSerializer from "dom-serializer";
-/**
- * https://github.com/cheeriojs/dom-serializer/issues/576
- * @type {import("dom-serializer").default}
- **/
-const serializeDom = /** @type {any} */ (domSerializer).default;
+import serializeDom from "dom-serializer";
 
 /**
  * @typedef {import("postcss").Root} PostCSSAst

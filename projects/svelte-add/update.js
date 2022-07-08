@@ -302,7 +302,7 @@ export const updateSvelte = async ({ path, markup, moduleScript, script, style }
 				} else {
 					tag = newTag;
 
-					const root = /** @type {import("domhandler").Element}*/ (domhandler);
+					const root = /** @type {import("domhandler").Element}*/ (/** @type {unknown} */ (domhandler));
 
 					if (beginning) prependChild(root, tag);
 					else appendChild(root, tag);

@@ -229,7 +229,7 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 				if (!hasSlot) {
 					const slot = new Element("slot", {});
 
-					const root = /** @type {import("domhandler").Element}*/ (domhandler);
+					const root = /** @type {import("domhandler").Element}*/ (/** @type {unknown} */ (domhandler));
 					appendChild(root, slot);
 				}
 
