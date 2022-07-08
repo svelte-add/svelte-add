@@ -24,7 +24,7 @@ importers:
     specifiers:
       kleur: ^4.1.5
       mri: ^1.2.0
-      svelte-add: workspace:2022.6.2-8.0
+      svelte-add: workspace:*
     dependencies:
       kleur: 4.1.5
       mri: 1.2.0
@@ -32,9 +32,9 @@ importers:
 
   projects/create-kit:
     specifiers:
-      '@svelte-add/app-initializer-tools': workspace:2022.6.2-8.0
+      '@svelte-add/app-initializer-tools': workspace:*
       create-svelte: ^2.0.0-next.146
-      svelte-add: workspace:2022.6.2-8.0
+      svelte-add: workspace:*
     dependencies:
       '@svelte-add/app-initializer-tools': link:../app-initializer-tools
       create-svelte: 2.0.0-next.146
@@ -42,8 +42,8 @@ importers:
 
   projects/create-vite:
     specifiers:
-      '@svelte-add/app-initializer-tools': workspace:2022.6.2-8.0
-      svelte-add: workspace:2022.6.2-8.0
+      '@svelte-add/app-initializer-tools': workspace:*
+      svelte-add: workspace:*
     dependencies:
       '@svelte-add/app-initializer-tools': link:../app-initializer-tools
       svelte-add: link:../svelte-add
@@ -93,9 +93,9 @@ importers:
 
   projects/test:
     specifiers:
-      '@svelte-add/create-kit': workspace:2022.6.2-8.0
-      '@svelte-add/create-vite': workspace:2022.6.2-8.0
-      svelte-add: workspace:2022.6.2-8.0
+      '@svelte-add/create-kit': workspace:*
+      '@svelte-add/create-vite': workspace:*
+      svelte-add: workspace:*
       uvu: ^0.5.6
     devDependencies:
       '@svelte-add/create-kit': link:../create-kit
