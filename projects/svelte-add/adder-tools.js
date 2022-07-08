@@ -3,89 +3,41 @@ import { appendChild, existsOne } from "domutils";
 import { walk } from "estree-walker";
 import { ElementType } from "htmlparser2";
 import { Comment } from "postcss";
-import { addImport, findImport, setDefaultDefaultExport, getPreprocessArray, getSveltePreprocessArgs, setDefault } from "./ast-tools.js";
+import { addImport, findImport, setDefaultDefaultExport, getPreprocessArray, getSveltePreprocessArgs } from "./ast-tools.js";
 
 /**
  * @param {object} param0
- * @param {import(".").FolderInfo} param0.folderInfo
  * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
  * @param {function(import("estree").ObjectExpression, ReturnType<typeof import("./ast-io.js").newTypeScriptEstreeAst>, boolean): void} param0.mutateViteConfig
  */
-export const updateViteConfig = async ({ folderInfo, updateJavaScript, mutateViteConfig }) => {
-	if (folderInfo.kit) {
-		const cjs = folderInfo.packageType !== "module";
-		await updateJavaScript({
-			path: cjs ? "/svelte.config.cjs" : "/svelte.config.js",
-			async script({ typeScriptEstree }) {
-				const svelteConfigObject = setDefaultDefaultExport({
-					cjs,
-					defaultValue: {
-						type: "ObjectExpression",
-						properties: [],
-					},
-					typeScriptEstree,
-				});
+export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig }) => {
+	await updateJavaScript({
+		path: "/vite.config.js",
+		async script({ typeScriptEstree }) {
+			const viteConfigObjectOrCall = setDefaultDefaultExport({
+				cjs: false,
+				defaultValue: {
+					type: "ObjectExpression",
+					properties: [],
+				},
+				typeScriptEstree,
+			});
 
-				if (svelteConfigObject.type !== "ObjectExpression") throw new Error("Svelte config must be an object");
+			if (viteConfigObjectOrCall.type === "ObjectExpression") {
+				mutateViteConfig(viteConfigObjectOrCall, typeScriptEstree, false);
+			} else if (viteConfigObjectOrCall.type === "CallExpression") {
+				const configObject = viteConfigObjectOrCall.arguments[0];
+				if (configObject.type !== "ObjectExpression") throw new Error("argument passed to vite defineConfig needs to be an object");
+				mutateViteConfig(configObject, typeScriptEstree, false);
+			} else {
+				throw new Error("vite config needs to be an object or defineConfig called on an object");
+			}
 
-				const kitConfigObject = setDefault({
-					default: {
-						type: "ObjectExpression",
-						properties: [],
-					},
-					object: svelteConfigObject,
-					property: "kit",
-				});
-
-				if (kitConfigObject.type !== "ObjectExpression") throw new Error("kit in Svelte config must be an object");
-
-				const viteConfigObject = setDefault({
-					default: {
-						type: "ObjectExpression",
-						properties: [],
-					},
-					object: kitConfigObject,
-					property: "vite",
-				});
-
-				if (viteConfigObject.type !== "ObjectExpression") throw new Error("vite in kit in Svelte config must be an object");
-
-				mutateViteConfig(viteConfigObject, typeScriptEstree, cjs);
-
-				return {
-					typeScriptEstree,
-				};
-			},
-		});
-	} else {
-		await updateJavaScript({
-			path: "/vite.config.js",
-			async script({ typeScriptEstree }) {
-				const viteConfigObjectOrCall = setDefaultDefaultExport({
-					cjs: false,
-					defaultValue: {
-						type: "ObjectExpression",
-						properties: [],
-					},
-					typeScriptEstree,
-				});
-
-				if (viteConfigObjectOrCall.type === "ObjectExpression") {
-					mutateViteConfig(viteConfigObjectOrCall, typeScriptEstree, false);
-				} else if (viteConfigObjectOrCall.type === "CallExpression") {
-					const configObject = viteConfigObjectOrCall.arguments[0];
-					if (configObject.type !== "ObjectExpression") throw new Error("argument passed to vite defineConfig needs to be an object");
-					mutateViteConfig(configObject, typeScriptEstree, false);
-				} else {
-					throw new Error("vite config needs to be an object or defineConfig called on an object");
-				}
-
-				return {
-					typeScriptEstree,
-				};
-			},
-		});
-	}
+			return {
+				typeScriptEstree,
+			};
+		},
+	});
 };
 
 /**
