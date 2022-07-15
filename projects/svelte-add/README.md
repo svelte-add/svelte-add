@@ -37,6 +37,7 @@ In theory, these adders are the most likely to work correctly:
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server) (out of date)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
+- [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
 - [**Vitest**](https://github.com/davipon/svelte-add-vitest)
 
