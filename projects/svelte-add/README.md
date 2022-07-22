@@ -3,15 +3,15 @@ This is a community project to easily add integrations and other functionality t
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 
-  `svelte-add` has app initializers that let you select the exact integrations wanted: `npm create @svelte-add/kit@latest`
+  Svelte Add has app initializers that let you select the exact integrations wanted: `npm create @svelte-add/kit@latest`
 
 - You have to fall back on following a third party tutorial that could be outdated or take a lot of work to add things missing from that template.
 
-  `svelte-add`'s "tutorials" are one step: `npx --yes svelte-add@latest graphql-server`
+  Svelte Add's "tutorials" are one step: `npx --yes svelte-add@latest graphql-server`
 
 - You have to rely on the maintainer keeping the template updated as the tools it uses change and the official Svelte app template it was built on changes.
 
-  `svelte-add`'s app initializers are always built on top of the latest version of the official Svelte app templates. Of course it still needs to be maintained as tools change (like Tailwind JIT or the future rewrite of mdsvex), but because it is in a central location and contributed to by many people, problems are found quickly, and fixes are for everyone—not just one specific template.
+  Svelte Add's app initializers are always built on top of the latest version of the official Svelte app templates. Of course it still needs to be maintained as tools change (like Tailwind JIT, SvelteKit's conversion to just a Vite plugin, or the future rewrite of mdsvex), but because it is in a central location and contributed to by many people, problems are found quickly, and fixes are for everyone—not just one specific template.
 
 ## 🪄 Built-in integration adders
 
@@ -37,7 +37,7 @@ In theory, these adders are the most likely to work correctly:
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server) (out of date)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
-- [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install)
+- [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install) (work in progress)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
 - [**Vitest**](https://github.com/davipon/svelte-add-vitest)
 
@@ -53,13 +53,13 @@ npm create @svelte-add/kit@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm create --yes @svelte-add/kit@latest my-new-svelte-kit-app -- --with postcss+mdsvex
+npm create @svelte-add/kit@latest my-new-svelte-kit-app --with postcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
 
 ```sh
-npm create @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+npm create @svelte-add/kit@latest my-new-app --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
 # NOTE: The Firebase Hosting adder doesn't support this yet.
 ```
 
@@ -85,7 +85,7 @@ npm create @svelte-add/vite@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm create --yes @svelte-add/vite@latest my-new-svelte-vite-app -- --with bulma+mdsvex
+npm create @svelte-add/vite@latest my-new-svelte-vite-app --with bulma+mdsvex
 ```
 
 ### ⚙️ Options
@@ -210,7 +210,7 @@ MIT
 
 ## 🙏 Attribution
 
-`svelte-add` takes inspiration from existing projects:
+Svelte Add takes inspiration from existing projects:
 
 - [Preset](https://preset.dev/)
 - [`snowpack-start`](https://github.com/awu43/snowpack-start)
