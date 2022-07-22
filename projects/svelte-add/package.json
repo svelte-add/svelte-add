@@ -38,7 +38,7 @@
 		"svelte-add": "cli.js"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^5.30.5",
+		"@typescript-eslint/typescript-estree": "^5.30.7",
 		"dom-serializer": "^2.0.0",
 		"domhandler": "^5.0.3",
 		"domutils": "^3.0.1",
@@ -55,7 +55,7 @@
 		"typescript": "^4.7.4"
 	},
 	"devDependencies": {
-		"@types/estree": "^0.0.52",
+		"@types/estree": "^1.0.0",
 		"@types/mri": "^1.1.1",
 		"@types/prettier": "^2.6.3",
 		"ast-types": "^0.14.2"

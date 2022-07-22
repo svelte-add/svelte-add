@@ -27,9 +27,9 @@
 		"generate-readmes": "node generate-readmes.js"
 	},
 	"devDependencies": {
-		"@types/node": "^18.0.3",
+		"@types/node": "^18.0.6",
 		"@types/prompts": "^2.0.14",
-		"eslint": "^8.19.0",
+		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-only-warn": "^1.0.3",
 		"prettier": "^2.7.1",
