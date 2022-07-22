@@ -1,11 +1,12 @@
 export const packageVersions = {
+	"@popperjs/core": "^2.11.5",
 	"@roxi/routify": "next",
 	"@sveltejs/adapter-static": "next",
 	"@tailwindcss/forms": "^0.5.2",
 	"@tailwindcss/typography": "^0.5.3",
 	"@tauri-apps/api": "^1.0.2",
 	autoprefixer: "^10.4.7",
-	bootstrap: "^5.1.3",
+	bootstrap: "^5.2.0",
 	bulma: "^0.9.4",
 	coffeescript: "^2.7.0",
 	daisyui: "^2.18.1",
