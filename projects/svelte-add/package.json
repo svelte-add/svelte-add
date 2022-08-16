@@ -38,7 +38,7 @@
 		"svelte-add": "cli.js"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^5.30.7",
+		"@typescript-eslint/typescript-estree": "^5.33.1",
 		"dom-serializer": "^2.0.0",
 		"domhandler": "^5.0.3",
 		"domutils": "^3.0.1",
@@ -46,18 +46,18 @@
 		"htmlparser2": "^8.0.1",
 		"kleur": "^4.1.5",
 		"mri": "^1.2.0",
-		"postcss": "^8.4.14",
+		"postcss": "^8.4.16",
 		"prettier": "^2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
 		"prompts": "^2.4.2",
-		"recast": "^0.21.1",
+		"recast": "^0.21.2",
 		"svelte": "^3.49.0",
 		"typescript": "^4.7.4"
 	},
 	"devDependencies": {
 		"@types/estree": "^1.0.0",
 		"@types/mri": "^1.1.1",
-		"@types/prettier": "^2.6.3",
+		"@types/prettier": "^2.7.0",
 		"ast-types": "^0.14.2"
 	}
 }
