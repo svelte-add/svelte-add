@@ -173,7 +173,7 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 
 	if (folderInfo.kit)
 		await updateSvelte({
-			path: "/src/routes/__layout.svelte",
+			path: "/src/routes/+layout.svelte",
 
 			async markup({ domhandler }) {
 				const hasSlot = existsOne((tag) => tag.type === ElementType.Tag && tag.tagName === "slot", domhandler.childNodes);
