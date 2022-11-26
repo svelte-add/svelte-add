@@ -53,13 +53,13 @@ npm create @svelte-add/kit@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm create @svelte-add/kit@latest my-new-svelte-kit-app --with postcss+mdsvex
+npm create @svelte-add/kit@latest my-new-svelte-kit-app -- --with postcss+mdsvex
 ```
 
 Here's a more complete example: to migrate from [`sapper-firebase-typescript-graphql-tailwindcss-actions-template`](https://github.com/babichjacob/sapper-firebase-typescript-graphql-tailwindcss-actions-template) to SvelteKit, this command can be run to recreate all the functionality:
 
 ```sh
-npm create @svelte-add/kit@latest my-new-app --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
+npm create @svelte-add/kit@latest my-new-app -- --with firebase-hosting+typescript+graphql-server+tailwindcss+eslint+prettier --firebase-hosting-project my-project-123
 # NOTE: The Firebase Hosting adder doesn't support this yet.
 ```
 
@@ -85,7 +85,7 @@ npm create @svelte-add/vite@latest
 If you have a favorite setup, you can recreate it without having to provide any interactive input:
 
 ```sh
-npm create @svelte-add/vite@latest my-new-svelte-vite-app --with bulma+mdsvex
+npm create @svelte-add/vite@latest my-new-svelte-vite-app -- --with bulma+mdsvex
 ```
 
 ### ⚙️ Options
