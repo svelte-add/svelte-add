@@ -19,6 +19,7 @@ export const packageVersions = {
 	"svelte-cubed": "^0.2.1",
 	tailwindcss: "^3.1.5",
 	three: "^0.142.0",
+	"vite-imagetools": "^4.0.4",
 	"vite-plugin-coffee": "^2.2.1",
 };
 
