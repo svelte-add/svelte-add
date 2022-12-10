@@ -30,6 +30,6 @@
 	"dependencies": {
 		"kleur": "^4.1.5",
 		"mri": "^1.2.0",
-		"svelte-add": "workspace:*"
+		"svelte-add": "workspace:2022.11.2-5.0"
 	}
 }

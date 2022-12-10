@@ -39,6 +39,7 @@ const printSpinner = (label) => {
  * @property {boolean} prettier
  * @property {boolean} runningTests
  * @property {"typescript" | "checkjs" | null} types
+ * @property {boolean} vitest
  *
  * @callback Initializer
  * @param {InitializerArg} param0
@@ -89,6 +90,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 		runningTests: false,
 		// TODO: prompt for and check if type-checked javascript was chosen
 		types: script === "typescript" ? "typescript" : null,
+		vitest: quality.includes("vitest"),
 	});
 
 	clearInterval(handle);

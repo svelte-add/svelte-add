@@ -49,6 +49,7 @@ for (const [app, init] of Object.entries(initializers)) {
 					runningTests: true,
 					// TODO: prompt for and check if type-checked javascript was chosen
 					types: script === "typescript" ? "typescript" : null,
+					vitest: quality.includes("vitest"),
 				});
 
 				let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });

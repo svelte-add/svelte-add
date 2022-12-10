@@ -11,5 +11,6 @@ export const fresh = async ({ demo, dir, eslint, playwright, prettier, types }) 
 		prettier,
 		template: demo ? "default" : "skeleton",
 		types,
+		vitest: false, // TODO: add a vitest feature
 	});
 };

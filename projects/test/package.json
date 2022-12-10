@@ -18,9 +18,9 @@
 		"test": "uvu tests"
 	},
 	"devDependencies": {
-		"@svelte-add/create-kit": "workspace:*",
-		"@svelte-add/create-vite": "workspace:*",
-		"svelte-add": "workspace:*",
+		"@svelte-add/create-kit": "workspace:2022.11.2-5.0",
+		"@svelte-add/create-vite": "workspace:2022.11.2-5.0",
+		"svelte-add": "workspace:2022.11.2-5.0",
 		"uvu": "^0.5.6"
 	}
 }

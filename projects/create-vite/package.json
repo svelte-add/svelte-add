@@ -26,7 +26,7 @@
 		"create-vite": "cli.js"
 	},
 	"dependencies": {
-		"@svelte-add/app-initializer-tools": "workspace:*",
-		"svelte-add": "workspace:*"
+		"@svelte-add/app-initializer-tools": "workspace:2022.11.2-5.0",
+		"svelte-add": "workspace:2022.11.2-5.0"
 	}
 }

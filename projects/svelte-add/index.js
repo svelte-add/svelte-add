@@ -18,7 +18,7 @@ export const exit = (text) => {
  * @typedef {"css" | "postcss" | "scss"} StyleLanguage
  * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
  * @typedef {"3d" | "graphql-server" | "mdsvex" | "routify"} Other
- * @typedef {"eslint" | "playwright" | "prettier" | "storybook"} Quality
+ * @typedef {"eslint" | "playwright" | "prettier" | "storybook" | "vitest"} Quality
  * @typedef {"firebase-hosting" | "tauri"} Deploy
  */
 
@@ -29,7 +29,7 @@ const styleLanguages = ["css", "postcss", "scss"];
 /** @type {Other[]} */
 const others = ["3d", "graphql-server", "mdsvex", "routify"];
 /** @type {Quality[]} */
-const qualities = ["eslint", "playwright", "prettier", "storybook"];
+const qualities = ["eslint", "playwright", "prettier", "storybook"]; // TODO: add a vitest feature
 /** @type {Deploy[]} */
 const deploys = ["firebase-hosting", "tauri"];
 
@@ -511,17 +511,17 @@ export const packageManagers = {
 	npm: {
 		detect: ["npm", ["--version"]],
 		install: ["npm", ["install"]],
-		init: ["npm", ["init"]],
+		init: ["npm", ["create"]],
 	},
 	pnpm: {
 		detect: ["pnpm", ["--version"]],
 		install: ["pnpm", ["install"]],
-		init: ["pnpm", ["init"]],
+		init: ["pnpm", ["create"]],
 	},
 	yarn: {
 		detect: ["yarn", ["--version"]],
 		install: ["yarn", ["install"]],
-		init: ["npm", ["init"]],
+		init: ["npm", ["create"]],
 	},
 };
 
@@ -532,7 +532,7 @@ export const npxs = {
 		detect: ["npx", ["--version"]],
 	},
 	pnpx: {
-		detect: ["pnpx", ["--version"]],
+		detect: ["pnpm", ["--version"]],
 	},
 };
 
