@@ -18,9 +18,6 @@
 		"url": "https://github.com/svelte-add/svelte-add/issues"
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
-	"files": [
-		"index.js"
-	],
 	"type": "module",
 	"exports": {
 		".": {

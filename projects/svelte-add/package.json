@@ -18,16 +18,6 @@
 		"url": "https://github.com/svelte-add/svelte-add/issues"
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
-	"files": [
-		"adders/**/*.js",
-		"adder-tools.js",
-		"ast-io.js",
-		"ast-tools.js",
-		"cli.js",
-		"index.js",
-		"package-versions.js",
-		"update.js"
-	],
 	"type": "module",
 	"exports": {
 		".": {

@@ -18,10 +18,6 @@
 		"url": "https://github.com/svelte-add/svelte-add/issues"
 	},
 	"homepage": "https://github.com/svelte-add/svelte-add",
-	"files": [
-		"__init.js",
-		"cli.js"
-	],
 	"type": "module",
 	"bin": {
 		"create-kit": "cli.js"
