@@ -29,6 +29,7 @@
 	},
 	"dependencies": {
 		"@typescript-eslint/typescript-estree": "^5.46.1",
+		"detect-package-manager": "^2.0.1",
 		"dom-serializer": "^2.0.0",
 		"domhandler": "^5.0.3",
 		"domutils": "^3.0.1",

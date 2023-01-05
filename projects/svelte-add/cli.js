@@ -2,6 +2,7 @@
 import colors from "kleur";
 import mri from "mri";
 import { applyPreset, detectAdder, exit, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
+import { detect } from "detect-package-manager";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -25,6 +26,7 @@ const main = async () => {
 	const passedFeatures = passedFeaturesJoined === "" ? undefined : passedFeaturesJoined.split("+");
 
 	const environment = await getEnvironment();
+	const detectedPackageManager = await detect();
 	const { adderOptions, deploy, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
 		passedFeatures,
 		defaultInstall: false,
@@ -34,7 +36,7 @@ const main = async () => {
 		passedDemos,
 		passedInstall,
 		passedOutput: passedFeatures ? ["."] : [],
-		passedPackageManager,
+		passedPackageManager: passedPackageManager ?? detectedPackageManager,
 	});
 
 	console.log("The project directory you're giving to this command cannot be determined to be guaranteed fresh — maybe it is, maybe it isn't. If any issues arise after running this command, please try again, making sure you've run it on a freshly initialized SvelteKit or Vite–Svelte app template.");
