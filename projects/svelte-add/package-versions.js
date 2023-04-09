@@ -21,6 +21,7 @@ export const packageVersions = {
 	three: "^0.142.0",
 	"vite-imagetools": "^4.0.4",
 	"vite-plugin-coffee": "^2.2.1",
+	typescript: "^4.9.3",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */
