@@ -1,4 +1,4 @@
-<h1 align="center">➕ Svelte Add</h1>
+<h1 align="center">➕ Svelte Add small change</h1>
 This is a community project to easily add integrations and other functionality to Svelte apps. Its goal is to solve the  problems with downloading templates to start your app from:
 
 - You have to want _all_ the functionality a template includes—no more, no less.
