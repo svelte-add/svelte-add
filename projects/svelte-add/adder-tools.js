@@ -9,10 +9,11 @@ import { addImport, findImport, setDefaultDefaultExport, getPreprocessArray, get
  * @param {object} param0
  * @param {import(".").AdderRunArg<any>["updateJavaScript"]} param0.updateJavaScript
  * @param {function(import("estree").ObjectExpression, ReturnType<typeof import("./ast-io.js").newTypeScriptEstreeAst>, boolean): void} param0.mutateViteConfig
+ * @param {import(".").FolderInfo} param0.folderInfo
  */
-export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig }) => {
+export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig, folderInfo }) => {
 	await updateJavaScript({
-		path: "/vite.config.js",
+		path: getViteConfigFilePath(folderInfo),
 		async script({ typeScriptEstree }) {
 			const viteConfigObjectOrCall = setDefaultDefaultExport({
 				cjs: false,
@@ -38,6 +39,16 @@ export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig }) =
 			};
 		},
 	});
+};
+
+/**
+ * @param {import(".").FolderInfo} folderInfo
+ */
+export const getViteConfigFilePath = (folderInfo) => {
+	const viteConfigName = "vite.config";
+	if (!folderInfo.kit && folderInfo.allDependencies.typescript) return `${viteConfigName}.ts`;
+
+	return `${viteConfigName}.js`;
 };
 
 /**
