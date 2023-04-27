@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/create-vite",
-	"version": "2022.12.0-9.0",
+	"version": "2023.4.27-0.0",
 	"description": "Create a Vite-powered Svelte app with extra integrations",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
@@ -22,7 +22,7 @@
 		"create-vite": "cli.js"
 	},
 	"dependencies": {
-		"@svelte-add/app-initializer-tools": "workspace:2022.12.0-9.0",
-		"svelte-add": "workspace:2022.12.0-9.0"
+		"@svelte-add/app-initializer-tools": "workspace:2023.4.27-0.0",
+		"svelte-add": "workspace:2023.4.27-0.0"
 	}
 }
