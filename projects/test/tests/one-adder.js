@@ -3,7 +3,7 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { detectAdder, getChoices, getEnvironment, getFolderInfo, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, getFolderInfo, installDependencies, runAdder, runCommand } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
@@ -96,6 +96,10 @@ for (const language of languagesToCheck) {
 						});
 						assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
 					}
+
+					// If this below codes fails, it will throw an exception, which will cause the complete test to fail.
+					// Always use npm here, as using pnpm will add the packages to the workspace, which is not the intended behavior here.
+					await installDependencies({ packageManager: "npm", platform: environment.platform, projectDirectory: output });
 				});
 			}
 		}
