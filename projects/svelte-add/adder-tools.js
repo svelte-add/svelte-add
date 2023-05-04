@@ -46,7 +46,8 @@ export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig, fol
  */
 export const getViteConfigFilePath = (folderInfo) => {
 	const viteConfigName = "vite.config";
-	if (!folderInfo.kit && folderInfo.allDependencies.typescript) return `${viteConfigName}.ts`;
+
+	if (folderInfo.allDependencies.typescript) return `${viteConfigName}.ts`;
 
 	return `${viteConfigName}.js`;
 };
