@@ -3,94 +3,105 @@ import { inspect } from "util";
 import { test } from "uvu";
 import * as assert from "uvu/assert";
 
-import { detectAdder, getChoices, getEnvironment, getFolderInfo, runAdder } from "svelte-add";
+import { detectAdder, getChoices, getEnvironment, getFolderInfo, installDependencies, runAdder } from "svelte-add";
 import { fresh as svelteKit } from "@svelte-add/create-kit/__init.js";
 import { fresh as vite } from "@svelte-add/create-vite/__init.js";
 
 const initializers = { svelteKit, vite };
+const languagesToCheck = [
+	"javascript",
+	"typescript",
+	// "coffeescript",
+];
 // Replace this with the specific adder(s) to test
-const addersToTest = ["tailwindcss"];
+const addersToTest = ["scss"];
 
-for (const [app, init] of Object.entries(initializers)) {
-	for (const adderToTest of addersToTest) {
-		for (const passedDemos of [false, true]) {
-			test(`${adderToTest} being used on ${app} (with demos: ${passedDemos})`, async () => {
-				const output = `_outputs/${app}_${adderToTest}_${passedDemos}`;
-				await rm(output, {
-					recursive: true,
-					force: true,
-				});
-
-				const environment = await getEnvironment();
-
-				const { adderOptions, demos, deploy, npx, other, packageManager, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
-					defaultInstall: false,
-					environment,
-					outputFolderMustBe: false,
-					passedFeatures: [adderToTest],
-					passedArgs: {},
-					passedDemos,
-					passedInstall: false,
-					passedOutput: [output],
-					passedPackageManager: "pnpm",
-				});
-
-				const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
-				const addersToCheck = features.filter((feature) => !["css", "javascript"].includes(feature));
-
-				await init({
-					demo: demos,
-					dir: output,
-					eslint: quality.includes("eslint"),
-					packageManager,
-					platform: environment.platform,
-					playwright: quality.includes("playwright"),
-					prettier: quality.includes("prettier"),
-					runningTests: true,
-					// TODO: prompt for and check if type-checked javascript was chosen
-					types: script === "typescript" ? "typescript" : null,
-					vitest: quality.includes("vitest"),
-				});
-
-				let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
-
-				/** @type {string[]} */
-				const addersToRun = [];
-
-				for (const adderToCheck of addersToCheck) {
-					const preRunCheck = await detectAdder({
-						adder: adderToCheck,
-						folderInfo,
-						projectDirectory: output,
+for (const language of languagesToCheck) {
+	for (const [app, init] of Object.entries(initializers)) {
+		for (const adderToTest of addersToTest) {
+			for (const passedDemos of [false, true]) {
+				test(`${adderToTest} being used on ${app}/${language} (with demos: ${passedDemos})`, async () => {
+					const output = `_outputs/${app}_${language}_${adderToTest}_${passedDemos}`;
+					await rm(output, {
+						recursive: true,
+						force: true,
 					});
-					assert.ok(
-						Object.values(preRunCheck).some((pass) => !pass),
-						`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
-					);
-					addersToRun.push(adderToCheck);
-				}
 
-				for (const adderToRun of addersToRun) {
-					await runAdder({
-						adder: adderToRun,
+					const environment = await getEnvironment();
+
+					const { adderOptions, demos, deploy, npx, other, packageManager, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
+						defaultInstall: false,
 						environment,
-						folderInfo,
-						npx,
-						options: adderOptions[adderToRun],
-						projectDirectory: output,
+						outputFolderMustBe: false,
+						passedFeatures: [adderToTest, language],
+						passedArgs: {},
+						passedDemos,
+						passedInstall: false,
+						passedOutput: [output],
+						passedPackageManager: "pnpm",
 					});
-					folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
-				}
 
-				for (const adderToCheck of addersToCheck) {
-					const postRunCheck = await detectAdder({
-						adder: adderToCheck,
-						projectDirectory: output,
-						folderInfo,
+					const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
+					const addersToCheck = features.filter((feature) => !["css", "javascript", "typescript"].includes(feature));
+
+					await init({
+						demo: demos,
+						dir: output,
+						eslint: quality.includes("eslint"),
+						packageManager,
+						platform: environment.platform,
+						playwright: quality.includes("playwright"),
+						prettier: quality.includes("prettier"),
+						runningTests: true,
+						// TODO: prompt for and check if type-checked javascript was chosen
+						types: script === "typescript" ? "typescript" : null,
+						vitest: quality.includes("vitest"),
 					});
-					assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
-				}
-			});
+
+					let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
+
+					/** @type {string[]} */
+					const addersToRun = [];
+
+					for (const adderToCheck of addersToCheck) {
+						const preRunCheck = await detectAdder({
+							adder: adderToCheck,
+							folderInfo,
+							projectDirectory: output,
+						});
+						assert.ok(
+							Object.values(preRunCheck).some((pass) => !pass),
+							`Somehow, pre-run checks show that ${adderToTest} is already set up: ${inspect(preRunCheck)}`
+						);
+						addersToRun.push(adderToCheck);
+					}
+
+					for (const adderToRun of addersToRun) {
+						await runAdder({
+							adder: adderToRun,
+							environment,
+							folderInfo,
+							npx,
+							options: adderOptions[adderToRun],
+							projectDirectory: output,
+						});
+						folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });
+					}
+
+					for (const adderToCheck of addersToCheck) {
+						const postRunCheck = await detectAdder({
+							adder: adderToCheck,
+							projectDirectory: output,
+							folderInfo,
+						});
+						assert.ok(Object.values(postRunCheck).every(Boolean), `${adderToTest} was not set up correctly: ${inspect(postRunCheck)}`);
+					}
+
+					// If this below codes fails, it will throw an exception, which will cause the complete test to fail.
+					// Always use npm here, as using pnpm will add the packages to the workspace, which is not the intended behavior here.
+					await installDependencies({ packageManager: "npm", platform: environment.platform, projectDirectory: output });
+				});
+			}
 		}
 	}
 }

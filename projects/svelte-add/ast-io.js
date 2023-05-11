@@ -23,7 +23,7 @@ export const stringifyPostcssAst = (ast) => ast.toString();
  * @param {string} text
  * @returns {DomHandlerAst}
  */
-export const newDomHandlerAst = (text) => parseDocument(text, { recognizeSelfClosing: true });
+export const newDomHandlerAst = (text) => parseDocument(text, { recognizeSelfClosing: true, lowerCaseTags: false });
 
 /**
  * @param {DomHandlerAst} ast
