@@ -475,3 +475,28 @@ export const getSveltePreprocessArgs = ({ preprocessArray, sveltePreprocessImpor
 
 	return sveltePreprocessFunctionCall.arguments[0];
 };
+
+/**
+ * @param {object} param0
+ * @param {import("./ast-io.js").RecastAST} param0.typeScriptEstree
+ * @param {string} param0.value
+ */
+export const addRootBlockComment = ({ typeScriptEstree, value }) => {
+	const blockComment = {
+		type: "Block",
+		value: value,
+		leading: true,
+		trailing: false,
+	};
+
+	// Note: as we are mixing RecastAST types with estree types it is nearly impossible
+	// to find or create a type that would allow for all necessary properties.
+	// For the sake of simplicity, let's assume the type `any` for the few lines below
+
+	/** @type {any[]} */
+	const body = typeScriptEstree.program.body;
+	const firstNode = body[0];
+
+	firstNode.comments = firstNode.comments ?? [];
+	firstNode.comments.push(blockComment);
+};
