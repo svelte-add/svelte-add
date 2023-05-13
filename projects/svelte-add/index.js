@@ -442,7 +442,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				type: "select",
 			}));
 
-			packageManager = defaultPackageManager;
+			packageManager = passedPackageManager ?? defaultPackageManager;
 			npx = defaultNpx;
 		} else {
 			const defaultPackageManagerIndex = installedPackageManagers.indexOf(defaultPackageManager);
