@@ -445,7 +445,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 			packageManager = passedPackageManager ?? defaultPackageManager;
 			npx = defaultNpx;
 		} else {
-			const defaultPackageManagerIndex = installedPackageManagers.indexOf(defaultPackageManager);
+			const defaultPackageManagerIndex = installedPackageManagers.indexOf(passedPackageManager ?? defaultPackageManager);
 
 			const { packageManagerOrUndefined } = await prompts({
 				choices: [
@@ -472,7 +472,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 
 				install = true;
 			} else {
-				packageManager = defaultPackageManager;
+				packageManager = passedPackageManager ?? defaultPackageManager;
 				npx = defaultNpx;
 				install = false;
 			}
