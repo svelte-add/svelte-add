@@ -2,7 +2,7 @@
 import colors from "kleur";
 import mri from "mri";
 import { applyPreset, detectAdder, exit, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "./index.js";
-import { detect } from "detect-package-manager";
+import { detect as detectPackageManager } from "detect-package-manager";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -26,7 +26,17 @@ const main = async () => {
 	const passedFeatures = passedFeaturesJoined === "" ? undefined : passedFeaturesJoined.split("+");
 
 	const environment = await getEnvironment();
-	const detectedPackageManager = await detect();
+
+	/** @type {string | undefined} */
+	let detectedPackageManager;
+	try {
+		detectedPackageManager = await detectPackageManager();
+	} catch (error) {
+		// sometimes package manager detection fails, if globally checking
+		// if a package manager is installed. But we want to continue execution.
+		// See https://github.com/egoist/detect-package-manager/pull/7 for full explanation.
+		detectedPackageManager = undefined;
+	}
 	const { adderOptions, deploy, install, npx, packageManager, other, presets, projectDirectory, quality, script, styleFramework, styleLanguage } = await getChoices({
 		passedFeatures,
 		defaultInstall: false,
