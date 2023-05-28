@@ -27,17 +27,17 @@ export const run = async ({ install, updateCss }) => {
 	await updateCss({
 		path: `/src/app.${extension}`,
 		async style({ postcss }) {
-			const importAtRule = new AtRule({
-				name: "import",
-				params: `"@picocss/pico/scss/pico`,
-			});
-
-			postcss.prepend(importAtRule);
-
 			const importHint = new Comment({
 				text: "To import only what you need from Pico [check the documentaion](https://picocss.com/docs/customization.html)",
 			});
 			postcss.prepend(importHint);
+
+			const importAtRule = new AtRule({
+				name: "import",
+				params: `"@picocss/pico/scss/pico"`,
+			});
+
+			postcss.prepend(importAtRule);
 
 			return {
 				postcss,
