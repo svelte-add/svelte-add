@@ -16,6 +16,9 @@
 [submodule "projects/svelte-add/adders/mdsvex"]
 	path = projects/svelte-add/adders/mdsvex
 	url = https://github.com/svelte-add/mdsvex
+[submodule "projects/svelte-add/adders/picocss"]
+	path = projects/svelte-add/adders/picocss
+	url = https://github.com/svelte-add/picocss
 [submodule "projects/svelte-add/adders/postcss"]
 	path = projects/svelte-add/adders/postcss
 	url = https://github.com/svelte-add/postcss

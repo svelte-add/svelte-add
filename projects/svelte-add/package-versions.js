@@ -1,4 +1,5 @@
 export const packageVersions = {
+	"@picocss/pico": "^1.5.10",
 	"@popperjs/core": "^2.11.7",
 	"@roxi/routify": "^2.18.2",
 	"@sveltejs/adapter-static": "^2.0.2",
