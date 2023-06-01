@@ -39,7 +39,6 @@ In theory, these adders are the most likely to work correctly:
 - [**Pug**](https://github.com/Leftium/pug-adder)
 - [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install) (work in progress)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
-- [**Vitest**](https://github.com/davipon/svelte-add-vitest)
 
 ## 🧰 Creating a SvelteKit app with integrations
 
@@ -182,6 +181,10 @@ Snowpack is no longer actively maintained, so we recommend using Vite if possibl
 ## 🌐 Support for webpack or Rollup
 
 There is no planned support for webpack- or Rollup-powered Svelte apps because Vite supersedes them. See the "Creating a Vite-powered Svelte app with integrations" section for the recommended approach.
+
+## 🧪 Support for Vitest
+
+SvelteKit now offers the option to setup Vitest when running `npm create svelte@latest`.
 
 ## 🎁 Contributing
 
