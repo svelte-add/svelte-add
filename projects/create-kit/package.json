@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/create-kit",
-	"version": "2023.05.14-0.0",
+	"version": "2023.5.14-0.0",
 	"description": "Create a SvelteKit app with extra integrations",
 	"author": "J / Jacob Babich <jacobbabichpublic+git@gmail.com>",
 	"keywords": [
@@ -23,8 +23,8 @@
 		"create-kit": "cli.js"
 	},
 	"dependencies": {
-		"@svelte-add/app-initializer-tools": "workspace:2023.05.14-0.0",
+		"@svelte-add/app-initializer-tools": "workspace:2023.5.14-0.0",
 		"create-svelte": "^4.1.0",
-		"svelte-add": "workspace:2023.05.14-0.0"
+		"svelte-add": "workspace:2023.5.14-0.0"
 	}
 }
