@@ -203,7 +203,7 @@ This is a community project! Here are some ways you can help:
 
    - `pnpm -w lint` (usually fixable with `pnpm -w format`)
    - `pnpm -w check`
-   - `pnpm -r test`. Modify `projects/test/tests/one-adder.js` with the right adder to test.
+   - `pnpm -r test`. Be careful, these test might need up to 10 minutes to complete. Consider using `pnpm -r test-one-adder`. Modify `projects/test/tests/one-adder/one-adder-fresh-project.js` with the right adder and configuration to test.
 
 4. Generate the `README`s for the new and changed adders with `pnpm -w generate-readmes`
 

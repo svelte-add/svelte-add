@@ -20,6 +20,8 @@ export const exit = (text) => {
  * @typedef {"3d" | "graphql-server" | "mdsvex" | "routify"} Other
  * @typedef {"eslint" | "playwright" | "prettier" | "storybook" | "vitest"} Quality
  * @typedef {"firebase-hosting" | "tauri"} Deploy
+ *
+ * @typedef {StyleLanguage | StyleFramework | Other | Quality | Deploy} NonScriptAdders
  */
 
 /** @type {Script[]} */
@@ -709,7 +711,7 @@ export const getAdderInfo = async ({ adder }) => {
 /**
  * @typedef {Object} GatekeepArg
  * @property {FolderInfo} folderInfo
- * @property {function(Omit<Parameters<typeof runCommand>[0], "cwd">): ReturnType<typeof runCommand>} runCommand
+ * @property {function(Parameters<typeof runCommand>[0]): ReturnType<typeof runCommand>} runCommand
  *
  * @callback Gatekeep
  * @param {GatekeepArg} param0
@@ -773,7 +775,13 @@ export const applyPreset = ({ args, platform, projectDirectory, npx, preset }) =
 		let command = npx;
 		if (platform === "win32") command += ".cmd";
 
-		const subprocess = spawn(command, ["--yes", "--package", "use-preset", "apply", preset, ...args], {
+		let processArgs = ["--yes", "--package", "use-preset", "apply", preset, ...args];
+		if (npx == "pnpx") {
+			processArgs.shift(); // we don't need the --yes if using pnpm
+			processArgs.shift(); // we don't need the --package if using pnpm
+		}
+
+		const subprocess = spawn(command, processArgs, {
 			cwd: projectDirectory,
 			stdio: "pipe",
 			timeout: 20000,
@@ -946,3 +954,43 @@ export const installDependencies = async ({ packageManager, platform, projectDir
 		async interact() {},
 	});
 };
+
+/**
+ * @param {object} param0
+ * @param {FolderInfo} param0.folderInfo
+ * @param {AdderInfo} param0.adderInfo
+ * @returns {Promise<Record<string, boolean>>}
+ */
+export const getSupportedInitializers = async ({ folderInfo, adderInfo }) => {
+	const addable = { vite: false, kit: false };
+
+	for (const bundler of /** @type {"vite"[]} */ (["vite"])) {
+		for (const kit of [true, false]) {
+			folderInfo.kit = kit;
+			folderInfo.bundler = bundler;
+
+			const gatekept = await adderInfo.gatekeep({
+				folderInfo,
+				runCommand,
+			});
+			if ("able" in gatekept) addable[kit ? "kit" : "vite"] = true;
+		}
+	}
+
+	return addable;
+};
+
+/**
+ * @returns {Script[]}
+ */
+export function getScriptLanguages() {
+	return scripts;
+}
+
+/**
+ * Gets a list of usable adders excluding script language adders
+ * @returns {NonScriptAdders[]}
+ */
+export function getAddersList() {
+	return [...styleLanguages, ...others, ...qualities, ...deploys];
+}
