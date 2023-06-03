@@ -16,7 +16,7 @@ export const exit = (text) => {
 /**
  * @typedef {"coffeescript" | "javascript" | "typescript"} Script
  * @typedef {"css" | "postcss" | "scss"} StyleLanguage
- * @typedef {"bootstrap" | "bulma" | "tailwindcss"} StyleFramework
+ * @typedef {"bootstrap" | "bulma" | "tailwindcss | picocss"} StyleFramework
  * @typedef {"3d" | "graphql-server" | "mdsvex" | "routify"} Other
  * @typedef {"eslint" | "playwright" | "prettier" | "storybook" | "vitest"} Quality
  * @typedef {"firebase-hosting" | "tauri"} Deploy
@@ -37,6 +37,7 @@ const deploys = ["firebase-hosting", "tauri"];
 const styleLanguageForFramework = {
 	bootstrap: "scss",
 	bulma: "scss",
+	picocss: "scss",
 	tailwindcss: "postcss",
 };
 
