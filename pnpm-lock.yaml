@@ -39,28 +39,28 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       svelte-add:
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../svelte-add
 
   projects/create-kit:
     dependencies:
       '@svelte-add/app-initializer-tools':
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../app-initializer-tools
       create-svelte:
         specifier: ^4.1.0
         version: 4.1.0
       svelte-add:
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../svelte-add
 
   projects/create-vite:
     dependencies:
       '@svelte-add/app-initializer-tools':
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../app-initializer-tools
       svelte-add:
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../svelte-add
 
   projects/svelte-add:
@@ -130,13 +130,13 @@ importers:
   projects/test:
     devDependencies:
       '@svelte-add/create-kit':
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../create-kit
       '@svelte-add/create-vite':
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../create-vite
       svelte-add:
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../svelte-add
       uvu:
         specifier: ^0.5.6
