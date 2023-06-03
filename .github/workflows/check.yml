@@ -10,7 +10,7 @@ jobs:
   check:
     strategy:
       matrix:
-        node-version: [14, 16, 18]
+        node-version: [16, 18, 20]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -24,7 +24,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - uses: pnpm/action-setup@v2.0.1
         with:
-          version: 7
+          version: 8
       - run: pnpm install
       - run: pnpm lint
       - run: pnpm check
