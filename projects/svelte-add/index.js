@@ -29,7 +29,7 @@ const scripts = ["javascript", "typescript", "coffeescript"];
 /** @type {StyleLanguage[]} */
 const styleLanguages = ["css", "postcss", "scss"];
 /** @type {StyleFramework[]} */
-const styleFrameworks = ["bootstrap", "bulma", "tailwindcss"];
+const styleFrameworks = ["bootstrap", "bulma", "tailwindcss", "picocss"];
 /** @type {Other[]} */
 const others = ["3d", "graphql-server", "mdsvex", "routify"];
 /** @type {Quality[]} */
