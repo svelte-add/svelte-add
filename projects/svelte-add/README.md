@@ -1,5 +1,9 @@
 <h1 align="center">➕ Svelte Add</h1>
-This is a community project to easily add integrations and other functionality to Svelte apps. Its goal is to solve the  problems with downloading templates to start your app from:
+
+[![GitHub issues by-label](https://img.shields.io/github/issues/svelte-add/svelte-add/confirmed%20bug?color=%23DC2626)](https://github.com/svelte-add/svelte-add/issues?q=is%3Aopen+is%3Aissue+label%3A%22confirmed+bug%22)
+[![GitHub issues by-label](https://img.shields.io/github/issues/svelte-add/svelte-add/support%20question?color=%23FACC15)](https://github.com/svelte-add/svelte-add/issues?q=is%3Aopen+is%3Aissue+label%3A%22support+question%22)
+
+This is a community project to easily add integrations and other functionality to Svelte apps. Its goal is to solve the problems with downloading templates to start your app from:
 
 - You have to want _all_ the functionality a template includes—no more, no less.
 

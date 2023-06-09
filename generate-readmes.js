@@ -22,15 +22,19 @@ const supportedEnvironmentsTemplate = ({ supportedEnvironments }) => {
 
 /**
  * @param {object} param0
+ * @param {string} param0.codename
  * @param {import("./projects/svelte-add/index.js").AdderOptions<unknown>} param0.options
  * @returns {string}
  */
-const optionsTemplate = ({ options }) => {
+const optionsTemplate = ({ codename, options }) => {
 	const allOptions = Object.entries(options);
 
 	if (allOptions.length === 0) return "This adder doesn't take any options of its own.";
 
-	return allOptions.map(([option, { default: default_, descriptionMarkdown }]) => `- \`${option}\` (default \`${default_}\`): ${descriptionMarkdown}`).join("\n\n");
+	const optionDescriptions = allOptions.map(([option, { default: default_, descriptionMarkdown }]) => `- \`${option}\` (default \`${default_}\`): ${descriptionMarkdown}`).join("\n\n");
+	const optionUsages = "\n\n```sh\nnpx svelte-add@latest " + codename + " " + allOptions.map(([option]) => `--${codename}-${option}`).join(" ") + "\n```";
+
+	return optionDescriptions + optionUsages;
 };
 
 /**
@@ -55,6 +59,9 @@ const usageTemplate = ({ usageMarkdown }) => {
 const template = ({ codename, emoji, name, options, supportedEnvironments, usageMarkdown }) =>
 	`<h1 align="center">${emoji} Add ${name} to Svelte</h1>
 
+[![GitHub issues by-label](https://img.shields.io/github/issues/svelte-add/svelte-add/confirmed%20bug?color=%23DC2626)](https://github.com/svelte-add/svelte-add/issues?q=is%3Aopen+is%3Aissue+label%3A%22confirmed+bug%22)
+[![GitHub issues by-label](https://img.shields.io/github/issues/svelte-add/svelte-add/support%20question?color=%23FACC15)](https://github.com/svelte-add/svelte-add/issues?q=is%3Aopen+is%3Aissue+label%3A%22support+question%22)
+
 This is an adder for \`svelte-add\`; you should [read its \`README\`](https://github.com/svelte-add/svelte-add#readme) before continuing here.
 
 ## ➕ Adding ${name}
@@ -71,7 +78,7 @@ ${supportedEnvironmentsTemplate({ supportedEnvironments })}
 
 ### ⚙️ Options
 
-${optionsTemplate({ options })}
+${optionsTemplate({ codename, options })}
 
 ## 🛠 Using ${name}
 
