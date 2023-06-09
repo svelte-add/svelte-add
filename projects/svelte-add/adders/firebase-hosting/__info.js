@@ -6,7 +6,7 @@ export const usageMarkdown = ["[You _cannot_ use server-side rendering](https://
 
 /** @type {import("../..").Gatekeep} */
 export const gatekeep = async () => {
-	return { able: true };
+	return { advice: "Out-of-date" };
 };
 
 /** @typedef {{ project: string }} Options */

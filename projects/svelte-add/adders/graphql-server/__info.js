@@ -8,7 +8,7 @@ export const usageMarkdown = ["You can create a GraphQL schema in `src/graphql/s
 export const gatekeep = async ({ folderInfo }) => {
 	if (!folderInfo.kit) return { advice: "can only be selected when using SvelteKit" };
 
-	return { able: true };
+	return { advice: "Out-of-date" };
 };
 
 /** @typedef {{}} Options */

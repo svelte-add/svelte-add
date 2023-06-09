@@ -5,7 +5,7 @@ module.exports = {
 		sourceType: "module",
 	},
 	env: {
-		es2020: true,
+		es2022: true,
 		node: true,
 	},
 	plugins: ["only-warn"],

@@ -15,9 +15,12 @@
 	"homepage": "https://github.com/svelte-add/svelte-add",
 	"type": "module",
 	"scripts": {
-		"test": "uvu tests"
+		"test": "uvu tests/all-adders",
+		"test-one-adder": "uvu tests/one-adder",
+		"test-all-adders": "uvu tests/all-adders"
 	},
 	"devDependencies": {
+		"@svelte-add/app-initializer-tools": "workspace:2023.6.3-0.0",
 		"@svelte-add/create-kit": "workspace:2023.6.3-0.0",
 		"@svelte-add/create-vite": "workspace:2023.6.3-0.0",
 		"svelte-add": "workspace:2023.6.3-0.0",
