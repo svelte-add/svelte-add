@@ -22,6 +22,7 @@ export const exit = (text) => {
  * @typedef {"firebase-hosting" | "tauri"} Deploy
  *
  * @typedef {StyleLanguage | StyleFramework | Other | Quality | Deploy} NonScriptAdders
+ * @typedef {NonScriptAdders | Script} InternalAdders
  */
 
 /** @type {Script[]} */
@@ -994,5 +995,16 @@ export function getScriptLanguages() {
  * @returns {NonScriptAdders[]}
  */
 export function getAddersList() {
-	return [...styleLanguages, ...others, ...qualities, ...deploys, ...styleFrameworks];
+	const allAdders = [...styleLanguages, ...others, ...qualities, ...deploys, ...styleFrameworks];
+	const internalAdders = getInternalAddersList();
+	const nonInternalAdders = allAdders.filter((feature) => !internalAdders.includes(feature));
+	return nonInternalAdders;
+}
+
+/**
+ * Gets a list of internal adders
+ * @returns {InternalAdders[]}
+ */
+export function getInternalAddersList() {
+	return ["css", "eslint", "javascript", "playwright", "prettier", "typescript"];
 }

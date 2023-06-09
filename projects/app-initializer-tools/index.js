@@ -1,7 +1,7 @@
 import { clearLine, cursorTo } from "readline";
 import colors from "kleur";
 import mri from "mri";
-import { applyPreset, detectAdder, getAdderInfo, getChoices, getEnvironment, getFolderInfo, installDependencies, packageManagers, runAdder } from "svelte-add";
+import { applyPreset, detectAdder, getAdderInfo, getChoices, getEnvironment, getFolderInfo, getInternalAddersList, installDependencies, packageManagers, runAdder } from "svelte-add";
 
 // Show the package version to make debugging easier
 import { createRequire } from "module";
@@ -98,7 +98,7 @@ export const setup = async ({ applicationFramework, fresh }) => {
 	cursorTo(process.stdout, 0);
 
 	const features = [script, styleLanguage, ...(styleFramework ? [styleFramework] : []), ...other, ...quality, ...(deploy ? [deploy] : [])];
-	const adders = features.filter((feature) => !["css", "eslint", "javascript", "playwright", "prettier", "typescript"].includes(feature));
+	const adders = features.filter((feature) => !getInternalAddersList().includes(feature));
 
 	/** @type {string[]} */
 	const workingFeatures = [];
