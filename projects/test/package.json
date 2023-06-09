@@ -20,6 +20,7 @@
 		"test-all-adders": "uvu tests/all-adders"
 	},
 	"devDependencies": {
+		"@svelte-add/app-initializer-tools": "workspace:2023.6.3-0.0",
 		"@svelte-add/create-kit": "workspace:2023.6.3-0.0",
 		"@svelte-add/create-vite": "workspace:2023.6.3-0.0",
 		"svelte-add": "workspace:2023.6.3-0.0",

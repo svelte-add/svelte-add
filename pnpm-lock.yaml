@@ -130,7 +130,7 @@ importers:
   projects/test:
     devDependencies:
       '@svelte-add/app-initializer-tools':
-        specifier: workspace:2023.5.14-0.0
+        specifier: workspace:2023.6.3-0.0
         version: link:../app-initializer-tools
       '@svelte-add/create-kit':
         specifier: workspace:2023.6.3-0.0
