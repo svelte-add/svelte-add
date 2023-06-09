@@ -72,6 +72,13 @@ for (const [framework, language] of Object.entries(styleLanguageForFramework)) {
  */
 
 /**
+ * @typedef {object} PublicAdderInfo
+ * @property {string} systemName
+ * @property {string} publicName
+ * @property {string | undefined} emoji
+ */
+
+/**
  * Sorts out the given features into categories (or prompts for them if needed),
  * Sorts out the given arguments into options for those adders (or prompts for them if needed)
  * Sorts out other arguments into options for svelte-add or its app initializers (or prompts for them if needed)
@@ -1008,3 +1015,46 @@ export function getAddersList() {
 export function getInternalAddersList() {
 	return ["css", "eslint", "javascript", "playwright", "prettier", "typescript"];
 }
+
+/**
+ * Determines all currently available adders, and returns some public facing adder information.
+ * In example to be used by sveltelab: https://github.com/SvelteLab/SvelteLab/issues/228
+ * @param {object} param whether we are currently in a webContainer or not.
+ * @param {boolean} param.kitProject defines if we are currently working on a sveltekit project, or only a svelte based project
+ * @returns {Promise<PublicAdderInfo[]>}
+ */
+export const getPublicAdderListInfos = async ({ kitProject }) => {
+	// generate empty folder info. At this point we only want to know if an adder
+	// would generally be available in the current environment or not.
+	// That's why we don't need to bother about the package type or the
+	// dependencies here.
+
+	/** @type {FolderInfo} */
+	const folderInfo = {
+		bundler: "vite",
+		empty: false,
+		kit: kitProject,
+		packageType: "module",
+		allDependencies: {},
+	};
+
+	/** @type {PublicAdderInfo[]} */
+	const availableAdders = [];
+	const allAdders = getAddersList();
+
+	for (const adder of allAdders) {
+		// check if the adder could be added
+		const adderInfo = await getAdderInfo({ adder });
+		const gatekept = await adderInfo.gatekeep({ folderInfo, runCommand });
+
+		if ("able" in gatekept) {
+			availableAdders.push({
+				systemName: adder,
+				publicName: adderInfo.name,
+				emoji: adderInfo.emoji,
+			});
+		}
+	}
+
+	return availableAdders;
+};
