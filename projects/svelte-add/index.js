@@ -994,5 +994,5 @@ export function getScriptLanguages() {
  * @returns {NonScriptAdders[]}
  */
 export function getAddersList() {
-	return [...styleLanguages, ...others, ...qualities, ...deploys];
+	return [...styleLanguages, ...others, ...qualities, ...deploys, ...styleFrameworks];
 }
