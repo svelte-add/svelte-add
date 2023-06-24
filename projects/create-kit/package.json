@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@svelte-add/app-initializer-tools": "workspace:2023.6.9-0.0",
-		"create-svelte": "^4.1.0",
+		"create-svelte": "^5.0.1",
 		"svelte-add": "workspace:2023.6.9-0.0"
 	}
 }
