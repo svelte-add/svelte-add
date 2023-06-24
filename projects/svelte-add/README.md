@@ -210,6 +210,7 @@ This is a community project! Here are some ways you can help:
    - `pnpm -r test`. Be careful, these test might need up to 10 minutes to complete. Consider using `pnpm -r test-one-adder`. Modify `projects/test/tests/one-adder/one-adder-fresh-project.js` with the right adder and configuration to test.
 
 4. Generate the `README`s for the new and changed adders with `pnpm -w generate-readmes`
+5. Update the used package versions from `/projects/svelte-add/package-versions.js` with `pnpm -w update-packages`
 
 ## 📄 License
 
