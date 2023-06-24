@@ -415,7 +415,7 @@ export const getPreprocessArray = ({ configObject }) => {
 
 	if (preprocessConfig.value.type !== "ArrayExpression") {
 		if (preprocessConfig.value.type !== "CallExpression") throw new TypeError("preprocess settings were expected to be a function call");
-		// Convert preprocess config from a single function call to an array e.x. [svelte-preprocess()]
+		// Convert preprocess config from a single function call to an array e.x. [vitePreprocess()]
 		/** @type {import("estree").ArrayExpression} */
 		const preprocessArray = {
 			type: "ArrayExpression",
@@ -445,7 +445,7 @@ export const getSveltePreprocessArgs = ({ preprocessArray, sveltePreprocessImpor
 		sveltePreprocessFunctionCall = element;
 	}
 
-	// Add a svelte-preprocess() call to the config if missing
+	// Add a vitePreprocess() call to the config if missing
 	if (!sveltePreprocessFunctionCall) {
 		sveltePreprocessFunctionCall = {
 			type: "CallExpression",
@@ -460,7 +460,7 @@ export const getSveltePreprocessArgs = ({ preprocessArray, sveltePreprocessImpor
 		preprocessArray.elements.push(sveltePreprocessFunctionCall);
 	}
 
-	// Initialize the svelte-preprocess options as {} if none were passed
+	// Initialize the vitePreprocess options as {} if none were passed
 	if (sveltePreprocessFunctionCall.arguments.length === 0) {
 		/** @type {import("estree").ObjectExpression} */
 		const emptyObject = {
@@ -471,7 +471,7 @@ export const getSveltePreprocessArgs = ({ preprocessArray, sveltePreprocessImpor
 		sveltePreprocessFunctionCall.arguments.push(emptyObject);
 	}
 
-	if (sveltePreprocessFunctionCall.arguments[0].type !== "ObjectExpression") throw new TypeError("that's an unexpected argument to svelte-preprocess");
+	if (sveltePreprocessFunctionCall.arguments[0].type !== "ObjectExpression") throw new TypeError("that's an unexpected argument to vitePreprocess");
 
 	return sveltePreprocessFunctionCall.arguments[0];
 };
