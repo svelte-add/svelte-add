@@ -1,7 +1,7 @@
 import { packageVersions } from "./projects/svelte-add/package-versions.js";
 import latestVersion from "latest-version";
 import { readFile, writeFile } from "fs/promises";
-import ncu from "npm-check-updates";
+import * as ncu from "npm-check-updates";
 
 console.log("start updating package.json across all projects");
 await updatePackageJson();
