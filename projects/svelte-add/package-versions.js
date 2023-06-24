@@ -17,6 +17,8 @@ export const packageVersions = {
 	"postcss-load-config": "^4.0.1",
 	sass: "^1.63.6",
 	"svelte-preprocess": "^5.0.4",
+	sass: "^1.63.6",
+	"@sveltejs/vite-plugin-svelte": "^2.0.4",
 	"svelte-cubed": "^0.2.1",
 	tailwindcss: "^3.3.2",
 	three: "^0.153.0",
