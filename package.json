@@ -33,6 +33,8 @@
 		"eslint": "^8.43.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-only-warn": "^1.1.0",
+		"latest-version": "^7.0.0",
+		"npm-check-updates": "^16.10.13",
 		"prettier": "^2.8.8",
 		"typescript": "^5.1.3"
 	}
