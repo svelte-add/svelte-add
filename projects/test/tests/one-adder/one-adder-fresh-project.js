@@ -5,7 +5,7 @@ import { runAdderTests } from "../../run-adder-tests.js";
 
 async function executeTests() {
 	await runAdderTests({
-		adder: "graphql-server",
+		adder: "mdsvex",
 		scriptLanguage: "javascript",
 		initializer: svelteKit,
 		initializerName: "svelteKit",
