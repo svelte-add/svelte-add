@@ -47,7 +47,9 @@ export const updateViteConfig = async ({ updateJavaScript, mutateViteConfig, fol
 export const getViteConfigFilePath = (folderInfo) => {
 	const viteConfigName = "vite.config";
 
-	if (folderInfo.allDependencies.typescript) return `${viteConfigName}.ts`;
+	// use tslib dependency here, as the typescript dependency is also added
+	// when the user creates a JSDOC project.
+	if (folderInfo.allDependencies.tslib) return `${viteConfigName}.ts`;
 
 	return `${viteConfigName}.js`;
 };

@@ -24,6 +24,7 @@ export const packageVersions = {
 	"vite-imagetools": "^5.0.4",
 	"vite-plugin-coffee": "^2.2.1",
 	typescript: "^5.1.3",
+	tslib: "^2.4.1",
 };
 
 /** @typedef {typeof packageVersions | Record<string, string>} Dependencies */
