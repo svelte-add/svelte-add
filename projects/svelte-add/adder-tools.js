@@ -64,13 +64,15 @@ export const updateSveltePreprocessArgs = async ({ folderInfo, mutateSveltePrepr
 	await updateJavaScript({
 		path: cjs ? "/svelte.config.js" : "/svelte.config.js",
 		async script({ typeScriptEstree }) {
-			const sveltePreprocessImports = findImport({ cjs, package: "@sveltejs/vite-plugin-svelte", typeScriptEstree });
+			const importFromPackage = folderInfo.kit ? "@sveltejs/kit/vite" : "@sveltejs/vite-plugin-svelte";
+
+			const sveltePreprocessImports = findImport({ cjs, package: importFromPackage, typeScriptEstree });
 			let sveltePreprocessImportedAs = sveltePreprocessImports.named.vitePreprocess;
 
 			// Add a preprocessing import if it's not there
 			if (!sveltePreprocessImportedAs) {
 				sveltePreprocessImportedAs = "vitePreprocess";
-				addImport({ require: sveltePreprocessImportedAs, cjs, named: { vitePreprocess: sveltePreprocessImportedAs }, package: "@sveltejs/vite-plugin-svelte", typeScriptEstree });
+				addImport({ require: sveltePreprocessImportedAs, cjs, named: { vitePreprocess: sveltePreprocessImportedAs }, package: importFromPackage, typeScriptEstree });
 			}
 
 			const svelteConfigObject = setDefaultDefaultExport({
