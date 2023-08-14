@@ -876,9 +876,11 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 					if (prod) {
 						if (!obj.dependencies) obj.dependencies = {};
 						obj.dependencies[pkg] = version;
+						obj.dependencies = orderObjectPropertiesAlphabetically(obj.dependencies);
 					} else {
 						if (!obj.devDependencies) obj.devDependencies = {};
 						obj.devDependencies[pkg] = version;
+						obj.devDependencies = orderObjectPropertiesAlphabetically(obj.devDependencies);
 					}
 
 					return {
@@ -908,6 +910,20 @@ export const runAdder = async ({ adder, projectDirectory, environment, folderInf
 		},
 	});
 };
+
+/**
+ * @param {any} data object to be ordererd by its properties
+ * @returns {any}
+ */
+function orderObjectPropertiesAlphabetically(data) {
+	return Object.keys(data)
+		.sort()
+		.reduce((obj, key) => {
+			// @ts-ignore
+			obj[key] = data[key];
+			return obj;
+		}, {});
+}
 
 /**
  * @param {object} param0
