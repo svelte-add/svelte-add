@@ -29,7 +29,7 @@ export const newDomHandlerAst = (text) => parseDocument(text, { recognizeSelfClo
  * @param {DomHandlerAst} ast
  * @returns {string}
  */
-export const stringifyDomHandlerAst = (ast) => serializeDom(ast);
+export const stringifyDomHandlerAst = (ast) => serializeDom(ast, { encodeEntities: "utf8" });
 
 // TODO: did I have to invent these types or did they already exist??
 
