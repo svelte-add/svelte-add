@@ -15,7 +15,7 @@ export const exit = (text) => {
 
 /**
  * @typedef {"coffeescript" | "javascript" | "typescript"} Script
- * @typedef {"css" | "postcss" | "scss"} StyleLanguage
+ * @typedef {"css" | "postcss" | "scss" | "sass"} StyleLanguage
  * @typedef {"bootstrap" | "bulma" | "tailwindcss" | "picocss"} StyleFramework
  * @typedef {"3d" | "graphql-server" | "mdsvex" | "routify"} Other
  * @typedef {"eslint" | "playwright" | "prettier" | "storybook" | "vitest"} Quality
@@ -28,7 +28,7 @@ export const exit = (text) => {
 /** @type {Script[]} */
 const scripts = ["javascript", "typescript", "coffeescript"];
 /** @type {StyleLanguage[]} */
-const styleLanguages = ["css", "postcss", "scss"];
+const styleLanguages = ["css", "postcss", "scss", "sass"];
 /** @type {StyleFramework[]} */
 const styleFrameworks = ["bootstrap", "bulma", "tailwindcss", "picocss"];
 /** @type {Other[]} */
