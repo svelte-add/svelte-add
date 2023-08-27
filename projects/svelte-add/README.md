@@ -29,7 +29,7 @@ In theory, these adders are the most likely to work correctly:
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
 - [**Routify**](https://github.com/svelte-add/routify) (work in progress)
-- [**SCSS**](https://github.com/svelte-add/scss)
+- [**SCSS**](https://github.com/svelte-add/scss)/[**SASS**](https://github.com/svelte-add/sass)
 - [**Tailwind CSS**](https://github.com/svelte-add/tailwindcss)
 - [**Tauri**](https://github.com/svelte-add/tauri) (work in progress)
 
