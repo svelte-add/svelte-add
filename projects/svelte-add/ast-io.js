@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as typeScriptEstree from "@typescript-eslint/typescript-estree";
 import { parseDocument } from "htmlparser2";
 import * as postcss from "postcss";

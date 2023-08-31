@@ -28,7 +28,7 @@
 		"svelte-add": "cli.js"
 	},
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^5.60.0",
+		"@typescript-eslint/typescript-estree": "^6.5.0",
 		"detect-package-manager": "^2.0.1",
 		"dom-serializer": "^2.0.0",
 		"domhandler": "^5.0.3",
