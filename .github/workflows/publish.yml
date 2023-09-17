@@ -31,3 +31,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Create Release
         run: gh release create ${GITHUB_REF#refs/*/} --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
