@@ -35,13 +35,18 @@ In theory, these adders are the most likely to work correctly:
 
 ## 📨 External integration adders
 
-`svelte-add` is currently being rewritten, so many integrations are still external (some added in a primitive and buggy way, unfortunately), until that is complete:
+### Official third-party adders
+
+- [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install)
+
+### Community adders
+
+`svelte-add` is currently being rewritten, so many integrations are still external (added in a primitive and buggy way, unfortunately), until that is complete:
 
 - [**Firebase Hosting**](https://github.com/svelte-add/firebase-hosting) (out of date)
 - [**GraphQL server**](https://github.com/svelte-add/graphql-server) (out of date)
 - [**Jest**](https://github.com/rossyman/svelte-add-jest)
 - [**Pug**](https://github.com/Leftium/pug-adder)
-- [**Storybook**](https://storybook.js.org/docs/svelte/get-started/install)
 - [**Supabase**](https://github.com/joshnuss/svelte-supabase)
 
 ## 🧰 Creating a SvelteKit app with integrations
