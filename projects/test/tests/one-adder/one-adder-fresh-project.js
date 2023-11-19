@@ -5,12 +5,13 @@ import { runAdderTests } from "../../run-adder-tests.js";
 
 async function executeTests() {
 	await runAdderTests({
-		adder: "mdsvex",
+		adder: "tailwindcss",
 		scriptLanguage: "javascript",
 		initializer: svelteKit,
 		initializerName: "svelteKit",
 		// initializer: vite,
 		// initializerName: "vite",
+		initializerQualities: ["prettier"],
 		checkDependencies: false,
 		useDemos: true,
 	});

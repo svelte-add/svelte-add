@@ -11,10 +11,11 @@ import * as assert from "uvu/assert";
  * @param {import("svelte-add").Script} param0.scriptLanguage script language
  * @param {import("@svelte-add/app-initializer-tools").Initializer} param0.initializer initializer to test
  * @param {string} param0.initializerName initializer name to test
+ * @param {import("svelte-add").Quality[]} param0.initializerQualities qualities to initialize
  * @param {boolean} param0.useDemos use initializer demo app
  * @param {boolean} param0.checkDependencies whether to install dependencies or ignore them
  */
-export async function runAdderTests({ adder, scriptLanguage, initializer, initializerName, useDemos, checkDependencies }) {
+export async function runAdderTests({ adder, scriptLanguage, initializer, initializerName, initializerQualities, useDemos, checkDependencies }) {
 	const adderInfo = await getAdderInfo({ adder: adder });
 
 	const testName = `${adder} being used on ${initializerName}/${scriptLanguage} (with demos: ${useDemos})`;
@@ -55,15 +56,15 @@ export async function runAdderTests({ adder, scriptLanguage, initializer, initia
 		await initializer({
 			demo: demos,
 			dir: output,
-			eslint: quality.includes("eslint"),
+			eslint: [...initializerQualities, ...quality].includes("eslint"),
 			packageManager,
 			platform: environment.platform,
-			playwright: quality.includes("playwright"),
-			prettier: quality.includes("prettier"),
+			playwright: [...initializerQualities, ...quality].includes("playwright"),
+			prettier: [...initializerQualities, ...quality].includes("prettier"),
 			runningTests: true,
 			// TODO: prompt for and check if type-checked javascript was chosen
 			types: script === "typescript" ? "typescript" : null,
-			vitest: quality.includes("vitest"),
+			vitest: [...initializerQualities, ...quality].includes("vitest"),
 		});
 
 		let folderInfo = await getFolderInfo({ projectDirectory: projectDirectory });

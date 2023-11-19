@@ -15,6 +15,7 @@ export const packageVersions = {
 	"npm-run-all": "^4.1.5",
 	postcss: "^8.4.24",
 	"postcss-load-config": "^4.0.1",
+	"prettier-plugin-tailwindcss": "^0.4.1",
 	sass: "^1.63.6",
 	"svelte-preprocess": "^5.0.4",
 	"@sveltejs/vite-plugin-svelte": "^2.4.2",

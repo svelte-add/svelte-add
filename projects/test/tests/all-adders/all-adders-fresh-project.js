@@ -18,6 +18,7 @@ async function executeTests() {
 						scriptLanguage: language,
 						initializer: init,
 						initializerName: app,
+						initializerQualities: [],
 						checkDependencies: true,
 						useDemos: passedDemos,
 					});
