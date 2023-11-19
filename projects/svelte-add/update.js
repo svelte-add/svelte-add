@@ -79,7 +79,7 @@ export const updateFile = async ({ path, content }) => {
 /**
  * Example:
  * await updateCss({
- *     path: "/path/to/project/src/app.postcss",
+ *     path: "/path/to/project/src/app.pcss",
  *     script: async ({ exists, postcss }) => {
  *         // modify the PostCSS AST and return it
  *         return {
