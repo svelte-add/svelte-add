@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  check:
+  build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -21,7 +21,7 @@ jobs:
         with:
           version: 8
       - run: pnpm install
-      - run: pnpm build
+      - run: pnpm -C ./projects/website/  build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
