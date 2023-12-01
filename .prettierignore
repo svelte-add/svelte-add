@@ -1,3 +1,5 @@
 /.history/**
 /pnpm-lock.yaml
 /projects/test/_outputs/**
+/projects/website/.svelte-kit/**
+/projects/website/build/**

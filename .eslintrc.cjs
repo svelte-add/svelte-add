@@ -9,4 +9,5 @@ module.exports = {
 		node: true,
 	},
 	plugins: ["only-warn"],
+	ignorePatterns: ["**/build/"],
 };

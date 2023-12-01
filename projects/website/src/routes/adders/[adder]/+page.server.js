@@ -16,7 +16,7 @@ export async function load({ params }) {
 	}
 
 	if (adderInfo.options) {
-		for (const [_, value] of Object.entries(adderInfo.options)) {
+		for (const value of Object.values(adderInfo.options)) {
 			const htmlResult = (await compile(value.descriptionMarkdown))?.code;
 
 			if (htmlResult) value.descriptionMarkdown = htmlResult;
