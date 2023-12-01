@@ -1037,9 +1037,10 @@ export function getInternalAddersList() {
  * In example to be used by sveltelab: https://github.com/SvelteLab/SvelteLab/issues/228
  * @param {object} param whether we are currently in a webContainer or not.
  * @param {boolean} param.kitProject defines if we are currently working on a sveltekit project, or only a svelte based project
+ * @param {boolean} param.shouldGatekeep defines if we are checking if the adder is available in the current environment
  * @returns {Promise<PublicAdderInfo[]>}
  */
-export const getPublicAdderListInfos = async ({ kitProject }) => {
+export const getPublicAdderListInfos = async ({ kitProject, shouldGatekeep = true }) => {
 	// generate empty folder info. At this point we only want to know if an adder
 	// would generally be available in the current environment or not.
 	// That's why we don't need to bother about the package type or the
@@ -1063,7 +1064,7 @@ export const getPublicAdderListInfos = async ({ kitProject }) => {
 		const adderInfo = await getAdderInfo({ adder });
 		const gatekept = await adderInfo.gatekeep({ folderInfo, runCommand });
 
-		if ("able" in gatekept) {
+		if (!shouldGatekeep || (shouldGatekeep && "able" in gatekept)) {
 			availableAdders.push({
 				systemName: adder,
 				publicName: adderInfo.name,
