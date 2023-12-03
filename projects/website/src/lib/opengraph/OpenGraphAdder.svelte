@@ -55,4 +55,8 @@
 		font-family: "Overpass Bold", Overpass;
 		font-weight: 700;
 	}
+
+	.satori {
+		background-color: white;
+	}
 </style>
