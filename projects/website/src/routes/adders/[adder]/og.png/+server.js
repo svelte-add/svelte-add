@@ -1,5 +1,5 @@
 import OpenGraphAdder from "$lib/opengraph/OpenGraphAdder.svelte";
-import { componentToPng } from "$lib/opengraph/renderImage";
+import { componentToPng } from "$lib/opengraph/renderImage.js";
 import { getAdderInfo } from "svelte-add";
 
 export const prerender = true;

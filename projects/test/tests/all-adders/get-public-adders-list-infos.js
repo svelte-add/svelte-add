@@ -5,6 +5,7 @@ async function executeTests() {
 	test("get public adders list infos (returns at least on element)", async () => {
 		const publicAdderListInfos = await getPublicAdderListInfos({
 			kitProject: true,
+			shouldGatekeep: true,
 		});
 
 		if (publicAdderListInfos.length <= 0) {
