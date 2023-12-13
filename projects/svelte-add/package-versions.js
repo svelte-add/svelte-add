@@ -18,7 +18,7 @@ export const packageVersions = {
 	"prettier-plugin-tailwindcss": "^0.4.1",
 	sass: "^1.63.6",
 	"svelte-preprocess": "^5.0.4",
-	"@sveltejs/vite-plugin-svelte": "^2.4.2",
+	"@sveltejs/vite-plugin-svelte": "^3.0.1",
 	"svelte-cubed": "^0.2.1",
 	tailwindcss: "^3.3.2",
 	three: "^0.153.0",
