@@ -1,4 +1,4 @@
-name: Lint and check every commit and pull request
+name: Lint and check source code
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ jobs:
   check:
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [20]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
