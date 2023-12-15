@@ -1,16 +1,11 @@
 import { mkdir, unlink, writeFile } from "fs/promises";
-import { dirname, parse } from "path";
-import { fileURLToPath } from "url";
-
+import { parse } from "path";
 import { ElementType } from "htmlparser2";
 import { appendChild, prependChild, removeElement, textContent } from "domutils";
 import { Element, Text } from "domhandler";
 import prettier from "prettier";
-
 import { readFile } from "./index.js";
 import { newPostcssAst, newDomHandlerAst, newTypeScriptEstreeAst, stringifyPostcssAst, stringifyDomHandlerAst, stringifyTypeScriptEstreeAst } from "./ast-io.js";
-
-const svelteAddPackageDirectory = dirname(fileURLToPath(import.meta.url));
 
 /**
  *
@@ -55,16 +50,16 @@ export const updateFile = async ({ path, content }) => {
 	let formatted = out.text;
 
 	try {
-		formatted = prettier.format(out.text, {
+		formatted = await prettier.format(out.text, {
 			...options,
 			filepath: path,
 		});
 	} catch (e) {
 		try {
-			formatted = prettier.format(out.text, {
+			formatted = await prettier.format(out.text, {
 				...options,
 				filepath: path,
-				pluginSearchDirs: [svelteAddPackageDirectory],
+				plugins: ["prettier-plugin-svelte"],
 			});
 		} catch (e) {
 			// This can fail and we don't really care (it's just formatting)

@@ -28,14 +28,14 @@
 		"update-packages": "node update-packages.js"
 	},
 	"devDependencies": {
-		"@types/node": "^20.5.7",
-		"@types/prompts": "^2.4.4",
-		"eslint": "^8.48.0",
-		"eslint-config-prettier": "^8.10.0",
+		"@types/node": "^20.10.4",
+		"@types/prompts": "^2.4.9",
+		"eslint": "^8.55.0",
+		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-only-warn": "^1.1.0",
 		"latest-version": "^7.0.0",
-		"npm-check-updates": "^16.13.2",
-		"prettier": "^2.8.8",
-		"typescript": "^5.2.2"
+		"npm-check-updates": "^16.14.12",
+		"prettier": "^3.1.1",
+		"typescript": "^5.3.3"
 	}
 }

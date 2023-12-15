@@ -121,7 +121,7 @@ export const setupStyleLanguage = async ({ extension, folderInfo, stylesHint, up
 		newCss.prepend(
 			new Comment({
 				text: stylesHint,
-			})
+			}),
 		);
 	};
 

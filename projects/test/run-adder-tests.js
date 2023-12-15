@@ -80,7 +80,7 @@ export async function runAdderTests({ adder, scriptLanguage, initializer, initia
 			});
 			assert.ok(
 				Object.values(preRunCheck).some((pass) => !pass),
-				`Somehow, pre-run checks show that ${adder} is already set up: ${inspect(preRunCheck)}`
+				`Somehow, pre-run checks show that ${adder} is already set up: ${inspect(preRunCheck)}`,
 			);
 			addersToRun.push(adderToCheck);
 		}
