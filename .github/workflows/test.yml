@@ -1,4 +1,4 @@
-name: Test every pull request
+name: Test adders
 
 on:
   pull_request:

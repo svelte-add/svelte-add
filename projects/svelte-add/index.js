@@ -320,7 +320,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				scripts.map(async (script) => ({
 					title: (await getAdderInfo({ adder: script })).name,
 					value: script,
-				}))
+				})),
 			),
 			message: "What scripting language will you write your app in?",
 			name: "script",
@@ -343,7 +343,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 					}
 
 					return choice;
-				})
+				}),
 			),
 			message: "What language will you write your app styles in?",
 			name: "styleLanguage",
@@ -362,7 +362,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 						styleFrameworksForLanguage[styleLanguage].map(async (styleFramework) => ({
 							title: (await getAdderInfo({ adder: styleFramework })).name,
 							value: styleFramework,
-						}))
+						})),
 					)),
 				],
 				message: "What framework will you use for your app's styles?",
@@ -377,7 +377,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				others.map(async (other) => ({
 					title: (await getAdderInfo({ adder: other })).name,
 					value: other,
-				}))
+				})),
 			),
 			message: "What other features do you want for your app?",
 			name: "other",
@@ -390,7 +390,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				qualities.map(async (quality) => ({
 					title: (await getAdderInfo({ adder: quality })).name,
 					value: quality,
-				}))
+				})),
 			),
 			message: "What code quality tools do you want to help maintain your app?",
 			name: "quality",
@@ -408,7 +408,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 					deploys.map(async (deploy) => ({
 						title: (await getAdderInfo({ adder: deploy })).name,
 						value: deploy,
-					}))
+					})),
 				)),
 			],
 			message: "Where will you deploy your app?",
@@ -570,8 +570,8 @@ const getAvailable = async ({ platform, tools }) =>
 					return [tool, false];
 				}
 				return [tool, true];
-			})
-		)
+			}),
+		),
 	);
 
 /**
@@ -762,8 +762,8 @@ export const detectAdder = async ({ adder, projectDirectory, folderInfo }) => {
 						return readFile({ path: join(projectDirectory, path) });
 					},
 				}),
-			])
-		)
+			]),
+		),
 	);
 };
 

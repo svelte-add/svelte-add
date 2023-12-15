@@ -114,7 +114,6 @@ export const setDefaultDefaultExport = ({ cjs, defaultValue, defaultVariableName
 				if (exportDefaultDeclaration.type === "Identifier") {
 					defaultExportVariable = exportDefaultDeclaration.name;
 				} else {
-					if (exportDefaultDeclaration.type === "VariableDeclaration") throw new Error("?!?! default export is a VariableDeclaration");
 					if (exportDefaultDeclaration.type === "FunctionDeclaration") throw new Error("?!?! default export is a FunctionDeclaration");
 					if (exportDefaultDeclaration.type === "ClassDeclaration") throw new Error("?!?! default export is a ClassDeclaration");
 					defaultExportExpression = exportDefaultDeclaration;
