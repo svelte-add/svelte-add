@@ -1,7 +1,7 @@
 export const packageVersions = {
 	"@picocss/pico": "^1.5.10",
 	"@popperjs/core": "^2.11.8",
-	"@roxi/routify": "^2.18.12",
+	"@roxi/routify": "^3.0.0-next.199",
 	"@sveltejs/adapter-static": "^3.0.0",
 	"@tailwindcss/forms": "^0.5.7",
 	"@tailwindcss/typography": "^0.5.10",
