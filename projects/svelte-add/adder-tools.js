@@ -66,7 +66,7 @@ export const updateSveltePreprocessArgs = async ({ folderInfo, mutateSveltePrepr
 	await updateJavaScript({
 		path: cjs ? "/svelte.config.js" : "/svelte.config.js",
 		async script({ typeScriptEstree }) {
-			const importFromPackage = folderInfo.kit ? "@sveltejs/kit/vite" : "@sveltejs/vite-plugin-svelte";
+			const importFromPackage = "@sveltejs/vite-plugin-svelte";
 
 			const sveltePreprocessImports = findImport({ cjs, package: importFromPackage, typeScriptEstree });
 			let sveltePreprocessImportedAs = sveltePreprocessImports.named.vitePreprocess;
