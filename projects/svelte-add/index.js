@@ -17,7 +17,7 @@ export const exit = (text) => {
  * @typedef {"coffeescript" | "javascript" | "typescript"} Script
  * @typedef {"css" | "postcss" | "scss" | "sass"} StyleLanguage
  * @typedef {"bootstrap" | "bulma" | "tailwindcss" | "picocss"} StyleFramework
- * @typedef {"3d" | "graphql-server" | "mdsvex" | "routify"} Other
+ * @typedef {"graphql-server" | "mdsvex" | "routify"} Other
  * @typedef {"eslint" | "playwright" | "prettier" | "storybook" | "vitest"} Quality
  * @typedef {"firebase-hosting" | "tauri"} Deploy
  *
@@ -32,7 +32,7 @@ const styleLanguages = ["css", "postcss", "scss", "sass"];
 /** @type {StyleFramework[]} */
 const styleFrameworks = ["bootstrap", "bulma", "tailwindcss", "picocss"];
 /** @type {Other[]} */
-const others = ["3d", "graphql-server", "mdsvex", "routify"];
+const others = ["graphql-server", "mdsvex", "routify"];
 /** @type {Quality[]} */
 const qualities = ["eslint", "playwright", "prettier", "storybook"]; // TODO: add a vitest feature
 /** @type {Deploy[]} */

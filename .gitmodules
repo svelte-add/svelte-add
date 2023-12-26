@@ -1,6 +1,3 @@
-[submodule "projects/svelte-add/adders/3d"]
-	path = projects/svelte-add/adders/3d
-	url = https://github.com/svelte-add/3d
 [submodule "projects/svelte-add/adders/bootstrap"]
 	path = projects/svelte-add/adders/bootstrap
 	url = https://github.com/svelte-add/bootstrap

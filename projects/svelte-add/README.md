@@ -21,7 +21,6 @@ This is a community project to easily add integrations and other functionality t
 
 In theory, these adders are the most likely to work correctly:
 
-- [**3D**](https://github.com/svelte-add/3d)
 - [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
 - [**CoffeeScript**](https://github.com/svelte-add/coffeescript)
