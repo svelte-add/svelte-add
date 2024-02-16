@@ -536,6 +536,11 @@ export const packageManagers = {
 		install: ["yarn", ["install"]],
 		init: ["npm", ["create"]],
 	},
+	bun: {
+		detect: ["bun", ["--version"]],
+		install: ["bun", ["install"]],
+		init: ["bun", ["create"]],
+	},
 };
 
 /** @typedef {"npx" | "pnpx"} NPX */
