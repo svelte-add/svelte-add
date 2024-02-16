@@ -22,7 +22,6 @@ export const packageVersions = {
 	"svelte-cubed": "^0.2.1",
 	tailwindcss: "^3.3.6",
 	three: "^0.159.0",
-	"vite-imagetools": "^6.2.7",
 	"vite-plugin-coffee": "^2.2.1",
 	typescript: "^5.3.3",
 	tslib: "^2.6.2",
