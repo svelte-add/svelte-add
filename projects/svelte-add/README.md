@@ -24,7 +24,6 @@ In theory, these adders are the most likely to work correctly:
 - [**Bootstrap**](https://github.com/svelte-add/bootstrap)
 - [**Bulma**](https://github.com/svelte-add/bulma)
 - [**CoffeeScript**](https://github.com/svelte-add/coffeescript)
-- [**Imagetools**](https://github.com/svelte-add/imagetools) (work in progress)
 - [**mdsvex**](https://github.com/svelte-add/mdsvex)
 - [**PostCSS**](https://github.com/svelte-add/postcss)
 - [**Routify**](https://github.com/svelte-add/routify) (work in progress)
