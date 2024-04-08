@@ -130,12 +130,14 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 	let defaultPackageManager = "npm";
 	if (environment.packageManagers.pnpm) defaultPackageManager = "pnpm";
 	else if (environment.packageManagers.yarn) defaultPackageManager = "yarn";
+	else if (environment.packageManagers.bun) defaultPackageManager = "bun";
 	/** @type {PackageManager} */
 	let packageManager;
 
 	/** @type {NPX} */
 	let defaultNpx = "npx";
 	if (environment.npxs.pnpx) defaultNpx = "pnpx";
+	if (environment.npxs.bunx) defaultNpx = "bunx";
 	/** @type {NPX} */
 	let npx;
 
@@ -242,6 +244,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 
 		if (passedPackageManager == "pnpm") npx = "pnpx";
 		else if (passedPackageManager == "npm") npx = "npx";
+		else if (passedPackageManager == "bun") npx = "bunx";
 		else npx = defaultNpx;
 
 		install = defaultInstall;
@@ -481,6 +484,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
 				packageManager = packageManagerOrUndefined;
 
 				if (packageManager === "pnpm") npx = "pnpx";
+				if (packageManager === "bun") npx = "bunx";
 				else npx = "npx";
 
 				install = true;
@@ -518,7 +522,7 @@ export const getChoices = async ({ defaultInstall, environment, outputFolderMust
  * } & Extensions>} Tools
  */
 
-/** @typedef {"npm" | "pnpm" | "yarn"} PackageManager */
+/** @typedef {"npm" | "pnpm" | "yarn" | "bun"} PackageManager */
 /** @type {Tools<PackageManager, {install: [string, string[]], init: [string, string[]]}>} */
 export const packageManagers = {
 	npm: {
@@ -536,9 +540,14 @@ export const packageManagers = {
 		install: ["yarn", ["install"]],
 		init: ["npm", ["create"]],
 	},
+	bun: {
+		detect: ["bun", ["--version"]],
+		install: ["bun", ["install"]],
+		init: ["bun", ["create"]],
+	},
 };
 
-/** @typedef {"npx" | "pnpx"} NPX */
+/** @typedef {"npx" | "pnpx" | "bunx"} NPX */
 /** @type {Tools<NPX, {}>} */
 export const npxs = {
 	npx: {
@@ -546,6 +555,11 @@ export const npxs = {
 	},
 	pnpx: {
 		detect: ["pnpm", ["--version"]],
+	},
+	bunx: {
+		// Can be changed to `bunx` when this issue is fixed:
+		// https://github.com/oven-sh/bun/issues/10093
+		detect: ["bun", ["--version"]],
 	},
 };
 
