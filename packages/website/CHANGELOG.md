@@ -1,5 +1,11 @@
 # @svelte-add/website
 
+## 2.0.2
+
+### Patch Changes
+
+- fix website build ([`5c608a715bcab61e4f97cd735c61249f419c2463`](https://github.com/svelte-add/svelte-add/commit/5c608a715bcab61e4f97cd735c61249f419c2463))
+
 ## 2.0.1
 
 ### Patch Changes
