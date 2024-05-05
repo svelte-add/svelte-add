@@ -1,4 +1,8 @@
-/.history
-/projects/test/_outputs
-.DS_Store
-node_modules
+node_modules/
+.pnpm-store/
+build/
+.npmrc
+packages/tests/.outputs
+temp/
+coverage/
+.rollup.cache

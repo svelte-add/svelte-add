@@ -1,0 +1,27 @@
+{
+    "name": "svelte-add",
+    "version": "2.0.0",
+    "bin": "build/index.js",
+    "type": "module",
+    "exports": {
+        "./website": {
+            "import": "./build/website.js"
+        }
+    },
+    "dependencies": {
+        "@svelte-add/core": "workspace:*"
+    },
+    "peerDependencies": {
+        "@svelte-add/bootstrap": "workspace:^",
+        "@svelte-add/bulma": "workspace:^",
+        "@svelte-add/mdsvex": "workspace:^",
+        "@svelte-add/routify": "workspace:^",
+        "@svelte-add/tailwindcss": "workspace:^",
+        "@svelte-add/threlte": "workspace:^",
+        "@svelte-add/storybook": "workspace:^",
+        "svelte-add": "workspace:^"
+    },
+    "devDependencies": {
+        "commander": "^12.0.0"
+    }
+}

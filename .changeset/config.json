@@ -1,0 +1,17 @@
+{
+    "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+    "changelog": [
+        "@svitejs/changesets-changelog-github-compact",
+        {
+            "repo": "svelte-add/svelte-add"
+        }
+    ],
+    "ignore": [
+        "@svelte-add/tests",
+        "@svelte-add/dev-utils"
+    ],
+    "commit": false,
+    "access": "public",
+    "baseBranch": "main",
+    "updateInternalDependencies": "patch"
+}

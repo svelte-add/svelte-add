@@ -1,0 +1,29 @@
+name: Feature Request
+description: This can be used to request a feature
+labels:
+    - enhancement
+body:
+    - type: input
+      id: topic
+      attributes:
+          label: Topic
+          description: >-
+              Please enter the adder or project you are having an issue with. (i.e.
+              bulma, tailwindcss, cli, website, etc)
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Description
+          description: A clear and concise description of the problem or missing capability
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Describe the solution you'd like
+          description: If you have a solution in mind, please describe it.
+    - type: markdown
+      attributes:
+          value: >-
+              This template was generated with [Issue Forms
+              Creator](https://issue-forms-creator.netlify.app)

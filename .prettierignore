@@ -1,5 +1,6 @@
-/.history/**
 /pnpm-lock.yaml
-/projects/test/_outputs/**
-/projects/website/.svelte-kit/**
-/projects/website/build/**
+/.changeset/
+CHANGELOG.md
+projects/website/.svelte-kit/
+adders/*/README.md
+adders/*/package.json

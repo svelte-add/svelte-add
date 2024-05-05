@@ -1,0 +1,44 @@
+name: Bug report
+description: This can be used to fill general bug reports
+labels:
+    - bug
+body:
+    - type: input
+      id: topic
+      attributes:
+          label: Topic
+          description: >-
+              Please enter the adder or project you are having an issue with. (i.e.
+              bulma, tailwindcss, cli, website, etc)
+      validations:
+          required: true
+    - type: input
+      id: version
+      attributes:
+          label: Version
+          description: >-
+              The version of the project you are having a problem with. If you want to
+              report a bug for a adder or the cli, than the version is always
+              displayed in the console. Otherwise you will find the used version
+              inside your package.json.
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected behavior
+          description: Please explain what should have happened
+    - type: textarea
+      id: actual
+      attributes:
+          label: Actual behavior
+          description: >-
+              Please explain what happened. If you think that it's useful, please
+              provide the full console output.
+      validations:
+          required: true
+    - type: markdown
+      attributes:
+          value: >-
+              This template was generated with [Issue Forms
+              Creator](https://issue-forms-creator.netlify.app)

@@ -1,0 +1,4 @@
+{
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "cSpell.words": ["ecma", "popperjs", "Svex", "threlte"]
+}

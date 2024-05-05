@@ -1,0 +1,13 @@
+{
+    "name": "@svelte-add/dev-utils",
+    "private": true,
+    "version": "2.0.0",
+    "type": "module",
+    "license": "MIT",
+    "bin": "./index.js",
+    "devDependencies": {
+        "@svelte-add/ast-manipulation": "workspace:^",
+        "svelte-add": "workspace:^",
+        "@svelte-add/core": "workspace:^"
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/node_modules/**", "**/coverage/**"],
+    "compilerOptions": {
+        "checkJs": true,
+        "module": "es2022",
+        "moduleResolution": "node",
+        "target": "es2022",
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "declaration": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "outDir": "build/"
+    }
+}

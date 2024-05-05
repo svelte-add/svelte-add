@@ -1,0 +1,60 @@
+name: New adder
+description: This can be used to request the creation of a new adder
+labels:
+    - "C: new-adder"
+    - "T: adder"
+body:
+    - type: markdown
+      attributes:
+          value: >-
+              Please note that creating and maintaining adders requires a huge time
+              investment. Therefore, it's impossible to create a adder for every
+              random tool you will find. Nevertheless, your suggestion will be
+              considered to be added based on the popularity and the general fit into
+              the svelte ecosystem.
+
+
+              In order to simplify the creation of new adders from a development
+              perspective, please answer the following questions.
+    - type: input
+      id: website
+      attributes:
+          label: Website
+          description: The website url of the tool
+      validations:
+          required: true
+    - type: input
+      id: docs
+      attributes:
+          label: Documentation
+          description: >-
+              Documentation url for integrating the tool into a vite-based
+              application. If there are svelte / svelte-kit specific documentations
+              available, please provide them here.
+      validations:
+          required: true
+    - type: textarea
+      id: integration_summary
+      attributes:
+          label: Integration summary
+          description: >-
+              Please provide a short rundown on what the adder would need to do to
+              setup a new svelte project, that supports the tool you mentioned out of
+              the box.
+          value: |-
+              1. install package `tool`
+              2. modify `svelte-config.js` and to add tool as preprocessor
+              3. import tool inside `+layout.svelte`
+              4. and so on...
+      validations:
+          required: true
+    - type: textarea
+      id: details
+      attributes:
+          label: Further details
+          description: If required, please provide further details.
+    - type: markdown
+      attributes:
+          value: >-
+              This template was generated with [Issue Forms
+              Creator](https://issue-forms-creator.netlify.app)

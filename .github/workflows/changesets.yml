@@ -1,0 +1,62 @@
+name: Changesets
+on:
+    push:
+        branches:
+            - main
+env:
+    CI: true
+    PNPM_CACHE_FOLDER: .pnpm-store
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    version:
+        timeout-minutes: 15
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout code repository
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+
+            - name: setup node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+            - name: install pnpm
+              run: npm i pnpm@latest -g
+
+            - name: Setup npmrc
+              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN_2024 }}" > .npmrc
+
+            - name: setup pnpm config
+              run: pnpm config set store-dir $PNPM_CACHE_FOLDER
+
+            - name: install dependencies
+              run: pnpm install
+
+            - name: build
+              run: pnpm build:prod
+
+            - name: website
+              run: pnpm website:build
+
+            - name: create and publish versions
+              id: changesets
+              uses: changesets/action@v1
+              with:
+                  publish: pnpm ci:publish
+                  version: pnpm ci:version
+                  createGithubReleases: false
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Publish website
+              if: steps.changesets.outputs.published == 'true' && contains(steps.changesets.outputs.publishedPackages, '@svelte-add/website')
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./projects/website/build
+                  cname: svelte-add.com
