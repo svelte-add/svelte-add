@@ -128,7 +128,7 @@ export async function installPackages(config: InlineAdderConfig<OptionDefinition
         }
     }
 
-    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, JSON.stringify(content));
+    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, JSON.stringify(content, null, "\t"));
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
 }
 
