@@ -82,10 +82,10 @@ export const adder = defineAdderConfig({
             condition: ({ kit }) => !kit.installed,
         },
         {
-            name: ({ kit }) => `${kit.routesDirectory}/+layout.js`,
-            contentType: "script",
-            content: ({ ast, imports }) => {
-                imports.addEmpty(ast, "../app.css");
+            name: ({ kit }) => `${kit.routesDirectory}/+layout.svelte`,
+            contentType: "svelte",
+            content: ({ js }) => {
+                js.imports.addEmpty(js.ast, "../app.css");
             },
             condition: ({ kit }) => kit.installed,
         },
