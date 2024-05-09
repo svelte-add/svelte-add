@@ -22,6 +22,7 @@ import { OptionValues } from "commander";
 import { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { spawnSync } from "child_process";
+import { serializeJson } from "@svelte-add/ast-tooling";
 
 export async function executeAdder<Args extends OptionDefinition>(
     config: AdderConfig<Args>,
@@ -106,7 +107,7 @@ export function determineWorkingDirectory(options: OptionValues) {
 }
 
 export async function installPackages(config: InlineAdderConfig<OptionDefinition>, workspace: WorkspaceWithoutExplicitArgs) {
-    const content = await getPackageJson(workspace);
+    const { text: originalText, data } = await getPackageJson(workspace);
 
     for (const dependency of config.packages) {
         if (dependency.condition && !dependency.condition(workspace)) {
@@ -114,21 +115,21 @@ export async function installPackages(config: InlineAdderConfig<OptionDefinition
         }
 
         if (dependency.dev) {
-            if (!content.devDependencies) {
-                content.devDependencies = {};
+            if (!data.devDependencies) {
+                data.devDependencies = {};
             }
 
-            content.devDependencies[dependency.name] = dependency.version;
+            data.devDependencies[dependency.name] = dependency.version;
         } else {
-            if (!content.dependencies) {
-                content.dependencies = {};
+            if (!data.dependencies) {
+                data.dependencies = {};
             }
 
-            content.dependencies[dependency.name] = dependency.version;
+            data.dependencies[dependency.name] = dependency.version;
         }
     }
 
-    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, JSON.stringify(content));
+    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
 }
 
@@ -141,7 +142,11 @@ function runHooks<Args extends OptionDefinition>(
     else if (!isInstall && config.uninstallHook) config.uninstallHook(workspace);
 }
 
-export function generateAdderInfo(pkg: any): { id: string; package: string; version: string } {
+export function generateAdderInfo(pkg: any): {
+    id: string;
+    package: string;
+    version: string;
+} {
     const name = pkg.name;
     const id = name.replace("@svelte-add/", "");
 

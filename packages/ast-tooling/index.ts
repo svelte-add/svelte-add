@@ -8,7 +8,7 @@ import { Root as CssAst, Declaration, Rule, AtRule, Comment } from "postcss";
 import { parse as postcssParse } from "postcss";
 import { namedTypes as AstTypes } from "ast-types";
 import * as AstKinds from "ast-types/gen/kinds";
-import * as fleece from "golden-fleece";
+import * as fleece from "silver-fleece";
 
 /**
  * Most of the AST tooling is pretty big in bundle size and bundling takes forever.
@@ -60,7 +60,10 @@ export function serializePostcss(ast: CssAst) {
 }
 
 export function parseHtml(content: string) {
-    return parseDocument(content, { recognizeSelfClosing: true, lowerCaseTags: false });
+    return parseDocument(content, {
+        recognizeSelfClosing: true,
+        lowerCaseTags: false,
+    });
 }
 
 export function serializeHtml(ast: Document) {
