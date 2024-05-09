@@ -2,11 +2,7 @@ import { AdderWithoutExplicitArgs, Tests } from "@svelte-add/core/adder/config";
 import { OptionValues, Question } from "@svelte-add/core/adder/options";
 import { Page } from "puppeteer";
 
-export async function runTests(
-    page: Page,
-    adder: AdderWithoutExplicitArgs,
-    options: OptionValues<Record<string, Question>>,
-) {
+export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, options: OptionValues<Record<string, Question>>) {
     const tests: Tests = {
         expectProperty: async (selector, property, expectedValue) => {
             await expectProperty(page, selector, property, expectedValue);
@@ -30,8 +26,7 @@ async function executeAdderTests(
     testMethods: Tests,
     options: OptionValues<Record<string, Question>>,
 ) {
-    if (!adder.tests || !adder.tests.tests || adder.tests.tests.length == 0)
-        throw new Error(`Cannot test adder without tests!`);
+    if (!adder.tests || !adder.tests.tests || adder.tests.tests.length == 0) throw new Error(`Cannot test adder without tests!`);
 
     for (const test of adder.tests.tests) {
         if (test.condition && !test.condition(options)) continue;
