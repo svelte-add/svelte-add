@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.0.2
+
+### Patch Changes
+
+- preserve json intendation ([#345](https://github.com/svelte-add/svelte-add/pull/345))
+
 ## 2.0.1
 
 ### Patch Changes
