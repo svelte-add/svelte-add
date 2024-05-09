@@ -45,7 +45,7 @@ export async function detectSvelteDirectory(directoryPath: string): Promise<stri
 
     const emptyWorkspace = createEmptyWorkspace();
     emptyWorkspace.cwd = directoryPath;
-    const packageJson = await getPackageJson(emptyWorkspace);
+    const { data: packageJson } = await getPackageJson(emptyWorkspace);
 
     if (packageJson.devDependencies && "svelte" in packageJson.devDependencies) {
         return directoryPath;
@@ -105,5 +105,8 @@ export async function createProject(cwd: string) {
         return { projectCreated: false, directory: "" };
     }
 
-    return { projectCreated: true, directory: path.join(process.cwd(), directory) };
+    return {
+        projectCreated: true,
+        directory: path.join(process.cwd(), directory),
+    };
 }

@@ -1,3 +1,4 @@
+import { parseJson } from "@svelte-add/ast-tooling";
 import { OptionDefinition } from "../adder/options.js";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import { Workspace, WorkspaceWithoutExplicitArgs } from "./workspace.js";
@@ -13,13 +14,19 @@ export async function getPackageJson(workspace: WorkspaceWithoutExplicitArgs) {
     const packageText = await readFile(workspace, commonFilePaths.packageJsonFilePath);
     if (!packageText) {
         return {
-            dependencies: {},
-            devDependencies: {},
-            name: "",
-            version: "",
+            text: "",
+            data: {
+                dependencies: {},
+                devDependencies: {},
+                name: "",
+                version: "",
+            },
         };
     }
 
-    const packageJson: Package = JSON.parse(packageText);
-    return packageJson;
+    const packageJson: Package = parseJson(packageText);
+    return {
+        text: packageText,
+        data: packageJson,
+    };
 }
