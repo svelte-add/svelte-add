@@ -130,6 +130,7 @@ function handleCssFile<Args extends OptionDefinition>(
     workspace: Workspace<Args>,
 ) {
     const ast = parsePostcss(content);
+    ast.raws.semicolon = true; // always add the optional semicolon
     fileDetails.content({ ...getCssAstEditor(ast), ...workspace });
     content = serializePostcss(ast);
     return content;
