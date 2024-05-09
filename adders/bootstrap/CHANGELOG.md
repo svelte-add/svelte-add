@@ -1,5 +1,12 @@
 # @svelte-add/bootstrap
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies [[`eff46682b9f4e39f5ea5b2c7fcba6db701cc99aa`](https://github.com/svelte-add/svelte-add/commit/eff46682b9f4e39f5ea5b2c7fcba6db701cc99aa)]:
+  - @svelte-add/core@2.0.2
+
 ## 1.0.1
 
 ### Patch Changes

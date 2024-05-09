@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/testing-library",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "type": "module",
     "license": "MIT",
     "exports": "./build/index.js",
