@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.0.3
+
+### Patch Changes
+
+- fix: always add the optional semicolon in stylesheets ([#347](https://github.com/svelte-add/svelte-add/pull/347))
+
 ## 2.0.2
 
 ### Patch Changes

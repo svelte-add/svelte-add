@@ -1,5 +1,14 @@
 # @svelte-add/bootstrap
 
+## 1.0.3
+
+### Patch Changes
+
+- fix: use layout.svelte instead of layout.js for adding global css ([#343](https://github.com/svelte-add/svelte-add/pull/343))
+
+- Updated dependencies [[`c8705337eac73db53d9a28ed2512229bc29ac89d`](https://github.com/svelte-add/svelte-add/commit/c8705337eac73db53d9a28ed2512229bc29ac89d)]:
+  - @svelte-add/core@2.0.3
+
 ## 1.0.2
 
 ### Patch Changes

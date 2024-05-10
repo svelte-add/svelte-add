@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/website",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "private": true,
     "type": "module",
     "license": "MIT",
