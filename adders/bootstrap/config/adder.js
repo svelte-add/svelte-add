@@ -92,14 +92,14 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            name: ({ kit }) => `${kit.routesDirectory}/+layout.js`,
-            contentType: "script",
+            name: ({ kit }) => `${kit.routesDirectory}/+layout.svelte`,
+            contentType: "svelte",
             condition: ({ kit }) => kit.installed,
-            content: ({ ast, imports, options }) => {
+            content: ({ js, options }) => {
                 if (options.useSass) {
-                    imports.addEmpty(ast, "../app.scss");
+                    js.imports.addEmpty(js.ast, "../app.scss");
                 } else {
-                    imports.addEmpty(ast, "bootstrap/dist/css/bootstrap.css");
+                    js.imports.addEmpty(js.ast, "bootstrap/dist/css/bootstrap.css");
                 }
             },
         },
