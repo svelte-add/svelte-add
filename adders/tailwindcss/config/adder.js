@@ -84,8 +84,10 @@ export const adder = defineAdderConfig({
         {
             name: ({ kit }) => `${kit.routesDirectory}/+layout.svelte`,
             contentType: "svelte",
-            content: ({ js }) => {
+            content: ({ js, html }) => {
                 js.imports.addEmpty(js.ast, "../app.css");
+                const slot = html.element("slot");
+                html.ast.childNodes.push(slot);
             },
             condition: ({ kit }) => kit.installed,
         },

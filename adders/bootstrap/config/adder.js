@@ -95,12 +95,14 @@ export const adder = defineAdderConfig({
             name: ({ kit }) => `${kit.routesDirectory}/+layout.svelte`,
             contentType: "svelte",
             condition: ({ kit }) => kit.installed,
-            content: ({ js, options }) => {
+            content: ({ js, options, html }) => {
                 if (options.useSass) {
                     js.imports.addEmpty(js.ast, "../app.scss");
                 } else {
                     js.imports.addEmpty(js.ast, "bootstrap/dist/css/bootstrap.css");
                 }
+                const slot = html.element("slot");
+                html.ast.childNodes.push(slot);
             },
         },
         {
