@@ -39,6 +39,9 @@ jobs:
 
             - name: test
               run: pnpm test storybook
+
+            - name: Setup upterm session
+              uses: lhotari/action-upterm@v1
     checks:
         runs-on: ubuntu-latest
         steps:
