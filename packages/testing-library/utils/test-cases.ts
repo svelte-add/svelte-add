@@ -114,7 +114,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
             };
 
             if (testCase.runSynchronously) {
-                asyncTasks.push(taskExecutor);
+                syncTasks.push(taskExecutor);
             } else {
                 asyncTasks.push(taskExecutor);
             }

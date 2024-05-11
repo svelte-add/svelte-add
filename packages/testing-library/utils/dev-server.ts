@@ -6,25 +6,26 @@ export async function startDevServer(
     command: string,
 ): Promise<{ url: string; devServer: ChildProcessWithoutNullStreams }> {
     return await new Promise((resolve) => {
-        const devServerProcess = spawn("pnpm", ["run", command], { stdio: "pipe", shell: true, cwd: output });
-        devServerProcess.stdout?.on("data", async (data) => {
-            const value = data.toString();
-            console.log(value);
+        const devServerProcess = spawn("pnpm", ["run", command], { stdio: "inherit", shell: true, cwd: output });
+        // devServerProcess.stdout?.on("data", async (data) => {
+        //     const value = data.toString();
+        //     console.log(value);
 
-            const regexUnicode = /[^\x20-\xaf]+/g;
-            const withoutUnicode = value.replace(regexUnicode, "");
+        //     const regexUnicode = /[^\x20-\xaf]+/g;
+        //     const withoutUnicode = value.replace(regexUnicode, "");
 
-            const regexUnicodeDigits = /\[[0-9]{1,2}m/g;
-            const withoutColors = withoutUnicode.replace(regexUnicodeDigits, "");
+        //     const regexUnicodeDigits = /\[[0-9]{1,2}m/g;
+        //     const withoutColors = withoutUnicode.replace(regexUnicodeDigits, "");
 
-            const regexUrl = /http:\/\/[^:\s]+:[0-9]+\//g;
-            const urls = withoutColors.match(regexUrl);
+        //     const regexUrl = /http:\/\/[^:\s]+:[0-9]+\//g;
+        //     const urls = withoutColors.match(regexUrl);
 
-            if (urls && urls.length > 0) {
-                const url = urls[0];
-                resolve({ url, devServer: devServerProcess });
-            }
-        });
+        //     if (urls && urls.length > 0) {
+        //         const url = urls[0];
+        //         resolve({ url, devServer: devServerProcess });
+        //     }
+        // });
+        // devServerProcess.
     });
 }
 
