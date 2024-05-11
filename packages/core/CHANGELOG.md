@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.0.4
+
+### Patch Changes
+
+- improve wording for installing dependencies ([#354](https://github.com/svelte-add/svelte-add/pull/354))
+
 ## 2.0.3
 
 ### Patch Changes
