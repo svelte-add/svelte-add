@@ -114,23 +114,23 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
             };
 
             if (testCase.runSynchronously) {
-                syncTasks.push(taskExecutor);
+                asyncTasks.push(taskExecutor);
             } else {
                 asyncTasks.push(taskExecutor);
             }
         }
     }
 
-    let totalProgress = 0;
-    let overallTasks = asyncTasks.length + syncTasks.length;
+    let testProgressCount = 0;
+    let overallTaskCount = asyncTasks.length + syncTasks.length;
     let parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
 
     const allAsyncResults = await Throttle.raw(asyncTasks, {
         failFast: false,
         maxInProgress: parallelTasks,
         progressCallback: (result) => {
-            totalProgress++;
-            logTestProgress(totalProgress, overallTasks, result.amountResolved, result.amountRejected);
+            testProgressCount++;
+            logTestProgress(testProgressCount, overallTaskCount, result.amountResolved, result.amountRejected);
         },
     });
 
@@ -138,10 +138,10 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
         failFast: false,
         maxInProgress: 1,
         progressCallback: (result) => {
-            totalProgress++;
+            testProgressCount++;
             logTestProgress(
-                totalProgress,
-                overallTasks,
+                testProgressCount,
+                overallTaskCount,
                 allAsyncResults.amountResolved + result.amountResolved,
                 allAsyncResults.amountRejected + result.amountRejected,
             );
@@ -159,6 +159,13 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
     if (rejectedPromisesResult.length > 0) {
         console.log("At least one test failed. Exiting.");
+        process.exit(1);
+    }
+
+    if (testProgressCount != overallTaskCount) {
+        console.log(
+            `Number of executed tests (${testProgressCount}) does not match number of expected tests (${overallTaskCount}). Tests failed!`,
+        );
         process.exit(1);
     }
 }

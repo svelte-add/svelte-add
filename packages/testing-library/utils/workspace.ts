@@ -10,7 +10,7 @@ export function getTemplatesDirectory(options: TestOptions) {
 }
 
 export async function installDependencies(output: string): Promise<void> {
-    const program = await spawn("npm", ["install"], { stdio: "pipe", shell: true, cwd: output });
+    const program = await spawn("npm", ["install"], { stdio: "inherit", shell: true, cwd: output });
 
     return await new Promise((resolve) => {
         program.on("exit", (code) => {

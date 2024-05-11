@@ -6,7 +6,7 @@ export async function startDevServer(
     command: string,
 ): Promise<{ url: string; devServer: ChildProcessWithoutNullStreams }> {
     return await new Promise((resolve) => {
-        const devServerProcess = spawn("pnpm", ["run", command], { stdio: "pipe", shell: true, cwd: output });
+        const devServerProcess = spawn("pnpm", ["run", command], { stdio: "inherit", shell: true, cwd: output });
         devServerProcess.stdout?.on("data", async (data) => {
             const value = data.toString();
 
