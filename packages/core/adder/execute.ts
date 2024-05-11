@@ -89,7 +89,7 @@ async function processExternalAdder<Args extends OptionDefinition>(
     if (!config.environment) config.environment = {};
 
     spawnSync("npx", config.command.split(" "), {
-        stdio: isTesting ? "ignore" : "inherit",
+        stdio: isTesting ? "inherit" : "inherit",
         shell: true,
         cwd: workingDirectory,
         env: Object.assign(process.env, config.environment),
