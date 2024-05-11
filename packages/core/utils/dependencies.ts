@@ -12,7 +12,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
         bun: "bun install",
     };
     startPrompts("Dependencies");
-    const selectedPm = (await selectPrompt("Do you want to install dependencies?", detectedPm.name, [
+    const selectedPm = (await selectPrompt("Which package manager to want to install dependencies with?", detectedPm.name, [
         {
             label: "None",
             value: undefined,
