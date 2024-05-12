@@ -1,7 +1,7 @@
 import { mkdir, rm } from "fs/promises";
 import { create } from "create-svelte";
-import { spawnSync } from "child_process";
 import { join } from "path";
+import { executeCli } from "@svelte-add/core/internal";
 
 export const ProjectTypes = {
     Svelte_JS: "svelte-js",
@@ -34,7 +34,11 @@ export async function createProject(output: string, projectType: string) {
         const template = projectType == ProjectTypes.Svelte_TS ? "svelte-ts" : "svelte";
         let args = ["init", "vite@latest", projectType, "--yes", "--", "--template", template];
 
-        spawnSync("npm", args, { shell: true, cwd: join(output, "..") });
+        try {
+            await executeCli("npm", args, join(output, ".."));
+        } catch (error) {
+            throw new Error("Failed initializing vite project: " + error);
+        }
     }
 }
 

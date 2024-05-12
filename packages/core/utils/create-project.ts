@@ -1,8 +1,7 @@
-import { spawnSync } from "child_process";
 import * as path from "path";
 import { booleanPrompt, endPrompts, selectPrompt, startPrompts, textPrompt } from "./prompts.js";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
-import { getPackageJson } from "./common.js";
+import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
 
 export async function detectOrCreateProject(cwd: string) {
@@ -98,10 +97,10 @@ export async function createProject(cwd: string) {
         args = ["init", "vite@latest", directory, "--", "--template", template];
     }
 
-    const program = spawnSync("npm", args, { stdio: "inherit", shell: true });
-
-    if (program.status == 1) {
-        console.log("cancelled or failed");
+    try {
+        await executeCli("npm", args, process.cwd(), { stdio: "inherit" });
+    } catch (error) {
+        console.log("cancelled or failed " + error);
         return { projectCreated: false, directory: "" };
     }
 
