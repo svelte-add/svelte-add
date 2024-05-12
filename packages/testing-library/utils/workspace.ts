@@ -1,7 +1,7 @@
-import { spawn } from "child_process";
-import { cp, mkdir, rm, writeFile } from "fs/promises";
+import { cp, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { TestOptions } from "..";
+import { executeCli } from "@svelte-add/core/internal";
 
 const templatesDirectory = "templates";
 
@@ -9,18 +9,12 @@ export function getTemplatesDirectory(options: TestOptions) {
     return join(options.outputDirectory, templatesDirectory);
 }
 
-export async function installDependencies(output: string): Promise<void> {
-    const program = await spawn("npm", ["install"], { stdio: "pipe", shell: true, cwd: output });
-
-    return await new Promise((resolve) => {
-        program.on("exit", (code) => {
-            if (code == 0) {
-                resolve();
-            } else {
-                throw new Error("unable to install dependencies");
-            }
-        });
-    });
+export async function installDependencies(output: string) {
+    try {
+        await executeCli("npm", ["install"], output, { stdio: "pipe" });
+    } catch (error) {
+        throw new Error("unable to install dependencies: " + error);
+    }
 }
 
 export async function prepareWorkspaceWithTemplate(output: string, template: string, templatesOutputDirectory: string) {

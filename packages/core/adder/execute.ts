@@ -2,7 +2,7 @@ import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { detectOrCreateProject } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { getPackageJson } from "../utils/common.js";
+import { executeCli, getPackageJson } from "../utils/common.js";
 import { Workspace, WorkspaceWithoutExplicitArgs, createEmptyWorkspace, populateWorkspaceDetails } from "../utils/workspace.js";
 import {
     OptionDefinition,
@@ -88,12 +88,15 @@ async function processExternalAdder<Args extends OptionDefinition>(
 
     if (!config.environment) config.environment = {};
 
-    spawnSync("npx", config.command.split(" "), {
-        stdio: isTesting ? "ignore" : "inherit",
-        shell: true,
-        cwd: workingDirectory,
-        env: Object.assign(process.env, config.environment),
-    });
+    try {
+        await executeCli("npx", config.command.split(" "), workingDirectory, {
+            env: Object.assign(process.env, config.environment),
+            stdio: isTesting ? "pipe" : "inherit",
+        });
+    } catch (error) {
+        throw new Error("Failed executing external command: " + error);
+    }
+
     if (!isTesting && config.installDependencies) await suggestInstallingDependencies(workingDirectory);
 }
 

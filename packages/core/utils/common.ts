@@ -1,7 +1,7 @@
 import { parseJson } from "@svelte-add/ast-tooling";
-import { OptionDefinition } from "../adder/options.js";
 import { commonFilePaths, readFile } from "../files/utils.js";
-import { Workspace, WorkspaceWithoutExplicitArgs } from "./workspace.js";
+import { WorkspaceWithoutExplicitArgs } from "./workspace.js";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 
 export type Package = {
     name: string;
@@ -29,4 +29,41 @@ export async function getPackageJson(workspace: WorkspaceWithoutExplicitArgs) {
         text: packageText,
         data: packageJson,
     };
+}
+
+export async function executeCli(
+    command: string,
+    commandArgs: string[],
+    cwd: string,
+    options?: {
+        onData?: (data: string, program: ChildProcessWithoutNullStreams, resolve: (value: any) => any) => void;
+        stdio?: "pipe" | "inherit";
+        env?: Record<string, string>;
+    },
+): Promise<void | any> {
+    const stdio = options?.stdio ?? "pipe";
+    const env = options?.env ?? process.env;
+
+    const program = await spawn(command, commandArgs, { stdio, shell: true, cwd, env });
+
+    return await new Promise((resolve, reject) => {
+        let errorText = "";
+        program.stderr?.on("data", (data) => {
+            const value = data.toString();
+            errorText += value;
+        });
+
+        program.stdout?.on("data", (data) => {
+            const value = data.toString();
+            if (options?.onData) options?.onData(value, program, resolve);
+        });
+
+        program.on("exit", (code) => {
+            if (code == 0) {
+                resolve(undefined);
+            } else {
+                reject(errorText);
+            }
+        });
+    });
 }

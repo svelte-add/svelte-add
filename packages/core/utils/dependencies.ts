@@ -1,7 +1,7 @@
-import { spawn } from "child_process";
 import { endPrompts, selectPrompt, startPrompts } from "./prompts";
 import preferredPackageManager from "preferred-pm";
 import { spinner, note } from "@clack/prompts";
+import { executeCli } from "./common";
 
 export async function suggestInstallingDependencies(workingDirectory: string) {
     const detectedPm = await preferredPackageManager(workingDirectory);
@@ -41,14 +41,9 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
 }
 
 async function installDependencies(command: string, args: string[], workingDirectory: string) {
-    const program = await spawn(command, args, { shell: true, cwd: workingDirectory });
-    await new Promise((resolve) => {
-        program.on("exit", (code) => {
-            if (code == 0) {
-                resolve(1);
-            } else {
-                throw new Error("unable to install dependencies");
-            }
-        });
-    });
+    try {
+        await executeCli(command, args, workingDirectory);
+    } catch (error) {
+        throw new Error("unable to install dependencies: " + error);
+    }
 }
