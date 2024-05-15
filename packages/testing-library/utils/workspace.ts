@@ -11,7 +11,7 @@ export function getTemplatesDirectory(options: TestOptions) {
 
 export async function installDependencies(output: string) {
     try {
-        await executeCli("pnpm", ["install"], output, { stdio: "pipe" });
+        await executeCli("pnpm", ["install", "--ignore-workspace"], output, { stdio: "pipe" });
     } catch (error) {
         throw new Error("unable to install dependencies: " + error);
     }
