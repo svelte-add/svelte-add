@@ -91,14 +91,14 @@ export async function createProject(cwd: string) {
 
     let args = [];
     if (projectType == "kit") {
-        args = ["create", "svelte@latest", directory];
+        args = ["init", "svelte@latest", directory];
     } else {
         const template = language == "ts" ? "svelte-ts" : "svelte";
-        args = ["create", "vite@latest", directory, "--template", template];
+        args = ["init", "vite@latest", directory, "--template", template];
     }
 
     try {
-        await executeCli("pnpm", args, process.cwd(), { stdio: "inherit" });
+        await executeCli("npm", args, process.cwd(), { stdio: "inherit" });
     } catch (error) {
         console.log("cancelled or failed " + error);
         return { projectCreated: false, directory: "" };
