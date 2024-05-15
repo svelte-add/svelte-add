@@ -6,8 +6,7 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
     fallback: T,
 ): T {
     const objectExpression = ast;
-    const properties =
-        (objectExpression.properties?.filter((x) => x.type == "ObjectProperty") as AstTypes.ObjectProperty[]) ?? [];
+    const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty") ?? [];
     let property = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
     let propertyValue: T;
 
@@ -40,7 +39,7 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
 
 export function overrideProperty<T extends AstKinds.ExpressionKind>(ast: AstTypes.ObjectExpression, name: string, value: T) {
     const objectExpression = ast;
-    const properties = objectExpression.properties.filter((x) => x.type == "ObjectProperty") as AstTypes.ObjectProperty[];
+    const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty");
     const property = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
 
     if (!property) {

@@ -21,7 +21,7 @@ export function getCssAstEditor(ast: CssAst) {
 }
 
 export function addRule(ast: CssAst, selector: string): Rule {
-    const rules = ast.nodes.filter((x) => x.type == "rule") as Rule[];
+    const rules = ast.nodes.filter((x): x is Rule => x.type == "rule");
     let rule = rules.find((x) => x.selector == selector);
 
     if (!rule) {
@@ -34,7 +34,7 @@ export function addRule(ast: CssAst, selector: string): Rule {
 }
 
 export function addDeclaration(ast: Rule | CssAst, property: string, value: string) {
-    const declarations = ast.nodes.filter((x) => x.type == "decl") as Declaration[];
+    const declarations = ast.nodes.filter((x): x is Declaration => x.type == "decl");
     let declaration = declarations.find((x) => x.prop == property);
 
     if (!declaration) {
@@ -46,7 +46,7 @@ export function addDeclaration(ast: Rule | CssAst, property: string, value: stri
 }
 
 export function addAtRule(ast: CssAst, name: string, params: string, append = false): AtRule {
-    const atRules = ast.nodes.filter((x) => x.type == "atrule") as AtRule[];
+    const atRules = ast.nodes.filter((x): x is AtRule => x.type == "atrule");
     let atRule = atRules.find((x) => x.name == name && x.params == params);
 
     if (atRule) {

@@ -26,7 +26,7 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
         // in this case the export default declaration is only referencing a variable, get that variable
         const exportDefaultDeclarationDeclaration = exportDefaultDeclaration.declaration as AstTypes.Identifier;
 
-        const variableDeclarations = ast.body.filter((x) => x.type == "VariableDeclaration") as AstTypes.VariableDeclaration[];
+        const variableDeclarations = ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration");
         const variableDeclaration = variableDeclarations.find((x) => {
             const variableDeclaration = x.declarations[0] as AstTypes.VariableDeclarator;
             const variableIdentifier = variableDeclaration.id as AstTypes.Identifier;
@@ -48,7 +48,7 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
 }
 
 export function namedExport(ast: AstTypes.Program, name: string, fallback: AstTypes.VariableDeclaration) {
-    const namedExports = ast.body.filter((x) => x.type == "ExportNamedDeclaration") as AstTypes.ExportNamedDeclaration[];
+    const namedExports = ast.body.filter((x): x is AstTypes.ExportNamedDeclaration => x.type == "ExportNamedDeclaration");
     let namedExport = namedExports.find((x) => {
         const variableDeclaration = x.declaration as AstTypes.VariableDeclaration;
         const variableDeclarator = variableDeclaration.declarations[0] as AstTypes.VariableDeclarator;

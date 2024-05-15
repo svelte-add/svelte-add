@@ -81,10 +81,10 @@ export async function createProject(cwd: string) {
 
     let language = "js";
     if (projectType == "svelte") {
-        language = (await selectPrompt("Choose language", language, [
+        language = await selectPrompt("Choose language", language, [
             { label: "JavaScript", value: "js" },
             { label: "TypeScript", value: "ts" },
-        ])) as string;
+        ]);
     }
 
     endPrompts("Initializing template...");
