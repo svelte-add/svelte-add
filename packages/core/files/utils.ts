@@ -1,8 +1,7 @@
 import fs from "fs/promises";
 import path from "node:path";
 import prettier from "prettier";
-import { OptionDefinition } from "../adder/options";
-import { Workspace, WorkspaceWithoutExplicitArgs } from "../utils/workspace";
+import type { WorkspaceWithoutExplicitArgs } from "../utils/workspace";
 
 export async function readFile(workspace: WorkspaceWithoutExplicitArgs, filePath: string) {
     const fullFilePath = getFilePath(workspace.cwd, filePath);

@@ -3,14 +3,14 @@ import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { detectOrCreateProject } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
 import { executeCli, getPackageJson } from "../utils/common.js";
-import { Workspace, WorkspaceWithoutExplicitArgs, createEmptyWorkspace, populateWorkspaceDetails } from "../utils/workspace.js";
+import { type Workspace, createEmptyWorkspace, populateWorkspaceDetails } from "../utils/workspace.js";
 import {
-    OptionDefinition,
+    type OptionDefinition,
     askQuestionsAndAssignValuesToWorkspace,
     ensureCorrectOptionTypes,
     prepareAndParseCliOptions,
 } from "./options.js";
-import {
+import type {
     AdderCheckConfig,
     AdderConfig,
     ExternalAdderConfig,
@@ -18,16 +18,15 @@ import {
     PostInstallationCheck,
     PreInstallationCheck,
 } from "./config.js";
-import { OptionValues } from "commander";
-import { RemoteControlOptions } from "./remoteControl.js";
+import type { OptionValues } from "commander";
+import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
-import { spawnSync } from "child_process";
 import { serializeJson } from "@svelte-add/ast-tooling";
 
 export async function executeAdder<Args extends OptionDefinition>(
     config: AdderConfig<Args>,
     checks: AdderCheckConfig<Args>,
-    remoteControlOptions: RemoteControlOptions = undefined,
+    remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
     if (checks.preInstallation) {
         await runPreInstallationChecks(checks.preInstallation);
@@ -47,7 +46,7 @@ export async function executeAdder<Args extends OptionDefinition>(
         workingDirectory = remoteControlOptions.workingDirectory;
     }
 
-    const workspace = createEmptyWorkspace();
+    const workspace = createEmptyWorkspace<Args>();
     await populateWorkspaceDetails(workspace, workingDirectory);
 
     await askQuestionsAndAssignValuesToWorkspace(config, workspace, cliOptions);
@@ -55,10 +54,10 @@ export async function executeAdder<Args extends OptionDefinition>(
 
     const isInstall = true;
 
-    if (config.integrationType == "inline") {
-        await processInlineAdder<Args>(config, workspace, isInstall, remoteControlled, workingDirectory);
-    } else if (config.integrationType == "external") {
-        await processExternalAdder<Args>(config, workingDirectory, isTesting);
+    if (config.integrationType === "inline") {
+        await processInlineAdder(config, workspace, isInstall, remoteControlled, workingDirectory);
+    } else if (config.integrationType === "external") {
+        await processExternalAdder(config, workingDirectory, isTesting);
     } else {
         throw new Error(`Unknown integration type`);
     }
@@ -68,14 +67,14 @@ export async function executeAdder<Args extends OptionDefinition>(
 
 async function processInlineAdder<Args extends OptionDefinition>(
     config: InlineAdderConfig<Args>,
-    workspace: WorkspaceWithoutExplicitArgs,
+    workspace: Workspace<Args>,
     isInstall: boolean,
     remoteControlled: boolean,
     workingDirectory: string,
 ) {
     await installPackages(config, workspace);
     await createOrUpdateFiles(config.files, workspace);
-    await runHooks(config, workspace, isInstall);
+    runHooks(config, workspace, isInstall);
     if (!remoteControlled) await suggestInstallingDependencies(workingDirectory);
 }
 
@@ -109,7 +108,10 @@ export function determineWorkingDirectory(options: OptionValues) {
     return cwd;
 }
 
-export async function installPackages(config: InlineAdderConfig<OptionDefinition>, workspace: WorkspaceWithoutExplicitArgs) {
+export async function installPackages<Args extends OptionDefinition>(
+    config: InlineAdderConfig<Args>,
+    workspace: Workspace<Args>,
+) {
     const { text: originalText, data } = await getPackageJson(workspace);
 
     for (const dependency of config.packages) {

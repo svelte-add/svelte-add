@@ -1,7 +1,7 @@
-import { OptionValues as CliOptionValues, program } from "commander";
+import { type OptionValues as CliOptionValues, program } from "commander";
 import { booleanPrompt, endPrompts, startPrompts, textPrompt } from "../utils/prompts.js";
-import { Workspace, WorkspaceWithoutExplicitArgs, addPropertyToWorkspaceOption } from "../utils/workspace.js";
-import { AdderConfig, AdderConfigWithoutExplicitArgs } from "./config.js";
+import { type Workspace, addPropertyToWorkspaceOption } from "../utils/workspace.js";
+import type { AdderConfig } from "./config.js";
 
 export type BooleanDefaultValue = {
     type: "boolean";
@@ -38,7 +38,7 @@ export type OptionValues<Args extends OptionDefinition> = {
             : never;
 };
 
-export function prepareAndParseCliOptions(config: AdderConfigWithoutExplicitArgs) {
+export function prepareAndParseCliOptions<Args extends OptionDefinition>(config: AdderConfig<Args>) {
     program.option("--path <string>", "Path to working directory");
 
     if (config.options) {
@@ -54,9 +54,9 @@ export function prepareAndParseCliOptions(config: AdderConfigWithoutExplicitArgs
     return options;
 }
 
-export async function askQuestionsAndAssignValuesToWorkspace(
-    config: AdderConfigWithoutExplicitArgs,
-    workspace: WorkspaceWithoutExplicitArgs,
+export async function askQuestionsAndAssignValuesToWorkspace<Args extends OptionDefinition>(
+    config: AdderConfig<Args>,
+    workspace: Workspace<Args>,
     cliOptions: CliOptionValues,
 ) {
     if (!config.options) return;
@@ -98,7 +98,7 @@ export async function askQuestionsAndAssignValuesToWorkspace(
     }
 }
 
-export function ensureCorrectOptionTypes(config: AdderConfigWithoutExplicitArgs, workspace: WorkspaceWithoutExplicitArgs) {
+export function ensureCorrectOptionTypes<Args extends OptionDefinition>(config: AdderConfig<Args>, workspace: Workspace<Args>) {
     if (!config.options) {
         return;
     }
