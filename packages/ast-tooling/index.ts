@@ -76,7 +76,7 @@ export type SvelteAst = {
     cssAst: CssAst;
 };
 
-export function parseSvelteFile(content): SvelteAst {
+export function parseSvelteFile(content: string): SvelteAst {
     const htmlAst = parseHtml(content);
 
     let scriptTag, styleTag: Element | undefined;

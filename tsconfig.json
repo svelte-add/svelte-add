@@ -1,5 +1,5 @@
 {
-    "exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/node_modules/**", "**/coverage/**"],
+    "exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/coverage/**"],
     "compilerOptions": {
         "checkJs": true,
         "module": "es2022",
@@ -10,6 +10,7 @@
         "declaration": true,
         "allowSyntheticDefaultImports": true,
         "sourceMap": true,
+        "strict": true,
         "outDir": "build/"
     }
 }

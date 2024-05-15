@@ -28,7 +28,7 @@ export const adder = defineAdderConfig({
             contentType: "css",
             condition: ({ options }) => options.useSass,
             content: ({ ast, addAtRule, addComment, addDeclaration }) => {
-                const baseImport = (component) => `"bootstrap/scss/${component}"`;
+                const baseImport = (/** @type {string} */ component) => `"bootstrap/scss/${component}"`;
                 const importRule = "import";
 
                 addComment(ast, "1. Include functions first (so you can manipulate colors, SVGs, calc, etc)");

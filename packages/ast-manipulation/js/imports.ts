@@ -36,17 +36,8 @@ export function addDefault(ast: AstTypes.Program, importFrom: string, importAs: 
 }
 
 export function addNamed(ast: AstTypes.Program, importFrom: string, exportedAsImportAs: Record<string, string>) {
-    const expectedImportDeclaration: AstTypes.ImportDeclaration = {
-        type: "ImportDeclaration",
-        source: {
-            type: "Literal",
-            value: importFrom,
-        },
-        specifiers: [],
-    };
-
-    for (const [key, value] of Object.entries(exportedAsImportAs)) {
-        const importSpecifier: AstTypes.ImportSpecifier = {
+    const specifiers = Object.entries(exportedAsImportAs).map(([key, value]) => {
+        const specifier: AstTypes.ImportSpecifier = {
             type: "ImportSpecifier",
             imported: {
                 type: "Identifier",
@@ -57,9 +48,17 @@ export function addNamed(ast: AstTypes.Program, importFrom: string, exportedAsIm
                 name: value,
             },
         };
+        return specifier;
+    });
 
-        expectedImportDeclaration.specifiers.push(importSpecifier);
-    }
+    const expectedImportDeclaration: AstTypes.ImportDeclaration = {
+        type: "ImportDeclaration",
+        source: {
+            type: "Literal",
+            value: importFrom,
+        },
+        specifiers,
+    };
 
     addImportIfNecessary(ast, expectedImportDeclaration);
 }

@@ -26,7 +26,7 @@ function updateAdderPackage(data, adder) {
     data.repository = {};
     data.repository.type = "git";
     data.repository.url = `${repoUrl}/tree/main/adders/${adder.metadata.id}`;
-    data.keywords = adder.metadata.website.keywords;
+    data.keywords = adder.metadata.website?.keywords;
     data.keywords.push("svelte");
     data.keywords.push("kit");
     data.keywords.push("svelte-kit");

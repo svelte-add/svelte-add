@@ -1,6 +1,6 @@
-import { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
-import { OptionValues, Question } from "@svelte-add/core/adder/options";
-import { RemoteControlOptions } from "@svelte-add/core/adder/remoteControl";
+import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
+import type { OptionValues, Question } from "@svelte-add/core/adder/options";
+import type { RemoteControlOptions } from "@svelte-add/core/adder/remoteControl";
 import { createEmptyWorkspace, createOrUpdateFiles, executeAdder, populateWorkspaceDetails } from "@svelte-add/core/internal";
 
 export async function runAdder(
@@ -17,5 +17,5 @@ export async function runAdder(
     workspace.options = optionValues;
 
     await populateWorkspaceDetails(workspace, workingDirectory);
-    await createOrUpdateFiles(adder.tests.files, workspace);
+    await createOrUpdateFiles(adder.tests?.files ?? [], workspace);
 }
