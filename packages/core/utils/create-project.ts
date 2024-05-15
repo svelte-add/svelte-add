@@ -94,7 +94,7 @@ export async function createProject(cwd: string) {
         args = ["init", "svelte@latest", directory];
     } else {
         const template = language == "ts" ? "svelte-ts" : "svelte";
-        args = ["init", "vite@latest", directory, "--template", template];
+        args = ["init", "vite@latest", directory, "--", "--template", template];
     }
 
     try {
