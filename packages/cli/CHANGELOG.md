@@ -1,5 +1,22 @@
 # svelte-add
 
+## 2.0.5
+
+### Patch Changes
+
+- chore: enabled `strict` mode and fixed types ([#361](https://github.com/svelte-add/svelte-add/pull/361))
+
+- Updated dependencies [[`4631dcad866b9d06a48c50b2f28928a4eb64061b`](https://github.com/svelte-add/svelte-add/commit/4631dcad866b9d06a48c50b2f28928a4eb64061b), [`4631dcad866b9d06a48c50b2f28928a4eb64061b`](https://github.com/svelte-add/svelte-add/commit/4631dcad866b9d06a48c50b2f28928a4eb64061b)]:
+  - @svelte-add/core@2.1.0
+  - @svelte-add/bootstrap@1.0.5
+  - svelte-add@2.0.5
+  - @svelte-add/bulma@1.0.5
+  - @svelte-add/mdsvex@1.0.5
+  - @svelte-add/routify@1.0.5
+  - @svelte-add/storybook@1.0.5
+  - @svelte-add/tailwindcss@1.0.5
+  - @svelte-add/threlte@1.0.5
+
 ## 2.0.4
 
 ### Patch Changes

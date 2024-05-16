@@ -1,5 +1,14 @@
 # @svelte-add/ast-manipulation
 
+## 2.0.3
+
+### Patch Changes
+
+- chore: enabled `strict` mode and fixed types ([#361](https://github.com/svelte-add/svelte-add/pull/361))
+
+- Updated dependencies [[`4631dcad866b9d06a48c50b2f28928a4eb64061b`](https://github.com/svelte-add/svelte-add/commit/4631dcad866b9d06a48c50b2f28928a4eb64061b)]:
+  - @svelte-add/ast-tooling@2.0.3
+
 ## 2.0.2
 
 ### Patch Changes

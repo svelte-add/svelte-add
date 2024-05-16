@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.0.3
+
+### Patch Changes
+
+- chore: enabled `strict` mode and fixed types ([#361](https://github.com/svelte-add/svelte-add/pull/361))
+
 ## 2.0.2
 
 ### Patch Changes
