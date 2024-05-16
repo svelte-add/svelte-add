@@ -1,8 +1,7 @@
 name: New adder
 description: This can be used to request the creation of a new adder
 labels:
-    - "C: new-adder"
-    - "T: adder"
+    - "make a new adder"
 body:
     - type: markdown
       attributes:
