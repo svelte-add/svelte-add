@@ -13,6 +13,10 @@ const adderFolders = fs
     .map((item) => item.name);
 const adderNamesAsString = adderFolders.map((x) => `"${x}"`);
 
+/**
+ * @param {string} project
+ * @param {boolean} isAdder
+ */
 function getConfig(project, isAdder) {
     const inputs = [];
     let outDir = "";
@@ -47,6 +51,7 @@ function getConfig(project, isAdder) {
             dir: outDir,
             format: "esm",
             sourcemap: true,
+            intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString}];` : undefined,
         },
         external: [/^@svelte-add.*/, "prettier", "create-svelte", "puppeteer"],
         plugins: [
@@ -58,10 +63,6 @@ function getConfig(project, isAdder) {
             dynamicImportVars(),
         ],
     };
-
-    if (project == "cli") {
-        config.output.intro = `const ADDER_LIST = [${adderNamesAsString}];`;
-    }
 
     return config;
 }

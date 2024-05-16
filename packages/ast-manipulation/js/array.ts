@@ -11,7 +11,7 @@ export function createEmpty() {
 
 export function push(ast: AstTypes.ArrayExpression, data: string | AstKinds.ExpressionKind) {
     if (typeof data === "string") {
-        const existingLiterals = ast.elements.filter((x) => x?.type == "StringLiteral") as AstTypes.StringLiteral[];
+        const existingLiterals = ast.elements.filter((x): x is AstTypes.StringLiteral => x?.type == "StringLiteral");
         let literal = existingLiterals.find((x) => x.value == data);
 
         if (!literal) {

@@ -1,8 +1,8 @@
-import { AstTypes, parseScript } from "@svelte-add/ast-tooling";
+import { type AstTypes, parseScript } from "@svelte-add/ast-tooling";
 import { getPackageJson } from "./common.js";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
-import { OptionDefinition, OptionValues, Question } from "../adder/options.js";
+import type { OptionDefinition, OptionValues } from "../adder/options.js";
 
 export type PrettierData = {
     installed: boolean;
@@ -28,9 +28,9 @@ export type Workspace<Args extends OptionDefinition> = {
     kit: SvelteKitData;
 };
 
-export type WorkspaceWithoutExplicitArgs = Workspace<Record<string, Question>>;
+export type WorkspaceWithoutExplicitArgs = Workspace<any>;
 
-export function createEmptyWorkspace(): WorkspaceWithoutExplicitArgs {
+export function createEmptyWorkspace<Args extends OptionDefinition>(): Workspace<Args> {
     return {
         options: {},
         cwd: "",
@@ -47,7 +47,7 @@ export function createEmptyWorkspace(): WorkspaceWithoutExplicitArgs {
             routesDirectory: "src/routes",
             libDirectory: "src/lib",
         },
-    };
+    } as Workspace<Args>;
 }
 
 export function addPropertyToWorkspaceOption(workspace: WorkspaceWithoutExplicitArgs, optionKey: string, value: unknown) {

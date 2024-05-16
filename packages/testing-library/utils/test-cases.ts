@@ -27,15 +27,15 @@ export async function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
         testCases.set(adder.config.metadata.id, adderTestCases);
 
         for (const template of ProjectTypesList) {
-            const runSynchronously = adder.tests.runSynchronously ?? false;
+            const runSynchronously = adder.tests?.runSynchronously ?? false;
 
             const environments = adder.config.metadata.environments;
             if ((!environments.kit && template.includes("kit")) || (!environments.svelte && template.includes("svelte"))) {
                 continue;
             }
 
-            const optionsList = adder.tests.optionValues;
-            if (optionsList.length > 0) {
+            const optionsList = adder.tests?.optionValues;
+            if (optionsList && optionsList.length > 0) {
                 for (const options of optionsList) {
                     adderTestCases.push({ adder, template, options, runSynchronously });
                 }
@@ -96,14 +96,15 @@ export type AdderError = {
 };
 
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
-    const asyncTasks = [];
-    const syncTasks = [];
+    const asyncTasks: Array<() => Promise<void>> = [];
+    const syncTasks: Array<() => Promise<void>> = [];
     for (const values of testCases.values()) {
         for (const testCase of values) {
             const taskExecutor = async () => {
                 try {
                     await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
-                } catch (error) {
+                } catch (e) {
+                    const error = e as Error;
                     const adderError: AdderError = {
                         adder: testCase.adder.config.metadata.id,
                         template: testCase.template,
@@ -148,12 +149,11 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
         },
     });
 
-    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map((x) => allAsyncResults.taskResults[x]);
-    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map((x) => allSyncResults.taskResults[x]);
+    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>((x) => allAsyncResults.taskResults[x]!);
+    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>((x) => allSyncResults.taskResults[x]!);
 
     const rejectedPromisesResult = [...rejectedAsyncPromisesResult, ...rejectedSyncPromisesResult];
-    for (const data of rejectedPromisesResult) {
-        const error = data as AdderError;
+    for (const error of rejectedPromisesResult) {
         console.log(`${error.adder} (${error.template}): ${error.message}`);
     }
 

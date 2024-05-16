@@ -1,10 +1,17 @@
 import { cancel, intro, isCancel, outro, select, text, multiselect } from "@clack/prompts";
 
-export type PromptOption = {
-    label: string;
-    value: boolean | string;
-    hint?: string;
-};
+type Primitive = Readonly<string | boolean | number>;
+export type PromptOption<Value> = Value extends Primitive
+    ? {
+          value: Value;
+          label?: string;
+          hint?: string;
+      }
+    : {
+          value: Value;
+          label: string;
+          hint?: string;
+      };
 
 export function startPrompts(message: string) {
     intro(message);
@@ -21,14 +28,14 @@ export async function booleanPrompt(question: string, initialValue: boolean) {
     ]);
 }
 
-export async function selectPrompt(question: string, initialValue: boolean | string, options: PromptOption[]) {
+export async function selectPrompt<T>(question: string, initialValue: T, options: PromptOption<T>[]) {
     const value = await select({
         message: question,
         options,
-        initialValue: initialValue,
+        initialValue,
     });
 
-    return cancelIfRequired(value) as string | boolean;
+    return cancelIfRequired(value);
 }
 
 export async function textPrompt(question: string, placeholder: string = "", initialValue: string = "") {
@@ -38,25 +45,26 @@ export async function textPrompt(question: string, placeholder: string = "", ini
         initialValue,
     });
 
-    const result = cancelIfRequired(value) as string;
+    const result = cancelIfRequired(value);
     return result;
 }
 
-export async function multiSelectPrompt(question: string, options: PromptOption[]) {
-    const value = (await multiselect({
+export async function multiSelectPrompt<T>(question: string, options: PromptOption<T>[]) {
+    const value = await multiselect<PromptOption<T>[], T>({
         message: question,
         options,
         required: false,
-    })) as unknown as string;
+    });
 
-    return cancelIfRequired(value) as string[];
+    return cancelIfRequired(value);
 }
 
-function cancelIfRequired(value: string | string[] | boolean | symbol) {
-    if (typeof value == "symbol" || isCancel(value)) {
+function cancelIfRequired<T>(value: T): T extends symbol ? never : T {
+    if (typeof value === "symbol" || isCancel(value)) {
         cancel("Operation cancelled.");
         process.exit(0);
     }
 
+    // @ts-expect-error hacking it to never return a symbol. there's probably a better way, but this works for now.
     return value;
 }

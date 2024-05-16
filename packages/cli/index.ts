@@ -44,7 +44,7 @@ async function executeCli() {
 
     for (const adder of filteredAdders) {
         const adderId = adder.config.metadata.id;
-        const adderOptions = {};
+        const adderOptions: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(options)) {
             if (!key || !key.startsWith(adderId)) continue;
 
@@ -110,7 +110,7 @@ async function askForAddersToApply(adders: AdderWithoutExplicitArgs[]): Promise<
         currentCategory++;
         const categoryDetails = categories[categoryId];
 
-        const promptOptions: PromptOption[] = [];
+        const promptOptions: PromptOption<string>[] = [];
         for (const adder of adders) {
             const adderMetadata = adder.config.metadata;
             promptOptions.push({

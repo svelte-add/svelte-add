@@ -32,6 +32,7 @@
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-typescript": "^11.1.6",
         "@svitejs/changesets-changelog-github-compact": "^1.1.0",
+        "@types/eslint__js": "^8.42.3",
         "@types/node": "^20.12.7",
         "autoprefixer": "^10.4.19",
         "eslint": "^9.1.1",

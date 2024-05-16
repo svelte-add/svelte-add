@@ -1,7 +1,7 @@
 import { parseJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, readFile } from "../files/utils.js";
-import { WorkspaceWithoutExplicitArgs } from "./workspace.js";
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
+import type { WorkspaceWithoutExplicitArgs } from "./workspace.js";
+import { type ChildProcess, spawn } from "child_process";
 
 export type Package = {
     name: string;
@@ -36,7 +36,7 @@ export async function executeCli(
     commandArgs: string[],
     cwd: string,
     options?: {
-        onData?: (data: string, program: ChildProcessWithoutNullStreams, resolve: (value: any) => any) => void;
+        onData?: (data: string, program: ChildProcess, resolve: (value: any) => any) => void;
         stdio?: "pipe" | "inherit";
         env?: Record<string, string>;
     },
@@ -44,7 +44,7 @@ export async function executeCli(
     const stdio = options?.stdio ?? "pipe";
     const env = options?.env ?? process.env;
 
-    const program = await spawn(command, commandArgs, { stdio, shell: true, cwd, env });
+    const program = spawn(command, commandArgs, { stdio, shell: true, cwd, env });
 
     return await new Promise((resolve, reject) => {
         let errorText = "";
@@ -55,7 +55,7 @@ export async function executeCli(
 
         program.stdout?.on("data", (data) => {
             const value = data.toString();
-            if (options?.onData) options?.onData(value, program, resolve);
+            options?.onData?.(value, program, resolve);
         });
 
         program.on("exit", (code) => {

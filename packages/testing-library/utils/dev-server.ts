@@ -39,7 +39,7 @@ async function forceKill(devServer: ChildProcessWithoutNullStreams): Promise<voi
     return new Promise((resolve) => {
         // just killing the process was not enough, because the process itself
         // spawns child process, that also need to be killed!
-        terminate(devServer.pid, () => {
+        terminate(devServer.pid!, () => {
             resolve();
         });
     });

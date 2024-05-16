@@ -68,7 +68,6 @@ async function expectProperty(page: Page, selector: string, property: string, ex
     const elementToCheck = await elementExists(page, selector);
 
     const computedStyle = await page.evaluate(
-        // eslint-disable-next-line no-undef
         (element, pV) => window.getComputedStyle(element).getPropertyValue(pV),
         elementToCheck,
         property,
