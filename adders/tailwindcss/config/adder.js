@@ -38,7 +38,7 @@ export const adder = defineAdderConfig({
                 let rootExport = object.createEmpty();
                 if (typescript.installed) {
                     imports.addNamed(ast, "tailwindcss", { Config: "Config" }, true);
-                    root = common.annotateExpression(rootExport, "Config");
+                    root = common.typeAnnotateExpression(rootExport, "Config");
                 }
 
                 const { astNode: exportDeclaration } = exports.defaultExport(ast, root ?? rootExport);
