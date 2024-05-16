@@ -33,10 +33,17 @@ export const adder = defineAdderConfig({
         {
             name: ({ typescript }) => `tailwind.config.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
-            content: ({ options, ast, array, object, common, functions, exports }) => {
-                const { astNode: exportDeclaration, value: rootExport } = exports.defaultExport(ast, object.createEmpty());
+            content: ({ options, ast, array, object, common, functions, exports, typescript, imports }) => {
+                let root;
+                let rootExport = object.createEmpty();
+                if (typescript.installed) {
+                    imports.addNamed(ast, "tailwindcss", { Config: "Config" }, true);
+                    root = common.annotateExpression(rootExport, "Config");
+                }
 
-                common.addJsDocTypeComment(exportDeclaration, "import('tailwindcss').Config");
+                const { astNode: exportDeclaration } = exports.defaultExport(ast, root ?? rootExport);
+
+                if (!typescript.installed) common.addJsDocTypeComment(exportDeclaration, "import('tailwindcss').Config");
 
                 const contentArray = object.property(rootExport, "content", array.createEmpty());
                 array.push(contentArray, "./src/**/*.{html,js,svelte,ts}");
