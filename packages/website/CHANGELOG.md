@@ -1,5 +1,13 @@
 # @svelte-add/website
 
+## 2.0.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @svelte-add/core@2.1.1
+  - svelte-add@2.0.6
+
 ## 2.0.6
 
 ### Patch Changes
