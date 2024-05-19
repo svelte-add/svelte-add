@@ -1,5 +1,14 @@
 # @svelte-add/tailwindcss
 
+## 1.0.6
+
+### Patch Changes
+
+- chore: correctly type annotate the tailwind config when using typescript ([#365](https://github.com/svelte-add/svelte-add/pull/365))
+
+- Updated dependencies []:
+  - @svelte-add/core@2.1.1
+
 ## 1.0.5
 
 ### Patch Changes

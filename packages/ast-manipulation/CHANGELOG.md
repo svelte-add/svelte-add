@@ -1,5 +1,11 @@
 # @svelte-add/ast-manipulation
 
+## 2.0.4
+
+### Patch Changes
+
+- added ability to add type annotations to expressions ([#365](https://github.com/svelte-add/svelte-add/pull/365))
+
 ## 2.0.3
 
 ### Patch Changes
