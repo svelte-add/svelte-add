@@ -120,20 +120,14 @@ export function defineAdderOptions<Args extends OptionDefinition>(options: Args)
     return options;
 }
 
-export type PreInstallationCheck = {
+export type Precondition = {
     name: string;
-    run: (workingDirectory: string) => boolean;
-};
-
-export type PostInstallationCheck = {
-    name: string;
-    run: (workingDirectory: string) => boolean;
+    run: () => { success: boolean; message: string | undefined };
 };
 
 export type AdderCheckConfig<Args extends OptionDefinition> = {
-    preInstallation?: PreInstallationCheck[];
-    postInstallation: PostInstallationCheck[];
     options: Args;
+    preconditions?: Precondition[];
 };
 
 export function defineAdderChecks<Args extends OptionDefinition>(checks: AdderCheckConfig<Args>) {

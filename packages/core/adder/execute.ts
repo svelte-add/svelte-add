@@ -10,28 +10,18 @@ import {
     ensureCorrectOptionTypes,
     prepareAndParseCliOptions,
 } from "./options.js";
-import type {
-    AdderCheckConfig,
-    AdderConfig,
-    ExternalAdderConfig,
-    InlineAdderConfig,
-    PostInstallationCheck,
-    PreInstallationCheck,
-} from "./config.js";
+import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
 import type { OptionValues } from "commander";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
+import { askUserToContinueWithFailedPreconditions, checkPreconditionsStatus, printPreconditionResults } from "./preconditions.js";
 
 export async function executeAdder<Args extends OptionDefinition>(
     config: AdderConfig<Args>,
     checks: AdderCheckConfig<Args>,
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
-    if (checks.preInstallation) {
-        await runPreInstallationChecks(checks.preInstallation);
-    }
-
     const remoteControlled = remoteControlOptions !== undefined;
     const isTesting = remoteControlled && remoteControlOptions.isTesting;
 
@@ -49,6 +39,12 @@ export async function executeAdder<Args extends OptionDefinition>(
     const workspace = createEmptyWorkspace<Args>();
     await populateWorkspaceDetails(workspace, workingDirectory);
 
+    if (checks.preconditions) {
+        const preconditionStatus = await checkPreconditionsStatus(checks.preconditions);
+        if (!isTesting) printPreconditionResults(preconditionStatus);
+        if (!preconditionStatus.autoApplyAdder) await askUserToContinueWithFailedPreconditions();
+    }
+
     await askQuestionsAndAssignValuesToWorkspace(config, workspace, cliOptions);
     ensureCorrectOptionTypes(config, workspace);
 
@@ -61,8 +57,6 @@ export async function executeAdder<Args extends OptionDefinition>(
     } else {
         throw new Error(`Unknown integration type`);
     }
-
-    await runPostInstallationChecks(checks.postInstallation);
 }
 
 async function processInlineAdder<Args extends OptionDefinition>(
@@ -160,12 +154,4 @@ export function generateAdderInfo(pkg: any): {
         package: name,
         version: pkg.version,
     };
-}
-
-export async function runPreInstallationChecks(checks: PreInstallationCheck[]) {
-    // console.log(checks);
-}
-
-export async function runPostInstallationChecks(checks: PostInstallationCheck[]) {
-    // console.log(checks);
 }
