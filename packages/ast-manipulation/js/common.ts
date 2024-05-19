@@ -11,6 +11,16 @@ export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
     node.comments.push(comment);
 }
 
+export function typeAnnotateExpression(node: AstKinds.ExpressionKind, type: string) {
+    const expression: AstTypes.TSAsExpression = {
+        type: "TSAsExpression",
+        expression: node,
+        typeAnnotation: { type: "TSTypeReference", typeName: { type: "Identifier", name: type } },
+    };
+
+    return expression;
+}
+
 export function createLiteral(value: string | null = null) {
     const literal: AstTypes.Literal = {
         type: "Literal",
