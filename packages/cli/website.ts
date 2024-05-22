@@ -23,17 +23,3 @@ export async function executeAdder(name: string): Promise<AdderConfig<Record<str
 
     return adderConfig;
 }
-
-export function groupBy<Key, Value>(list: Value[], keyGetter: (input: Value) => Key) {
-    const map = new Map<Key, Value[]>();
-    list.forEach((item) => {
-        const key = keyGetter(item);
-        const collection = map.get(key);
-        if (!collection) {
-            map.set(key, [item]);
-        } else {
-            collection.push(item);
-        }
-    });
-    return map;
-}

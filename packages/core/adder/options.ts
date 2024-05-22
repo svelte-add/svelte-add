@@ -1,7 +1,7 @@
 import { type OptionValues as CliOptionValues, program } from "commander";
-import { booleanPrompt, endPrompts, startPrompts, textPrompt } from "../utils/prompts.js";
-import { type Workspace, addPropertyToWorkspaceOption } from "../utils/workspace.js";
-import type { AdderConfig } from "./config.js";
+import { AdderDetails, AddersExecutionPlan } from "./execute.js";
+import { textPrompt } from "../internal.js";
+import { booleanPrompt } from "../utils/prompts.js";
 
 export type BooleanDefaultValue = {
     type: "boolean";
@@ -38,14 +38,33 @@ export type OptionValues<Args extends OptionDefinition> = {
             : never;
 };
 
-export function prepareAndParseCliOptions<Args extends OptionDefinition>(config: AdderConfig<Args>) {
-    program.option("--path <string>", "Path to working directory");
+export type CommonCliOptions = {
+    path?: string;
+    adders?: string[];
+};
 
-    if (config.options) {
+export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[]) {
+    const multipleAdders = adderDetails.length > 1;
+
+    program.option("--path <string>", "Path to working directory");
+    if (multipleAdders) {
+        program.option("--adder <string...>", "List of adders to install");
+    }
+
+    const addersWithOptions = adderDetails.filter((x) => Object.keys(x.config.options).length > 0);
+
+    for (const { config } of addersWithOptions) {
         for (const optionKey of Object.keys(config.options)) {
             const option = config.options[optionKey];
 
-            program.option(`--${optionKey} [value]`, option.question);
+            let optionString;
+            if (multipleAdders) {
+                optionString = `--${config.metadata.id}-${optionKey} [${option.type}]`;
+            } else {
+                optionString = `--${optionKey} [${option.type}]`;
+            }
+
+            program.option(optionString, option.question);
         }
     }
 
@@ -54,83 +73,122 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(config:
     return options;
 }
 
-export async function askQuestionsAndAssignValuesToWorkspace<Args extends OptionDefinition>(
-    config: AdderConfig<Args>,
-    workspace: Workspace<Args>,
-    cliOptions: CliOptionValues,
+export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
+    adderDetails: AdderDetails<Args>[],
+    cliOptionsByAdderId: Record<string, Record<string, any>>,
 ) {
-    if (!config.options) return;
-
-    let needsToAskQuestions = false;
-    for (const optionKey of Object.keys(config.options)) {
-        const cliOption = cliOptions[optionKey];
-        if (cliOption === undefined) {
-            needsToAskQuestions = true;
-        }
-    }
-
-    if (needsToAskQuestions) {
-        startPrompts(`${config.metadata.package}@${config.metadata.version}`);
-    }
-
-    for (const optionKey of Object.keys(config.options)) {
-        const cliOption = cliOptions[optionKey];
-        if (cliOption !== undefined) {
-            addPropertyToWorkspaceOption(workspace, optionKey, cliOption);
-
-            continue;
-        }
-
-        const option = config.options[optionKey];
-        let optionValue;
-
-        if (option.type == "number" || option.type == "string") {
-            optionValue = await textPrompt(option.question, "Not sure", "" + option.default);
-        } else if (option.type == "boolean") {
-            optionValue = await booleanPrompt(option.question, option.default);
-        }
-
-        addPropertyToWorkspaceOption(workspace, optionKey, optionValue);
-    }
-
-    if (needsToAskQuestions) {
-        endPrompts(`You're all set!`);
-    }
-}
-
-export function ensureCorrectOptionTypes<Args extends OptionDefinition>(config: AdderConfig<Args>, workspace: Workspace<Args>) {
-    if (!config.options) {
+    if (!cliOptionsByAdderId) {
         return;
     }
 
     let foundInvalidType = false;
 
-    for (const optionKey of Object.keys(config.options)) {
-        const option = config.options[optionKey];
-        const value = workspace.options[optionKey];
+    for (const { config } of adderDetails) {
+        const adderId = config.metadata.id;
 
-        if (option.type == "boolean" && typeof value == "boolean") {
-            continue;
-        } else if (option.type == "number" && typeof value == "number") {
-            continue;
-        } else if (
-            option.type == "number" &&
-            typeof value == "string" &&
-            typeof parseInt(value) == "number" &&
-            !isNaN(parseInt(value))
-        ) {
-            addPropertyToWorkspaceOption(workspace, optionKey, parseInt(value));
-            continue;
-        } else if (option.type == "string" && typeof value == "string") {
-            continue;
+        for (const optionKey of Object.keys(config.options)) {
+            const option = config.options[optionKey];
+            const value = cliOptionsByAdderId[adderId][optionKey];
+
+            if (value == undefined) {
+                continue;
+            } else if (option.type == "boolean" && typeof value == "boolean") {
+                continue;
+            } else if (option.type == "number" && typeof value == "number") {
+                continue;
+            } else if (
+                option.type == "number" &&
+                typeof value == "string" &&
+                typeof parseInt(value) == "number" &&
+                !isNaN(parseInt(value))
+            ) {
+                cliOptionsByAdderId[adderId][optionKey] = parseInt(value);
+                continue;
+            } else if (option.type == "string" && typeof value == "string") {
+                continue;
+            }
+
+            foundInvalidType = true;
+            console.log(`Option ${optionKey} needs to be of type ${option.type} but was of type ${typeof value}!`);
         }
-
-        foundInvalidType = true;
-        console.log(`Option ${optionKey} needs to be of type ${option.type} but was of type ${typeof value}!`);
     }
 
     if (foundInvalidType) {
         console.log("Found invalid option type. Exiting.");
         process.exit(0);
+    }
+}
+
+export function extractCommonCliOptions(cliOptions: CliOptionValues) {
+    const commonOptions: CommonCliOptions = {
+        path: cliOptions.path,
+        adders: cliOptions.adder,
+    };
+
+    return commonOptions;
+}
+
+export function extractAdderCliOptions<Args extends OptionDefinition>(
+    cliOptions: CliOptionValues,
+    adderDetails: AdderDetails<Args>[],
+) {
+    const multipleAdders = adderDetails.length > 1;
+
+    const options: Record<string, Record<string, any>> = {};
+    for (const { config } of adderDetails) {
+        const adderId = config.metadata.id;
+        options[adderId] = {};
+
+        for (const optionKey of Object.keys(config.options)) {
+            let cliOptionKey = optionKey;
+
+            if (multipleAdders) cliOptionKey = `${adderId}${upperCaseFirstLetter(cliOptionKey)}`;
+
+            let optionValue = cliOptions[cliOptionKey];
+            if (optionValue === "true") optionValue = true;
+            else if (optionValue === "false") optionValue = false;
+
+            options[adderId][optionKey] = optionValue;
+        }
+    }
+
+    return options;
+}
+
+function upperCaseFirstLetter(string: string) {
+    return string.charAt(0).toLocaleUpperCase() + string.slice(1);
+}
+
+export async function requestMissingOptionsFromUser<Args extends OptionDefinition>(
+    adderDetails: AdderDetails<Args>[],
+    executionPlan: AddersExecutionPlan,
+) {
+    if (!executionPlan.cliOptionsByAdderId) return;
+
+    for (const { config } of adderDetails) {
+        const adderId = config.metadata.id;
+        const questionPrefix = adderDetails.length > 1 ? `${config.metadata.name}: ` : "";
+
+        for (const optionKey of Object.keys(config.options)) {
+            const option = config.options[optionKey];
+
+            if (!executionPlan.cliOptionsByAdderId[adderId]) continue;
+
+            let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey];
+
+            // if the option already has an value, ignore it and continue
+            if (optionValue) continue;
+
+            if (option.type == "number" || option.type == "string") {
+                optionValue = await textPrompt(questionPrefix + option.question, "Not sure", "" + option.default);
+            } else if (option.type == "boolean") {
+                optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
+            }
+
+            if (optionValue === "true") optionValue = true;
+            if (optionValue === "false") optionValue = false;
+
+            executionPlan.cliOptionsByAdderId[adderId][optionKey] = optionValue;
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { cancel, intro, isCancel, outro, select, text, multiselect } from "@clack/prompts";
+import { cancel, intro, isCancel, outro, select, text, multiselect, note } from "@clack/prompts";
 
 type Primitive = Readonly<string | boolean | number>;
 export type PromptOption<Value> = Value extends Primitive
@@ -57,6 +57,10 @@ export async function multiSelectPrompt<T>(question: string, options: PromptOpti
     });
 
     return cancelIfRequired(value);
+}
+
+export function messagePrompt(title: string, content: string) {
+    note(content, title);
 }
 
 function cancelIfRequired<T>(value: T): T extends symbol ? never : T {

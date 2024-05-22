@@ -1,68 +1,72 @@
-import { booleanPrompt } from "../utils/prompts.js";
-import { Precondition } from "./config.js";
+import { config } from "process";
+import { booleanPrompt, endPrompts, messagePrompt } from "../utils/prompts.js";
+import { AdderDetails } from "./execute.js";
+import { OptionDefinition } from "./options.js";
+import pc from "picocolors";
 
-export type PreconditionCheckResult = {
-    successfulPreconditions: string[];
-    failedPreconditions: { name: string; message: string }[];
-    autoApplyAdder: boolean;
-};
+export async function validatePreconditions<Args extends OptionDefinition>(
+    adderDetails: AdderDetails<Args>[],
+    isTesting: boolean,
+) {
+    const multipleAdders = adderDetails.length > 1;
+    let allPreconditionsPassed = true;
+    const preconditionLog: string[] = [];
+    for (const { config, checks } of adderDetails) {
+        if (!checks.preconditions) continue;
 
-export function checkPreconditionsStatus(preconditions: Precondition[]) {
-    const status: PreconditionCheckResult = {
-        successfulPreconditions: [],
-        failedPreconditions: [],
-        autoApplyAdder: true,
-    };
+        for (const precondition of checks.preconditions) {
+            let message;
+            let preconditionPassed;
+            try {
+                const result = precondition.run();
 
-    for (const precondition of preconditions) {
-        try {
-            const result = precondition.run();
-
-            if (result.success) {
-                status.successfulPreconditions.push(precondition.name);
-            } else {
-                status.failedPreconditions.push({
-                    name: precondition.name,
-                    message: result.message ?? "No failure message provided",
-                });
+                if (result.success) {
+                    message = precondition.name;
+                    preconditionPassed = true;
+                } else {
+                    preconditionPassed = false;
+                    message = `${precondition.name} (${result.message ?? "No failure message provided"})`;
+                }
+            } catch (error) {
+                preconditionPassed = false;
+                message = precondition.name + `(Unexpected failure: ${error})`;
             }
-        } catch (error) {
-            status.failedPreconditions.push({ name: precondition.name, message: "Unexpected failure: " + error });
+
+            if (multipleAdders) {
+                message = `${config.metadata.name}: ${message}`;
+            }
+
+            message = preconditionPassed ? pc.green(message) : pc.yellow(message);
+            preconditionLog.push(message);
+
+            if (!preconditionPassed) allPreconditionsPassed = false;
         }
     }
+    if (preconditionLog.length > 0) {
+        let allMessages = "";
+        for (const [i, message] of preconditionLog.entries()) {
+            allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
+        }
 
-    status.autoApplyAdder = status.failedPreconditions.length == 0;
+        if (!allPreconditionsPassed && isTesting) {
+            throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
+        }
 
-    return status;
-}
+        if (isTesting) return;
 
-export function printPreconditionResults(preconditionStatus: PreconditionCheckResult) {
-    if (preconditionStatus.successfulPreconditions.length == 0 && preconditionStatus.failedPreconditions.length == 0) {
-        return;
+        messagePrompt("Preconditions:", allMessages);
+
+        if (!allPreconditionsPassed) {
+            await askUserToContinueWithFailedPreconditions();
+        }
     }
-
-    const preconditionMessages: { success: boolean; message: string }[] = [];
-    for (const preconditionResult of preconditionStatus.successfulPreconditions) {
-        preconditionMessages.push({ success: true, message: preconditionResult });
-    }
-    for (const preconditionResult of preconditionStatus.failedPreconditions) {
-        preconditionMessages.push({ success: false, message: `${preconditionResult.name} (${preconditionResult.message})` });
-    }
-
-    // sort the elements alphabetically by message
-    preconditionMessages.sort((a, b) => a.message.localeCompare(b.message));
-
-    console.log("Preconditions:");
-    for (const messageData of preconditionMessages) {
-        const symbol = messageData.success ? "✅" : "❌";
-        console.log(`  - ${symbol} ${messageData.message}`);
-    }
-
-    console.log(""); // force a new line after the precondition output
 }
 
 export async function askUserToContinueWithFailedPreconditions() {
     const result = await booleanPrompt("Preconditions failed. Do you wish to continue?", false);
 
-    if (!result) process.exit();
+    if (!result) {
+        endPrompts("Exiting.");
+        process.exit();
+    }
 }

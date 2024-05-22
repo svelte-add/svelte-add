@@ -58,7 +58,6 @@ export type ExternalAdderConfig<Args extends OptionDefinition> = BaseAdderConfig
     integrationType: "external";
     command: string;
     environment?: Record<string, string>;
-    installDependencies: boolean;
 };
 
 export type AdderConfig<Args extends OptionDefinition> = InlineAdderConfig<Args> | ExternalAdderConfig<Args>;
@@ -83,7 +82,10 @@ export function defineAdder<Args extends OptionDefinition>(
 ) {
     const remoteControlled = remoteControl.isRemoteControlled();
     if (!remoteControlled) {
-        executeAdder(config, checks);
+        executeAdder({
+            config,
+            checks,
+        });
     }
 
     const adder: Adder<Args> = { config, checks, tests };

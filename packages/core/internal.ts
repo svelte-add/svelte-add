@@ -1,5 +1,5 @@
 import * as remoteControl from "./adder/remoteControl.js";
-import { executeAdder, determineWorkingDirectory } from "./adder/execute.js";
+import { executeAdder, executeAdders, determineWorkingDirectory } from "./adder/execute.js";
 import { createOrUpdateFiles } from "./files/processors.js";
 import { createEmptyWorkspace, populateWorkspaceDetails } from "./utils/workspace.js";
 import { detectOrCreateProject } from "./utils/create-project.js";
@@ -12,6 +12,7 @@ export {
     createOrUpdateFiles,
     createEmptyWorkspace,
     executeAdder,
+    executeAdders,
     populateWorkspaceDetails,
     determineWorkingDirectory,
     detectOrCreateProject,

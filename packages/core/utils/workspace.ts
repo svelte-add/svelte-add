@@ -6,12 +6,10 @@ import type { OptionDefinition, OptionValues } from "../adder/options.js";
 
 export type PrettierData = {
     installed: boolean;
-    config: unknown;
 };
 
 export type TypescriptData = {
     installed: boolean;
-    config: unknown;
 };
 
 export type SvelteKitData = {
@@ -36,11 +34,9 @@ export function createEmptyWorkspace<Args extends OptionDefinition>(): Workspace
         cwd: "",
         prettier: {
             installed: false,
-            config: "",
         },
         typescript: {
             installed: false,
-            config: "",
         },
         kit: {
             installed: false,
