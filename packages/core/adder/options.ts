@@ -177,7 +177,7 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
             let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey];
 
             // if the option already has an value, ignore it and continue
-            if (optionValue) continue;
+            if (optionValue !== undefined) continue;
 
             if (option.type == "number" || option.type == "string") {
                 optionValue = await textPrompt(questionPrefix + option.question, "Not sure", "" + option.default);
