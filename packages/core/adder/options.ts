@@ -1,7 +1,6 @@
 import { type OptionValues as CliOptionValues, program } from "commander";
 import { AdderDetails, AddersExecutionPlan } from "./execute.js";
-import { textPrompt } from "../internal.js";
-import { booleanPrompt } from "../utils/prompts.js";
+import { booleanPrompt, textPrompt } from "../utils/prompts.js";
 
 export type BooleanDefaultValue = {
     type: "boolean";
