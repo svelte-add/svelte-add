@@ -1,4 +1,5 @@
-import { getAdderConfig, getAdderList, groupBy } from "svelte-add/website";
+import { getAdderConfig, getAdderList } from "svelte-add/website";
+import { groupBy } from "@svelte-add/core/internal";
 
 /**
  * @typedef AdderMetadataWithOptions
