@@ -2,6 +2,7 @@ import { parseJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import type { WorkspaceWithoutExplicitArgs } from "./workspace.js";
 import { type ChildProcess, spawn } from "child_process";
+import { error } from "console";
 
 export type Package = {
     name: string;
@@ -66,4 +67,18 @@ export async function executeCli(
             }
         });
     });
+}
+
+export function groupBy<Key, Value>(list: Value[], keyGetter: (input: Value) => Key) {
+    const map = new Map<Key, Value[]>();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [item]);
+        } else {
+            collection.push(item);
+        }
+    });
+    return map;
 }

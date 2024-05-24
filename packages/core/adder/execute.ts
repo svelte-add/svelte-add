@@ -1,81 +1,202 @@
 import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
-import { detectOrCreateProject } from "../utils/create-project.js";
+import { createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { executeCli, getPackageJson } from "../utils/common.js";
-import { type Workspace, createEmptyWorkspace, populateWorkspaceDetails } from "../utils/workspace.js";
+import { executeCli, getPackageJson, groupBy } from "../utils/common.js";
+import {
+    type Workspace,
+    createEmptyWorkspace,
+    populateWorkspaceDetails,
+    addPropertyToWorkspaceOption,
+} from "../utils/workspace.js";
 import {
     type OptionDefinition,
-    askQuestionsAndAssignValuesToWorkspace,
-    ensureCorrectOptionTypes,
+    ensureCorrectOptionTypes as validateOptionTypes,
     prepareAndParseCliOptions,
+    extractCommonCliOptions,
+    extractAdderCliOptions,
+    CommonCliOptions,
+    requestMissingOptionsFromUser,
 } from "./options.js";
-import type {
-    AdderCheckConfig,
-    AdderConfig,
-    ExternalAdderConfig,
-    InlineAdderConfig,
-    PostInstallationCheck,
-    PreInstallationCheck,
-} from "./config.js";
-import type { OptionValues } from "commander";
+import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
+import { validatePreconditions } from "./preconditions.js";
+import { PromptOption, endPrompts, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
+import { categories } from "./categories.js";
+import { booleanPrompt, messagePrompt } from "../utils/prompts.js";
+
+export type AdderDetails<Args extends OptionDefinition> = {
+    config: AdderConfig<Args>;
+    checks: AdderCheckConfig<Args>;
+};
+
+export type ExecutingAdderInfo = {
+    name: string;
+    version: string;
+};
+
+export type AddersExecutionPlan = {
+    createProject: boolean;
+    commonCliOptions: CommonCliOptions;
+    cliOptionsByAdderId: Record<string, Record<string, any>>;
+    workingDirectory: string;
+};
 
 export async function executeAdder<Args extends OptionDefinition>(
-    config: AdderConfig<Args>,
-    checks: AdderCheckConfig<Args>,
+    adderDetails: AdderDetails<Args>,
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
-    if (checks.preInstallation) {
-        await runPreInstallationChecks(checks.preInstallation);
-    }
+    const adderMetadata = adderDetails.config.metadata;
+    const executingAdderInfo: ExecutingAdderInfo = {
+        name: adderMetadata.package,
+        version: adderMetadata.version,
+    };
+    await executeAdders([adderDetails], executingAdderInfo, remoteControlOptions);
+}
+
+export async function executeAdders<Args extends OptionDefinition>(
+    adderDetails: AdderDetails<Args>[],
+    executingAdder: ExecutingAdderInfo,
+    remoteControlOptions: RemoteControlOptions | undefined = undefined,
+) {
+    const adderDetailsByAdderId: Map<string, AdderDetails<Args>> = new Map();
+    adderDetails.map((x) => adderDetailsByAdderId.set(x.config.metadata.id, x));
 
     const remoteControlled = remoteControlOptions !== undefined;
     const isTesting = remoteControlled && remoteControlOptions.isTesting;
 
-    let cliOptions = {};
-    let workingDirectory = "";
-    if (!remoteControlled) {
-        cliOptions = prepareAndParseCliOptions(config);
-        workingDirectory = determineWorkingDirectory(cliOptions);
-        workingDirectory = await detectOrCreateProject(workingDirectory);
-    } else {
-        cliOptions = remoteControlOptions.optionValues;
-        workingDirectory = remoteControlOptions.workingDirectory;
+    const cliOptions = !isTesting ? prepareAndParseCliOptions(adderDetails) : {};
+    const commonCliOptions = extractCommonCliOptions(cliOptions);
+    const cliOptionsByAdderId = !isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions;
+    validateOptionTypes(adderDetails, cliOptionsByAdderId);
+
+    let workingDirectory: string | null;
+    if (isTesting) workingDirectory = remoteControlOptions.workingDirectory;
+    else workingDirectory = await determineWorkingDirectory(commonCliOptions.path);
+    workingDirectory = await detectSvelteDirectory(workingDirectory);
+    const createProject = workingDirectory == null;
+    if (!workingDirectory) workingDirectory = process.cwd();
+
+    const executionPlan: AddersExecutionPlan = {
+        workingDirectory,
+        createProject,
+        commonCliOptions,
+        cliOptionsByAdderId,
+    };
+
+    await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
+}
+
+async function executePlan<Args extends OptionDefinition>(
+    executionPlan: AddersExecutionPlan,
+    executingAdder: ExecutingAdderInfo,
+    adderDetails: AdderDetails<Args>[],
+    remoteControlOptions: RemoteControlOptions | undefined,
+) {
+    const remoteControlled = remoteControlOptions !== undefined;
+    const isTesting = remoteControlled && remoteControlOptions.isTesting;
+
+    if (!isTesting) startPrompts(`Welcome to ${executingAdder.name}@${executingAdder.version}`);
+
+    // create project if required
+    if (executionPlan.createProject) {
+        const cwd = executionPlan.commonCliOptions.path ?? executionPlan.workingDirectory;
+        const { projectCreated, directory } = await createProject(cwd);
+        if (!projectCreated) return;
+        executionPlan.workingDirectory = directory;
     }
 
-    const workspace = createEmptyWorkspace<Args>();
-    await populateWorkspaceDetails(workspace, workingDirectory);
-
-    await askQuestionsAndAssignValuesToWorkspace(config, workspace, cliOptions);
-    ensureCorrectOptionTypes(config, workspace);
-
-    const isInstall = true;
-
-    if (config.integrationType === "inline") {
-        await processInlineAdder(config, workspace, isInstall, remoteControlled, workingDirectory);
-    } else if (config.integrationType === "external") {
-        await processExternalAdder(config, workingDirectory, isTesting);
-    } else {
-        throw new Error(`Unknown integration type`);
+    // select appropriate adders
+    let userSelectedAdders = executionPlan.commonCliOptions.adders ?? [];
+    if (userSelectedAdders.length == 0 && adderDetails.length > 1) {
+        // if the user has not selected any adders via the cli and we are currently executing for more than one adder
+        // the user should have the possibility to select the adders he want's to add.
+        userSelectedAdders = await askForAddersToApply(adderDetails);
+    } else if (userSelectedAdders.length == 0 && adderDetails.length == 1) {
+        // if we are executing only one adder, then we can safely assume that this adder should be added
+        userSelectedAdders = [adderDetails[0].config.metadata.id];
     }
 
-    await runPostInstallationChecks(checks.postInstallation);
+    // remove unselected adder data
+    const addersToRemove = adderDetails.filter((x) => !userSelectedAdders.includes(x.config.metadata.id));
+    for (const adderToRemove of addersToRemove) {
+        const adderId = adderToRemove.config.metadata.id;
+        delete executionPlan.cliOptionsByAdderId[adderId];
+    }
+    adderDetails = adderDetails.filter((x) => userSelectedAdders.includes(x.config.metadata.id));
+
+    // preconditions
+    await validatePreconditions(adderDetails, isTesting);
+
+    // ask the user questions about unselected options
+    await requestMissingOptionsFromUser(adderDetails, executionPlan);
+
+    // apply the adders
+    for (const { config } of adderDetails) {
+        const adderId = config.metadata.id;
+
+        const workspace = createEmptyWorkspace();
+        await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+        if (executionPlan.cliOptionsByAdderId) {
+            for (const [key, value] of Object.entries(executionPlan.cliOptionsByAdderId[adderId])) {
+                addPropertyToWorkspaceOption(workspace, key, value);
+            }
+        }
+
+        const isInstall = true;
+        if (config.integrationType === "inline") {
+            const localConfig = config as InlineAdderConfig<OptionDefinition>;
+            await processInlineAdder(localConfig, workspace, isInstall);
+        } else if (config.integrationType === "external") {
+            await processExternalAdder(config, executionPlan.workingDirectory, isTesting);
+        } else {
+            throw new Error(`Unknown integration type`);
+        }
+    }
+
+    if (!remoteControlled) await suggestInstallingDependencies(executionPlan.workingDirectory);
+
+    if (!isTesting) endPrompts("You're all set!");
+}
+
+async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[]): Promise<string[]> {
+    const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
+    const selectedAdders: string[] = [];
+    const totalCategories = Object.keys(categories).length;
+    let currentCategory = 0;
+
+    for (const [categoryId, adders] of groupedByCategory) {
+        currentCategory++;
+        const categoryDetails = categories[categoryId];
+
+        const promptOptions: PromptOption<string>[] = [];
+        for (const adder of adders) {
+            const adderMetadata = adder.config.metadata;
+            promptOptions.push({
+                label: adderMetadata.name,
+                value: adderMetadata.id,
+                hint: adderMetadata.description,
+            });
+        }
+
+        const promptDescription = `${categoryDetails.name} (${currentCategory} / ${totalCategories})`;
+        const selectedValues = await multiSelectPrompt(promptDescription, promptOptions);
+        selectedAdders.push(...selectedValues);
+    }
+
+    return selectedAdders;
 }
 
 async function processInlineAdder<Args extends OptionDefinition>(
     config: InlineAdderConfig<Args>,
     workspace: Workspace<Args>,
     isInstall: boolean,
-    remoteControlled: boolean,
-    workingDirectory: string,
 ) {
     await installPackages(config, workspace);
     await createOrUpdateFiles(config.files, workspace);
     runHooks(config, workspace, isInstall);
-    if (!remoteControlled) await suggestInstallingDependencies(workingDirectory);
 }
 
 async function processExternalAdder<Args extends OptionDefinition>(
@@ -95,12 +216,10 @@ async function processExternalAdder<Args extends OptionDefinition>(
     } catch (error) {
         throw new Error("Failed executing external command: " + error);
     }
-
-    if (!isTesting && config.installDependencies) await suggestInstallingDependencies(workingDirectory);
 }
 
-export function determineWorkingDirectory(options: OptionValues) {
-    let cwd = options.path ?? process.cwd();
+export function determineWorkingDirectory(directory: string | undefined) {
+    let cwd = directory ?? process.cwd();
     if (!path.isAbsolute(cwd)) {
         cwd = path.join(process.cwd(), cwd);
     }
@@ -160,12 +279,4 @@ export function generateAdderInfo(pkg: any): {
         package: name,
         version: pkg.version,
     };
-}
-
-export async function runPreInstallationChecks(checks: PreInstallationCheck[]) {
-    // console.log(checks);
-}
-
-export async function runPostInstallationChecks(checks: PostInstallationCheck[]) {
-    // console.log(checks);
 }

@@ -58,7 +58,6 @@ export type ExternalAdderConfig<Args extends OptionDefinition> = BaseAdderConfig
     integrationType: "external";
     command: string;
     environment?: Record<string, string>;
-    installDependencies: boolean;
 };
 
 export type AdderConfig<Args extends OptionDefinition> = InlineAdderConfig<Args> | ExternalAdderConfig<Args>;
@@ -83,7 +82,10 @@ export function defineAdder<Args extends OptionDefinition>(
 ) {
     const remoteControlled = remoteControl.isRemoteControlled();
     if (!remoteControlled) {
-        executeAdder(config, checks);
+        executeAdder({
+            config,
+            checks,
+        });
     }
 
     const adder: Adder<Args> = { config, checks, tests };
@@ -120,20 +122,14 @@ export function defineAdderOptions<Args extends OptionDefinition>(options: Args)
     return options;
 }
 
-export type PreInstallationCheck = {
+export type Precondition = {
     name: string;
-    run: (workingDirectory: string) => boolean;
-};
-
-export type PostInstallationCheck = {
-    name: string;
-    run: (workingDirectory: string) => boolean;
+    run: () => Promise<{ success: boolean; message: string | undefined }>;
 };
 
 export type AdderCheckConfig<Args extends OptionDefinition> = {
-    preInstallation?: PreInstallationCheck[];
-    postInstallation: PostInstallationCheck[];
     options: Args;
+    preconditions?: Precondition[];
 };
 
 export function defineAdderChecks<Args extends OptionDefinition>(checks: AdderCheckConfig<Args>) {

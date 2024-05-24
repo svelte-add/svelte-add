@@ -3,6 +3,7 @@ import { booleanPrompt, endPrompts, selectPrompt, startPrompts, textPrompt } fro
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
+import { spinner } from "@clack/prompts";
 
 export async function detectOrCreateProject(cwd: string) {
     let workingDirectory = await detectSvelteDirectory(cwd);
@@ -56,8 +57,6 @@ export async function detectSvelteDirectory(directoryPath: string): Promise<stri
 }
 
 export async function createProject(cwd: string) {
-    startPrompts("Create new project");
-
     const createNewProject = await booleanPrompt("Create new Project?", true);
     if (!createNewProject) {
         console.log("New project should not be created. Exiting.");
@@ -87,8 +86,6 @@ export async function createProject(cwd: string) {
         ]);
     }
 
-    endPrompts("Initializing template...");
-
     let args = [];
     if (projectType == "kit") {
         args = ["init", "svelte@latest", directory];
@@ -97,12 +94,22 @@ export async function createProject(cwd: string) {
         args = ["init", "vite@latest", directory, "--", "--template", template];
     }
 
+    const loadingSpinner = spinner();
+    loadingSpinner.start("Initializing template...");
+
     try {
+        loadingSpinner.stop("Downloading initializer cli...");
+
         await executeCli("npm", args, process.cwd(), { stdio: "inherit" });
+
+        console.clear();
     } catch (error) {
+        loadingSpinner.stop("Failed initializing template!");
         console.log("cancelled or failed " + error);
         return { projectCreated: false, directory: "" };
     }
+
+    loadingSpinner.stop("Template initialized");
 
     return {
         projectCreated: true,

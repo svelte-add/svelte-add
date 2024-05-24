@@ -1,7 +1,7 @@
 import { mkdir, rm } from "fs/promises";
 import { create } from "create-svelte";
 import { join } from "path";
-import { executeCli } from "@svelte-add/core/internal";
+import { executeCli } from "@svelte-add/core";
 
 export const ProjectTypes = {
     Svelte_JS: "svelte-js",

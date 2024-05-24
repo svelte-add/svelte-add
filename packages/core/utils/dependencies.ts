@@ -15,7 +15,6 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     // Note: The return type for this is incorrect. If a PM is not found, it returns `null`.
     const detectedPm = await preferredPackageManager(workingDirectory);
     let selectedPm: PackageManager;
-    startPrompts("Dependencies");
     if (!detectedPm) {
         selectedPm = await selectPrompt("Which package manager to want to install dependencies with?", undefined, [
             {
@@ -31,7 +30,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     }
 
     if (!selectedPm || !packageManagers[selectedPm]) {
-        endPrompts("Skipped installing dependencies");
+        console.log("Skipped installing dependencies");
         return;
     }
 
@@ -41,11 +40,9 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     args.splice(0, 1);
 
     const loadingSpinner = spinner();
-    loadingSpinner.start("Installing");
+    loadingSpinner.start("Installing dependencies...");
     await installDependencies(command, args, workingDirectory);
-    loadingSpinner.stop("Done");
-
-    endPrompts("You're all set!");
+    loadingSpinner.stop("Successfully installed dependencies");
 }
 
 async function installDependencies(command: string, args: string[], workingDirectory: string) {

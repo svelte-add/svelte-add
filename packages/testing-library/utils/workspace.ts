@@ -1,7 +1,7 @@
 import { cp, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { TestOptions } from "..";
-import { executeCli } from "@svelte-add/core/internal";
+import { executeCli } from "@svelte-add/core";
 
 const templatesDirectory = "templates";
 

@@ -8,9 +8,11 @@ export async function runAdder(
     workingDirectory: string,
     optionValues: OptionValues<Record<string, Question>>,
 ) {
-    const remoteControlledOptions: RemoteControlOptions = { workingDirectory, optionValues, isTesting: true };
+    const adderOptions: Record<string, Record<string, any>> = {};
+    adderOptions[adder.config.metadata.id] = optionValues;
+    const remoteControlOptions: RemoteControlOptions = { workingDirectory, isTesting: true, adderOptions };
 
-    await executeAdder(adder.config, adder.checks, remoteControlledOptions);
+    await executeAdder({ config: adder.config, checks: adder.checks }, remoteControlOptions);
 
     const workspace = createEmptyWorkspace();
     workspace.cwd = workingDirectory;
