@@ -1,5 +1,12 @@
 # @svelte-add/bootstrap
 
+## 1.0.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @svelte-add/core@2.1.1
+
 ## 1.0.5
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @svelte-add/core
 
+## 2.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`8abea835a5c761fcc208f151b7ef347c238e3862`](https://github.com/svelte-add/svelte-add/commit/8abea835a5c761fcc208f151b7ef347c238e3862)]:
+  - @svelte-add/ast-manipulation@2.0.4
+
 ## 2.1.0
 
 ### Minor Changes
