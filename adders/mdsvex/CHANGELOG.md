@@ -1,5 +1,12 @@
 # @svelte-add/mdsvex
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`9086cdafbcf326280b92d86cdc72a15f78038657`](https://github.com/svelte-add/svelte-add/commit/9086cdafbcf326280b92d86cdc72a15f78038657)]:
+  - @svelte-add/core@2.1.2
+
 ## 1.0.6
 
 ### Patch Changes

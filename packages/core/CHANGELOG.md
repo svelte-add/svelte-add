@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.1.2
+
+### Patch Changes
+
+- chore: add precondition logic and improve user flow ([#368](https://github.com/svelte-add/svelte-add/pull/368))
+
 ## 2.1.1
 
 ### Patch Changes

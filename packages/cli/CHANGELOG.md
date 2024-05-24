@@ -1,5 +1,22 @@
 # svelte-add
 
+## 2.0.7
+
+### Patch Changes
+
+- chore: add precondition logic and improve user flow ([#368](https://github.com/svelte-add/svelte-add/pull/368))
+
+- Updated dependencies [[`9086cdafbcf326280b92d86cdc72a15f78038657`](https://github.com/svelte-add/svelte-add/commit/9086cdafbcf326280b92d86cdc72a15f78038657)]:
+  - @svelte-add/core@2.1.2
+  - svelte-add@2.0.7
+  - @svelte-add/bootstrap@1.0.7
+  - @svelte-add/bulma@1.0.7
+  - @svelte-add/mdsvex@1.0.7
+  - @svelte-add/routify@1.0.7
+  - @svelte-add/storybook@1.0.7
+  - @svelte-add/tailwindcss@1.0.7
+  - @svelte-add/threlte@1.0.7
+
 ## 2.0.6
 
 ### Patch Changes
