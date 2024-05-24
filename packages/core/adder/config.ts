@@ -124,7 +124,7 @@ export function defineAdderOptions<Args extends OptionDefinition>(options: Args)
 
 export type Precondition = {
     name: string;
-    run: () => { success: boolean; message: string | undefined };
+    run: () => Promise<{ success: boolean; message: string | undefined }>;
 };
 
 export type AdderCheckConfig<Args extends OptionDefinition> = {

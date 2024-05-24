@@ -1,4 +1,4 @@
-import { executeCli } from "@svelte-add/core/internal";
+import { executeCli } from "@svelte-add/core";
 import { ChildProcessWithoutNullStreams } from "child_process";
 import terminate from "terminate";
 

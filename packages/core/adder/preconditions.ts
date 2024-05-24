@@ -18,7 +18,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
             let message;
             let preconditionPassed;
             try {
-                const result = precondition.run();
+                const result = await precondition.run();
 
                 if (result.success) {
                     message = precondition.name;
@@ -29,7 +29,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                 }
             } catch (error) {
                 preconditionPassed = false;
-                message = precondition.name + `(Unexpected failure: ${error})`;
+                message = precondition.name + ` (Unexpected failure: ${error})`;
             }
 
             if (multipleAdders) {

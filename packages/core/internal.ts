@@ -5,7 +5,6 @@ import { createEmptyWorkspace, populateWorkspaceDetails } from "./utils/workspac
 import { detectOrCreateProject } from "./utils/create-project.js";
 import { PromptOption, endPrompts, multiSelectPrompt, textPrompt, startPrompts } from "./utils/prompts.js";
 import { suggestInstallingDependencies } from "./utils/dependencies.js";
-import { executeCli } from "./utils/common.js";
 
 export {
     remoteControl,
@@ -22,5 +21,4 @@ export {
     textPrompt,
     startPrompts,
     suggestInstallingDependencies,
-    executeCli,
 };
