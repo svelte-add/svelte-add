@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.2.0
+
+### Minor Changes
+
+- feat: add ability to skip installing dependencies and skip precondition checks ([#371](https://github.com/svelte-add/svelte-add/pull/371))
+
+### Patch Changes
+
+- chore: consolidate common options ([#371](https://github.com/svelte-add/svelte-add/pull/371))
+
 ## 2.1.2
 
 ### Patch Changes
