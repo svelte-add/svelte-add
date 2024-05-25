@@ -17,7 +17,8 @@
         "test": "node ./packages/tests/index.js",
         "types:check": "tsc --project tsconfig.json",
         "utils:readmes": "npx ./packages/dev-utils readmes",
-        "utils:packages": "npx ./packages/dev-utils packages"
+        "utils:packages": "npx ./packages/dev-utils packages",
+        "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check"
     },
     "keywords": [],
     "author": "",

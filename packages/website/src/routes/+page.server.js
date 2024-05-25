@@ -1,4 +1,5 @@
 import { getAdderInfos } from "$lib/adder";
+import { availableCliOptions } from "@svelte-add/core/internal";
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
@@ -17,5 +18,6 @@ export async function load() {
     return {
         adderCategories: infos,
         keywords,
+        availableCliOptions,
     };
 }

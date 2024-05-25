@@ -11,8 +11,9 @@
 
     /** @type {import("$lib/adder.js").AdderMetadataWithOptions} */
     const adder = data.adder;
+    const availableCliOptions = data.availableCliOptions;
 
-    const { metadata, options } = adder;
+    const { metadata } = adder;
 </script>
 
 <Seo title={metadata.name} description="Add {metadata.name} to your svelte project" keywords={metadata.website?.keywords} />
@@ -35,4 +36,4 @@
     </Box>
 </BoxWrapper>
 
-<Configurator adders={[adder]}></Configurator>
+<Configurator adders={[adder]} {availableCliOptions}></Configurator>

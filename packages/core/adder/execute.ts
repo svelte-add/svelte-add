@@ -15,7 +15,7 @@ import {
     prepareAndParseCliOptions,
     extractCommonCliOptions,
     extractAdderCliOptions,
-    CommonCliOptions,
+    AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
 import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
@@ -39,7 +39,7 @@ export type ExecutingAdderInfo = {
 
 export type AddersExecutionPlan = {
     createProject: boolean;
-    commonCliOptions: CommonCliOptions;
+    commonCliOptions: AvailableCliOptionValues;
     cliOptionsByAdderId: Record<string, Record<string, any>>;
     workingDirectory: string;
 };
@@ -128,7 +128,7 @@ async function executePlan<Args extends OptionDefinition>(
     adderDetails = adderDetails.filter((x) => userSelectedAdders.includes(x.config.metadata.id));
 
     // preconditions
-    await validatePreconditions(adderDetails, isTesting);
+    if (!executionPlan.commonCliOptions.skipPreconditions) await validatePreconditions(adderDetails, isTesting);
 
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
@@ -156,7 +156,8 @@ async function executePlan<Args extends OptionDefinition>(
         }
     }
 
-    if (!remoteControlled) await suggestInstallingDependencies(executionPlan.workingDirectory);
+    if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
+        await suggestInstallingDependencies(executionPlan.workingDirectory);
 
     if (!isTesting) endPrompts("You're all set!");
 }

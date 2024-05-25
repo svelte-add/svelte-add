@@ -20,3 +20,25 @@ npx @svelte-add/mdsvex@latest --path ./your-project
 ```
 
 undefined
+
+
+## Available options (common)
+
+    
+- `path` (default: ./) - Path to working directory
+- `skip-preconditions` (default: false) - Skips validating preconditions before running the adder
+- `skip-install` (default: false) - Skips installing dependencies after applying the adder
+
+
+Option syntax
+```sh
+npx @svelte-add/mdsvex@latest --key value
+```
+
+Specific example
+```sh
+npx @svelte-add/mdsvex@latest --path ./
+```
+
+You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.
+

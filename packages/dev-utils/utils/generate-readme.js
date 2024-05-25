@@ -1,5 +1,6 @@
 import { getAdderConfig, getAdderList } from "svelte-add/website";
 import { writeFile } from "fs/promises";
+import { availableCliOptions } from "@svelte-add/core/internal";
 
 const domain = "https://svelte-add.com";
 const codeTagStart = "```sh";
@@ -46,6 +47,8 @@ ${adderNpx} --path ./your-project
 ${codeTagEnd}
 
 ${generateOptions(adder, adderNpx)}
+
+${generateCommonOptions(adder, adderNpx)}
 `;
 }
 
@@ -59,7 +62,7 @@ function generateOptions(adder, adderNpx) {
     if (optionKeys.length == 0) return;
 
     let markdown = `
-## Available options
+## Available options (adder-specific)
 
     `;
 
@@ -79,6 +82,44 @@ ${codeTagEnd}
 Specific example
 ${codeTagStart}
 ${adderNpx} --${firstOptionKey} ${firstOptionValue.default}
+${codeTagEnd}
+
+You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.
+`;
+
+    return markdown;
+}
+
+/**
+ * @param {import("@svelte-add/core/adder/config").AdderConfig<Record<string, import("@svelte-add/core/adder/options").Question>>} adder
+ * @param {string} adderNpx
+ */
+function generateCommonOptions(adder, adderNpx) {
+    if (!availableCliOptions) return;
+    const optionKeys = Object.keys(availableCliOptions);
+    if (optionKeys.length == 0) return;
+
+    let markdown = `
+## Available options (common)
+
+    `;
+
+    const options = Object.values(availableCliOptions);
+    for (const value of options) {
+        markdown += `\n- \`${value.cliArg}\` (default: ${value.default}) - ${value.description}`;
+    }
+
+    const firstOptionValue = options[0];
+
+    markdown += `\n\n
+Option syntax
+${codeTagStart}
+${adderNpx} --key value
+${codeTagEnd}
+
+Specific example
+${codeTagStart}
+${adderNpx} --${firstOptionValue.cliArg} ${firstOptionValue.default}
 ${codeTagEnd}
 
 You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.

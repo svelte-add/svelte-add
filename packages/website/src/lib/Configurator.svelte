@@ -5,6 +5,9 @@
     /** @type {import("./adder").AdderMetadataWithOptions[]} */
     export let adders = [];
 
+    /** @type {import("@svelte-add/core/internal").AvailableCliOptions} */
+    export let availableCliOptions;
+
     /** @type {any} */
     const selectedOptions = {};
     let command = "";
@@ -123,4 +126,28 @@
     {/if}
 
     <CopyCommand {command} />
+
+    <div>
+        There is a number of options that apply for all adders, that you can add as you like:
+        <ul>
+            {#each Object.values(availableCliOptions) as cliOption}
+                <li class="option">
+                    <span class="option-command">--{cliOption.cliArg}</span>
+                    (default: {cliOption.default}) {cliOption.description}
+                </li>
+            {/each}
+        </ul>
+    </div>
 </Box>
+
+<style>
+    .option {
+        margin: 0.5rem 0;
+    }
+
+    .option-command {
+        background-color: var(--dark-grey);
+        padding: 0.2rem 0.3rem;
+        border-radius: 0.5rem;
+    }
+</style>

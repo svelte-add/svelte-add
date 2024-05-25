@@ -6,6 +6,7 @@ import { detectOrCreateProject } from "./utils/create-project.js";
 import { PromptOption, endPrompts, multiSelectPrompt, textPrompt, startPrompts } from "./utils/prompts.js";
 import { suggestInstallingDependencies } from "./utils/dependencies.js";
 import { groupBy } from "./utils/common.js";
+import { availableCliOptions, type AvailableCliOptions } from "./adder/options.js";
 
 export {
     remoteControl,
@@ -23,4 +24,6 @@ export {
     startPrompts,
     suggestInstallingDependencies,
     groupBy,
+    availableCliOptions,
+    AvailableCliOptions,
 };

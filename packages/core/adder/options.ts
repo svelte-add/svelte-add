@@ -37,15 +37,63 @@ export type OptionValues<Args extends OptionDefinition> = {
             : never;
 };
 
-export type CommonCliOptions = {
-    path?: string;
-    adders?: string[];
+export type AvailableCliOptionKeys = "path" | "skipPreconditions" | "skipInstall";
+export type AvailableCliOptionKeyTypes = {
+    path: string;
+    skipPreconditions: boolean;
+    skipInstall: boolean;
+};
+
+export type AvailableCliOptionValues = {
+    [K in AvailableCliOptionKeys]?: AvailableCliOptionKeyTypes[K];
+} & { adders?: string[] };
+
+export type AvailableCliOption = {
+    cliArg: string;
+    processedCliArg: string; // `commander` will transform the cli name if the arg names contains `-`
+    description: string;
+    allowShorthand: boolean;
+} & (BooleanDefaultValue | StringDefaultValue);
+export type AvailableCliOptions = Record<AvailableCliOptionKeys, AvailableCliOption>;
+
+export const availableCliOptions: AvailableCliOptions = {
+    path: {
+        cliArg: "path",
+        processedCliArg: "path",
+        type: "string",
+        default: "./",
+        description: "Path to working directory",
+        allowShorthand: false,
+    },
+    skipPreconditions: {
+        cliArg: "skip-preconditions",
+        processedCliArg: "skipPreconditions",
+        type: "boolean",
+        default: false,
+        description: "Skips validating preconditions before running the adder",
+        allowShorthand: true,
+    },
+    skipInstall: {
+        cliArg: "skip-install",
+        processedCliArg: "skipInstall",
+        type: "boolean",
+        default: false,
+        description: "Skips installing dependencies after applying the adder",
+        allowShorthand: true,
+    },
 };
 
 export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[]) {
     const multipleAdders = adderDetails.length > 1;
 
-    program.option("--path <string>", "Path to working directory");
+    for (const option of Object.values(availableCliOptions)) {
+        if (option.allowShorthand) {
+            program.option(`--${option.cliArg} [${option.type}]`, option.description);
+        } else {
+            program.option(`--${option.cliArg} <${option.type}>`, option.description);
+        }
+    }
+
     if (multipleAdders) {
         program.option("--adder <string...>", "List of adders to install");
     }
@@ -119,8 +167,10 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
 }
 
 export function extractCommonCliOptions(cliOptions: CliOptionValues) {
-    const commonOptions: CommonCliOptions = {
-        path: cliOptions.path,
+    const commonOptions: AvailableCliOptionValues = {
+        path: cliOptions[availableCliOptions.path.processedCliArg],
+        skipInstall: cliOptions[availableCliOptions.skipInstall.processedCliArg],
+        skipPreconditions: cliOptions[availableCliOptions.skipPreconditions.processedCliArg],
         adders: cliOptions.adder,
     };
 
