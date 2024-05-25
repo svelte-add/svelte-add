@@ -1,5 +1,17 @@
 # @svelte-add/website
 
+## 2.1.0
+
+### Minor Changes
+
+- feat: display common options ([#371](https://github.com/svelte-add/svelte-add/pull/371))
+
+### Patch Changes
+
+- Updated dependencies [[`36f0162aa9a9f37bbc5ee20b295bb29c4eafafdd`](https://github.com/svelte-add/svelte-add/commit/36f0162aa9a9f37bbc5ee20b295bb29c4eafafdd), [`36f0162aa9a9f37bbc5ee20b295bb29c4eafafdd`](https://github.com/svelte-add/svelte-add/commit/36f0162aa9a9f37bbc5ee20b295bb29c4eafafdd)]:
+  - @svelte-add/core@2.2.0
+  - svelte-add@2.0.8
+
 ## 2.0.8
 
 ### Patch Changes
