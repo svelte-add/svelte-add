@@ -4,3 +4,4 @@ CHANGELOG.md
 packages/website/.svelte-kit/
 adders/*/README.md
 adders/*/package.json
+temp/

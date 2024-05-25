@@ -20,7 +20,7 @@ npx @svelte-add/bootstrap@latest --path ./your-project
 ```
 
 
-## Available options
+## Available options (adder-specific)
 
     
 - `useSass` (default: false) - Do you want to use sass? (css = faster, sass = better customization)
@@ -35,6 +35,28 @@ npx @svelte-add/bootstrap@latest --key value
 Specific example
 ```sh
 npx @svelte-add/bootstrap@latest --useSass false
+```
+
+You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.
+
+
+
+## Available options (common)
+
+    
+- `path` (default: ./) - Path to working directory
+- `skip-preconditions` (default: false) - Skips validating preconditions before running the adder
+- `skip-install` (default: false) - Skips installing dependencies after applying the adder
+
+
+Option syntax
+```sh
+npx @svelte-add/bootstrap@latest --key value
+```
+
+Specific example
+```sh
+npx @svelte-add/bootstrap@latest --path ./
 ```
 
 You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.

@@ -8,6 +8,7 @@
 
     const adderCategories = data.adderCategories;
     const category = data.category;
+    const availableCliOptions = data.availableCliOptions;
 
     /** @type {import("$lib/adder.js").AdderMetadataWithOptions[]} */
     let selectedAdders = [];
@@ -18,5 +19,5 @@
 <AdderCategoryList {adderCategories} bind:selectedAdders />
 
 <Box>
-    <Configurator adders={selectedAdders} />
+    <Configurator adders={selectedAdders} {availableCliOptions} />
 </Box>

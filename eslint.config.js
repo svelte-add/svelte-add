@@ -30,6 +30,7 @@ export default [
             "packages/tests/build",
             "packages/website/.svelte-kit",
             "packages/website/build",
+            "temp",
         ],
     },
 ];
