@@ -13,7 +13,7 @@
     },
     "devDependencies": {
         "@clack/prompts": "^0.7.0",
-        "commander": "^12.0.0",
+        "commander": "^12.1.0",
         "prettier-plugin-svelte": "^3.2.3"
     },
     "dependencies": {

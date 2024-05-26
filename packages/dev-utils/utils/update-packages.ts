@@ -1,5 +1,7 @@
 import { getAdderConfig, getAdderList } from "svelte-add/website";
 import { readFile, writeFile } from "fs/promises";
+import { Question } from "@svelte-add/core/adder/options";
+import { AdderConfig } from "@svelte-add/core/adder/config";
 
 const repoUrl = "https://github.com/svelte-add/svelte-add";
 
@@ -17,11 +19,7 @@ export async function updateAdderPackages() {
     }
 }
 
-/**
- * @param {any} data
- * @param {import("@svelte-add/core/adder/config").AdderConfig<Record<string, import("@svelte-add/core/adder/options").Question>>} adder
- */
-function updateAdderPackage(data, adder) {
+function updateAdderPackage(data: any, adder: AdderConfig<Record<string, Question>>) {
     data.bugs = `${repoUrl}/issues`;
     data.repository = {};
     data.repository.type = "git";

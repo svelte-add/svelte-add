@@ -22,6 +22,6 @@
         "svelte-add": "workspace:^"
     },
     "devDependencies": {
-        "commander": "^12.0.0"
+        "commander": "^12.1.0"
     }
 }

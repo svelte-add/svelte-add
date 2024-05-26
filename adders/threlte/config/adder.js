@@ -18,7 +18,7 @@ export const adder = defineAdderConfig({
     options,
     integrationType: "inline",
     packages: [
-        { name: "three", version: "^0.163.0", dev: false },
+        { name: "three", version: "^0.164.1", dev: false },
         { name: "@threlte/core", version: "^7.3.0", dev: false },
     ],
     files: [

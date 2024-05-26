@@ -79,4 +79,5 @@ export default [
     ...adderConfigs,
     getConfig("cli", false),
     getConfig("testing-library", false),
+    getConfig("dev-utils", false),
 ];

@@ -37,8 +37,8 @@ export {
     AstKinds,
 };
 
-export function parseScript(path: string): AstTypes.Program {
-    const jsAst: AstTypes.Program = recastParse(path, {
+export function parseScript(content: string): AstTypes.Program {
+    const jsAst: AstTypes.Program = recastParse(content, {
         parser: {
             parse: tsParse,
         },
