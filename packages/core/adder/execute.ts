@@ -128,7 +128,8 @@ async function executePlan<Args extends OptionDefinition>(
     adderDetails = adderDetails.filter((x) => userSelectedAdders.includes(x.config.metadata.id));
 
     // preconditions
-    if (!executionPlan.commonCliOptions.skipPreconditions) await validatePreconditions(adderDetails, isTesting);
+    if (!executionPlan.commonCliOptions.skipPreconditions)
+        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
 
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
