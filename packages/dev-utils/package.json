@@ -7,7 +7,7 @@
     "bin": "./index.js",
     "devDependencies": {
         "@svelte-add/ast-manipulation": "workspace:^",
-        "@svelte-add/ast-tooling": "^2.0.3",
+        "@svelte-add/ast-tooling": "^2.0.4",
         "@svelte-add/core": "workspace:^",
         "npm-check-updates": "^16.14.20",
         "svelte-add": "workspace:^"
