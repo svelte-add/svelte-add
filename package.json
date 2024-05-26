@@ -18,7 +18,7 @@
         "types:check": "tsc --project tsconfig.json",
         "utils:readmes": "node ./packages/dev-utils/build/index.js readmes",
         "utils:packages": "node ./packages/dev-utils/build/index.js packages",
-        "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies",
+        "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
         "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check"
     },
     "keywords": [],
