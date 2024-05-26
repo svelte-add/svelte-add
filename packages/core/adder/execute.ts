@@ -74,7 +74,7 @@ export async function executeAdders<Args extends OptionDefinition>(
 
     let workingDirectory: string | null;
     if (isTesting) workingDirectory = remoteControlOptions.workingDirectory;
-    else workingDirectory = await determineWorkingDirectory(commonCliOptions.path);
+    else workingDirectory = determineWorkingDirectory(commonCliOptions.path);
     workingDirectory = await detectSvelteDirectory(workingDirectory);
     const createProject = workingDirectory == null;
     if (!workingDirectory) workingDirectory = process.cwd();
@@ -130,6 +130,16 @@ async function executePlan<Args extends OptionDefinition>(
     // preconditions
     if (!executionPlan.commonCliOptions.skipPreconditions)
         await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
+
+    // applies the default option value to adder's cli options
+    if (executionPlan.commonCliOptions.default) {
+        for (const adder of adderDetails) {
+            const adderId = adder.config.metadata.id;
+            for (const [option, value] of Object.entries(adder.config.options)) {
+                executionPlan.cliOptionsByAdderId[adderId][option] = value.default;
+            }
+        }
+    }
 
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
