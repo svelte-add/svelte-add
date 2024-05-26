@@ -5,7 +5,10 @@ import pc from "picocolors";
 import { Precondition } from "./config.js";
 import { executeCli } from "../utils/common.js";
 
-function getGlobalPreconditions(executingCli: string): { name: string; preconditions: Precondition[] | undefined } {
+function getGlobalPreconditions(
+    executingCli: string,
+    workingDirectory: string,
+): { name: string; preconditions: Precondition[] | undefined } {
     return {
         name: executingCli,
         preconditions: [
@@ -21,7 +24,7 @@ function getGlobalPreconditions(executingCli: string): { name: string; precondit
                         // there are no pending changes. If the below command is run outside of a git repository,
                         // git will exit with a failing exit code, which will trigger the catch statement.
                         // also see https://remarkablemark.org/blog/2017/10/12/check-git-dirty/#git-status
-                        await executeCli("git", ["status", "--short"], process.cwd(), {
+                        await executeCli("git", ["status", "--short"], workingDirectory, {
                             onData: (data, program, resolve) => {
                                 outputText += data;
                             },
@@ -44,6 +47,7 @@ function getGlobalPreconditions(executingCli: string): { name: string; precondit
 export async function validatePreconditions<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
     executingCliName: string,
+    workingDirectory: string,
     isTesting: boolean,
 ) {
     const multipleAdders = adderDetails.length > 1;
@@ -56,7 +60,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
             preconditions: checks.preconditions,
         };
     });
-    const combinedPreconditions = [getGlobalPreconditions(executingCliName), ...adderPreconditions];
+    const combinedPreconditions = [getGlobalPreconditions(executingCliName, workingDirectory), ...adderPreconditions];
 
     for (const { name, preconditions } of combinedPreconditions) {
         if (!preconditions) continue;

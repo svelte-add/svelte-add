@@ -129,7 +129,7 @@ async function executePlan<Args extends OptionDefinition>(
 
     // preconditions
     if (!executionPlan.commonCliOptions.skipPreconditions)
-        await validatePreconditions(adderDetails, executingAdder.name, isTesting);
+        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
 
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
