@@ -1,11 +1,11 @@
-// import { run } from "npm-check-updates";
+import { run } from "npm-check-updates";
 import { readdirSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
 
 export async function updateDependencies() {
-    // await updatePackageJson();
+    await updatePackageJson();
     await updateAdderDependencies();
 }
 
@@ -29,6 +29,11 @@ async function updateAdderDependencies() {
         const init = declarator.init as AstTypes.CallExpression;
 
         const config = functions.argumentByIndex(init, 0, object.createEmpty());
+        const integrationType = object.property(config, "integrationType", common.createLiteral());
+        if (integrationType.value == "external")
+            // external adders do not have packages
+            continue;
+
         const packages = object.property(config, "packages", array.createEmpty());
 
         for (const packageObject of packages.elements as AstTypes.ObjectExpression[]) {
@@ -53,13 +58,13 @@ async function getLatestVersion(name: string) {
     return json.version;
 }
 
-// async function updatePackageJson() {
-//     const upgraded = await run({
-//         upgrade: true,
-//         cwd: process.cwd(),
-//         deep: true,
-//         root: true,
-//     });
+async function updatePackageJson() {
+    const upgraded = await run({
+        upgrade: true,
+        cwd: process.cwd(),
+        deep: true,
+        root: true,
+    });
 
-//     console.log(upgraded);
-// }
+    console.log(upgraded);
+}
