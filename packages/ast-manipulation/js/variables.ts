@@ -1,7 +1,15 @@
 import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
-export function declaration(ast: AstTypes.Program, kind: "const" | "let" | "var", name: string, value: AstKinds.ExpressionKind) {
-    const declarations = ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration");
+export function declaration(
+    ast: AstTypes.Program | AstKinds.DeclarationKind,
+    kind: "const" | "let" | "var",
+    name: string,
+    value: AstKinds.ExpressionKind,
+) {
+    const declarations =
+        ast.type == "Program"
+            ? ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration")
+            : [ast as AstTypes.VariableDeclaration];
     let declaration = declarations.find((x) => {
         const declarator = x.declarations[0] as AstTypes.VariableDeclarator;
         const identifier = declarator.id as AstTypes.Identifier;

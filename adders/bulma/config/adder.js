@@ -18,8 +18,8 @@ export const adder = defineAdderConfig({
     options,
     integrationType: "inline",
     packages: [
-        { name: "bulma", version: "^1.0.0", dev: true },
-        { name: "sass", version: "^1.71.1", dev: true, condition: ({ options }) => options.useSass },
+        { name: "bulma", version: "^1.0.1", dev: true },
+        { name: "sass", version: "^1.77.2", dev: true, condition: ({ options }) => options.useSass },
     ],
     files: [
         {

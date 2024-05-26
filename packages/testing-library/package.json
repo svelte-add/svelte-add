@@ -13,8 +13,8 @@
         "@svelte-add/ast-tooling": "workspace:^",
         "svelte-add": "workspace:^",
         "@svelte-add/core": "workspace:^",
-        "create-svelte": "^6.1.2",
-        "puppeteer": "^22.7.1"
+        "create-svelte": "^6.2.0",
+        "puppeteer": "^22.10.0"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {

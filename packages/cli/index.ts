@@ -2,7 +2,6 @@
 
 import { remoteControl, executeAdders } from "@svelte-add/core/internal";
 import { getAdderList } from "./website";
-import type { RemoteControlOptions } from "@svelte-add/core/adder/remoteControl";
 import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
 import pkg from "./package.json";
 import type { Question } from "@svelte-add/core/adder/options";

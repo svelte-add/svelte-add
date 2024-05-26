@@ -1,6 +1,8 @@
 import { getAdderConfig, getAdderList } from "svelte-add/website";
 import { writeFile } from "fs/promises";
 import { availableCliOptions } from "@svelte-add/core/internal";
+import { AdderConfig } from "@svelte-add/core/adder/config";
+import { Question } from "@svelte-add/core/adder/options";
 
 const domain = "https://svelte-add.com";
 const codeTagStart = "```sh";
@@ -17,11 +19,7 @@ export async function generateAdderReadmes() {
     }
 }
 
-/**
- * Generates the contents of the readme for a given adder
- * @param {import("@svelte-add/core/adder/config").AdderConfig<Record<string, import("@svelte-add/core/adder/options").Question>>} adder
- */
-export function generateReadme(adder) {
+export function generateReadme(adder: AdderConfig<Record<string, Question>>) {
     const metadata = adder.metadata;
     const adderNpx = `npx ${metadata.package}@latest`;
 
@@ -48,15 +46,11 @@ ${codeTagEnd}
 
 ${generateOptions(adder, adderNpx)}
 
-${generateCommonOptions(adder, adderNpx)}
+${generateCommonOptions(adderNpx)}
 `;
 }
 
-/**
- * @param {import("@svelte-add/core/adder/config").AdderConfig<Record<string, import("@svelte-add/core/adder/options").Question>>} adder
- * @param {string} adderNpx
- */
-function generateOptions(adder, adderNpx) {
+function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx: string) {
     if (!adder.options) return;
     const optionKeys = Object.keys(adder.options);
     if (optionKeys.length == 0) return;
@@ -90,11 +84,7 @@ You can combine as many options as you want. The usage of options is optional. I
     return markdown;
 }
 
-/**
- * @param {import("@svelte-add/core/adder/config").AdderConfig<Record<string, import("@svelte-add/core/adder/options").Question>>} adder
- * @param {string} adderNpx
- */
-function generateCommonOptions(adder, adderNpx) {
+function generateCommonOptions(adderNpx: string) {
     if (!availableCliOptions) return;
     const optionKeys = Object.keys(availableCliOptions);
     if (optionKeys.length == 0) return;

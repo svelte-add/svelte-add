@@ -15,6 +15,7 @@ export const adder = defineAdderConfig({
             documentation: "https://storybook.js.org/docs/get-started",
         },
     },
+
     options,
     integrationType: "external",
     command: "storybook init --skip-install",

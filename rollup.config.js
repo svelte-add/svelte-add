@@ -53,7 +53,7 @@ function getConfig(project, isAdder) {
             sourcemap: true,
             intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString}];` : undefined,
         },
-        external: [/^@svelte-add.*/, "prettier", "create-svelte", "puppeteer"],
+        external: [/^@svelte-add.*/, "prettier", "create-svelte", "puppeteer", "npm-check-updates"],
         plugins: [
             preserveShebangs(),
             typescript({ project: "./tsconfig.json", outDir, rootDir: projectRoot, sourceRoot: projectRoot }),
@@ -79,4 +79,5 @@ export default [
     ...adderConfigs,
     getConfig("cli", false),
     getConfig("testing-library", false),
+    getConfig("dev-utils", false),
 ];
