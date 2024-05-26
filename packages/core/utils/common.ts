@@ -36,7 +36,7 @@ export async function executeCli(
     commandArgs: string[],
     cwd: string,
     options?: {
-        onData?: (data: string, program: ChildProcess, resolve: (value: any) => any) => void;
+        onData?: (data: string, program: ChildProcess, resolve: (value?: any) => any) => void;
         stdio?: "pipe" | "inherit";
         env?: Record<string, string>;
     },
