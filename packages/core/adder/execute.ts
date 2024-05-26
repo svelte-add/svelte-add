@@ -131,12 +131,12 @@ async function executePlan<Args extends OptionDefinition>(
     if (!executionPlan.commonCliOptions.skipPreconditions)
         await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
 
-    // applies the default option value to adder's cli options
+    // applies the default option value to missing adder's cli options
     if (executionPlan.commonCliOptions.default) {
         for (const adder of adderDetails) {
             const adderId = adder.config.metadata.id;
             for (const [option, value] of Object.entries(adder.config.options)) {
-                executionPlan.cliOptionsByAdderId[adderId][option] = value.default;
+                executionPlan.cliOptionsByAdderId[adderId][option] ??= value.default;
             }
         }
     }
