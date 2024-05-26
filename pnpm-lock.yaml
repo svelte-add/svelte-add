@@ -215,8 +215,8 @@ importers:
         specifier: workspace:^
         version: link:../ast-manipulation
       '@svelte-add/ast-tooling':
-        specifier: ^2.0.3
-        version: 2.0.3
+        specifier: workspace:^
+        version: link:../ast-tooling
       '@svelte-add/core':
         specifier: workspace:^
         version: link:../core
@@ -912,9 +912,6 @@ packages:
   '@sindresorhus/is@5.6.0':
     resolution: {integrity: sha512-TV7t8GKYaJWsn00tFDqBw8+Uqmr8A0fRU1tvTQhyZzGv0sJCGRQL3JGMI3ucuKo3XIZdUP+Lx7/gh2t3lewy7g==}
     engines: {node: '>=14.16'}
-
-  '@svelte-add/ast-tooling@2.0.3':
-    resolution: {integrity: sha512-4jwN7LwTdDt2aBRd5sDw+t928ruayHxRxMOpGdJz0jL9yKdLJLS1gYXPkBlnUtdUd4ymsUmIc/PA/AWGPg1rbA==}
 
   '@sveltejs/adapter-static@3.0.1':
     resolution: {integrity: sha512-6lMvf7xYEJ+oGeR5L8DFJJrowkefTK6ZgA4JiMqoClMkKq0s6yvsd3FZfCFvX1fQ0tpCD7fkuRVHsnUVgsHyNg==}
@@ -4429,8 +4426,6 @@ snapshots:
       - supports-color
 
   '@sindresorhus/is@5.6.0': {}
-
-  '@svelte-add/ast-tooling@2.0.3': {}
 
   '@sveltejs/adapter-static@3.0.1(@sveltejs/kit@2.5.10(@sveltejs/vite-plugin-svelte@3.1.0(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))':
     dependencies:
