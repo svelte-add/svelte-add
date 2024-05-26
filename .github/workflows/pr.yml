@@ -85,5 +85,8 @@ jobs:
             - name: install dependencies
               run: pnpm install
 
-            - name: types
+            - name: packages build
+              run: pnpm build:prod
+
+            - name: website build
               run: pnpm website:build
