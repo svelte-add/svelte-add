@@ -1,5 +1,20 @@
 # svelte-add
 
+## 2.0.10
+
+### Patch Changes
+
+-   Updated dependencies [[`bad241ea02049cb1a5ec1c1bdac6c728879a2ec2`](https://github.com/svelte-add/svelte-add/commit/bad241ea02049cb1a5ec1c1bdac6c728879a2ec2)]:
+    -   @svelte-add/core@2.4.0
+    -   @svelte-add/bootstrap@1.0.10
+    -   @svelte-add/bulma@1.0.10
+    -   @svelte-add/mdsvex@1.0.10
+    -   @svelte-add/routify@1.0.10
+    -   @svelte-add/storybook@1.0.10
+    -   @svelte-add/tailwindcss@1.0.10
+    -   @svelte-add/threlte@1.0.10
+    -   svelte-add@2.0.10
+
 ## 2.0.9
 
 ### Patch Changes
