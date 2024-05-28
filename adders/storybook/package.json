@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/storybook",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "bin": "build/index.js",
     "type": "module",
     "license": "MIT",
