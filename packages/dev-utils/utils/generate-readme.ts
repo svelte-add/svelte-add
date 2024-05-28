@@ -99,7 +99,7 @@ function generateCommonOptions(adderNpx: string) {
         markdown += `\n- \`${value.cliArg}\` (default: ${value.default}) - ${value.description}`;
     }
 
-    const firstOptionValue = options[0];
+    const firstOptionValue = options.find((option) => option.cliArg === "path")!;
 
     markdown += `\n\n
 Option syntax

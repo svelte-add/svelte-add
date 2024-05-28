@@ -30,7 +30,6 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     }
 
     if (!selectedPm || !packageManagers[selectedPm]) {
-        console.log("Skipped installing dependencies");
         return;
     }
 
