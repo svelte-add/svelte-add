@@ -63,7 +63,7 @@ export const availableCliOptions: AvailableCliOptions = {
         processedCliArg: "default",
         type: "boolean",
         default: false,
-        description: "Installs default adder options",
+        description: "Installs default adder options for unspecified options",
         allowShorthand: true,
     },
     path: {
