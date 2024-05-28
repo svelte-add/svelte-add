@@ -1,6 +1,6 @@
 import { type OptionValues as CliOptionValues, program } from "commander";
 import { AdderDetails, AddersExecutionPlan } from "./execute.js";
-import { booleanPrompt, textPrompt } from "../utils/prompts.js";
+import { booleanPrompt, selectPrompt, textPrompt, type PromptOption } from "../utils/prompts.js";
 
 export type BooleanDefaultValue = {
     type: "boolean";
@@ -17,6 +17,12 @@ export type NumberDefaultValue = {
     default: number;
 };
 
+export type SelectDefaultValue<Value = any> = {
+    type: "select";
+    options: PromptOption<Value>[];
+    default: Value;
+};
+
 export type BaseQuestion = {
     question: string;
 };
@@ -24,7 +30,8 @@ export type BaseQuestion = {
 export type BooleanQuestion = BaseQuestion & BooleanDefaultValue;
 export type StringQuestion = BaseQuestion & StringDefaultValue;
 export type NumberQuestion = BaseQuestion & NumberDefaultValue;
-export type Question = BooleanQuestion | StringQuestion | NumberQuestion;
+export type SelectQuestion = BaseQuestion & SelectDefaultValue;
+export type Question = BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion;
 
 export type OptionDefinition = Record<string, Question>;
 export type OptionValues<Args extends OptionDefinition> = {
@@ -34,7 +41,12 @@ export type OptionValues<Args extends OptionDefinition> = {
           ? boolean
           : Args[K]["type"] extends "number"
             ? number
-            : never;
+            : Args[K]["type"] extends "select"
+              ? // @ts-expect-error we're trying to infer the type of the select, but TS is being belligerent
+                Args[K]["options"] extends Array<PromptOption<infer Value>>
+                  ? Value
+                  : never
+              : never;
 };
 
 export type AvailableCliOptionKeys = "path" | "skipPreconditions" | "skipInstall";
@@ -232,6 +244,8 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
                 optionValue = await textPrompt(questionPrefix + option.question, "Not sure", "" + option.default);
             } else if (option.type == "boolean") {
                 optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
+            } else if (option.type == "select") {
+                optionValue = await selectPrompt(questionPrefix + option.question, option.default, option.options);
             }
 
             if (optionValue === "true") optionValue = true;
