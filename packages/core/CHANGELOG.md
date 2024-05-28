@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.4.0
+
+### Minor Changes
+
+-   feat: added the shorthand `--default` flag to install the default adder options ([#376](https://github.com/svelte-add/svelte-add/pull/376))
+
 ## 2.3.0
 
 ### Minor Changes
