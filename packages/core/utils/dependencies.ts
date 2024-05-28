@@ -1,4 +1,4 @@
-import { endPrompts, selectPrompt, startPrompts } from "./prompts";
+import { selectPrompt } from "./prompts";
 import preferredPackageManager from "preferred-pm";
 import { spinner } from "@clack/prompts";
 import { executeCli } from "./common";

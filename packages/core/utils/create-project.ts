@@ -1,5 +1,5 @@
 import * as path from "path";
-import { booleanPrompt, endPrompts, selectPrompt, startPrompts, textPrompt } from "./prompts.js";
+import { booleanPrompt, selectPrompt, textPrompt } from "./prompts.js";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";

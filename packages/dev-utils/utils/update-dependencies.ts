@@ -3,6 +3,7 @@ import { readdirSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import { AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
+import { Package } from "@svelte-add/core/utils/common";
 
 export async function updateDependencies() {
     await updatePackageJson();
@@ -17,7 +18,7 @@ async function updateAdderDependencies() {
     for (const adderId of adderFolders) {
         const filePath = `./adders/${adderId}/config/adder.js`;
         const content = (await readFile(filePath)).toString();
-        const { ast, exports, functions, object, array, variables, common } = await getJsAstEditor(parseScript(content));
+        const { ast, exports, functions, object, array, variables, common } = getJsAstEditor(parseScript(content));
 
         const defineAdderConfig = functions.call("defineAdderConfig", []);
         const assignment = variables.declaration(ast, "const", "adder", defineAdderConfig);
@@ -54,7 +55,7 @@ async function updateAdderDependencies() {
 
 async function getLatestVersion(name: string) {
     const response = await fetch(`https://registry.npmjs.org/${name}/latest`);
-    const json = await response.json();
+    const json = (await response.json()) as Package;
     return json.version;
 }
 

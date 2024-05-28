@@ -122,7 +122,7 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
 
 export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
-    cliOptionsByAdderId: Record<string, Record<string, any>>,
+    cliOptionsByAdderId: Record<string, Record<string, unknown>>,
 ) {
     if (!cliOptionsByAdderId) {
         return;
@@ -183,7 +183,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 ) {
     const multipleAdders = adderDetails.length > 1;
 
-    const options: Record<string, Record<string, any>> = {};
+    const options: Record<string, Record<string, unknown>> = {};
     for (const { config } of adderDetails) {
         const adderId = config.metadata.id;
         options[adderId] = {};
@@ -193,7 +193,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 
             if (multipleAdders) cliOptionKey = `${adderId}${upperCaseFirstLetter(cliOptionKey)}`;
 
-            let optionValue = cliOptions[cliOptionKey];
+            let optionValue = cliOptions[cliOptionKey] as unknown;
             if (optionValue === "true") optionValue = true;
             else if (optionValue === "false") optionValue = false;
 
@@ -223,7 +223,7 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
 
             if (!executionPlan.cliOptionsByAdderId[adderId]) continue;
 
-            let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey];
+            let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey] as unknown;
 
             // if the option already has an value, ignore it and continue
             if (optionValue !== undefined) continue;

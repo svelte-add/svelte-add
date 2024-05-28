@@ -15,7 +15,7 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
     } else {
         let isShorthand = false;
         if (fallback.type == "Identifier") {
-            const identifier = fallback as AstTypes.Identifier;
+            const identifier: AstTypes.Identifier = fallback;
             isShorthand = identifier.name == name;
         }
 

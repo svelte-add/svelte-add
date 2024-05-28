@@ -20,7 +20,7 @@ export type TestCase = {
     runSynchronously: boolean;
 };
 
-export async function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
+export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
     const testCases = new Map<string, TestCase[]>();
     for (const adder of adders) {
         const adderTestCases: TestCase[] = [];
@@ -93,7 +93,7 @@ export type AdderError = {
     adder: string;
     template: string;
     message: string;
-};
+} & Error;
 
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
     const asyncTasks: Array<() => Promise<void>> = [];
@@ -106,6 +106,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
                 } catch (e) {
                     const error = e as Error;
                     const adderError: AdderError = {
+                        name: "AdderError",
                         adder: testCase.adder.config.metadata.id,
                         template: testCase.template,
                         message: error.message,
@@ -123,8 +124,8 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
     }
 
     let testProgressCount = 0;
-    let overallTaskCount = asyncTasks.length + syncTasks.length;
-    let parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
+    const overallTaskCount = asyncTasks.length + syncTasks.length;
+    const parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
 
     const allAsyncResults = await Throttle.raw(asyncTasks, {
         failFast: false,

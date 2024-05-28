@@ -32,7 +32,7 @@ export async function createProject(output: string, projectType: string) {
         });
     } else {
         const template = projectType == ProjectTypes.Svelte_TS ? "svelte-ts" : "svelte";
-        let args = ["init", "vite@latest", projectType, "--yes", "--", "--template", template];
+        const args = ["init", "vite@latest", projectType, "--yes", "--", "--template", template];
 
         try {
             await executeCli("npm", args, join(output, ".."));

@@ -5,7 +5,7 @@ import terminate from "terminate";
 export async function startDevServer(
     output: string,
     command: string,
-): Promise<{ url: string; devServer: ChildProcessWithoutNullStreams }> {
+): Promise<{ url: string; devServer: ChildProcessWithoutNullStreams } | undefined> {
     try {
         return await executeCli("pnpm", ["run", command], output, {
             onData: (data, program, resolve) => {

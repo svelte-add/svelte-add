@@ -8,6 +8,9 @@ export type Package = {
     version: string;
     dependencies: Record<string, string>;
     devDependencies: Record<string, string>;
+    bugs?: string;
+    repository?: { type: string; url: string };
+    keywords?: string[];
 };
 
 export async function getPackageJson(workspace: WorkspaceWithoutExplicitArgs) {
@@ -40,7 +43,7 @@ export async function executeCli(
         stdio?: "pipe" | "inherit";
         env?: Record<string, string>;
     },
-): Promise<void | any> {
+): Promise<void | undefined | string> {
     const stdio = options?.stdio ?? "pipe";
     const env = options?.env ?? process.env;
 
@@ -48,12 +51,12 @@ export async function executeCli(
 
     return await new Promise((resolve, reject) => {
         let errorText = "";
-        program.stderr?.on("data", (data) => {
+        program.stderr?.on("data", (data: Buffer) => {
             const value = data.toString();
             errorText += value;
         });
 
-        program.stdout?.on("data", (data) => {
+        program.stdout?.on("data", (data: Buffer) => {
             const value = data.toString();
             options?.onData?.(value, program, resolve);
         });

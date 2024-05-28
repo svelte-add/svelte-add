@@ -18,14 +18,13 @@ import {
     AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
-import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
+import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
-import { PromptOption, endPrompts, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
+import { PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
 import { categories } from "./categories.js";
-import { booleanPrompt, messagePrompt } from "../utils/prompts.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -40,7 +39,7 @@ export type ExecutingAdderInfo = {
 export type AddersExecutionPlan = {
     createProject: boolean;
     commonCliOptions: AvailableCliOptionValues;
-    cliOptionsByAdderId: Record<string, Record<string, any>>;
+    cliOptionsByAdderId: Record<string, Record<string, unknown>>;
     workingDirectory: string;
 };
 
@@ -74,7 +73,7 @@ export async function executeAdders<Args extends OptionDefinition>(
 
     let workingDirectory: string | null;
     if (isTesting) workingDirectory = remoteControlOptions.workingDirectory;
-    else workingDirectory = await determineWorkingDirectory(commonCliOptions.path);
+    else workingDirectory = determineWorkingDirectory(commonCliOptions.path);
     workingDirectory = await detectSvelteDirectory(workingDirectory);
     const createProject = workingDirectory == null;
     if (!workingDirectory) workingDirectory = process.cwd();
@@ -198,7 +197,7 @@ async function processInlineAdder<Args extends OptionDefinition>(
 ) {
     await installPackages(config, workspace);
     await createOrUpdateFiles(config.files, workspace);
-    runHooks(config, workspace, isInstall);
+    await runHooks(config, workspace, isInstall);
 }
 
 async function processExternalAdder<Args extends OptionDefinition>(
@@ -259,13 +258,13 @@ export async function installPackages<Args extends OptionDefinition>(
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
 }
 
-function runHooks<Args extends OptionDefinition>(
+async function runHooks<Args extends OptionDefinition>(
     config: InlineAdderConfig<Args>,
     workspace: Workspace<Args>,
     isInstall: boolean,
 ) {
-    if (isInstall && config.installHook) config.installHook(workspace);
-    else if (!isInstall && config.uninstallHook) config.uninstallHook(workspace);
+    if (isInstall && config.installHook) await config.installHook(workspace);
+    else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
 }
 
 export function generateAdderInfo(pkg: any): {

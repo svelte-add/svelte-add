@@ -7,12 +7,12 @@ import pkg from "./package.json";
 import type { Question } from "@svelte-add/core/adder/options";
 import type { AdderDetails, ExecutingAdderInfo } from "@svelte-add/core/adder/execute";
 
-executeCli();
+void executeCli();
 
 async function executeCli() {
     remoteControl.enable();
 
-    const addersList = await getAdderList();
+    const addersList = getAdderList();
     const adderDetails: AdderDetails<Record<string, Question>>[] = [];
 
     for (const adderName of addersList) {

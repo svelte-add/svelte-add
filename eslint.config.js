@@ -1,9 +1,12 @@
 import js from "@eslint/js";
 import eslintPrettier from "eslint-plugin-prettier/recommended";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
     js.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+    // ...tseslint.configs.stylisticTypeChecked,
     eslintPrettier,
     {
         languageOptions: {
@@ -11,6 +14,10 @@ export default [
             sourceType: "module",
             globals: {
                 ...globals.node,
+            },
+            parserOptions: {
+                project: ["./tsconfig.json", "./packages/website/tsconfig.json"],
+                tsconfigRootDir: import.meta.dirname,
             },
         },
         rules: {},
@@ -30,7 +37,8 @@ export default [
             "packages/tests/build",
             "packages/website/.svelte-kit",
             "packages/website/build",
+            "packages/website",
             "temp",
         ],
     },
-];
+);

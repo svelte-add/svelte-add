@@ -4,8 +4,8 @@ import { Question } from "@svelte-add/core/adder/options";
 export function getAdderList(): string[] {
     // @ts-expect-error The list is assembled during build and injected by rollup.
     // If you don't see all required adders, please restart your dev server.
-    // eslint-disable-next-line no-undef
-    return ADDER_LIST;
+
+    return ADDER_LIST as string[];
 }
 
 export async function getAdderConfig(name: string) {

@@ -8,7 +8,7 @@ export async function runAdder(
     workingDirectory: string,
     optionValues: OptionValues<Record<string, Question>>,
 ) {
-    const adderOptions: Record<string, Record<string, any>> = {};
+    const adderOptions: Record<string, OptionValues<Record<string, Question>>> = {};
     adderOptions[adder.config.metadata.id] = optionValues;
     const remoteControlOptions: RemoteControlOptions = { workingDirectory, isTesting: true, adderOptions };
 

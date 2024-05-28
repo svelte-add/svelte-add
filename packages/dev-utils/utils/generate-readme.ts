@@ -9,7 +9,7 @@ const codeTagStart = "```sh";
 const codeTagEnd = "```";
 
 export async function generateAdderReadmes() {
-    const adderList = await getAdderList();
+    const adderList = getAdderList();
 
     for (const adderName of adderList) {
         const adderConfig = await getAdderConfig(adderName);
