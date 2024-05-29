@@ -74,7 +74,7 @@ export function statementFromString(value: string): AstKinds.StatementKind {
     return program.body[0];
 }
 
-/** Appends the statement to body of the block */
+/** Appends the statement to body of the block if it doesn't already exist */
 export function addStatement(ast: AstTypes.BlockStatement | AstTypes.Program, statement: AstKinds.StatementKind) {
     if (hasNode(ast, statement) === false) ast.body.push(statement);
 }
