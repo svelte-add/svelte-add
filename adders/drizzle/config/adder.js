@@ -72,10 +72,12 @@ export const adder = defineAdderConfig({
                     imports.addNamed(ast, "node:url", { pathToFileURL: "pathToFileURL" });
                 }
 
-                common.addFromString(
-                    ast,
+                const envCheckStatement = common.statementFromString(
                     `if (!process.env.DATABASE_URL) throw new Error('Missing environment variable: DATABASE_URL');`,
                 );
+                if (common.hasNode(ast, envCheckStatement) === false) {
+                    ast.body.push(envCheckStatement);
+                }
 
                 const dbURL =
                     options.database === "sqlite"
@@ -174,9 +176,9 @@ export const adder = defineAdderConfig({
 
                 imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
 
-                const clientIdentExists = alreadyDeclared(ast, "client");
-                if (clientIdentExists === false && clientExpression) {
-                    const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
+                if (!clientExpression) throw new Error("unreachable state...");
+                const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
+                if (common.hasNode(ast, clientIdentifier) === false) {
                     ast.body.push(clientIdentifier);
                 }
 
@@ -192,19 +194,3 @@ export const adder = defineAdderConfig({
         },
     ],
 });
-
-/**
- *
- * @param {import('../../../packages/ast-tooling/index.js').AstTypes.Program} ast
- * @param {string} identifier
- */
-function alreadyDeclared(ast, identifier) {
-    const foundNode = ast.body.find(
-        (statement) =>
-            statement.type === "VariableDeclaration" &&
-            statement.declarations.some(
-                (n) => n.type === "VariableDeclarator" && n.id.type === "Identifier" && n.id.name === identifier,
-            ),
-    );
-    return foundNode !== undefined;
-}

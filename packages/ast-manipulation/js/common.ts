@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import { AstKinds, AstTypes, Walker, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 
 export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
     const comment: AstTypes.CommentBlock = {
@@ -31,7 +31,7 @@ export function createLiteral(value: string | null = null) {
 }
 
 export function areNodesEqual(ast1: AstTypes.ASTNode, ast2: AstTypes.ASTNode) {
-    return serializeScript(ast1) == serializeScript(ast2);
+    return serializeScript(ast1) === serializeScript(ast2);
 }
 
 export function blockStatement() {
@@ -60,6 +60,32 @@ export function addFromString(ast: AstTypes.BlockStatement | AstTypes.Program, v
 
 export function expressionFromString(value: string): AstKinds.ExpressionKind {
     const program = parseScript(value);
+    const statement = program.body[0];
+    if (statement.type !== "ExpressionStatement") {
+        throw new Error("value passed was not an expression");
+    }
 
-    return program.body[0] as unknown as AstKinds.ExpressionKind;
+    return statement.expression;
+}
+
+export function statementFromString(value: string): AstKinds.StatementKind {
+    const program = parseScript(value);
+
+    return program.body[0];
+}
+
+export function hasNode(ast: AstTypes.ASTNode, nodeToMatch: AstTypes.ASTNode): boolean {
+    let found = false;
+    // prettier-ignore
+    // this gets needlessly butchered by prettier
+    Walker.walk(ast, {}, {
+        _(node, { next, stop }) {
+            if (node.type === nodeToMatch.type) {
+                found = areNodesEqual(node, nodeToMatch);
+                if (found) stop();
+            }
+            next();
+        },
+    });
+    return found;
 }

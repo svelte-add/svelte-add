@@ -13,7 +13,8 @@
         "htmlparser2": "^9.1.0",
         "postcss": "^8.4.38",
         "recast": "^0.23.7",
-        "silver-fleece": "^1.1.0"
+        "silver-fleece": "^1.1.0",
+        "zimmerframe": "^1.1.2"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
