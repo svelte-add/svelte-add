@@ -15,7 +15,7 @@ import * as Walker from "zimmerframe";
  * Most of the AST tooling is pretty big in bundle size and bundling takes forever.
  * Nevertheless bundling of these tools seems smart, as they add many dependencies to each install.
  * In order to avoid long bundling during development, all of the AST tools have been extracted
- * into this separate packe and are bundled only here. This package has been marked as external
+ * into this separate package and are bundled only here. This package has been marked as external
  * and will not be bundled into all other projects / bundles.
  */
 
