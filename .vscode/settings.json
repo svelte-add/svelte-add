@@ -1,10 +1,5 @@
 {
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-    "cSpell.words": [
-        "ecma",
-        "popperjs",
-        "Svex",
-        "threlte"
-    ],
+    "cSpell.words": ["ecma", "popperjs", "Svex", "threlte"],
     "eslint.experimental.useFlatConfig": true
 }
