@@ -5,7 +5,7 @@
     "license": "MIT",
     "exports": "./build/index.js",
     "devDependencies": {
-        "promise-parallel-throttle": "^3.4.1",
+        "promise-parallel-throttle": "^3.5.0",
         "terminate": "^2.6.1",
         "uid": "^2.0.2"
     },
