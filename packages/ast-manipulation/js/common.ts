@@ -57,3 +57,9 @@ export function addFromString(ast: AstTypes.BlockStatement | AstTypes.Program, v
         ast.body.push(childNode);
     }
 }
+
+export function expressionFromString(value: string): AstKinds.ExpressionKind {
+    const program = parseScript(value);
+
+    return program.body[0] as unknown as AstKinds.ExpressionKind;
+}
