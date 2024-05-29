@@ -98,6 +98,8 @@ export type AdderError = {
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
     const asyncTasks: Array<() => Promise<void>> = [];
     const syncTasks: Array<() => Promise<void>> = [];
+    const asyncTestCaseInputs: TestCase[] = [];
+    const syncTestCaseInputs: TestCase[] = [];
     for (const values of testCases.values()) {
         for (const testCase of values) {
             const taskExecutor = async () => {
@@ -117,8 +119,10 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
             if (testCase.runSynchronously) {
                 syncTasks.push(taskExecutor);
+                syncTestCaseInputs.push(testCase);
             } else {
                 asyncTasks.push(taskExecutor);
+                asyncTestCaseInputs.push(testCase);
             }
         }
     }
@@ -132,7 +136,13 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
         maxInProgress: parallelTasks,
         progressCallback: (result) => {
             testProgressCount++;
-            logTestProgress(testProgressCount, overallTaskCount, result.amountResolved, result.amountRejected);
+            logTestProgress(
+                testProgressCount,
+                overallTaskCount,
+                result.amountResolved,
+                result.amountRejected,
+                asyncTestCaseInputs[result.lastCompletedIndex],
+            );
         },
     });
 
@@ -146,6 +156,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
                 overallTaskCount,
                 allAsyncResults.amountResolved + result.amountResolved,
                 allAsyncResults.amountRejected + result.amountRejected,
+                syncTestCaseInputs[result.lastCompletedIndex],
             );
         },
     });
@@ -175,6 +186,11 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
     }
 }
 
-function logTestProgress(current: number, total: number, success: number, failed: number) {
-    console.log(`Total: ${current.toString()} / ${total.toString()} Success: ${success.toString()} Failed: ${failed.toString()}`);
+function logTestProgress(current: number, total: number, success: number, failed: number, testCaseInput: TestCase) {
+    const length = total.toString().length;
+    const zeroPad = (num: number) => String(num).padStart(length, "0");
+
+    console.log(
+        `Total: ${zeroPad(current)} / ${total.toString()} Success: ${zeroPad(success)} Failed: ${zeroPad(failed)} (${testCaseInput.adder.config.metadata.id} / ${testCaseInput.template})`,
+    );
 }
