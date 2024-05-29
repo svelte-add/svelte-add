@@ -6,8 +6,8 @@ import { type ChildProcess, spawn } from "child_process";
 export type Package = {
     name: string;
     version: string;
-    dependencies: Record<string, string>;
-    devDependencies: Record<string, string>;
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
     bugs?: string;
     repository?: { type: string; url: string };
     keywords?: string[];
@@ -27,7 +27,7 @@ export async function getPackageJson(workspace: WorkspaceWithoutExplicitArgs) {
         };
     }
 
-    const packageJson: Package = parseJson(packageText);
+    const packageJson: Package = parseJson(packageText) as Package;
     return {
         text: packageText,
         data: packageJson,
@@ -39,11 +39,13 @@ export async function executeCli(
     commandArgs: string[],
     cwd: string,
     options?: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onData?: (data: string, program: ChildProcess, resolve: (value?: any) => any) => void;
         stdio?: "pipe" | "inherit";
         env?: Record<string, string>;
     },
-): Promise<void | undefined | string> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
     const stdio = options?.stdio ?? "pipe";
     const env = options?.env ?? process.env;
 

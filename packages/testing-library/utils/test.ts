@@ -27,7 +27,7 @@ async function executeAdderTests(
     testMethods: Tests,
     options: OptionValues<Record<string, Question>>,
 ) {
-    if (!adder.tests || !adder.tests.tests || adder.tests.tests.length == 0) throw new Error(`Cannot test adder without tests!`);
+    if (!adder.tests || adder.tests.tests.length == 0) throw new Error(`Cannot test adder without tests!`);
 
     for (const test of adder.tests.tests) {
         if (test.condition && !test.condition(options)) continue;

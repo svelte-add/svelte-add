@@ -6,7 +6,7 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
     fallback: T,
 ): T {
     const objectExpression = ast;
-    const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty") ?? [];
+    const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty");
     let property = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
     let propertyValue: T;
 

@@ -2,7 +2,7 @@ import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { executeCli, getPackageJson, groupBy } from "../utils/common.js";
+import { Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -176,10 +176,10 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
     const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
     const selectedAdders: string[] = [];
     const totalCategories = Object.keys(categories).length;
-    let currentCategory = 0;
+    let currentCategoryIndex = 0;
 
     for (const [categoryId, adders] of groupedByCategory) {
-        currentCategory++;
+        currentCategoryIndex++;
         const categoryDetails = categories[categoryId];
 
         const promptOptions: PromptOption<string>[] = [];
@@ -192,7 +192,7 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
             });
         }
 
-        const promptDescription = `${categoryDetails.name} (${currentCategory} / ${totalCategories})`;
+        const promptDescription = `${categoryDetails.name} (${currentCategoryIndex.toString()} / ${totalCategories.toString()})`;
         const selectedValues = await multiSelectPrompt(promptDescription, promptOptions);
         selectedAdders.push(...selectedValues);
     }
@@ -225,7 +225,8 @@ async function processExternalAdder<Args extends OptionDefinition>(
             stdio: isTesting ? "pipe" : "inherit",
         });
     } catch (error) {
-        throw new Error("Failed executing external command: " + error);
+        const errorString = error as string;
+        throw new Error("Failed executing external command: " + errorString);
     }
 }
 
@@ -277,17 +278,18 @@ async function runHooks<Args extends OptionDefinition>(
     else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
 }
 
-export function generateAdderInfo(pkg: any): {
+export function generateAdderInfo(data: unknown): {
     id: string;
     package: string;
     version: string;
 } {
-    const name = pkg.name;
+    const packageContent = data as Package;
+    const name = packageContent.name;
     const id = name.replace("@svelte-add/", "");
 
     return {
         id,
         package: name,
-        version: pkg.version,
+        version: packageContent.version,
     };
 }

@@ -50,7 +50,8 @@ export type SvelteFileType<Args extends OptionDefinition> = {
 };
 export type SvelteFile<Args extends OptionDefinition> = SvelteFileType<Args> & BaseFile<Args>;
 
-export type JsonFileEditorArgs<Args extends OptionDefinition> = { data: unknown } & Workspace<Args>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type JsonFileEditorArgs<Args extends OptionDefinition> = { data: any } & Workspace<Args>;
 export type JsonFileType<Args extends OptionDefinition> = {
     contentType: "json";
     content: (editor: JsonFileEditorArgs<Args>) => void;

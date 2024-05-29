@@ -14,7 +14,8 @@ export async function installDependencies(output: string) {
     try {
         await executeCli("npm", ["install"], output, { stdio: "pipe" });
     } catch (error) {
-        throw new Error("unable to install dependencies: " + error);
+        const errorString = error as string;
+        throw new Error("unable to install dependencies: " + errorString);
     }
 }
 

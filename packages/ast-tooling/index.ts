@@ -38,13 +38,14 @@ export {
 };
 
 export function parseScript(content: string): AstTypes.Program {
-    const jsAst: AstTypes.Program = recastParse(content, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const recastOutput: { program: AstTypes.Program } = recastParse(content, {
         parser: {
             parse: tsParse,
         },
-    }).program;
+    });
 
-    return jsAst;
+    return recastOutput.program;
 }
 
 export function serializeScript(ast: AstTypes.ASTNode) {
@@ -133,11 +134,13 @@ export function serializeSvelteFile(asts: SvelteAst) {
 export function parseJson(content: string) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.
-
     // use https://github.com/Rich-Harris/golden-fleece#fleecepatchstr-value instead
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return fleece.evaluate(content);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function serializeJson(originalInput: string, data: any) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.

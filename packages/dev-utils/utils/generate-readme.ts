@@ -51,9 +51,8 @@ ${generateCommonOptions(adderNpx)}
 }
 
 function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx: string) {
-    if (!adder.options) return;
     const optionKeys = Object.keys(adder.options);
-    if (optionKeys.length == 0) return;
+    if (optionKeys.length == 0) return "";
 
     let markdown = `
 ## Available options (adder-specific)
@@ -62,7 +61,7 @@ function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx:
 
     const options = Object.entries(adder.options);
     for (const [key, value] of options) {
-        markdown += `\n- \`${key}\` (default: ${value.default}) - ${value.question}`;
+        markdown += `\n- \`${key}\` (default: ${value.default.toString()}) - ${value.question}`;
     }
 
     const [firstOptionKey, firstOptionValue] = options[0];
@@ -75,7 +74,7 @@ ${codeTagEnd}
 
 Specific example
 ${codeTagStart}
-${adderNpx} --${firstOptionKey} ${firstOptionValue.default}
+${adderNpx} --${firstOptionKey} ${firstOptionValue.default.toString()}
 ${codeTagEnd}
 
 You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.
@@ -85,9 +84,8 @@ You can combine as many options as you want. The usage of options is optional. I
 }
 
 function generateCommonOptions(adderNpx: string) {
-    if (!availableCliOptions) return;
     const optionKeys = Object.keys(availableCliOptions);
-    if (optionKeys.length == 0) return;
+    if (optionKeys.length == 0) return "";
 
     let markdown = `
 ## Available options (common)
@@ -96,10 +94,11 @@ function generateCommonOptions(adderNpx: string) {
 
     const options = Object.values(availableCliOptions);
     for (const value of options) {
-        markdown += `\n- \`${value.cliArg}\` (default: ${value.default}) - ${value.description}`;
+        markdown += `\n- \`${value.cliArg}\` (default: ${value.default.toString()}) - ${value.description}`;
     }
 
-    const firstOptionValue = options.find((option) => option.cliArg === "path")!;
+    const pathOptionValue = options.find((option) => option.cliArg === "path");
+    if (!pathOptionValue) return "";
 
     markdown += `\n\n
 Option syntax
@@ -109,7 +108,7 @@ ${codeTagEnd}
 
 Specific example
 ${codeTagStart}
-${adderNpx} --${firstOptionValue.cliArg} ${firstOptionValue.default}
+${adderNpx} --${pathOptionValue.cliArg} ${pathOptionValue.default.toString()}
 ${codeTagEnd}
 
 You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.

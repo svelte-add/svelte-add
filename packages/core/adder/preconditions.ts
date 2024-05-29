@@ -79,8 +79,9 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                     message = `${precondition.name} (${result.message ?? "No failure message provided"})`;
                 }
             } catch (error) {
+                const errorString = error as string;
                 preconditionPassed = false;
-                message = precondition.name + ` (Unexpected failure: ${error})`;
+                message = precondition.name + ` (Unexpected failure: ${errorString})`;
             }
 
             if (multipleAdders) {

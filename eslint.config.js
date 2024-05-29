@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
     js.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked,
+    ...tseslint.configs.strictTypeChecked,
     // ...tseslint.configs.stylisticTypeChecked,
     eslintPrettier,
     {
@@ -20,7 +20,9 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname,
             },
         },
-        rules: {},
+        rules: {
+            "@typescript-eslint/no-unnecessary-condition": "off",
+        },
     },
     {
         ignores: [

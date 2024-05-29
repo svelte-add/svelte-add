@@ -67,9 +67,11 @@ export async function populateWorkspaceDetails(workspace: WorkspaceWithoutExplic
     workspace.cwd = workingDirectory;
 
     const { data: packageJson } = await getPackageJson(workspace);
-    workspace.typescript.installed = "tslib" in packageJson.devDependencies;
-    workspace.prettier.installed = "prettier" in packageJson.devDependencies;
-    workspace.kit.installed = "@sveltejs/kit" in packageJson.devDependencies;
+    if (packageJson.devDependencies) {
+        workspace.typescript.installed = "tslib" in packageJson.devDependencies;
+        workspace.prettier.installed = "prettier" in packageJson.devDependencies;
+        workspace.kit.installed = "@sveltejs/kit" in packageJson.devDependencies;
+    }
 
     await parseSvelteConfigIntoWorkspace(workspace);
 }

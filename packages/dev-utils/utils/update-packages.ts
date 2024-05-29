@@ -14,7 +14,7 @@ export async function updateAdderPackages() {
 
         const filePath = `./adders/${adderConfig.metadata.id}/package.json`;
         const content = await readFile(filePath);
-        const data: Package = JSON.parse(content.toString());
+        const data: Package = JSON.parse(content.toString()) as Package;
         updateAdderPackage(data, adderConfig);
         await writeFile(filePath, JSON.stringify(data, null, 4));
     }

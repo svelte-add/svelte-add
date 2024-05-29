@@ -150,8 +150,12 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
         },
     });
 
-    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>((x) => allAsyncResults.taskResults[x]!);
-    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>((x) => allSyncResults.taskResults[x]!);
+    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>(
+        (x) => allAsyncResults.taskResults[x] as unknown as AdderError,
+    );
+    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>(
+        (x) => allSyncResults.taskResults[x] as unknown as AdderError,
+    );
 
     const rejectedPromisesResult = [...rejectedAsyncPromisesResult, ...rejectedSyncPromisesResult];
     for (const error of rejectedPromisesResult) {
@@ -165,12 +169,12 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
     if (testProgressCount != overallTaskCount) {
         console.log(
-            `Number of executed tests (${testProgressCount}) does not match number of expected tests (${overallTaskCount}). Tests failed!`,
+            `Number of executed tests (${testProgressCount.toString()}) does not match number of expected tests (${overallTaskCount.toString()}). Tests failed!`,
         );
         process.exit(1);
     }
 }
 
 function logTestProgress(current: number, total: number, success: number, failed: number) {
-    console.log(`Total: ${current} / ${total} Success: ${success} Failed: ${failed}`);
+    console.log(`Total: ${current.toString()} / ${total.toString()} Success: ${success.toString()} Failed: ${failed.toString()}`);
 }
