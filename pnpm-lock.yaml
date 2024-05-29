@@ -246,8 +246,8 @@ importers:
         version: link:../cli
     devDependencies:
       promise-parallel-throttle:
-        specifier: ^3.4.1
-        version: 3.4.1
+        specifier: ^3.5.0
+        version: 3.5.0
       terminate:
         specifier: ^2.6.1
         version: 2.6.1
@@ -2858,8 +2858,8 @@ packages:
       bluebird:
         optional: true
 
-  promise-parallel-throttle@3.4.1:
-    resolution: {integrity: sha512-aurKMPfoh9rhyS9AO7y0k7UmTzMTfxn55GZLP2415anFuHo0vaG4TOE1nOprAjD/GP2uNT0rkWwRH7Ihdt7y5A==}
+  promise-parallel-throttle@3.5.0:
+    resolution: {integrity: sha512-PXqj8TEaYMV6pQd6IVPoMjRrOHh2o/vxbWbt5eUxPuuAplrLgcdzo3KGqh2aT0A4Se6JSQxoGnB8CSIXeAOLvQ==}
 
   promise-retry@2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
@@ -6571,7 +6571,7 @@ snapshots:
 
   promise-inflight@1.0.1: {}
 
-  promise-parallel-throttle@3.4.1: {}
+  promise-parallel-throttle@3.5.0: {}
 
   promise-retry@2.0.1:
     dependencies:
