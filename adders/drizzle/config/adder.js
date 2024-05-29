@@ -99,7 +99,7 @@ export const adder = defineAdderConfig({
         {
             name: ({ typescript }) => `src/lib/server/db/schema.${typescript ? "ts" : "js"}`,
             contentType: "script",
-            content: ({ ast, exports, imports, options, common, typescript, variables }) => {
+            content: ({ ast, exports, imports, options, common, variables }) => {
                 let userSchemaExpression;
                 if (options.database === "sqlite") {
                     imports.addNamed(ast, "drizzle-orm/sqlite-core", {
@@ -146,11 +146,6 @@ export const adder = defineAdderConfig({
                 if (!userSchemaExpression) throw new Error("unreachable state...");
                 const userIdentifier = variables.declaration(ast, "const", "user", userSchemaExpression);
                 exports.namedExport(ast, "user", userIdentifier);
-
-                // add user type example
-                if (typescript.installed) {
-                    common.addFromString(ast, "export type User = typeof user.$inferSelect;");
-                }
             },
         },
         {
