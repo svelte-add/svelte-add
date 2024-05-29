@@ -74,6 +74,12 @@ export function statementFromString(value: string): AstKinds.StatementKind {
     return program.body[0];
 }
 
+/** Appends the statement to body of the block */
+export function addStatement(ast: AstTypes.BlockStatement | AstTypes.Program, statement: AstKinds.StatementKind) {
+    if (hasNode(ast, statement) === false) ast.body.push(statement);
+}
+
+/** Returns `true` of the provided node exists in the AST */
 export function hasNode(ast: AstTypes.ASTNode, nodeToMatch: AstTypes.ASTNode): boolean {
     let found = false;
     // prettier-ignore

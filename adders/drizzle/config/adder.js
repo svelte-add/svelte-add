@@ -75,9 +75,7 @@ export const adder = defineAdderConfig({
                 const envCheckStatement = common.statementFromString(
                     `if (!process.env.DATABASE_URL) throw new Error('Missing environment variable: DATABASE_URL');`,
                 );
-                if (common.hasNode(ast, envCheckStatement) === false) {
-                    ast.body.push(envCheckStatement);
-                }
+                common.addStatement(ast, envCheckStatement);
 
                 const dbURL =
                     options.database === "sqlite"
@@ -113,7 +111,7 @@ export const adder = defineAdderConfig({
                     userSchemaExpression = common.expressionFromString(`sqliteTable('user', {
                         id: integer('id').primaryKey(),
                         name: text('name').notNull(),
-                        age: integer('age').notNull()
+                        age: integer('age')
                     })`);
                 }
                 if (options.database === "mysql") {
@@ -178,13 +176,11 @@ export const adder = defineAdderConfig({
 
                 if (!clientExpression) throw new Error("unreachable state...");
                 const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
-                if (common.hasNode(ast, clientIdentifier) === false) {
-                    ast.body.push(clientIdentifier);
-                }
+                common.addStatement(ast, clientIdentifier);
 
                 if (options.database === "postgresql") {
-                    const connectExpression = common.expressionFromString("await client.connect()");
-                    ast.body.push(common.expressionStatement(connectExpression));
+                    const connectStatement = common.statementFromString("await client.connect();");
+                    common.addStatement(ast, connectStatement);
                 }
 
                 const drizzleCall = functions.callByIdentifier("drizzle", ["client"]);
