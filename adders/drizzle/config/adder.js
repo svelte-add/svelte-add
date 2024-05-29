@@ -157,40 +157,40 @@ export const adder = defineAdderConfig({
             name: ({ typescript }) => `src/lib/server/db/index.${typescript ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, functions, variables }) => {
-                let driverExpression;
+                let clientExpression;
                 if (options.database === "sqlite") {
                     imports.addDefault(ast, "better-sqlite3", "Database");
                     imports.addNamed(ast, "drizzle-orm/better-sqlite3", { drizzle: "drizzle" });
 
-                    driverExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
+                    clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
                 }
                 if (options.database === "mysql") {
                     imports.addDefault(ast, "mysql2/promise", "mysql");
                     imports.addNamed(ast, "drizzle-orm/mysql2", { drizzle: "drizzle" });
 
-                    driverExpression = common.expressionFromString("await mysql.createConnection(env.DATABASE_URL)");
+                    clientExpression = common.expressionFromString("await mysql.createConnection(env.DATABASE_URL)");
                 }
                 if (options.database === "postgresql") {
                     imports.addNamed(ast, "pg", { Client: "Client" });
                     imports.addNamed(ast, "drizzle-orm/node-postgres", { drizzle: "drizzle" });
 
-                    driverExpression = common.expressionFromString("new Client(env.DATABASE_URL)");
+                    clientExpression = common.expressionFromString("new Client(env.DATABASE_URL)");
                 }
 
                 imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
 
-                const driverIdentExists = alreadyDeclared(ast, "driver");
-                if (driverIdentExists === false && driverExpression) {
-                    const driverIdentifier = variables.declaration(ast, "const", "driver", driverExpression);
-                    ast.body.push(driverIdentifier);
+                const clientIdentExists = alreadyDeclared(ast, "client");
+                if (clientIdentExists === false && clientExpression) {
+                    const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
+                    ast.body.push(clientIdentifier);
                 }
 
                 if (options.database === "postgresql") {
-                    const connectExpression = common.expressionFromString("await driver.connect()");
+                    const connectExpression = common.expressionFromString("await client.connect()");
                     ast.body.push(common.expressionStatement(connectExpression));
                 }
 
-                const drizzleCall = functions.callByIdentifier("drizzle", ["driver"]);
+                const drizzleCall = functions.callByIdentifier("drizzle", ["client"]);
                 const db = variables.declaration(ast, "const", "db", drizzleCall);
                 exports.namedExport(ast, "db", db);
             },
