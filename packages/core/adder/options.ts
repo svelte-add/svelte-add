@@ -49,8 +49,9 @@ export type OptionValues<Args extends OptionDefinition> = {
               : never;
 };
 
-export type AvailableCliOptionKeys = "path" | "skipPreconditions" | "skipInstall";
+export type AvailableCliOptionKeys = keyof AvailableCliOptionKeyTypes;
 export type AvailableCliOptionKeyTypes = {
+    default: boolean;
     path: string;
     skipPreconditions: boolean;
     skipInstall: boolean;
@@ -69,6 +70,14 @@ export type AvailableCliOption = {
 export type AvailableCliOptions = Record<AvailableCliOptionKeys, AvailableCliOption>;
 
 export const availableCliOptions: AvailableCliOptions = {
+    default: {
+        cliArg: "default",
+        processedCliArg: "default",
+        type: "boolean",
+        default: false,
+        description: "Installs default adder options for unspecified options",
+        allowShorthand: true,
+    },
     path: {
         cliArg: "path",
         processedCliArg: "path",
@@ -180,6 +189,7 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
 
 export function extractCommonCliOptions(cliOptions: CliOptionValues) {
     const commonOptions: AvailableCliOptionValues = {
+        default: cliOptions[availableCliOptions.default.processedCliArg],
         path: cliOptions[availableCliOptions.path.processedCliArg],
         skipInstall: cliOptions[availableCliOptions.skipInstall.processedCliArg],
         skipPreconditions: cliOptions[availableCliOptions.skipPreconditions.processedCliArg],

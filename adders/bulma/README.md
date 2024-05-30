@@ -43,6 +43,7 @@ You can combine as many options as you want. The usage of options is optional. I
 ## Available options (common)
 
     
+- `default` (default: false) - Installs default adder options for unspecified options
 - `path` (default: ./) - Path to working directory
 - `skip-preconditions` (default: false) - Skips validating preconditions before running the adder
 - `skip-install` (default: false) - Skips installing dependencies after applying the adder

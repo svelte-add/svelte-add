@@ -25,6 +25,7 @@ undefined
 ## Available options (common)
 
     
+- `default` (default: false) - Installs default adder options for unspecified options
 - `path` (default: ./) - Path to working directory
 - `skip-preconditions` (default: false) - Skips validating preconditions before running the adder
 - `skip-install` (default: false) - Skips installing dependencies after applying the adder
