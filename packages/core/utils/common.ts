@@ -67,6 +67,7 @@ export async function executeCli(
             if (code == 0) {
                 resolve(undefined);
             } else {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 reject(errorText);
             }
         });
