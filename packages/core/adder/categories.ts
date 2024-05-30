@@ -3,10 +3,9 @@ export type CategoryInfo = {
     name: string;
     description: string;
 };
-export type CategoryKeys = "styling" | "tools" | "asd";
+export type CategoryKeys = "styling" | "tools";
 export type CategoryDetails = {
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    [K in CategoryKeys | string]: CategoryInfo;
+    [K in CategoryKeys]: CategoryInfo;
 };
 
 export const categories: CategoryDetails = {

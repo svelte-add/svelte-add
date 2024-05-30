@@ -24,7 +24,7 @@ import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
 import { PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
-import { categories } from "./categories.js";
+import { CategoryKeys, categories } from "./categories.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -180,7 +180,7 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
 
     for (const [categoryId, adders] of groupedByCategory) {
         currentCategoryIndex++;
-        const categoryDetails = categories[categoryId];
+        const categoryDetails = categories[categoryId as CategoryKeys];
 
         const promptOptions: PromptOption<string>[] = [];
         for (const adder of adders) {
