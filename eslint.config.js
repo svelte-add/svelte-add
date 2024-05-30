@@ -22,6 +22,7 @@ export default tseslint.config(
         },
         rules: {
             "@typescript-eslint/no-unnecessary-condition": "off",
+            "@typescript-eslint/no-dynamic-delete": "off",
         },
     },
     {
