@@ -83,15 +83,16 @@ export const adder = defineAdderConfig({
                         : "process.env.DATABASE_URL";
 
                 const defaultExport = common.expressionFromString(`
-                defineConfig({
-                    schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
-                    dialect: '${options.database}',
-                    dbCredentials: {
-                        url: ${dbURL}
-                    },
-                    verbose: true,
-                    strict: true
-                })`);
+                    defineConfig({
+                        schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
+                        dialect: '${options.database}',
+                        dbCredentials: {
+                            url: ${dbURL}
+                        },
+                        verbose: true,
+                        strict: true
+                    })
+                `);
 
                 exports.defaultExport(ast, defaultExport);
             },
