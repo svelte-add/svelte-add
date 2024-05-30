@@ -2,50 +2,45 @@ import { type OptionValues as CliOptionValues, program } from "commander";
 import { AdderDetails, AddersExecutionPlan } from "./execute.js";
 import { booleanPrompt, selectPrompt, textPrompt, type PromptOption } from "../utils/prompts.js";
 
-export type BooleanDefaultValue = {
+export type BooleanQuestion = {
     type: "boolean";
     default: boolean;
 };
 
-export type StringDefaultValue = {
+export type StringQuestion = {
     type: "string";
     default: string;
 };
 
-export type NumberDefaultValue = {
+export type NumberQuestion = {
     type: "number";
     default: number;
 };
 
-export type SelectDefaultValue<Value = any> = {
+export type SelectQuestion<Value = any> = {
     type: "select";
-    options: PromptOption<Value>[];
     default: Value;
+    options: PromptOption<Value>[];
 };
 
 export type BaseQuestion = {
     question: string;
+    // TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
+    condition?: (options: any) => boolean;
 };
 
-export type BooleanQuestion = BaseQuestion & BooleanDefaultValue;
-export type StringQuestion = BaseQuestion & StringDefaultValue;
-export type NumberQuestion = BaseQuestion & NumberDefaultValue;
-export type SelectQuestion = BaseQuestion & SelectDefaultValue;
-export type Question = BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion;
+export type Question = BaseQuestion & (BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion);
 
 export type OptionDefinition = Record<string, Question>;
 export type OptionValues<Args extends OptionDefinition> = {
-    [K in keyof Args]: Args[K]["type"] extends "string"
+    [K in keyof Args]: Args[K] extends StringQuestion
         ? string
-        : Args[K]["type"] extends "boolean"
+        : Args[K] extends BooleanQuestion
           ? boolean
-          : Args[K]["type"] extends "number"
+          : Args[K] extends NumberQuestion
             ? number
-            : Args[K]["type"] extends "select"
-              ? // @ts-expect-error we're trying to infer the type of the select, but TS is being belligerent
-                Args[K]["options"] extends Array<PromptOption<infer Value>>
-                  ? Value
-                  : never
+            : Args[K] extends SelectQuestion<infer Value>
+              ? Value
               : never;
 };
 
@@ -66,7 +61,7 @@ export type AvailableCliOption = {
     processedCliArg: string; // `commander` will transform the cli name if the arg names contains `-`
     description: string;
     allowShorthand: boolean;
-} & (BooleanDefaultValue | StringDefaultValue);
+} & (BooleanQuestion | StringQuestion);
 export type AvailableCliOptions = Record<AvailableCliOptionKeys, AvailableCliOption>;
 
 export const availableCliOptions: AvailableCliOptions = {
@@ -242,10 +237,12 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
 
         for (const optionKey of Object.keys(config.options)) {
             const option = config.options[optionKey];
+            const selectedValues = executionPlan.cliOptionsByAdderId[adderId];
+            const skipQuestion = option.condition?.(selectedValues) === false;
 
-            if (!executionPlan.cliOptionsByAdderId[adderId]) continue;
+            if (!selectedValues || skipQuestion) continue;
 
-            let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey];
+            let optionValue = selectedValues[optionKey];
 
             // if the option already has an value, ignore it and continue
             if (optionValue !== undefined) continue;
@@ -261,7 +258,7 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
             if (optionValue === "true") optionValue = true;
             if (optionValue === "false") optionValue = false;
 
-            executionPlan.cliOptionsByAdderId[adderId][optionKey] = optionValue;
+            selectedValues[optionKey] = optionValue;
         }
     }
 }
