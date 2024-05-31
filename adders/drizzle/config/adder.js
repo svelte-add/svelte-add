@@ -134,10 +134,14 @@ export const adder = defineAdderConfig({
                         ? "pathToFileURL(process.env.DATABASE_URL).toString()"
                         : "process.env.DATABASE_URL";
 
+                // specifies the turso driver for the config
+                const driver = options.sqlite === "turso" ? "driver: 'turso'," : "";
+
                 const defaultExport = common.expressionFromString(`
                     defineConfig({
                         schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
-                        dialect: '${options.database}',
+                        dialect: '${options.database}', 
+                        ${driver}
                         dbCredentials: {
                             url: ${dbURL}
                         },
