@@ -20,15 +20,50 @@ export const adder = defineAdderConfig({
     packages: [
         { name: "drizzle-orm", version: "^0.30.10", dev: false },
         { name: "drizzle-kit", version: "^0.21.4", dev: true },
-        { name: "mysql2", version: "^3.9.8", dev: false, condition: ({ options }) => options.database === "mysql" },
-        { name: "pg", version: "^8.11.5", dev: false, condition: ({ options }) => options.database === "postgresql" },
-        { name: "@types/pg", version: "^8.11.6", dev: true, condition: ({ options }) => options.database === "postgresql" },
-        { name: "better-sqlite3", version: "^10.0.0", dev: false, condition: ({ options }) => options.database === "sqlite" },
+        // MySQL
+        {
+            name: "mysql2",
+            version: "^3.9.8",
+            dev: false,
+            condition: ({ options }) => options.database === "mysql" && options.mysql === "mysql2",
+        },
+        {
+            name: "@planetscale/database",
+            version: "^1.18.0",
+            dev: false,
+            condition: ({ options }) => options.database === "mysql" && options.mysql === "planetscale",
+        },
+        // PostgreSQL
+        {
+            name: "pg",
+            version: "^8.11.5",
+            dev: false,
+            condition: ({ options }) => options.database === "postgresql" && options.postgresql === "node-postgres",
+        },
+        {
+            name: "@types/pg",
+            version: "^8.11.6",
+            dev: true,
+            condition: ({ options }) => options.database === "postgresql" && options.postgresql === "node-postgres",
+        },
+        {
+            name: "@neondatabase/serverless",
+            version: "^0.9.3",
+            dev: false,
+            condition: ({ options }) => options.database === "postgresql" && options.postgresql === "neon",
+        },
+        // SQLite
+        {
+            name: "better-sqlite3",
+            version: "^10.0.0",
+            dev: false,
+            condition: ({ options }) => options.database === "sqlite" && options.sqlite === "better-sqlite3",
+        },
         {
             name: "@types/better-sqlite3",
             version: "^7.6.10",
             dev: true,
-            condition: ({ options }) => options.database === "sqlite",
+            condition: ({ options }) => options.database === "sqlite" && options.sqlite === "better-sqlite3",
         },
     ],
     files: [
@@ -154,19 +189,46 @@ export const adder = defineAdderConfig({
             contentType: "script",
             content: ({ ast, exports, imports, options, common, functions, variables }) => {
                 let clientExpression;
-                if (options.database === "sqlite") {
+                // SQLite
+                if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
                     imports.addDefault(ast, "better-sqlite3", "Database");
                     imports.addNamed(ast, "drizzle-orm/better-sqlite3", { drizzle: "drizzle" });
 
                     clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
                 }
-                if (options.database === "mysql") {
+                if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
+                    imports.addDefault(ast, "better-sqlite3", "Database");
+                    imports.addNamed(ast, "drizzle-orm/better-sqlite3", { drizzle: "drizzle" });
+
+                    clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
+                }
+                // MySQL
+                if (options.database === "mysql" && options.mysql === "mysql2") {
                     imports.addDefault(ast, "mysql2/promise", "mysql");
                     imports.addNamed(ast, "drizzle-orm/mysql2", { drizzle: "drizzle" });
 
                     clientExpression = common.expressionFromString("await mysql.createConnection(env.DATABASE_URL)");
                 }
-                if (options.database === "postgresql") {
+                if (options.database === "mysql" && options.mysql === "planetscale") {
+                    imports.addNamed(ast, "@planetscale/database", { Client: "Client" });
+                    imports.addNamed(ast, "drizzle-orm/planetscale-serverless", { drizzle: "drizzle" });
+
+                    clientExpression = common.expressionFromString("new Client({ url: env.DATABASE_URL })");
+                }
+                // PostgreSQL
+                if (options.database === "postgresql" && options.postgresql === "node-postgres") {
+                    imports.addNamed(ast, "pg", { Client: "Client" });
+                    imports.addNamed(ast, "drizzle-orm/node-postgres", { drizzle: "drizzle" });
+
+                    clientExpression = common.expressionFromString("new Client(env.DATABASE_URL)");
+                }
+                if (options.database === "postgresql" && options.postgresql === "neon") {
+                    imports.addNamed(ast, "@neondatabase/serverless", { neon: "neon" });
+                    imports.addNamed(ast, "drizzle-orm/neon-http", { drizzle: "drizzle" });
+
+                    clientExpression = common.expressionFromString("neon(env.DATABASE_URL!)");
+                }
+                if (options.database === "postgresql" && options.postgresql === "supabase") {
                     imports.addNamed(ast, "pg", { Client: "Client" });
                     imports.addNamed(ast, "drizzle-orm/node-postgres", { drizzle: "drizzle" });
 
@@ -179,7 +241,8 @@ export const adder = defineAdderConfig({
                 const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
                 common.addStatement(ast, clientIdentifier);
 
-                if (options.database === "postgresql") {
+                // Statements after `client` declaration
+                if (options.database === "postgresql" && options.postgresql === "node-postgres") {
                     const connectStatement = common.statementFromString("await client.connect();");
                     common.addStatement(ast, connectStatement);
                 }

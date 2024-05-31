@@ -17,7 +17,7 @@ export const options = defineAdderOptions({
         default: "better-sqlite3",
         options: [
             { value: "better-sqlite3", label: "better-sqlite3" },
-            { value: "http", label: "SQLite HTTP Driver" },
+            { value: "turso", label: "Turso" },
         ],
         condition: ({ database }) => database === "sqlite",
     },
@@ -26,8 +26,8 @@ export const options = defineAdderOptions({
         type: "select",
         default: "mysql2",
         options: [
-            { value: "mysql", label: "mysql2" },
-            { value: "http", label: "MySQL HTTP Driver" },
+            { value: "mysql2", label: "mysql2" },
+            { value: "planetscale", label: "PlanetScale" },
         ],
         condition: ({ database }) => database === "mysql",
     },
@@ -37,7 +37,10 @@ export const options = defineAdderOptions({
         default: "node-postgres",
         options: [
             { value: "node-postgres", label: "node-postgres" },
-            { value: "http", label: "PostgreSQL HTTP Driver" },
+            { value: "postgres.js", label: "Postgres.JS" },
+            { value: "supabase", label: "Supabase" },
+            { value: "neon", label: "Neon" },
+            { value: "vercel-postgres", label: "Vercel Postgres" },
         ],
         condition: ({ database }) => database === "postgresql",
     },
