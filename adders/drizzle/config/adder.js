@@ -52,6 +52,12 @@ export const adder = defineAdderConfig({
             dev: false,
             condition: ({ options }) => options.database === "postgresql" && options.postgresql === "neon",
         },
+        {
+            name: "postgres",
+            version: "^3.4.4",
+            dev: false,
+            condition: ({ options }) => options.database === "postgresql" && options.postgresql === "supabase",
+        },
         // SQLite
         {
             name: "better-sqlite3",
@@ -226,13 +232,15 @@ export const adder = defineAdderConfig({
                     imports.addNamed(ast, "@neondatabase/serverless", { neon: "neon" });
                     imports.addNamed(ast, "drizzle-orm/neon-http", { drizzle: "drizzle" });
 
+                    // TODO: deal with type assertion
                     clientExpression = common.expressionFromString("neon(env.DATABASE_URL!)");
                 }
                 if (options.database === "postgresql" && options.postgresql === "supabase") {
-                    imports.addNamed(ast, "pg", { Client: "Client" });
-                    imports.addNamed(ast, "drizzle-orm/node-postgres", { drizzle: "drizzle" });
+                    imports.addDefault(ast, "postgres", "postgres");
+                    imports.addNamed(ast, "drizzle-orm/postgres-js", { drizzle: "drizzle" });
 
-                    clientExpression = common.expressionFromString("new Client(env.DATABASE_URL)");
+                    // TODO: deal with type assertion
+                    clientExpression = common.expressionFromString("postgres(env.DATABASE_URL!)");
                 }
 
                 imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
