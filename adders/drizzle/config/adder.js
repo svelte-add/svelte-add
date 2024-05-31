@@ -71,6 +71,12 @@ export const adder = defineAdderConfig({
             dev: true,
             condition: ({ options }) => options.database === "sqlite" && options.sqlite === "better-sqlite3",
         },
+        {
+            name: "@libsql/client",
+            version: "^0.6.1",
+            dev: false,
+            condition: ({ options }) => options.database === "sqlite" && options.sqlite === "turso",
+        },
     ],
     files: [
         {
@@ -78,8 +84,13 @@ export const adder = defineAdderConfig({
             contentType: "text",
             content: ({ content, options }) => {
                 if (!content.includes("DATABASE_URL=")) {
-                    if (options.database === "sqlite") {
+                    if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
                         content += `\nDATABASE_URL="./sqlite.db"`;
+                    }
+                    if (options.database === "sqlite" && options.sqlite === "turso") {
+                        content += `\n# Replace with your DB credentials`;
+                        content += `\nDATABASE_URL="libsql://db-name-user.turso.io"`;
+                        content += `\nDATABASE_AUTH_TOKEN=""`;
                     }
                     if (options.database === "mysql") {
                         content += `\n# Replace with your DB credentials`;
@@ -202,11 +213,14 @@ export const adder = defineAdderConfig({
 
                     clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
                 }
-                if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
-                    imports.addDefault(ast, "better-sqlite3", "Database");
-                    imports.addNamed(ast, "drizzle-orm/better-sqlite3", { drizzle: "drizzle" });
+                if (options.database === "sqlite" && options.sqlite === "turso") {
+                    imports.addNamed(ast, "@libsql/client", { createClient: "createClient" });
+                    imports.addNamed(ast, "drizzle-orm/libsql", { drizzle: "drizzle" });
 
-                    clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
+                    // TODO: deal with type assertion
+                    clientExpression = common.expressionFromString(
+                        "createClient({ url: env.DATABASE_URL!, authToken: env.DATABASE_AUTH_TOKEN })",
+                    );
                 }
                 // MySQL
                 if (options.database === "mysql" && options.mysql === "mysql2") {
