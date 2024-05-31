@@ -18,6 +18,7 @@ export const options = defineAdderOptions({
         options: [
             { value: "better-sqlite3", label: "better-sqlite3" },
             { value: "turso", label: "Turso" },
+            // { value: "d1", label: "Cloudflare D1" },
         ],
         condition: ({ database }) => database === "sqlite",
     },
@@ -37,10 +38,9 @@ export const options = defineAdderOptions({
         default: "node-postgres",
         options: [
             { value: "node-postgres", label: "node-postgres" },
-            { value: "postgres.js", label: "Postgres.JS" },
+            // { value: "postgres.js", label: "Postgres.JS" },
             { value: "supabase", label: "Supabase" },
             { value: "neon", label: "Neon" },
-            { value: "vercel-postgres", label: "Vercel Postgres" },
         ],
         condition: ({ database }) => database === "postgresql",
     },
