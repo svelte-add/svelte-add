@@ -88,7 +88,7 @@ export const adder = defineAdderConfig({
                         // we'll prefill with the default docker db credentials
                         const db = options.database === "mysql" ? "mysql" : "postgres";
                         const port = options.database === "mysql" ? "3306" : "5432";
-                        content += `\nDATABASE_URL="${db}://root:mysecretpassword@localhost:${port}/db"`;
+                        content += `\nDATABASE_URL="${db}://root:mysecretpassword@localhost:${port}/local"`;
                         return content;
                     }
                     if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
@@ -125,14 +125,10 @@ export const adder = defineAdderConfig({
                 const port = options.database === "mysql" ? "3306" : "5432";
 
                 content = `
-                version: '3.9'
-
                 services:
                   db:
                     image: ${db}
                     restart: always
-                    # set shared memory limit when using docker-compose
-                    shm_size: 128mb
                     ports:
                       - ${port}:${port}
                     environment:
@@ -141,13 +137,13 @@ export const adder = defineAdderConfig({
                 if (options.mysql === "mysql2") {
                     content += `
                       MYSQL_ROOT_PASSWORD: mysecretpassword
-                      MYSQL_DATABASE: db
+                      MYSQL_DATABASE: local
                 `;
                 } else if (options.postgresql === "node-postgres") {
                     content += `
                       POSTGRES_USER: root
                       POSTGRES_PASSWORD: mysecretpassword
-                      POSTGRES_DB: db
+                      POSTGRES_DB: local
                 `;
                 }
                 return content;
@@ -158,7 +154,7 @@ export const adder = defineAdderConfig({
             contentType: "json",
             content: ({ data, options }) => {
                 data.scripts ??= {};
-                if (options.docker) data.scripts["db:start"] ??= "docker-compose up";
+                if (options.docker) data.scripts["db:start"] ??= "docker compose up";
                 data.scripts["db:push"] ??= "drizzle-kit push";
                 data.scripts["db:migrate"] ??= "drizzle-kit migrate";
                 data.scripts["db:studio"] ??= "drizzle-kit studio";
