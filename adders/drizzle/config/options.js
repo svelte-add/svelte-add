@@ -14,7 +14,7 @@ export const options = defineAdderOptions({
     sqlite: {
         question: "Which SQLite client would you like to use?",
         type: "select",
-        default: "better-sqlite3",
+        default: undefined,
         options: [
             { value: "better-sqlite3", label: "better-sqlite3" },
             { value: "turso", label: "Turso" },
@@ -25,7 +25,7 @@ export const options = defineAdderOptions({
     mysql: {
         question: "Which MySQL client would you like to use?",
         type: "select",
-        default: "mysql2",
+        default: undefined,
         options: [
             { value: "mysql2", label: "mysql2" },
             { value: "planetscale", label: "PlanetScale" },
@@ -35,7 +35,7 @@ export const options = defineAdderOptions({
     postgresql: {
         question: "Which PostgreSQL client would you like to use?",
         type: "select",
-        default: "node-postgres",
+        default: undefined,
         options: [
             { value: "node-postgres", label: "node-postgres" },
             // { value: "postgres.js", label: "Postgres.JS" },
@@ -43,5 +43,11 @@ export const options = defineAdderOptions({
             { value: "neon", label: "Neon" },
         ],
         condition: ({ database }) => database === "postgresql",
+    },
+    docker: {
+        question: "Do you want to run the database locally with docker-compose?",
+        default: false,
+        type: "boolean",
+        condition: ({ mysql, postgresql }) => mysql === "mysql2" || postgresql === "node-postgres",
     },
 });
