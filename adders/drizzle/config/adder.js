@@ -84,22 +84,71 @@ export const adder = defineAdderConfig({
             contentType: "text",
             content: ({ content, options }) => {
                 if (!content.includes("DATABASE_URL=")) {
+                    if (options.docker === true) {
+                        // we'll prefill with the default docker db credentials
+                        const db = options.database === "mysql" ? "mysql" : "postgres";
+                        const port = options.database === "mysql" ? "3306" : "5432";
+                        content += `\nDATABASE_URL="${db}://root:mysecretpassword@localhost:${port}/db"`;
+                        return content;
+                    }
                     if (options.database === "sqlite" && options.sqlite === "better-sqlite3") {
                         content += `\nDATABASE_URL="./sqlite.db"`;
+                        return content;
                     }
+
+                    content += `\n# Replace with your DB credentials`;
                     if (options.database === "sqlite" && options.sqlite === "turso") {
-                        content += `\n# Replace with your DB credentials`;
                         content += `\nDATABASE_URL="libsql://db-name-user.turso.io"`;
                         content += `\nDATABASE_AUTH_TOKEN=""`;
                     }
                     if (options.database === "mysql") {
-                        content += `\n# Replace with your DB credentials`;
                         content += `\nDATABASE_URL="mysql://user:password@host:port/db-name"`;
                     }
                     if (options.database === "postgresql") {
-                        content += `\n# Replace with your DB credentials`;
                         content += `\nDATABASE_URL="postgres://user:password@host:port/db-name"`;
                     }
+                }
+                return content;
+            },
+        },
+        {
+            name: () => `docker-compose.yml`,
+            contentType: "text",
+            condition: ({ options }) =>
+                options.database !== "sqlite" && (options.mysql === "mysql2" || options.postgresql === "node-postgres"),
+            content: ({ content, options }) => {
+                // if the file already exists, don't modify it
+                // (in the future, we could add some tooling for modifying yaml)
+                if (content.length > 0) return content;
+
+                const db = options.database === "mysql" ? "mysql" : "postgres";
+                const port = options.database === "mysql" ? "3306" : "5432";
+
+                content = `
+                version: '3.9'
+
+                services:
+                  db:
+                    image: ${db}
+                    restart: always
+                    # set shared memory limit when using docker-compose
+                    shm_size: 128mb
+                    ports:
+                      - ${port}:${port}
+                    environment:
+                `;
+
+                if (options.mysql === "mysql2") {
+                    content += `
+                      MYSQL_ROOT_PASSWORD: mysecretpassword
+                      MYSQL_DATABASE: db
+                `;
+                } else if (options.postgresql === "node-postgres") {
+                    content += `
+                      POSTGRES_USER: root
+                      POSTGRES_PASSWORD: mysecretpassword
+                      POSTGRES_DB: db
+                `;
                 }
                 return content;
             },
