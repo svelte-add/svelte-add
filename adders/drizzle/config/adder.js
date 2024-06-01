@@ -156,8 +156,9 @@ export const adder = defineAdderConfig({
         {
             name: () => `package.json`,
             contentType: "json",
-            content: ({ data }) => {
+            content: ({ data, options }) => {
                 data.scripts ??= {};
+                if (options.docker) data.scripts["db:start"] ??= "docker-compose up";
                 data.scripts["db:push"] ??= "drizzle-kit push";
                 data.scripts["db:migrate"] ??= "drizzle-kit migrate";
                 data.scripts["db:studio"] ??= "drizzle-kit studio";
