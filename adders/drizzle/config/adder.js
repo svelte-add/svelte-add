@@ -198,7 +198,7 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            name: ({ typescript }) => `src/lib/server/db/schema.${typescript ? "ts" : "js"}`,
+            name: ({ typescript }) => `src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, variables }) => {
                 let userSchemaExpression;
@@ -250,7 +250,7 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            name: ({ typescript }) => `src/lib/server/db/index.${typescript ? "ts" : "js"}`,
+            name: ({ typescript }) => `src/lib/server/db/index.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, functions, variables }) => {
                 let clientExpression;
