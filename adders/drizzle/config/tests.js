@@ -73,7 +73,6 @@ export const tests = defineAdderTests({
 
                 if (!process.env.DATABASE_URL) throw new Error("Missing environment variable: DATABASE_URL");
                 
-                console.log(pathToFileURL(process.env.DATABASE_URL).href)
                 export default defineConfig({
                     schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
                     dialect: "sqlite",
