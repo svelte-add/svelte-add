@@ -174,9 +174,7 @@ export const adder = defineAdderConfig({
                 common.addStatement(ast, envCheckStatement);
 
                 const dbURL =
-                    options.database === "sqlite"
-                        ? "pathToFileURL(process.env.DATABASE_URL).toString()"
-                        : "process.env.DATABASE_URL";
+                    options.database === "sqlite" ? "pathToFileURL(process.env.DATABASE_URL).href" : "process.env.DATABASE_URL";
 
                 // specifies the turso driver for the config
                 const driver = options.sqlite === "turso" ? "driver: 'turso'," : "";
