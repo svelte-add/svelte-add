@@ -94,6 +94,8 @@ export async function validatePreconditions<Args extends OptionDefinition>(
         }
     }
     if (preconditionLog.length > 0) {
+        if (isTesting) return;
+
         let allMessages = "";
         for (const [i, message] of preconditionLog.entries()) {
             allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
@@ -102,8 +104,6 @@ export async function validatePreconditions<Args extends OptionDefinition>(
         if (!allPreconditionsPassed && isTesting) {
             throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
         }
-
-        if (isTesting) return;
 
         messagePrompt("Preconditions:", allMessages);
 
