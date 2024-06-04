@@ -159,6 +159,18 @@ export const adder = defineAdderConfig({
             },
         },
         {
+            // Adds the db file to the gitignore if one is present
+            name: () => `.gitignore`,
+            contentType: "text",
+            condition: ({ options }) => options.database === "sqlite",
+            content: ({ content }) => {
+                if (content.length === 0) return content;
+
+                if (!content.includes("\n*.db")) content = content.trimEnd() + "\n*.db";
+                return content;
+            },
+        },
+        {
             name: ({ typescript }) => `drizzle.config.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ options, ast, common, exports, typescript, imports }) => {
@@ -331,7 +343,7 @@ export const adder = defineAdderConfig({
  */
 function addEnvVar(content, key, value) {
     if (!content.includes(key + "=")) {
-        content += `\n${key}=${value}`;
+        content = content.trimEnd() + `\n${key}=${value}`;
     }
     return content;
 }
