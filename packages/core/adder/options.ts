@@ -169,6 +169,8 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
                 continue;
             } else if (option.type == "string" && typeof value == "string") {
                 continue;
+            } else if (option.type === "select") {
+                continue;
             }
 
             foundInvalidType = true;
