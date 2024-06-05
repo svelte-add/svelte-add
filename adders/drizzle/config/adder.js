@@ -92,14 +92,16 @@ export const adder = defineAdderConfig({
                     return content;
                 }
                 if (options.sqlite === "better-sqlite3") {
-                    content = addEnvVar(content, DB_URL_KEY, `"./sqlite.db"`);
+                    content = addEnvVar(content, DB_URL_KEY, `"local.db"`);
                     return content;
                 }
 
-                content += `\n# Replace with your DB credentials`;
+                content = addEnvComment(content, "Replace with your DB credentials!");
                 if (options.sqlite === "turso") {
                     content = addEnvVar(content, DB_URL_KEY, `"libsql://db-name-user.turso.io"`);
                     content = addEnvVar(content, "DATABASE_AUTH_TOKEN", `""`);
+                    content = addEnvComment(content, "A local DB can also be used in dev as well");
+                    content = addEnvComment(content, `${DB_URL_KEY}="file:local.db"`);
                 }
                 if (options.database === "mysql") {
                     content = addEnvVar(content, DB_URL_KEY, `"mysql://user:password@host:port/db-name"`);
@@ -181,7 +183,7 @@ export const adder = defineAdderConfig({
                 }
 
                 const envCheckStatement = common.statementFromString(
-                    `if (!process.env.DATABASE_URL) throw new Error('Missing environment variable: DATABASE_URL');`,
+                    `if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');`,
                 );
                 common.addStatement(ast, envCheckStatement);
 
@@ -263,6 +265,14 @@ export const adder = defineAdderConfig({
             name: ({ typescript }) => `src/lib/server/db/index.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, functions, variables }) => {
+                imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
+
+                // env var checks
+                const dbURLCheck = common.statementFromString(
+                    `if (!env.DATABASE_URL) throw new Error("DATABASE_URL is not set");`,
+                );
+                common.addStatement(ast, dbURLCheck);
+
                 let clientExpression;
                 // SQLite
                 if (options.sqlite === "better-sqlite3") {
@@ -274,6 +284,13 @@ export const adder = defineAdderConfig({
                 if (options.sqlite === "turso") {
                     imports.addNamed(ast, "@libsql/client", { createClient: "createClient" });
                     imports.addNamed(ast, "drizzle-orm/libsql", { drizzle: "drizzle" });
+                    imports.addNamed(ast, "$app/environment", { dev: "dev" });
+
+                    // auth token check in prod
+                    const authTokenCheck = common.statementFromString(
+                        `if (!dev && !env.DATABASE_AUTH_TOKEN) throw new Error("DATABASE_AUTH_TOKEN is not set");`,
+                    );
+                    common.addStatement(ast, authTokenCheck);
 
                     clientExpression = common.expressionFromString(
                         "createClient({ url: env.DATABASE_URL, authToken: env.DATABASE_AUTH_TOKEN })",
@@ -312,20 +329,6 @@ export const adder = defineAdderConfig({
                     clientExpression = common.expressionFromString("postgres(env.DATABASE_URL)");
                 }
 
-                imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
-
-                // env var checks
-                const dbURLCheck = common.statementFromString(
-                    `if (!env.DATABASE_URL) throw new Error("DATABASE_URL is not set");`,
-                );
-                common.addStatement(ast, dbURLCheck);
-                if (options.sqlite === "turso") {
-                    const authTokenCheck = common.statementFromString(
-                        `if (!env.DATABASE_AUTH_TOKEN) throw new Error("DATABASE_AUTH_TOKEN is not set");`,
-                    );
-                    common.addStatement(ast, authTokenCheck);
-                }
-
                 if (!clientExpression) throw new Error("unreachable state...");
                 const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
                 common.addStatement(ast, clientIdentifier);
@@ -353,6 +356,17 @@ export const adder = defineAdderConfig({
 function addEnvVar(content, key, value) {
     if (!content.includes(key + "=")) {
         content = content.trimEnd() + `\n${key}=${value}`;
+    }
+    return content;
+}
+/**
+ * @param {string} content
+ * @param {string} comment
+ * @returns {string}
+ */
+function addEnvComment(content, comment) {
+    if (!content.includes(comment)) {
+        content = content.trimEnd() + `\n# ${comment}`;
     }
     return content;
 }
