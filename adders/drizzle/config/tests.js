@@ -21,8 +21,7 @@ export const tests = defineAdderTests({
             contentType: "svelte",
             condition: ({ kit }) => kit.installed,
             content: ({ html, js }) => {
-                const ast = js.ast;
-                js.common.addFromString(ast, "export let data;");
+                js.common.addFromString(js.ast, "export let data;");
                 html.addFromRawHtml(
                     html.ast.childNodes,
                     `
@@ -64,18 +63,16 @@ export const tests = defineAdderTests({
             name: ({ typescript }) => `drizzle.config.${typescript.installed ? "ts" : "js"}`,
             contentType: "text",
             condition: ({ kit }) => kit.installed,
-            content: ({ typescript }) => {
+            content: ({ typescript, options }) => {
                 // NOTE: For some reason, using the file's url via the file protocol (file://) does not work in tests,
                 // but it works for end users. However, the inverse is true as well, where the _lack_ of file protocol
                 // in the url *does not* work for users, but it (strangely) works for tests.
                 return `
                 import { defineConfig } from "drizzle-kit";
 
-                if (!process.env.DATABASE_URL) throw new Error("Missing environment variable: DATABASE_URL");
-                
                 export default defineConfig({
                     schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
-                    dialect: "sqlite",
+                    dialect: "${options.database}",
                     dbCredentials: {
                         url: process.env.DATABASE_URL
                     },
