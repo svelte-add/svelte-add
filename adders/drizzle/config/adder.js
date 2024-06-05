@@ -35,18 +35,6 @@ export const adder = defineAdderConfig({
         },
         // PostgreSQL
         {
-            name: "pg",
-            version: "^8.11.5",
-            dev: false,
-            condition: ({ options }) => options.postgresql === "node-postgres",
-        },
-        {
-            name: "@types/pg",
-            version: "^8.11.6",
-            dev: true,
-            condition: ({ options }) => options.postgresql === "node-postgres",
-        },
-        {
             name: "@neondatabase/serverless",
             version: "^0.9.3",
             dev: false,
@@ -56,7 +44,7 @@ export const adder = defineAdderConfig({
             name: "postgres",
             version: "^3.4.4",
             dev: false,
-            condition: ({ options }) => options.postgresql === "supabase",
+            condition: ({ options }) => options.postgresql === "postgres.js",
         },
         // SQLite
         {
@@ -115,7 +103,7 @@ export const adder = defineAdderConfig({
         {
             name: () => `docker-compose.yml`,
             contentType: "text",
-            condition: ({ options }) => options.mysql === "mysql2" || options.postgresql === "node-postgres",
+            condition: ({ options }) => options.mysql === "mysql2" || options.postgresql === "postgres.js",
             content: ({ content, options }) => {
                 // if the file already exists, don't modify it
                 // (in the future, we could add some tooling for modifying yaml)
@@ -139,7 +127,8 @@ export const adder = defineAdderConfig({
                       MYSQL_ROOT_PASSWORD: mysecretpassword
                       MYSQL_DATABASE: local
                 `;
-                } else if (options.postgresql === "node-postgres") {
+                }
+                if (options.postgresql === "postgres.js") {
                     content += `
                       POSTGRES_USER: root
                       POSTGRES_PASSWORD: mysecretpassword
@@ -310,19 +299,13 @@ export const adder = defineAdderConfig({
                     clientExpression = common.expressionFromString("new Client({ url: env.DATABASE_URL })");
                 }
                 // PostgreSQL
-                if (options.postgresql === "node-postgres") {
-                    imports.addNamed(ast, "pg", { Client: "Client" });
-                    imports.addNamed(ast, "drizzle-orm/node-postgres", { drizzle: "drizzle" });
-
-                    clientExpression = common.expressionFromString("new Client(env.DATABASE_URL)");
-                }
                 if (options.postgresql === "neon") {
                     imports.addNamed(ast, "@neondatabase/serverless", { neon: "neon" });
                     imports.addNamed(ast, "drizzle-orm/neon-http", { drizzle: "drizzle" });
 
                     clientExpression = common.expressionFromString("neon(env.DATABASE_URL)");
                 }
-                if (options.postgresql === "supabase") {
+                if (options.postgresql === "supabase" || options.postgresql === "postgres.js") {
                     imports.addDefault(ast, "postgres", "postgres");
                     imports.addNamed(ast, "drizzle-orm/postgres-js", { drizzle: "drizzle" });
 
@@ -332,12 +315,6 @@ export const adder = defineAdderConfig({
                 if (!clientExpression) throw new Error("unreachable state...");
                 const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
                 common.addStatement(ast, clientIdentifier);
-
-                // Statements after `client` declaration
-                if (options.postgresql === "node-postgres") {
-                    const connectStatement = common.statementFromString("await client.connect();");
-                    common.addStatement(ast, connectStatement);
-                }
 
                 const drizzleCall = functions.callByIdentifier("drizzle", ["client"]);
                 const db = variables.declaration(ast, "const", "db", drizzleCall);

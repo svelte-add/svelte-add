@@ -37,8 +37,7 @@ export const options = defineAdderOptions({
         type: "select",
         default: undefined,
         options: [
-            { value: "node-postgres", label: "node-postgres" },
-            // { value: "postgres.js", label: "Postgres.JS" },
+            { value: "postgres.js", label: "Postgres.JS" },
             { value: "supabase", hint: "uses Postgres.JS", label: "Supabase" },
             { value: "neon", hint: "uses @neondatabase/serverless", label: "Neon" },
         ],
@@ -48,6 +47,6 @@ export const options = defineAdderOptions({
         question: "Do you want to run the database locally with docker-compose?",
         default: false,
         type: "boolean",
-        condition: ({ mysql, postgresql }) => mysql === "mysql2" || postgresql === "node-postgres",
+        condition: ({ mysql, postgresql }) => mysql === "mysql2" || postgresql === "postgres.js",
     },
 });
