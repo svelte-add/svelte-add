@@ -275,9 +275,8 @@ export const adder = defineAdderConfig({
                     imports.addNamed(ast, "@libsql/client", { createClient: "createClient" });
                     imports.addNamed(ast, "drizzle-orm/libsql", { drizzle: "drizzle" });
 
-                    // TODO: deal with type assertion
                     clientExpression = common.expressionFromString(
-                        "createClient({ url: env.DATABASE_URL!, authToken: env.DATABASE_AUTH_TOKEN })",
+                        "createClient({ url: env.DATABASE_URL, authToken: env.DATABASE_AUTH_TOKEN })",
                     );
                 }
                 // MySQL
@@ -304,18 +303,28 @@ export const adder = defineAdderConfig({
                     imports.addNamed(ast, "@neondatabase/serverless", { neon: "neon" });
                     imports.addNamed(ast, "drizzle-orm/neon-http", { drizzle: "drizzle" });
 
-                    // TODO: deal with type assertion
-                    clientExpression = common.expressionFromString("neon(env.DATABASE_URL!)");
+                    clientExpression = common.expressionFromString("neon(env.DATABASE_URL)");
                 }
                 if (options.postgresql === "supabase") {
                     imports.addDefault(ast, "postgres", "postgres");
                     imports.addNamed(ast, "drizzle-orm/postgres-js", { drizzle: "drizzle" });
 
-                    // TODO: deal with type assertion
-                    clientExpression = common.expressionFromString("postgres(env.DATABASE_URL!)");
+                    clientExpression = common.expressionFromString("postgres(env.DATABASE_URL)");
                 }
 
                 imports.addNamed(ast, "$env/dynamic/private", { env: "env" });
+
+                // env var checks
+                const dbURLCheck = common.statementFromString(
+                    `if (!env.DATABASE_URL) throw new Error("DATABASE_URL is not set");`,
+                );
+                common.addStatement(ast, dbURLCheck);
+                if (options.sqlite === "turso") {
+                    const authTokenCheck = common.statementFromString(
+                        `if (!env.DATABASE_AUTH_TOKEN) throw new Error("DATABASE_AUTH_TOKEN is not set");`,
+                    );
+                    common.addStatement(ast, authTokenCheck);
+                }
 
                 if (!clientExpression) throw new Error("unreachable state...");
                 const clientIdentifier = variables.declaration(ast, "const", "client", clientExpression);
