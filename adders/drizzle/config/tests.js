@@ -12,9 +12,10 @@ export const tests = defineAdderTests({
     options,
     optionValues: [
         { ...defaults, database: "sqlite", sqlite: "better-sqlite3" },
-        // { ...defaults, database: "mysql", mysql: "mysql2", docker: true },
-        // { ...defaults, database: "postgresql", postgresql: "node-postgres", docker: true },
+        { ...defaults, database: "mysql", mysql: "mysql2", docker: true },
+        { ...defaults, database: "postgresql", postgresql: "postgres.js", docker: true },
     ],
+    runSynchronously: true,
     files: [
         {
             name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
@@ -85,7 +86,7 @@ export const tests = defineAdderTests({
             name: () => "package.json",
             contentType: "json",
             content: ({ data }) => {
-                // executes after npm install
+                // executes after pnpm install
                 data.scripts["postinstall"] ??= "pnpm run db:push";
             },
         },
@@ -96,8 +97,6 @@ export const tests = defineAdderTests({
             run: async ({ elementExists }) => {
                 await elementExists("[data-test-id]");
             },
-            // TODO: remove this condition once mysql and postgres test setups are implemented
-            condition: ({ sqlite }) => sqlite === "better-sqlite3",
         },
     ],
 });
