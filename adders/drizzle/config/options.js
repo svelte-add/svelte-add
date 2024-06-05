@@ -17,7 +17,7 @@ export const options = defineAdderOptions({
         default: undefined,
         options: [
             { value: "better-sqlite3", label: "better-sqlite3" },
-            { value: "turso", label: "Turso" },
+            { value: "turso", hint: "uses libSQL", label: "Turso" },
             // { value: "d1", label: "Cloudflare D1" },
         ],
         condition: ({ database }) => database === "sqlite",
@@ -28,7 +28,7 @@ export const options = defineAdderOptions({
         default: undefined,
         options: [
             { value: "mysql2", label: "mysql2" },
-            { value: "planetscale", label: "PlanetScale" },
+            { value: "planetscale", hint: "uses @planetscale/database", label: "PlanetScale" },
         ],
         condition: ({ database }) => database === "mysql",
     },
@@ -39,8 +39,8 @@ export const options = defineAdderOptions({
         options: [
             { value: "node-postgres", label: "node-postgres" },
             // { value: "postgres.js", label: "Postgres.JS" },
-            { value: "supabase", label: "Supabase" },
-            { value: "neon", label: "Neon" },
+            { value: "supabase", hint: "uses Postgres.JS", label: "Supabase" },
+            { value: "neon", hint: "uses @neondatabase/serverless", label: "Neon" },
         ],
         condition: ({ database }) => database === "postgresql",
     },
