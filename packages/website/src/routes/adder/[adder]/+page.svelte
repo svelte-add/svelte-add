@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+    import { browser } from "$app/environment";
     import Box from "$lib/Box.svelte";
     import BoxWrapper from "$lib/BoxWrapper.svelte";
     import AdderImage from "$lib/AdderImage.svelte";
@@ -6,11 +7,12 @@
     import CopyCommand from "$lib/CopyCommand.svelte";
     import Seo from "$lib/Seo.svelte";
     import SupportedEnvironments from "$lib/SupportedEnvironments.svelte";
+    import type { AdderMetadataWithOptions } from "$lib/adder.js";
+    import type { PageData } from "./$types.js";
 
-    export let data;
+    export let data: PageData;
 
-    /** @type {import("$lib/adder.js").AdderMetadataWithOptions} */
-    const adder = data.adder;
+    const adder: AdderMetadataWithOptions = data.adder;
     const availableCliOptions = data.availableCliOptions;
 
     const { metadata } = adder;
