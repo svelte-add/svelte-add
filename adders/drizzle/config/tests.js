@@ -1,19 +1,19 @@
 import { defineAdderTests } from "@svelte-add/core";
 import { options } from "./options";
 
-const defaults = {
-    mysql: undefined,
-    postgresql: undefined,
-    docker: false,
-    sqlite: undefined,
+const defaultOptionValues = {
+    sqlite: options.sqlite.default,
+    mysql: options.mysql.default,
+    postgresql: options.postgresql.default,
+    docker: options.docker.default,
 };
 
 export const tests = defineAdderTests({
     options,
     optionValues: [
-        { ...defaults, database: "sqlite", sqlite: "better-sqlite3" },
-        { ...defaults, database: "mysql", mysql: "mysql2", docker: true },
-        { ...defaults, database: "postgresql", postgresql: "postgres.js", docker: true },
+        { ...defaultOptionValues, database: "sqlite", sqlite: "better-sqlite3" },
+        { ...defaultOptionValues, database: "mysql", mysql: "mysql2", docker: true },
+        { ...defaultOptionValues, database: "postgresql", postgresql: "postgres.js", docker: true },
     ],
     runSynchronously: true,
     files: [
