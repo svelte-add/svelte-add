@@ -74,11 +74,11 @@ function startDocker() {
 }
 
 function stopDocker() {
+    if (usingDocker) return;
     console.log("Stopping docker containers");
     execSync("docker compose down --volumes", { cwd, stdio: "inherit" });
 }
 
-// cleanup
-process.on("exit", async () => {
-    if (usingDocker) stopDocker();
-});
+const cleanup = async () => stopDocker();
+process.on("exit", cleanup);
+process.on("SIGINT", cleanup);
