@@ -47,6 +47,7 @@ export const options = defineAdderOptions({
         question: "Do you want to run the database locally with docker-compose?",
         default: false,
         type: "boolean",
-        condition: ({ mysql, postgresql }) => mysql === "mysql2" || postgresql === "postgres.js",
+        condition: ({ database, mysql, postgresql }) =>
+            (database === "mysql" && mysql === "mysql2") || (database === "postgresql" && postgresql === "postgres.js"),
     },
 });
