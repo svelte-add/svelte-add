@@ -12,6 +12,7 @@ export const tests = defineAdderTests({
     options,
     optionValues: [
         { ...defaultOptionValues, database: "sqlite", sqlite: "better-sqlite3" },
+        { ...defaultOptionValues, database: "sqlite", sqlite: "libsql" },
         { ...defaultOptionValues, database: "mysql", mysql: "mysql2", docker: true },
         { ...defaultOptionValues, database: "postgresql", postgresql: "postgres.js", docker: true },
     ],

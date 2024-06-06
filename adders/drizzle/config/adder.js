@@ -63,7 +63,7 @@ export const adder = defineAdderConfig({
             name: "@libsql/client",
             version: "^0.6.1",
             dev: false,
-            condition: ({ options }) => options.sqlite === "turso",
+            condition: ({ options }) => options.sqlite === "libsql" || options.sqlite === "turso",
         },
     ],
     files: [
@@ -79,8 +79,9 @@ export const adder = defineAdderConfig({
                     content = addEnvVar(content, DB_URL_KEY, `"${db}://root:mysecretpassword@localhost:${port}/local"`);
                     return content;
                 }
-                if (options.sqlite === "better-sqlite3") {
-                    content = addEnvVar(content, DB_URL_KEY, `"local.db"`);
+                if (options.sqlite === "better-sqlite3" || options.sqlite === "libsql") {
+                    const prefix = options.sqlite === "libsql" ? "file:" : "";
+                    content = addEnvVar(content, DB_URL_KEY, `"${prefix}local.db"`);
                     return content;
                 }
 
@@ -167,17 +168,16 @@ export const adder = defineAdderConfig({
             content: ({ options, ast, common, exports, typescript, imports }) => {
                 imports.addNamed(ast, "drizzle-kit", { defineConfig: "defineConfig" });
 
-                if (options.database === "sqlite") {
+                const isBetterSqlite = options.sqlite === "better-sqlite3";
+                if (isBetterSqlite) {
                     imports.addNamed(ast, "node:url", { pathToFileURL: "pathToFileURL" });
                 }
 
+                const dbURL = isBetterSqlite ? "pathToFileURL(process.env.DATABASE_URL).href" : "process.env.DATABASE_URL";
                 const envCheckStatement = common.statementFromString(
                     `if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');`,
                 );
                 common.addStatement(ast, envCheckStatement);
-
-                const dbURL =
-                    options.database === "sqlite" ? "pathToFileURL(process.env.DATABASE_URL).href" : "process.env.DATABASE_URL";
 
                 // specifies the turso driver for the config
                 const driver = options.sqlite === "turso" ? "driver: 'turso'," : "";
@@ -270,20 +270,24 @@ export const adder = defineAdderConfig({
 
                     clientExpression = common.expressionFromString("new Database(env.DATABASE_URL)");
                 }
-                if (options.sqlite === "turso") {
+                if (options.sqlite === "libsql" || options.sqlite === "turso") {
                     imports.addNamed(ast, "@libsql/client", { createClient: "createClient" });
                     imports.addNamed(ast, "drizzle-orm/libsql", { drizzle: "drizzle" });
-                    imports.addNamed(ast, "$app/environment", { dev: "dev" });
 
-                    // auth token check in prod
-                    const authTokenCheck = common.statementFromString(
-                        `if (!dev && !env.DATABASE_AUTH_TOKEN) throw new Error("DATABASE_AUTH_TOKEN is not set");`,
-                    );
-                    common.addStatement(ast, authTokenCheck);
+                    if (options.sqlite === "turso") {
+                        imports.addNamed(ast, "$app/environment", { dev: "dev" });
+                        // auth token check in prod
+                        const authTokenCheck = common.statementFromString(
+                            `if (!dev && !env.DATABASE_AUTH_TOKEN) throw new Error("DATABASE_AUTH_TOKEN is not set");`,
+                        );
+                        common.addStatement(ast, authTokenCheck);
 
-                    clientExpression = common.expressionFromString(
-                        "createClient({ url: env.DATABASE_URL, authToken: env.DATABASE_AUTH_TOKEN })",
-                    );
+                        clientExpression = common.expressionFromString(
+                            "createClient({ url: env.DATABASE_URL, authToken: env.DATABASE_AUTH_TOKEN })",
+                        );
+                    } else {
+                        clientExpression = common.expressionFromString("createClient({ url: env.DATABASE_URL })");
+                    }
                 }
                 // MySQL
                 if (options.mysql === "mysql2") {
@@ -305,7 +309,7 @@ export const adder = defineAdderConfig({
 
                     clientExpression = common.expressionFromString("neon(env.DATABASE_URL)");
                 }
-                if (options.postgresql === "supabase" || options.postgresql === "postgres.js") {
+                if (options.postgresql === "postgres.js") {
                     imports.addDefault(ast, "postgres", "postgres");
                     imports.addNamed(ast, "drizzle-orm/postgres-js", { drizzle: "drizzle" });
 

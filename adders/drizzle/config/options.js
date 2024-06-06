@@ -17,6 +17,7 @@ export const options = defineAdderOptions({
         default: undefined,
         options: [
             { value: "better-sqlite3", label: "better-sqlite3" },
+            { value: "libsql", label: "libSQL" },
             { value: "turso", hint: "uses libSQL", label: "Turso" },
             // { value: "d1", label: "Cloudflare D1" },
         ],
@@ -38,7 +39,6 @@ export const options = defineAdderOptions({
         default: undefined,
         options: [
             { value: "postgres.js", label: "Postgres.JS" },
-            { value: "supabase", hint: "uses Postgres.JS", label: "Supabase" },
             { value: "neon", hint: "uses @neondatabase/serverless", label: "Neon" },
         ],
         condition: ({ database }) => database === "postgresql",
