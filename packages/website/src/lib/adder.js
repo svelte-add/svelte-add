@@ -19,6 +19,7 @@ export async function getAdderInfos(category) {
     const adders = [];
     for (const adderName of addersNames) {
         const config = await getAdderDetails(adderName);
+        serializeConditions(config);
 
         if (category && config.metadata.category.id !== category) {
             continue;
@@ -39,6 +40,7 @@ export async function getAdderInfos(category) {
  */
 export async function getAdderDetails(name) {
     const config = await getAdderConfig(name);
+    serializeConditions(config);
 
     return {
         metadata: config.metadata,
@@ -52,4 +54,17 @@ export async function getAdderDetails(name) {
  */
 function groupAddersByCategory(adders) {
     return groupBy(adders, (adder) => adder.metadata.category);
+}
+
+/**
+ * Serializes the functions that evaluate a question's conditions
+ * @param {AdderMetadataWithOptions} adder
+ */
+function serializeConditions(adder) {
+    for (const question of Object.values(adder.options ?? {})) {
+        if (question?.condition) {
+            // @ts-expect-error we're temporarily serializing this function so that we can use it on the client
+            question.condition = question.condition.toString();
+        }
+    }
 }
