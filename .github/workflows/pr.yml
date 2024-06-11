@@ -24,7 +24,6 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
-                  cache-dependency-path: pnpm-lock.yaml
 
             - name: install dependencies
               run: pnpm install
@@ -48,7 +47,6 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
-                  cache-dependency-path: pnpm-lock.yaml
 
             - name: install dependencies
               run: pnpm install
@@ -75,7 +73,6 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
-                  cache-dependency-path: pnpm-lock.yaml
 
             - name: install dependencies
               run: pnpm install
