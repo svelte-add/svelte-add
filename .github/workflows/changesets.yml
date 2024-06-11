@@ -18,11 +18,15 @@ jobs:
               with:
                   fetch-depth: 0
 
+            - name: setup pnpm
+              uses: pnpm/action-setup@v4
+
             - name: setup node.js
               uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: pnpm
+                  cache-dependency-path: pnpm-lock.yaml
 
             - name: Setup npmrc
               run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN_2024 }}" > .npmrc
