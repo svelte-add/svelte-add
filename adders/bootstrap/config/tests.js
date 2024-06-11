@@ -51,7 +51,7 @@ export const tests = defineAdderTests({
         {
             name: "typography properties",
             run: async ({ expectProperty }) => {
-                await expectProperty(".h1", "font-size", "34px");
+                await expectProperty(".h1", "font-size", "40px");
                 await expectProperty(".text-decoration-line-through", "text-decoration", "line-through solid rgb(33, 37, 41)");
             },
         },
