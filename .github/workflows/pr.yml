@@ -16,26 +16,11 @@ jobs:
             - name: checkout code repository
               uses: actions/checkout@v4
 
-            - name: setup pnpm
-              uses: pnpm/action-setup@v4
-
             - name: setup node.js
               uses: actions/setup-node@v4
               with:
                   node-version: 20
-
-            # PNPM Store cache setup
-            - name: get pnpm store directory
-              id: pnpm-cache
-              run: |
-                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - name: setup pnpm cache
-              uses: actions/cache@v4
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pnpm-store-
+                  cache: pnpm
 
             - name: install dependencies
               run: pnpm install
@@ -51,26 +36,11 @@ jobs:
             - name: checkout code repository
               uses: actions/checkout@v3
 
-            - name: setup pnpm
-              uses: pnpm/action-setup@v4
-
             - name: setup node.js
               uses: actions/setup-node@v3
               with:
                   node-version: 20
-
-            # PNPM Store cache setup
-            - name: get pnpm store directory
-              id: pnpm-cache
-              run: |
-                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - name: setup pnpm cache
-              uses: actions/cache@v4
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pnpm-store-
+                  cache: pnpm
 
             - name: install dependencies
               run: pnpm install
@@ -89,26 +59,11 @@ jobs:
             - name: checkout code repository
               uses: actions/checkout@v3
 
-            - name: setup pnpm
-              uses: pnpm/action-setup@v4
-
             - name: setup node.js
               uses: actions/setup-node@v3
               with:
                   node-version: 20
-
-            # PNPM Store cache setup
-            - name: get pnpm store directory
-              id: pnpm-cache
-              run: |
-                  echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - name: setup pnpm cache
-              uses: actions/cache@v4
-              with:
-                  path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pnpm-store-
+                  cache: pnpm
 
             - name: install dependencies
               run: pnpm install
