@@ -58,7 +58,7 @@ export const tests = defineAdderTests({
         {
             name: "dropdown properties",
             run: async ({ click, elementExists }) => {
-                await click(".btn.dropdown-toggle", false);
+                await click(".btn.dropdown-toggle");
                 await elementExists(".btn.dropdown-toggle.show");
             },
         },

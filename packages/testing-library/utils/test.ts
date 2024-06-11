@@ -10,8 +10,8 @@ export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, opti
         elementExists: async (selector) => {
             await elementExists(page, selector);
         },
-        click: async (selector, waitForNavigation) => {
-            await click(page, selector, waitForNavigation);
+        click: async (selector, path) => {
+            await click(page, selector, path);
         },
         expectUrlPath: async (path) => {
             await expectUrlPath(page, path);
@@ -44,10 +44,22 @@ async function elementExists(page: Page, selector: string) {
     return elementToCheck;
 }
 
-async function click(page: Page, selector: string, waitForNavigation: boolean) {
+/**
+ * @param path If the click action results in a navigation, provide the expected path
+ *
+ * @example
+ * ```js
+ * await click(page, "a.some-link", "/some-path");
+ * ```
+ */
+async function click(page: Page, selector: string, path?: string) {
     await elementExists(page, selector);
 
-    await page.click(selector, { noWaitAfter: !waitForNavigation });
+    await page.click(selector);
+
+    if (path) {
+        await page.waitForURL((url) => url.pathname === path);
+    }
 }
 
 async function expectUrlPath(page: Page, path: string) {
