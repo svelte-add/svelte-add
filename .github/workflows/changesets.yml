@@ -27,9 +27,6 @@ jobs:
                   node-version: 20
                   cache: pnpm
 
-            - name: Setup npmrc
-              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN_2024 }}" > .npmrc
-
             - name: install dependencies
               run: pnpm install
 
@@ -48,6 +45,7 @@ jobs:
                   createGithubReleases: false
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
 
             - name: Publish website
               if: steps.changesets.outputs.published == 'true' && contains(steps.changesets.outputs.publishedPackages, '@svelte-add/website')
