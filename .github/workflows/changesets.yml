@@ -26,7 +26,6 @@ jobs:
               with:
                   node-version: 20
                   cache: pnpm
-                  cache-dependency-path: pnpm-lock.yaml
 
             - name: Setup npmrc
               run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN_2024 }}" > .npmrc
