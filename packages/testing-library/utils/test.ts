@@ -1,6 +1,6 @@
-import { AdderWithoutExplicitArgs, Tests } from "@svelte-add/core/adder/config";
-import { OptionValues, Question } from "@svelte-add/core/adder/options";
-import { Page } from "puppeteer";
+import type { AdderWithoutExplicitArgs, Tests } from "@svelte-add/core/adder/config";
+import type { OptionValues, Question } from "@svelte-add/core/adder/options";
+import type { Page } from "playwright";
 
 export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, options: OptionValues<Record<string, Question>>) {
     const tests: Tests = {
@@ -47,13 +47,7 @@ async function elementExists(page: Page, selector: string) {
 async function click(page: Page, selector: string, waitForNavigation: boolean) {
     await elementExists(page, selector);
 
-    if (!waitForNavigation) {
-        await page.click(selector);
-    } else {
-        // if a click triggers a page reload, this is the correct
-        // syntax according to puppeteer documentation
-        await Promise.all([page.waitForNavigation(), page.click(selector)]);
-    }
+    await page.click(selector, { noWaitAfter: !waitForNavigation });
 }
 
 async function expectUrlPath(page: Page, path: string) {
@@ -67,11 +61,13 @@ async function expectUrlPath(page: Page, path: string) {
 async function expectProperty(page: Page, selector: string, property: string, expectedValue: string) {
     const elementToCheck = await elementExists(page, selector);
 
-    const computedStyle = await page.evaluate(
-        (element, pV) => window.getComputedStyle(element).getPropertyValue(pV),
+    const aWindowHandle = await page.evaluateHandle(() => window);
+    const computedStyle = await page.evaluate(([element, pV, window]) => window.getComputedStyle(element).getPropertyValue(pV), [
         elementToCheck,
         property,
-    );
+        aWindowHandle,
+    ] as const);
+    await aWindowHandle.dispose();
 
     if (computedStyle !== expectedValue) {
         throw new Error(`Expected '${expectedValue}' but got '${computedStyle}' for selector '${selector}'`);
