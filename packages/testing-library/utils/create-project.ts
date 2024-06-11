@@ -32,10 +32,10 @@ export async function createProject(output: string, projectType: string) {
         });
     } else {
         const template = projectType == ProjectTypes.Svelte_TS ? "svelte-ts" : "svelte";
-        let args = ["create", "vite@latest", projectType, "--yes", "--template", template];
+        let args = ["init", "vite@latest", projectType, "--yes", "--", "--template", template];
 
         try {
-            await executeCli("pnpm", args, join(output, ".."));
+            await executeCli("npm", args, join(output, ".."));
         } catch (error) {
             throw new Error("Failed initializing vite project: " + error);
         }
