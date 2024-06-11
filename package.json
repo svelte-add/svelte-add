@@ -19,8 +19,7 @@
         "utils:readmes": "node ./packages/dev-utils/build/index.js readmes",
         "utils:packages": "node ./packages/dev-utils/build/index.js packages",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
-        "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
-        "postinstall": "node packages/testing-library/node_modules/puppeteer/install.mjs"
+        "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check"
     },
     "keywords": [],
     "author": "",
