@@ -80,8 +80,8 @@ export const adder = defineAdderConfig({
                     return content;
                 }
                 if (options.sqlite === "better-sqlite3" || options.sqlite === "libsql") {
-                    const prefix = options.sqlite === "libsql" ? "file:" : "";
-                    content = addEnvVar(content, DB_URL_KEY, `"${prefix}local.db"`);
+                    const dbFile = options.sqlite === "libsql" ? "file:local.db" : "local.db";
+                    content = addEnvVar(content, DB_URL_KEY, dbFile);
                     return content;
                 }
 
@@ -104,7 +104,7 @@ export const adder = defineAdderConfig({
         {
             name: () => `docker-compose.yml`,
             contentType: "text",
-            condition: ({ options }) => options.mysql === "mysql2" || options.postgresql === "postgres.js",
+            condition: ({ options }) => options.docker && (options.mysql === "mysql2" || options.postgresql === "postgres.js"),
             content: ({ content, options }) => {
                 // if the file already exists, don't modify it
                 // (in the future, we could add some tooling for modifying yaml)
@@ -151,7 +151,7 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            // Adds the db file to the gitignore if one is present
+            // Adds the db file to the gitignore if an ignore is present
             name: () => `.gitignore`,
             contentType: "text",
             condition: ({ options }) => options.database === "sqlite",
@@ -346,8 +346,9 @@ function addEnvVar(content, key, value) {
  * @returns {string}
  */
 function addEnvComment(content, comment) {
-    if (!content.includes(comment)) {
-        content = content.trimEnd() + `\n# ${comment}`;
+    const commented = `# ${comment}`;
+    if (!content.includes(commented)) {
+        content = content.trimEnd() + "\n" + commented;
     }
     return content;
 }
