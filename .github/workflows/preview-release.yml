@@ -6,7 +6,6 @@ on:
 
 jobs:
     preview-release:
-        if: github.event.review.state == 'APPROVED'
         timeout-minutes: 30
         runs-on: ubuntu-latest
         steps:
