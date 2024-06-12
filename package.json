@@ -20,7 +20,7 @@
         "utils:packages": "node ./packages/dev-utils/build/index.js packages",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
         "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
-        "postinstall": "pnpm -F @svelte-add/testing-library playwright install chromium"
+        "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium"
     },
     "keywords": [],
     "author": "",
