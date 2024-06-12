@@ -45,4 +45,4 @@ jobs:
 
             - name: publish preview
               if: ${{ steps.changed-files.outputs.any_changed }}
-              run: pnpm pkg-pr-new publish --pnpm --compact ${{ steps.changed-files.outputs.all_changed_files }}
+              run: pnpm pkg-pr-new publish --pnpm ${{ steps.changed-files.outputs.all_changed_files }}
