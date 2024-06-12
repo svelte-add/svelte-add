@@ -66,9 +66,6 @@ export const tests = defineAdderTests({
             contentType: "text",
             condition: ({ kit }) => kit.installed,
             content: ({ typescript, options }) => {
-                // For some reason, using the file's url via the file protocol (file://) does not work in tests,
-                // but it works for end users. However, the inverse is also true, where the _lack_ of file protocol
-                // in the url *does not* work for users, but it (strangely) works for tests.
                 return `
                 import { defineConfig } from "drizzle-kit";
 
