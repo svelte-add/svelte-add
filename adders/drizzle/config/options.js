@@ -19,7 +19,6 @@ export const options = defineAdderOptions({
             { value: "better-sqlite3", label: "better-sqlite3" },
             { value: "libsql", label: "libSQL" },
             { value: "turso", hint: "uses libSQL", label: "Turso" },
-            // { value: "d1", label: "Cloudflare D1" },
         ],
         condition: ({ database }) => database === "sqlite",
     },

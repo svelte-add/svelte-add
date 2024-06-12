@@ -173,7 +173,6 @@ export const adder = defineAdderConfig({
                     imports.addNamed(ast, "node:url", { pathToFileURL: "pathToFileURL" });
                 }
 
-                const dbURL = isBetterSqlite ? "pathToFileURL(process.env.DATABASE_URL).href" : "process.env.DATABASE_URL";
                 const envCheckStatement = common.statementFromString(
                     `if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');`,
                 );
@@ -189,7 +188,7 @@ export const adder = defineAdderConfig({
                         dialect: '${options.database}', 
                         ${driver}
                         dbCredentials: {
-                            url: ${dbURL},
+                            url: process.env.DATABASE_URL,
                             ${authToken}
                         },
                         verbose: true,
