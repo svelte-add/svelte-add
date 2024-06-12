@@ -181,6 +181,7 @@ export const adder = defineAdderConfig({
 
                 // specifies the turso driver for the config
                 const driver = options.sqlite === "turso" ? "driver: 'turso'," : "";
+                const authToken = options.sqlite === "turso" ? "authToken: process.env.DATABASE_AUTH_TOKEN" : "";
 
                 const defaultExport = common.expressionFromString(`
                     defineConfig({
@@ -188,7 +189,8 @@ export const adder = defineAdderConfig({
                         dialect: '${options.database}', 
                         ${driver}
                         dbCredentials: {
-                            url: ${dbURL}
+                            url: ${dbURL},
+                            ${authToken}
                         },
                         verbose: true,
                         strict: true
