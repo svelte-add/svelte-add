@@ -73,13 +73,10 @@ async function expectUrlPath(page: Page, path: string) {
 async function expectProperty(page: Page, selector: string, property: string, expectedValue: string) {
     const elementToCheck = await elementExists(page, selector);
 
-    const aWindowHandle = await page.evaluateHandle(() => window);
-    const computedStyle = await page.evaluate(([element, pV, window]) => window.getComputedStyle(element).getPropertyValue(pV), [
+    const computedStyle = await page.evaluate(([element, pV]) => window.getComputedStyle(element).getPropertyValue(pV), [
         elementToCheck,
         property,
-        aWindowHandle,
     ] as const);
-    await aWindowHandle.dispose();
 
     if (computedStyle !== expectedValue) {
         throw new Error(`Expected '${expectedValue}' but got '${computedStyle}' for selector '${selector}'`);
