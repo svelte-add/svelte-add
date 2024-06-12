@@ -1,0 +1,48 @@
+name: Publish Approved Pull Requests
+on:
+    pull_request_review:
+        types: [submitted]
+
+jobs:
+    preview-release:
+        if: github.event.review.state == 'APPROVED'
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout code repository
+              uses: actions/checkout@v3
+
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+
+            - name: setup node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+                  cache: pnpm
+
+            - name: Run changed-files
+              id: changed-files
+              uses: tj-actions/changed-files@v44
+              with:
+                  separator: " "
+                  dir_names: "true"
+                  dir_names_max_depth: "2" # truncates the path to adders/X
+                  files: |
+                      adders/**
+                      packages/**
+                  files_ignore: |
+                      packages/dev-utils/**
+                      packages/tests/**
+                      packages/website/**
+
+            - name: install dependencies
+              run: pnpm install
+
+            - name: build
+              run: pnpm build:prod
+
+            - name: publish preview
+              if: ${{ steps.changed-files.outputs.any_changed }}
+              run: pnpm pkg-pr-new publish --pnpm --compact ${{ steps.changed-files.outputs.all_changed_files }}
