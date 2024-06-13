@@ -1,5 +1,13 @@
 # @svelte-add/testing-library
 
+## 2.0.11
+
+### Patch Changes
+
+-   chore: use `pnpm` instead of `npm` ([#384](https://github.com/svelte-add/svelte-add/pull/384))
+
+-   chore: improve test output ([#380](https://github.com/svelte-add/svelte-add/pull/380))
+
 ## 2.0.10
 
 ### Patch Changes
