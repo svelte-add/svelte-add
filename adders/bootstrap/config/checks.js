@@ -9,7 +9,7 @@ export const checks = defineAdderChecks({
             run: async ({ fileExists, fileContains }) => {
                 const filePath = `src/variables.scss`;
                 await fileExists(filePath);
-                await fileContains(filePath, "testasd");
+                await fileContains(filePath, "$background: lightgrey;");
             },
         },
     ],
