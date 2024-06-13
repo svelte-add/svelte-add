@@ -20,7 +20,7 @@ export const adder = defineAdderConfig({
     packages: [
         { name: "bootstrap", version: "^5.3.3", dev: true },
         { name: "@popperjs/core", version: "^2.11.8", dev: true, condition: ({ options }) => options.addJavaScript },
-        { name: "sass", version: "^1.77.2", dev: true, condition: ({ options }) => options.useSass },
+        { name: "sass", version: "^1.77.5", dev: true, condition: ({ options }) => options.useSass },
     ],
     files: [
         {
