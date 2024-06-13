@@ -2,6 +2,8 @@ import { Workspace } from "../utils/workspace";
 import { AdderCheckConfig, AdderConfig } from "./config";
 import { OptionDefinition } from "./options";
 import { fileExistsWorkspace, readFile } from "../files/utils";
+import pc from "picocolors";
+import { messagePrompt } from "../utils/prompts";
 
 export type PreconditionParameters<Args extends OptionDefinition> = {
     workspace: Workspace<Args>;
@@ -56,4 +58,12 @@ async function fileContains<Args extends OptionDefinition>(
     if (content && content.includes(expectedContent)) return;
 
     throw new Error(`File "${path}" does not contain "${expectedContent}"`);
+}
+
+export async function printUnmetPostconditions(unmetPostconditions: string[]) {
+    const postconditionList = unmetPostconditions.map((x) => pc.yellow(`- ${x}`)).join("\n");
+    const additionalText = `Postconditions are not supposed to fail.
+Please open an issue providing the full console output:
+https://github.com/svelte-add/svelte-add/issues/new/choose`;
+    messagePrompt("Postconditions not met", `${postconditionList}\n\n${additionalText}`);
 }

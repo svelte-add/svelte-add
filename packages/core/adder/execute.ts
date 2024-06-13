@@ -23,10 +23,9 @@ import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
-import { PromptOption, endPrompts, messagePrompt, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
+import { PromptOption, endPrompts, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
 import { categories } from "./categories.js";
-import { checkPostconditions } from "./postconditions.js";
-import pc from "picocolors";
+import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -175,7 +174,7 @@ async function executePlan<Args extends OptionDefinition>(
     if (isTesting && unmetPostconditions.length > 0) {
         throw new Error("Postconditions not met: " + unmetPostconditions.join(" / "));
     } else if (unmetPostconditions.length > 0) {
-        messagePrompt("Postconditions not met", unmetPostconditions.map((x) => pc.yellow(`- ${x}`)).join("\n"));
+        await printUnmetPostconditions(unmetPostconditions);
     }
 
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
