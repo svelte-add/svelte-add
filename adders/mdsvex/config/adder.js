@@ -17,7 +17,7 @@ export const adder = defineAdderConfig({
     },
     options,
     integrationType: "inline",
-    packages: [{ name: "mdsvex", version: "^0.11.0", dev: true }],
+    packages: [{ name: "mdsvex", version: "^0.11.2", dev: true }],
     files: [
         {
             name: () => `svelte.config.js`,
