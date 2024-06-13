@@ -18,5 +18,5 @@ export const adder = defineAdderConfig({
 
     options,
     integrationType: "external",
-    command: "storybook@next init --skip-install",
+    command: "storybook@latest init --skip-install",
 });
