@@ -2,4 +2,4 @@
 "@svelte-add/core": patch
 ---
 
-fix: preconditions are now ignored during tests
+fix: global preconditions are now ignored during tests
