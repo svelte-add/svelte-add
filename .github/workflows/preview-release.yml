@@ -1,5 +1,6 @@
 name: Publish Approved Pull Requests
 on:
+    pull_request:
     issue_comment:
         types: [edited, created]
 
