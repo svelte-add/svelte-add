@@ -1,8 +1,5 @@
 name: Publish Approved Pull Requests
 on:
-    push:
-        branches:
-            - main
     issue_comment:
         types: [edited, created]
 
