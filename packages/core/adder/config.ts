@@ -95,7 +95,7 @@ export function defineAdder<Args extends OptionDefinition>(
 export type Tests = {
     expectProperty: (selector: string, property: string, expectedValue: string) => Promise<void>;
     elementExists: (selector: string) => Promise<void>;
-    click: (selector: string, waitForNavigation: boolean) => Promise<void>;
+    click: (selector: string, path?: string) => Promise<void>;
     expectUrlPath: (path: string) => Promise<void>;
 };
 

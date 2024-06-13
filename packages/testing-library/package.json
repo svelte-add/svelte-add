@@ -11,10 +11,10 @@
     },
     "dependencies": {
         "@svelte-add/ast-tooling": "workspace:^",
-        "svelte-add": "workspace:^",
         "@svelte-add/core": "workspace:^",
         "create-svelte": "^6.2.0",
-        "puppeteer": "^22.10.0"
+        "playwright": "^1.44.1",
+        "svelte-add": "workspace:^"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
