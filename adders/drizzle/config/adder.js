@@ -129,17 +129,21 @@ export const adder = defineAdderConfig({
                     environment:
                 `;
 
+                const USER = "root";
+                const PASSWORD = "mysecretpassword";
+                const DB_NAME = "local";
+
                 if (options.mysql === "mysql2") {
                     content += `
-                      MYSQL_ROOT_PASSWORD: mysecretpassword
-                      MYSQL_DATABASE: local
+                      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+                      MYSQL_DATABASE: ${DB_NAME}
                 `;
                 }
                 if (options.postgresql === "postgres.js") {
                     content += `
-                      POSTGRES_USER: root
-                      POSTGRES_PASSWORD: mysecretpassword
-                      POSTGRES_DB: local
+                      POSTGRES_USER: ${USER}
+                      POSTGRES_PASSWORD: ${PASSWORD}
+                      POSTGRES_DB: ${DB_NAME}
                 `;
                 }
                 return content;
