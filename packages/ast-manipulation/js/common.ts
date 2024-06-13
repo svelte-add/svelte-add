@@ -70,8 +70,12 @@ export function expressionFromString(value: string): AstKinds.ExpressionKind {
 
 export function statementFromString(value: string): AstKinds.StatementKind {
     const program = parseScript(value);
+    const statement = program.body[0];
+    if (!statement) {
+        throw new Error("value passed was not an statement");
+    }
 
-    return program.body[0];
+    return statement;
 }
 
 /** Appends the statement to body of the block if it doesn't already exist */

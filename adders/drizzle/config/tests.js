@@ -16,7 +16,6 @@ export const tests = defineAdderTests({
         { ...defaultOptionValues, database: "mysql", mysql: "mysql2", docker: true },
         { ...defaultOptionValues, database: "postgresql", postgresql: "postgres.js", docker: true },
     ],
-    runSynchronously: true,
     files: [
         {
             name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
@@ -65,19 +64,8 @@ export const tests = defineAdderTests({
             name: ({ typescript }) => `drizzle.config.${typescript.installed ? "ts" : "js"}`,
             contentType: "text",
             condition: ({ kit }) => kit.installed,
-            content: ({ typescript, options }) => {
-                return `
-                import { defineConfig } from "drizzle-kit";
-
-                export default defineConfig({
-                    schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
-                    dialect: "${options.database}",
-                    dbCredentials: {
-                        url: process.env.DATABASE_URL
-                    },
-                    verbose: true
-                });
-                `;
+            content: ({ content }) => {
+                return content.replace("strict: true,", "");
             },
         },
         {

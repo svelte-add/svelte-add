@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "Drizzle",
-        description: "Headless TypeScript ORM with a head.",
+        description: "Headless ORM for NodeJS, TypeScript and JavaScript",
         category: categories.tools,
         environments: { svelte: false, kit: true },
         website: {
@@ -200,7 +200,7 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            name: ({ typescript }) => `src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`,
+            name: ({ kit, typescript }) => `${kit.libDirectory}/server/db/schema.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, variables }) => {
                 let userSchemaExpression;
@@ -252,7 +252,7 @@ export const adder = defineAdderConfig({
             },
         },
         {
-            name: ({ typescript }) => `src/lib/server/db/index.${typescript.installed ? "ts" : "js"}`,
+            name: ({ kit, typescript }) => `${kit.libDirectory}/server/db/index.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
             content: ({ ast, exports, imports, options, common, functions, variables }) => {
                 imports.addNamed(ast, "$env/dynamic/private", { env: "env" });

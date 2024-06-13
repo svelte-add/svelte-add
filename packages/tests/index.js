@@ -70,13 +70,13 @@ const cwd = path.resolve(fileURLToPath(import.meta.url), "..");
 // We're using `execSync` instead of our `executeCli` because we need the cleanup to be synchronous
 function startDocker() {
     console.log("Starting docker containers");
-    execSync("docker compose up --detach", { cwd, stdio: "inherit" });
+    execSync("docker compose up --detach", { cwd, stdio: "pipe" });
 }
 
 function stopDocker() {
     if (usingDocker) return;
     console.log("Stopping docker containers");
-    execSync("docker compose down --volumes", { cwd, stdio: "inherit" });
+    execSync("docker compose down --volumes", { cwd, stdio: "pipe" });
 }
 
 const cleanup = async () => stopDocker();
