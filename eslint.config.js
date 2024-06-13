@@ -40,7 +40,6 @@ export default tseslint.config(
             "packages/tests/build",
             "packages/website/.svelte-kit",
             "packages/website/build",
-            "packages/website",
             "temp",
         ],
     },

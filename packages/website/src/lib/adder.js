@@ -9,7 +9,7 @@ import { groupBy } from "@svelte-add/core/internal";
 
 /**
  *
- * @param {string | undefined} [category]
+ * @param {string} [category]
  * @returns
  */
 export async function getAdderInfos(category) {
