@@ -26,7 +26,7 @@ export type SelectQuestion<Value = any> = {
 export type BaseQuestion = {
     question: string;
     // TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
-    condition?: (options: any) => boolean;
+    condition?: (options: OptionValues<any>) => boolean;
 };
 
 export type Question = BaseQuestion & (BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion);
