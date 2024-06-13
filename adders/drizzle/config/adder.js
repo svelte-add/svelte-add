@@ -2,6 +2,12 @@ import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/co
 import pkg from "../package.json";
 import { options } from "./options";
 
+const PORTS = /** @type {const} */ ({
+    mysql: "3306",
+    postgresql: "5432",
+    sqlite: "",
+});
+
 export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
@@ -74,9 +80,9 @@ export const adder = defineAdderConfig({
                 const DB_URL_KEY = "DATABASE_URL";
                 if (options.docker === true) {
                     // we'll prefill with the default docker db credentials
-                    const db = options.database === "mysql" ? "mysql" : "postgres";
-                    const port = options.database === "mysql" ? "3306" : "5432";
-                    content = addEnvVar(content, DB_URL_KEY, `"${db}://root:mysecretpassword@localhost:${port}/local"`);
+                    const protocol = options.database === "mysql" ? "mysql" : "postgres";
+                    const port = PORTS[options.database];
+                    content = addEnvVar(content, DB_URL_KEY, `"${protocol}://root:mysecretpassword@localhost:${port}/local"`);
                     return content;
                 }
                 if (options.sqlite === "better-sqlite3" || options.sqlite === "libsql") {
@@ -110,13 +116,13 @@ export const adder = defineAdderConfig({
                 // (in the future, we could add some tooling for modifying yaml)
                 if (content.length > 0) return content;
 
-                const db = options.database === "mysql" ? "mysql" : "postgres";
-                const port = options.database === "mysql" ? "3306" : "5432";
+                const imageName = options.database === "mysql" ? "mysql" : "postgres";
+                const port = PORTS[options.database];
 
                 content = `
                 services:
                   db:
-                    image: ${db}
+                    image: ${imageName}
                     restart: always
                     ports:
                       - ${port}:${port}
