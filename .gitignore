@@ -1,6 +1,7 @@
 node_modules/
 .pnpm-store/
 build/
+.npmrc
 packages/tests/.outputs
 temp/
 coverage/
