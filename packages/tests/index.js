@@ -74,9 +74,10 @@ function startDocker() {
 }
 
 function stopDocker() {
-    if (usingDocker) return;
+    if (!usingDocker) return;
     console.log("Stopping docker containers");
     execSync("docker compose down --volumes", { cwd, stdio: "pipe" });
+    usingDocker = false;
 }
 
 const cleanup = async () => stopDocker();
