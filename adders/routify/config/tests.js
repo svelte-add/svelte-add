@@ -12,10 +12,10 @@ export const tests = defineAdderTests({
                 await elementExists(".routify-demo");
                 await expectUrlPath("/");
 
-                await click(".routify-demo .demo", true);
+                await click(".routify-demo .demo", "/demo");
                 await expectUrlPath("/demo");
 
-                await click(".routify-demo .index", true);
+                await click(".routify-demo .index", "/");
                 await expectUrlPath("/");
             },
         },

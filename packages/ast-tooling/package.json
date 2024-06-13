@@ -5,7 +5,7 @@
     "type": "module",
     "exports": "./build/index.js",
     "devDependencies": {
-        "@babel/parser": "^7.24.6",
+        "@babel/parser": "^7.24.7",
         "ast-types": "^0.14.2",
         "dom-serializer": "^2.0.0",
         "domhandler": "^5.0.3",

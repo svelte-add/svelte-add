@@ -5,6 +5,7 @@ import { CategoryInfo } from "./categories.js";
 import { OptionDefinition, OptionValues, Question } from "./options.js";
 import { FileTypes } from "../files/processors.js";
 import { Workspace } from "../utils/workspace.js";
+import { Postcondition } from "./postconditions.js";
 
 export { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
@@ -95,7 +96,7 @@ export function defineAdder<Args extends OptionDefinition>(
 export type Tests = {
     expectProperty: (selector: string, property: string, expectedValue: string) => Promise<void>;
     elementExists: (selector: string) => Promise<void>;
-    click: (selector: string, waitForNavigation: boolean) => Promise<void>;
+    click: (selector: string, path?: string) => Promise<void>;
     expectUrlPath: (path: string) => Promise<void>;
 };
 
@@ -130,6 +131,7 @@ export type Precondition = {
 export type AdderCheckConfig<Args extends OptionDefinition> = {
     options: Args;
     preconditions?: Precondition[];
+    postconditions?: Postcondition<Args>[];
 };
 
 export function defineAdderChecks<Args extends OptionDefinition>(checks: AdderCheckConfig<Args>) {
