@@ -18,14 +18,15 @@ import {
     AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
-import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
+import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
-import { PromptOption, endPrompts, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
+import { PromptOption, endPrompts, messagePrompt, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
 import { categories } from "./categories.js";
-import { booleanPrompt, messagePrompt } from "../utils/prompts.js";
+import { checkPostconditions } from "./postconditions.js";
+import pc from "picocolors";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -145,10 +146,11 @@ async function executePlan<Args extends OptionDefinition>(
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
 
     // apply the adders
-    for (const { config } of adderDetails) {
+    const unmetPostconditions: string[] = [];
+    for (const { config, checks } of adderDetails) {
         const adderId = config.metadata.id;
 
-        const workspace = createEmptyWorkspace();
+        const workspace = createEmptyWorkspace<Args>();
         await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
         if (executionPlan.cliOptionsByAdderId) {
             for (const [key, value] of Object.entries(executionPlan.cliOptionsByAdderId[adderId])) {
@@ -165,6 +167,15 @@ async function executePlan<Args extends OptionDefinition>(
         } else {
             throw new Error(`Unknown integration type`);
         }
+
+        const unmetAdderPostconditions = await checkPostconditions(config, checks, workspace, adderDetails.length > 1);
+        unmetPostconditions.push(...unmetAdderPostconditions);
+    }
+
+    if (isTesting && unmetPostconditions.length > 0) {
+        throw new Error("Postconditions not met: " + unmetPostconditions.join(" / "));
+    } else if (unmetPostconditions.length > 0) {
+        messagePrompt("Postconditions not met", unmetPostconditions.map((x) => pc.yellow(`- ${x}`)).join("\n"));
     }
 
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
