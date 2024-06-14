@@ -101,20 +101,17 @@ export async function validatePreconditions<Args extends OptionDefinition>(
 
     if (allPreconditionsPassed) {
         return;
-    } else if (!allPreconditionsPassed && isTesting) {
+    } 
+    
+    if (isTesting) {
         throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
     }
 
-    let allMessages = "";
-    for (const [i, message] of preconditionLog.entries()) {
-        allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
-    }
+    const allMessages = preconditionLog.map((msg) => `- ${msg}`).join("\n");
 
     messagePrompt("Preconditions not met", allMessages);
 
-    if (!allPreconditionsPassed) {
-        await askUserToContinueWithFailedPreconditions();
-    }
+    await askUserToContinueWithFailedPreconditions();
 }
 
 export async function askUserToContinueWithFailedPreconditions() {
