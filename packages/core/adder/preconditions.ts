@@ -86,32 +86,34 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                 message = precondition.name + ` (Unexpected failure: ${errorString})`;
             }
 
-            if (multipleAdders) {
-                message = `${name}: ${message}`;
-            }
+            if (!preconditionPassed) {
+                if (multipleAdders) {
+                    message = `${name}: ${message}`;
+                }
 
-            message = preconditionPassed ? pc.green(message) : pc.yellow(message);
-            preconditionLog.push(message);
+                message = pc.yellow(message);
+                preconditionLog.push(message);
+            }
 
             if (!preconditionPassed) allPreconditionsPassed = false;
         }
     }
-    if (preconditionLog.length > 0) {
-        let allMessages = "";
-        for (const [i, message] of preconditionLog.entries()) {
-            allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
-        }
 
-        if (!allPreconditionsPassed && isTesting) {
-            throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
-        }
-        if (isTesting) return;
+    if (allPreconditionsPassed) {
+        return;
+    } else if (!allPreconditionsPassed && isTesting) {
+        throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
+    }
 
-        messagePrompt("Preconditions:", allMessages);
+    let allMessages = "";
+    for (const [i, message] of preconditionLog.entries()) {
+        allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
+    }
 
-        if (!allPreconditionsPassed) {
-            await askUserToContinueWithFailedPreconditions();
-        }
+    messagePrompt("Preconditions not met", allMessages);
+
+    if (!allPreconditionsPassed) {
+        await askUserToContinueWithFailedPreconditions();
     }
 }
 
