@@ -6,7 +6,8 @@ if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
 const dirs = process.env.CHANGED_DIRS.split(" ");
 const json = execSync(`pnpm -r list --only-projects --json`).toString("utf8");
-const depsMap = /** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string }>} */ (JSON.parse(json));
+/** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string }>} */
+const depsMap = JSON.parse(json);
 const packagesToPublish = new Set();
 
 for (const dir of dirs) {
@@ -21,4 +22,4 @@ for (const dir of dirs) {
 }
 
 const toPublish = Array.from(packagesToPublish).join(" ");
-process.stdout.write(toPublish);
+execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${toPublish}`, { stdio: "inherit" });

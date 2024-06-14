@@ -45,4 +45,4 @@ jobs:
               env:
                   CHANGED_DIRS: ${{ steps.changed-files.outputs.all_changed_files }}
               run: |
-                  node scripts/get-deps-to-publish.js | pnpm dlx pkg-pr-new@0.0 publish --pnpm
+                  node scripts/get-deps-to-publish.js
