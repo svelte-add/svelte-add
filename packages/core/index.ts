@@ -13,4 +13,3 @@ export {
     executeCli,
     categories,
 };
-// temp
