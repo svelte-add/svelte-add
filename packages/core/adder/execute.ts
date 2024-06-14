@@ -138,7 +138,7 @@ async function executePlan<Args extends OptionDefinition>(
 
     // preconditions
     if (!executionPlan.commonCliOptions.skipPreconditions)
-        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
+        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting, projectType);
 
     // applies the default option value to missing adder's cli options
     if (executionPlan.commonCliOptions.default) {

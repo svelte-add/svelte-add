@@ -4,10 +4,13 @@ import { OptionDefinition } from "./options.js";
 import pc from "picocolors";
 import { Precondition } from "./config.js";
 import { executeCli } from "../utils/common.js";
+import { ProjectType } from "../utils/create-project.js";
 
-function getGlobalPreconditions(
+function getGlobalPreconditions<Args extends OptionDefinition>(
     executingCli: string,
     workingDirectory: string,
+    adderDetails: AdderDetails<Args>[],
+    projectType: ProjectType,
 ): { name: string; preconditions: Precondition[] | undefined } {
     return {
         name: executingCli,
@@ -40,6 +43,29 @@ function getGlobalPreconditions(
                     }
                 },
             },
+            {
+                name: "supported environments",
+                // eslint-disable-next-line @typescript-eslint/require-await
+                run: async () => {
+                    const addersForInvalidEnvironment = adderDetails.filter((x) => {
+                        const supportedEnvironments = x.config.metadata.environments;
+                        if (projectType == "kit" && !supportedEnvironments.kit) return true;
+                        if (projectType == "svelte" && !supportedEnvironments.svelte) return true;
+
+                        return false;
+                    });
+
+                    if (addersForInvalidEnvironment.length == 0) {
+                        return { success: true, message: undefined };
+                    }
+
+                    const messages: string[] = [];
+                    for (const adder of addersForInvalidEnvironment) {
+                        messages.push(`"${adder.config.metadata.name}" does not support "${projectType}"`);
+                    }
+                    return { success: false, message: messages.join(" / ") };
+                },
+            },
         ],
     };
 }
@@ -49,6 +75,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
     executingCliName: string,
     workingDirectory: string,
     isTesting: boolean,
+    projectType: ProjectType,
 ) {
     const multipleAdders = adderDetails.length > 1;
     let allPreconditionsPassed = true;
@@ -62,7 +89,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
     });
     const combinedPreconditions = isTesting
         ? adderPreconditions
-        : [getGlobalPreconditions(executingCliName, workingDirectory), ...adderPreconditions];
+        : [getGlobalPreconditions(executingCliName, workingDirectory, adderDetails, projectType), ...adderPreconditions];
 
     for (const { name, preconditions } of combinedPreconditions) {
         if (!preconditions) continue;
