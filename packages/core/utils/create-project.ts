@@ -1,6 +1,6 @@
 import * as path from "path";
 import { PromptOption, booleanPrompt, selectPrompt, textPrompt } from "./prompts.js";
-import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
+import { type PromptOption, booleanPrompt, selectPrompt, textPrompt, endPrompts } from "./prompts.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
 import { spinner } from "@clack/prompts";
@@ -42,7 +42,7 @@ export async function detectSvelteDirectory(directoryPath: string): Promise<stri
 export async function createProject(cwd: string, supportKit: boolean, supportSvelte: boolean) {
     const createNewProject = await booleanPrompt("Create new Project?", true);
     if (!createNewProject) {
-        console.log("New project should not be created. Exiting.");
+        endPrompts("Exiting.");
         process.exit(0);
     }
 
@@ -63,7 +63,7 @@ export async function createProject(cwd: string, supportKit: boolean, supportSve
     let projectType: string;
 
     if (availableProjectTypes.length == 0) throw new Error("Failed to identify possible project types");
-    else if (availableProjectTypes.length == 1) projectType = availableProjectTypes[0].value;
+    if (availableProjectTypes.length == 1) projectType = availableProjectTypes[0].value;
     else projectType = await selectPrompt("Which project type do you want to create?", "kit", availableProjectTypes);
 
     let language = "js";

@@ -59,10 +59,9 @@ function getGlobalPreconditions<Args extends OptionDefinition>(
                         return { success: true, message: undefined };
                     }
 
-                    const messages: string[] = [];
-                    for (const adder of addersForInvalidEnvironment) {
-                        messages.push(`"${adder.config.metadata.name}" does not support "${projectType}"`);
-                    }
+                    const messages = addersForInvalidEnvironment.map(
+                        (adder) => `"${adder.config.metadata.name}" does not support "${projectType}"`,
+                    );
                     return { success: false, message: messages.join(" / ") };
                 },
             },

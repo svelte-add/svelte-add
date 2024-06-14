@@ -1,6 +1,6 @@
 import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
-import { ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
+import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
 import { Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
 import {
