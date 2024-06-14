@@ -51,7 +51,7 @@ function getConfig(project, isAdder) {
             dir: outDir,
             format: "esm",
             sourcemap: true,
-            intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString}];` : undefined,
+            intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined,
         },
         external: [/^@svelte-add.*/, "prettier", "create-svelte", "playwright", "npm-check-updates"],
         plugins: [

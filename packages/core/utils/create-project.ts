@@ -1,5 +1,5 @@
 import * as path from "path";
-import { booleanPrompt, endPrompts, selectPrompt, startPrompts, textPrompt } from "./prompts.js";
+import { booleanPrompt, selectPrompt, textPrompt } from "./prompts.js";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
@@ -105,7 +105,8 @@ export async function createProject(cwd: string) {
         console.clear();
     } catch (error) {
         loadingSpinner.stop("Failed initializing template!");
-        console.log("cancelled or failed " + error);
+        const typedError = error as Error;
+        console.log("cancelled or failed " + typedError.message);
         return { projectCreated: false, directory: "" };
     }
 

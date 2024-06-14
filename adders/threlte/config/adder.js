@@ -39,8 +39,10 @@ export const adder = defineAdderConfig({
             contentType: "json",
             condition: ({ typescript }) => typescript.installed,
             content: ({ data }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 if (!data.compilerOptions) data.compilerOptions = {};
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 data.compilerOptions.moduleResolution = "Bundler";
             },
         },
@@ -48,25 +50,33 @@ export const adder = defineAdderConfig({
             name: () => "src/App.svelte",
             contentType: "svelte",
             condition: ({ kit, options }) => !kit.installed && options.addDemo,
-            content: ({ js, html, kit }) => addDemoSceneUsage(js, html, kit.installed),
+            content: ({ js, html, kit }) => {
+                addDemoSceneUsage(js, html, kit.installed);
+            },
         },
         {
             name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
             contentType: "svelte",
             condition: ({ kit, options }) => kit.installed && options.addDemo,
-            content: ({ js, html, kit }) => addDemoSceneUsage(js, html, kit.installed),
+            content: ({ js, html, kit }) => {
+                addDemoSceneUsage(js, html, kit.installed);
+            },
         },
         {
             name: () => "src/Scene.svelte",
             contentType: "svelte",
             condition: ({ kit, options }) => !kit.installed && options.addDemo,
-            content: ({ js, html }) => addDemoScene(js, html),
+            content: ({ js, html }) => {
+                addDemoScene(js, html);
+            },
         },
         {
             name: ({ kit }) => `${kit.libDirectory}/Scene.svelte`,
             contentType: "svelte",
             condition: ({ kit, options }) => kit.installed && options.addDemo,
-            content: ({ js, html }) => addDemoScene(js, html),
+            content: ({ js, html }) => {
+                addDemoScene(js, html);
+            },
         },
     ],
 });

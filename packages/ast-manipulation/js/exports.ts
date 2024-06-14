@@ -24,7 +24,7 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
 
     if (exportDefaultDeclaration.declaration.type == "Identifier") {
         // in this case the export default declaration is only referencing a variable, get that variable
-        const exportDefaultDeclarationDeclaration = exportDefaultDeclaration.declaration as AstTypes.Identifier;
+        const exportDefaultDeclarationDeclaration = exportDefaultDeclaration.declaration;
 
         const variableDeclarations = ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration");
         const variableDeclaration = variableDeclarations.find((x) => {

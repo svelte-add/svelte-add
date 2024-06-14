@@ -1,4 +1,4 @@
-import { endPrompts, selectPrompt, startPrompts } from "./prompts";
+import { selectPrompt } from "./prompts";
 import preferredPackageManager from "preferred-pm";
 import { spinner } from "@clack/prompts";
 import { executeCli } from "./common";
@@ -50,6 +50,7 @@ async function installDependencies(command: string, args: string[], workingDirec
     try {
         await executeCli(command, args, workingDirectory);
     } catch (error) {
-        throw new Error("unable to install dependencies: " + error);
+        const typedError = error as Error;
+        throw new Error("unable to install dependencies: " + typedError.message);
     }
 }

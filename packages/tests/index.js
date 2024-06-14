@@ -16,11 +16,11 @@ const testOptions = {
     outputDirectory: path.join(process.cwd(), "packages", "tests", ".outputs"),
 };
 
-test();
+void test();
 
 async function test() {
     const addersToTest = process.argv.slice(2);
-    if (addersToTest && addersToTest.length > 0) console.log("Only testing the following adders", addersToTest);
+    if (addersToTest.length > 0) console.log("Only testing the following adders", addersToTest);
 
     await executeTests(addersToTest);
 }
@@ -30,8 +30,8 @@ async function test() {
  * @param {string[]} addersToTest
  */
 async function executeTests(addersToTest) {
-    const filterAdders = addersToTest && addersToTest.length > 0;
-    const adderNames = await getAdderList();
+    const filterAdders = addersToTest.length > 0;
+    const adderNames = getAdderList();
 
     /** @type {import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs[]} */
     const adders = [];
@@ -56,8 +56,9 @@ async function executeTests(addersToTest) {
 async function getAdder(adderName) {
     remoteControl.enable();
 
+    /** @type {{default: import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs}} */
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const adderModule = await import(`../../adders/${adderName}/build/index.js`);
-    /** @type {import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs} */
     const adder = adderModule.default;
 
     remoteControl.disable();
@@ -80,6 +81,5 @@ function stopDocker() {
     usingDocker = false;
 }
 
-const cleanup = async () => stopDocker();
-process.on("exit", cleanup);
-process.on("SIGINT", cleanup);
+process.on("exit", stopDocker);
+process.on("SIGINT", stopDocker);

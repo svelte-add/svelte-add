@@ -25,7 +25,7 @@ export async function testAdders(adders: AdderWithoutExplicitArgs[], options: Te
 
 export async function executeTests(adders: AdderWithoutExplicitArgs[], options: TestOptions) {
     console.log("generating test cases");
-    let testCases = await generateTestCases(adders);
+    const testCases = generateTestCases(adders);
 
     console.log("start testing");
     await runTestCases(testCases, options);

@@ -7,12 +7,12 @@ import pkg from "./package.json";
 import type { Question } from "@svelte-add/core/adder/options";
 import type { AdderDetails, ExecutingAdderInfo } from "@svelte-add/core/adder/execute";
 
-executeCli();
+void executeCli();
 
 async function executeCli() {
     remoteControl.enable();
 
-    const addersList = await getAdderList();
+    const addersList = getAdderList();
     const adderDetails: AdderDetails<Record<string, Question>>[] = [];
 
     for (const adderName of addersList) {
@@ -31,7 +31,8 @@ async function executeCli() {
 }
 
 async function getAdderConfig(name: string) {
-    const adder = await import(`../../adders/${name}/build/index.js`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/build/index.js`);
 
-    return adder.default as AdderWithoutExplicitArgs;
+    return adder.default;
 }

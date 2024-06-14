@@ -42,13 +42,14 @@ export {
 };
 
 export function parseScript(content: string): AstTypes.Program {
-    const jsAst: AstTypes.Program = recastParse(content, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const recastOutput: { program: AstTypes.Program } = recastParse(content, {
         parser: {
             parse: tsParse,
         },
-    }).program;
+    });
 
-    return stripAst(jsAst, "loc");
+    return stripAst(recastOutput.program, "loc");
 }
 
 export function serializeScript(ast: AstTypes.ASTNode) {
@@ -74,7 +75,7 @@ export function serializeHtml(ast: Document) {
     return serializeDom(ast, { encodeEntities: "utf8", selfClosingTags: true });
 }
 
-export function stripAst<T extends unknown>(node: T, propToRemove: string): T {
+export function stripAst<T>(node: T, propToRemove: string): T {
     if (typeof node !== "object" || node === null) return node;
     if (propToRemove in node) delete node[propToRemove as keyof T];
 
@@ -83,7 +84,7 @@ export function stripAst<T extends unknown>(node: T, propToRemove: string): T {
         const child = node[key];
         if (child && typeof child === "object") {
             if (Array.isArray(child)) {
-                child.forEach((c) => stripAst(c, propToRemove));
+                child.forEach((element) => stripAst<unknown>(element, propToRemove));
             } else {
                 stripAst(child, propToRemove);
             }
@@ -157,11 +158,13 @@ export function serializeSvelteFile(asts: SvelteAst) {
 export function parseJson(content: string) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.
-
     // use https://github.com/Rich-Harris/golden-fleece#fleecepatchstr-value instead
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return fleece.evaluate(content);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function serializeJson(originalInput: string, data: any) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.

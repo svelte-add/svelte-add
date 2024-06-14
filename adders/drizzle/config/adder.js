@@ -78,7 +78,7 @@ export const adder = defineAdderConfig({
             contentType: "text",
             content: ({ content, options }) => {
                 const DB_URL_KEY = "DATABASE_URL";
-                if (options.docker === true) {
+                if (options.docker) {
                     // we'll prefill with the default docker db credentials
                     const protocol = options.database === "mysql" ? "mysql" : "postgres";
                     const port = PORTS[options.database];
@@ -153,11 +153,14 @@ export const adder = defineAdderConfig({
             name: () => `package.json`,
             contentType: "json",
             content: ({ data, options }) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 data.scripts ??= {};
-                if (options.docker) data.scripts["db:start"] ??= "docker compose up";
-                data.scripts["db:push"] ??= "drizzle-kit push";
-                data.scripts["db:migrate"] ??= "drizzle-kit migrate";
-                data.scripts["db:studio"] ??= "drizzle-kit studio";
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+                const scripts = /** @type {Record<string, string>} */ (data.scripts);
+                if (options.docker) scripts["db:start"] ??= "docker compose up";
+                scripts["db:push"] ??= "drizzle-kit push";
+                scripts["db:migrate"] ??= "drizzle-kit migrate";
+                scripts["db:studio"] ??= "drizzle-kit studio";
             },
         },
         {

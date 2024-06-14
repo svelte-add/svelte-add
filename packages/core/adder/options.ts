@@ -17,6 +17,7 @@ export type NumberQuestion = {
     default: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SelectQuestion<Value = any> = {
     type: "select";
     default: Value;
@@ -26,6 +27,7 @@ export type SelectQuestion<Value = any> = {
 export type BaseQuestion = {
     question: string;
     // TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     condition?: (options: OptionValues<any>) => boolean;
 };
 
@@ -138,12 +140,8 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
 
 export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
-    cliOptionsByAdderId: Record<string, Record<string, any>>,
+    cliOptionsByAdderId: Record<string, Record<string, unknown>>,
 ) {
-    if (!cliOptionsByAdderId) {
-        return;
-    }
-
     let foundInvalidType = false;
 
     for (const { config } of adderDetails) {
@@ -185,12 +183,14 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
 }
 
 export function extractCommonCliOptions(cliOptions: CliOptionValues) {
+    const typedOption = <T>(name: string) => cliOptions[name] as T;
+
     const commonOptions: AvailableCliOptionValues = {
-        default: cliOptions[availableCliOptions.default.processedCliArg],
-        path: cliOptions[availableCliOptions.path.processedCliArg],
-        skipInstall: cliOptions[availableCliOptions.skipInstall.processedCliArg],
-        skipPreconditions: cliOptions[availableCliOptions.skipPreconditions.processedCliArg],
-        adders: cliOptions.adder,
+        default: typedOption(availableCliOptions.default.processedCliArg),
+        path: typedOption(availableCliOptions.path.processedCliArg),
+        skipInstall: typedOption(availableCliOptions.skipInstall.processedCliArg),
+        skipPreconditions: typedOption(availableCliOptions.skipPreconditions.processedCliArg),
+        adders: typedOption("adder"),
     };
 
     return commonOptions;
@@ -202,7 +202,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 ) {
     const multipleAdders = adderDetails.length > 1;
 
-    const options: Record<string, Record<string, any>> = {};
+    const options: Record<string, Record<string, unknown>> = {};
     for (const { config } of adderDetails) {
         const adderId = config.metadata.id;
         options[adderId] = {};
@@ -212,7 +212,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 
             if (multipleAdders) cliOptionKey = `${adderId}${upperCaseFirstLetter(cliOptionKey)}`;
 
-            let optionValue = cliOptions[cliOptionKey];
+            let optionValue = cliOptions[cliOptionKey] as unknown;
             if (optionValue === "true") optionValue = true;
             else if (optionValue === "false") optionValue = false;
 
@@ -231,8 +231,6 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
     adderDetails: AdderDetails<Args>[],
     executionPlan: AddersExecutionPlan,
 ) {
-    if (!executionPlan.cliOptionsByAdderId) return;
-
     for (const { config } of adderDetails) {
         const adderId = config.metadata.id;
         const questionPrefix = adderDetails.length > 1 ? `${config.metadata.name}: ` : "";
@@ -250,7 +248,7 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
             if (optionValue !== undefined) continue;
 
             if (option.type == "number" || option.type == "string") {
-                optionValue = await textPrompt(questionPrefix + option.question, "Not sure", "" + option.default);
+                optionValue = await textPrompt(questionPrefix + option.question, "Not sure", option.default.toString());
             } else if (option.type == "boolean") {
                 optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
             } else if (option.type == "select") {

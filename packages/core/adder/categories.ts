@@ -3,9 +3,9 @@ export type CategoryInfo = {
     name: string;
     description: string;
 };
-
+export type CategoryKeys = "styling" | "tools";
 export type CategoryDetails = {
-    [K in "styling" | "tools" | string]: CategoryInfo;
+    [K in CategoryKeys]: CategoryInfo;
 };
 
 export const categories: CategoryDetails = {

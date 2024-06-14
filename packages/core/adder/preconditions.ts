@@ -25,7 +25,7 @@ function getGlobalPreconditions(
                         // git will exit with a failing exit code, which will trigger the catch statement.
                         // also see https://remarkablemark.org/blog/2017/10/12/check-git-dirty/#git-status
                         await executeCli("git", ["status", "--short"], workingDirectory, {
-                            onData: (data, program, resolve) => {
+                            onData: (data) => {
                                 outputText += data;
                             },
                         });
@@ -81,8 +81,9 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                     message = `${precondition.name} (${result.message ?? "No failure message provided"})`;
                 }
             } catch (error) {
+                const errorString = error as string;
                 preconditionPassed = false;
-                message = precondition.name + ` (Unexpected failure: ${error})`;
+                message = precondition.name + ` (Unexpected failure: ${errorString})`;
             }
 
             if (multipleAdders) {

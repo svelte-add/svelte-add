@@ -2,7 +2,7 @@ import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { executeCli, getPackageJson, groupBy } from "../utils/common.js";
+import { Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -23,8 +23,8 @@ import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
-import { PromptOption, endPrompts, multiSelectPrompt, startPrompts, textPrompt } from "../utils/prompts.js";
-import { categories } from "./categories.js";
+import { PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
+import { CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
@@ -40,7 +40,7 @@ export type ExecutingAdderInfo = {
 export type AddersExecutionPlan = {
     createProject: boolean;
     commonCliOptions: AvailableCliOptionValues;
-    cliOptionsByAdderId: Record<string, Record<string, any>>;
+    cliOptionsByAdderId: Record<string, Record<string, unknown>>;
     workingDirectory: string;
 };
 
@@ -69,7 +69,8 @@ export async function executeAdders<Args extends OptionDefinition>(
 
     const cliOptions = !isTesting ? prepareAndParseCliOptions(adderDetails) : {};
     const commonCliOptions = extractCommonCliOptions(cliOptions);
-    const cliOptionsByAdderId = !isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions;
+    const cliOptionsByAdderId =
+        (!isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions) ?? {};
     validateOptionTypes(adderDetails, cliOptionsByAdderId);
 
     let workingDirectory: string | null;
@@ -123,6 +124,7 @@ async function executePlan<Args extends OptionDefinition>(
     const addersToRemove = adderDetails.filter((x) => !userSelectedAdders.includes(x.config.metadata.id));
     for (const adderToRemove of addersToRemove) {
         const adderId = adderToRemove.config.metadata.id;
+
         delete executionPlan.cliOptionsByAdderId[adderId];
     }
     adderDetails = adderDetails.filter((x) => userSelectedAdders.includes(x.config.metadata.id));
@@ -174,7 +176,7 @@ async function executePlan<Args extends OptionDefinition>(
     if (isTesting && unmetPostconditions.length > 0) {
         throw new Error("Postconditions not met: " + unmetPostconditions.join(" / "));
     } else if (unmetPostconditions.length > 0) {
-        await printUnmetPostconditions(unmetPostconditions);
+        printUnmetPostconditions(unmetPostconditions);
     }
 
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
@@ -187,11 +189,11 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
     const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
     const selectedAdders: string[] = [];
     const totalCategories = Object.keys(categories).length;
-    let currentCategory = 0;
+    let currentCategoryIndex = 0;
 
     for (const [categoryId, adders] of groupedByCategory) {
-        currentCategory++;
-        const categoryDetails = categories[categoryId];
+        currentCategoryIndex++;
+        const categoryDetails = categories[categoryId as CategoryKeys];
 
         const promptOptions: PromptOption<string>[] = [];
         for (const adder of adders) {
@@ -203,7 +205,7 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
             });
         }
 
-        const promptDescription = `${categoryDetails.name} (${currentCategory} / ${totalCategories})`;
+        const promptDescription = `${categoryDetails.name} (${currentCategoryIndex.toString()} / ${totalCategories.toString()})`;
         const selectedValues = await multiSelectPrompt(promptDescription, promptOptions);
         selectedAdders.push(...selectedValues);
     }
@@ -218,7 +220,7 @@ async function processInlineAdder<Args extends OptionDefinition>(
 ) {
     await installPackages(config, workspace);
     await createOrUpdateFiles(config.files, workspace);
-    runHooks(config, workspace, isInstall);
+    await runHooks(config, workspace, isInstall);
 }
 
 async function processExternalAdder<Args extends OptionDefinition>(
@@ -236,7 +238,8 @@ async function processExternalAdder<Args extends OptionDefinition>(
             stdio: isTesting ? "pipe" : "inherit",
         });
     } catch (error) {
-        throw new Error("Failed executing external command: " + error);
+        const typedError = error as Error;
+        throw new Error("Failed executing external command: " + typedError.message);
     }
 }
 
@@ -279,26 +282,27 @@ export async function installPackages<Args extends OptionDefinition>(
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
 }
 
-function runHooks<Args extends OptionDefinition>(
+async function runHooks<Args extends OptionDefinition>(
     config: InlineAdderConfig<Args>,
     workspace: Workspace<Args>,
     isInstall: boolean,
 ) {
-    if (isInstall && config.installHook) config.installHook(workspace);
-    else if (!isInstall && config.uninstallHook) config.uninstallHook(workspace);
+    if (isInstall && config.installHook) await config.installHook(workspace);
+    else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
 }
 
-export function generateAdderInfo(pkg: any): {
+export function generateAdderInfo(data: unknown): {
     id: string;
     package: string;
     version: string;
 } {
-    const name = pkg.name;
+    const packageContent = data as Package;
+    const name = packageContent.name;
     const id = name.replace("@svelte-add/", "");
 
     return {
         id,
         package: name,
-        version: pkg.version,
+        version: packageContent.version,
     };
 }

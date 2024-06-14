@@ -83,7 +83,7 @@ export function defineAdder<Args extends OptionDefinition>(
 ) {
     const remoteControlled = remoteControl.isRemoteControlled();
     if (!remoteControlled) {
-        executeAdder({
+        void executeAdder({
             config,
             checks,
         });

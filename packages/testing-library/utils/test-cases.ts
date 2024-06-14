@@ -20,7 +20,7 @@ export type TestCase = {
     runSynchronously: boolean;
 };
 
-export async function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
+export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
     const testCases = new Map<string, TestCase[]>();
     for (const adder of adders) {
         const adderTestCases: TestCase[] = [];
@@ -93,7 +93,7 @@ export type AdderError = {
     adder: string;
     template: string;
     message: string;
-};
+} & Error;
 
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
     const asyncTasks: Array<() => Promise<void>> = [];
@@ -108,6 +108,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
                 } catch (e) {
                     const error = e as Error;
                     const adderError: AdderError = {
+                        name: "AdderError",
                         adder: testCase.adder.config.metadata.id,
                         template: testCase.template,
                         message: error.message,
@@ -127,8 +128,8 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
     }
 
     let testProgressCount = 0;
-    let overallTaskCount = asyncTasks.length + syncTasks.length;
-    let parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
+    const overallTaskCount = asyncTasks.length + syncTasks.length;
+    const parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
 
     const allAsyncResults = await Throttle.raw(asyncTasks, {
         failFast: false,
@@ -160,8 +161,12 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
         },
     });
 
-    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>((x) => allAsyncResults.taskResults[x]!);
-    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>((x) => allSyncResults.taskResults[x]!);
+    const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>(
+        (x) => allAsyncResults.taskResults[x] as unknown as AdderError,
+    );
+    const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>(
+        (x) => allSyncResults.taskResults[x] as unknown as AdderError,
+    );
 
     const rejectedPromisesResult = [...rejectedAsyncPromisesResult, ...rejectedSyncPromisesResult];
     for (const error of rejectedPromisesResult) {
@@ -175,7 +180,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
     if (testProgressCount != overallTaskCount) {
         console.log(
-            `Number of executed tests (${testProgressCount}) does not match number of expected tests (${overallTaskCount}). Tests failed!`,
+            `Number of executed tests (${testProgressCount.toString()}) does not match number of expected tests (${overallTaskCount.toString()}). Tests failed!`,
         );
         process.exit(1);
     }
@@ -186,6 +191,6 @@ function logTestProgress(current: number, total: number, success: number, failed
     const zeroPad = (num: number) => String(num).padStart(length, "0");
 
     console.log(
-        `Total: ${zeroPad(current)} / ${total} Success: ${zeroPad(success)} Failed: ${zeroPad(failed)} (${testCaseInput.adder.config.metadata.id} / ${testCaseInput.template})`,
+        `Total: ${zeroPad(current)} / ${total.toString()} Success: ${zeroPad(success)} Failed: ${zeroPad(failed)} (${testCaseInput.adder.config.metadata.id} / ${testCaseInput.template})`,
     );
 }

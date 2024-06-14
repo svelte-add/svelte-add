@@ -71,16 +71,13 @@ export function expressionFromString(value: string): AstKinds.ExpressionKind {
 export function statementFromString(value: string): AstKinds.StatementKind {
     const program = parseScript(value);
     const statement = program.body[0];
-    if (!statement) {
-        throw new Error("value passed was not an statement");
-    }
 
     return statement;
 }
 
 /** Appends the statement to body of the block if it doesn't already exist */
 export function addStatement(ast: AstTypes.BlockStatement | AstTypes.Program, statement: AstKinds.StatementKind) {
-    if (hasNode(ast, statement) === false) ast.body.push(statement);
+    if (!hasNode(ast, statement)) ast.body.push(statement);
 }
 
 /** Returns `true` of the provided node exists in the AST */

@@ -2,6 +2,7 @@ import { cp, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { TestOptions } from "..";
 import { executeCli } from "@svelte-add/core";
+import { OptionValues, Question } from "@svelte-add/core/adder/options";
 
 const templatesDirectory = "templates";
 
@@ -15,7 +16,8 @@ export async function installDependencies(output: string) {
         // we need to add the `--ignore-workspace` flag so that our root lockfile isn't modified
         await executeCli("pnpm", ["install", "--ignore-workspace"], output, { stdio: "pipe" });
     } catch (error) {
-        throw new Error("unable to install dependencies: " + error);
+        const typedError = error as Error;
+        throw new Error("unable to install dependencies: " + typedError.message);
     }
 }
 
@@ -27,7 +29,7 @@ export async function prepareWorkspaceWithTemplate(output: string, template: str
     return output;
 }
 
-export async function saveOptionsFile(workingDirectory: string, options: Record<string, any>) {
+export async function saveOptionsFile(workingDirectory: string, options: OptionValues<Record<string, Question>>) {
     const json = JSON.stringify(options);
     await writeFile(join(workingDirectory, "options.json"), json);
 }
