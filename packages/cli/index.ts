@@ -29,7 +29,7 @@ async function executeCli() {
 
     remoteControl.disable();
 }
-
+// temp
 async function getAdderConfig(name: string) {
     const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/build/index.js`);
 
