@@ -313,16 +313,11 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
       tslib:
-<<<<<<< HEAD
-        specifier: ^2.6.2
-        version: 2.6.2
+        specifier: ^2.6.3
+        version: 2.6.3
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
-=======
-        specifier: ^2.6.3
-        version: 2.6.3
->>>>>>> main
       vite:
         specifier: ^5.3.0
         version: 5.3.0(@types/node@20.14.2)
