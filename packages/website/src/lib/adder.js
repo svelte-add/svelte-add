@@ -8,7 +8,6 @@ import { groupBy } from "@svelte-add/core/internal";
  */
 
 /**
- *
  * @param {string} [category]
  * @returns
  */
