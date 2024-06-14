@@ -97,7 +97,7 @@ export type Tests = {
     expectProperty: (selector: string, property: string, expectedValue: string) => Promise<void>;
     elementExists: (selector: string) => Promise<void>;
     click: (selector: string, path?: string) => Promise<void>;
-    expectUrlPath: (path: string) => Promise<void>;
+    expectUrlPath: (path: string) => void;
 };
 
 export type TestDefinition<Args extends OptionDefinition> = {
@@ -123,9 +123,11 @@ export function defineAdderOptions<const Args extends OptionDefinition>(options:
     return options;
 }
 
+type MaybePromise<T> = Promise<T> | T;
+
 export type Precondition = {
     name: string;
-    run: () => Promise<{ success: boolean; message: string | undefined }>;
+    run: () => MaybePromise<{ success: boolean; message: string | undefined }>;
 };
 
 export type AdderCheckConfig<Args extends OptionDefinition> = {

@@ -45,8 +45,7 @@ function getGlobalPreconditions<Args extends OptionDefinition>(
             },
             {
                 name: "supported environments",
-                // eslint-disable-next-line @typescript-eslint/require-await
-                run: async () => {
+                run: () => {
                     const addersForInvalidEnvironment = adderDetails.filter((x) => {
                         const supportedEnvironments = x.config.metadata.environments;
                         if (projectType == "kit" && !supportedEnvironments.kit) return true;
@@ -60,7 +59,7 @@ function getGlobalPreconditions<Args extends OptionDefinition>(
                     }
 
                     const messages = addersForInvalidEnvironment.map(
-                        (adder) => `"${adder.config.metadata.name}" does not support "${projectType}"`,
+                        (adder) => `"${adder.config.metadata.name}" does not support "${projectType.toString()}"`,
                     );
                     return { success: false, message: messages.join(" / ") };
                 },
