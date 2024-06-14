@@ -1,11 +1,11 @@
 name: Publish Preview Release
 on:
     pull_request:
-        types: [ready_for_review, synchronize, opened]
+        types: [ready_for_review, synchronize, opened, labeled]
 
 jobs:
     preview-release:
-        if: github.repository == 'svelte-add/svelte-add' && !github.event.pull_request.draft
+        if: github.repository == 'svelte-add/svelte-add' && (!github.event.pull_request.draft || github.event.pull_request.labels.name == 'publish:preview')
         timeout-minutes: 30
         runs-on: ubuntu-latest
         steps:
