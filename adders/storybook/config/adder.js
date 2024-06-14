@@ -7,7 +7,7 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Storybook",
         description: "Build UIs without the grunt work",
-        category: categories.styling,
+        category: categories.tools,
         environments: { kit: true, svelte: true },
         website: {
             logo: "./storybook.svg",
