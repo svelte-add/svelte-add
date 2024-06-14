@@ -102,10 +102,8 @@ export const adder = defineAdderConfig({
             name: () => ".prettierrc",
             contentType: "json",
             content: ({ data }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 if (!data.plugins) data.plugins = [];
 
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
                 data.plugins.push("prettier-plugin-tailwindcss");
             },
             condition: ({ prettier }) => prettier.installed,

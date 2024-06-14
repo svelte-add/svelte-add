@@ -19,7 +19,6 @@ export async function executeAdder(name: string): Promise<AdderConfig<Record<str
     // present on the `index.js` file. That's why we directly import the configuration
     // for the website here, as this is the only important part.
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const adder: Promise<{ adder: AdderConfig<Record<string, Question>> }> = await import(`../../adders/${name}/config/adder.js`);
     const { adder: adderConfig } = await adder;
 
