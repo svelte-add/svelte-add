@@ -1,4 +1,4 @@
-name: Publish Approved Pull Requests
+name: Publish Preview Release
 on:
     pull_request:
     issue_comment:
