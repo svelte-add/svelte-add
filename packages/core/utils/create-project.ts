@@ -1,28 +1,11 @@
 import * as path from "path";
-import { booleanPrompt, selectPrompt, textPrompt } from "./prompts.js";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
+import { type PromptOption, booleanPrompt, selectPrompt, textPrompt, endPrompts } from "./prompts.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
 import { spinner } from "@clack/prompts";
 
-export async function detectOrCreateProject(cwd: string) {
-    let workingDirectory = await detectSvelteDirectory(cwd);
-    if (!workingDirectory) {
-        console.log("Please create a new project first");
-
-        const { projectCreated, directory } = await createProject(cwd);
-
-        if (!projectCreated) {
-            console.log("Template initializer failed, please see output above.");
-            process.exit(0);
-        }
-
-        console.clear();
-        workingDirectory = directory;
-    }
-
-    return workingDirectory;
-}
+export type ProjectType = "svelte" | "kit";
 
 export async function detectSvelteDirectory(directoryPath: string): Promise<string | null> {
     if (!directoryPath) return null;
@@ -56,10 +39,10 @@ export async function detectSvelteDirectory(directoryPath: string): Promise<stri
     return null;
 }
 
-export async function createProject(cwd: string) {
+export async function createProject(cwd: string, supportKit: boolean, supportSvelte: boolean) {
     const createNewProject = await booleanPrompt("Create new Project?", true);
     if (!createNewProject) {
-        console.log("New project should not be created. Exiting.");
+        endPrompts("Exiting.");
         process.exit(0);
     }
 
@@ -73,10 +56,15 @@ export async function createProject(cwd: string) {
         directory = relativePath;
     }
 
-    const projectType = await selectPrompt("Which project type do you want to create?", "kit", [
-        { label: "SvelteKit", value: "kit" },
-        { label: "Svelte", value: "svelte" },
-    ]);
+    const availableProjectTypes: PromptOption<string>[] = [];
+    if (supportKit) availableProjectTypes.push({ label: "SvelteKit", value: "kit" });
+    if (supportSvelte) availableProjectTypes.push({ label: "Svelte", value: "svelte" });
+
+    let projectType: string;
+
+    if (availableProjectTypes.length == 0) throw new Error("Failed to identify possible project types");
+    if (availableProjectTypes.length == 1) projectType = availableProjectTypes[0].value;
+    else projectType = await selectPrompt("Which project type do you want to create?", "kit", availableProjectTypes);
 
     let language = "js";
     if (projectType == "svelte") {

@@ -13,8 +13,7 @@ export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, opti
         click: async (selector, path) => {
             await click(page, selector, path);
         },
-        // eslint-disable-next-line @typescript-eslint/require-await
-        expectUrlPath: async (path) => {
+        expectUrlPath: (path) => {
             expectUrlPath(page, path);
         },
     };

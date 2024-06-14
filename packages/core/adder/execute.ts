@@ -1,6 +1,6 @@
 import path from "path";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
-import { createProject, detectSvelteDirectory } from "../utils/create-project.js";
+import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
 import { Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
 import {
@@ -98,24 +98,31 @@ async function executePlan<Args extends OptionDefinition>(
 ) {
     const remoteControlled = remoteControlOptions !== undefined;
     const isTesting = remoteControlled && remoteControlOptions.isTesting;
+    const isExecutingMultipleAdders = adderDetails.length > 1;
 
     if (!isTesting) startPrompts(`Welcome to ${executingAdder.name}@${executingAdder.version}`);
 
     // create project if required
     if (executionPlan.createProject) {
         const cwd = executionPlan.commonCliOptions.path ?? executionPlan.workingDirectory;
-        const { projectCreated, directory } = await createProject(cwd);
+        const supportKit = adderDetails.reduce((value, x) => value || x.config.metadata.environments.kit, false);
+        const supportSvelte = adderDetails.reduce((value, x) => value || x.config.metadata.environments.svelte, false);
+        const { projectCreated, directory } = await createProject(cwd, supportKit, supportSvelte);
         if (!projectCreated) return;
         executionPlan.workingDirectory = directory;
     }
 
+    const workspace = createEmptyWorkspace();
+    await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+    const projectType: ProjectType = workspace.kit.installed ? "kit" : "svelte";
+
     // select appropriate adders
     let userSelectedAdders = executionPlan.commonCliOptions.adders ?? [];
-    if (userSelectedAdders.length == 0 && adderDetails.length > 1) {
+    if (userSelectedAdders.length == 0 && isExecutingMultipleAdders) {
         // if the user has not selected any adders via the cli and we are currently executing for more than one adder
         // the user should have the possibility to select the adders he want's to add.
-        userSelectedAdders = await askForAddersToApply(adderDetails);
-    } else if (userSelectedAdders.length == 0 && adderDetails.length == 1) {
+        userSelectedAdders = await askForAddersToApply(adderDetails, projectType);
+    } else if (userSelectedAdders.length == 0 && !isExecutingMultipleAdders) {
         // if we are executing only one adder, then we can safely assume that this adder should be added
         userSelectedAdders = [adderDetails[0].config.metadata.id];
     }
@@ -131,7 +138,7 @@ async function executePlan<Args extends OptionDefinition>(
 
     // preconditions
     if (!executionPlan.commonCliOptions.skipPreconditions)
-        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting);
+        await validatePreconditions(adderDetails, executingAdder.name, executionPlan.workingDirectory, isTesting, projectType);
 
     // applies the default option value to missing adder's cli options
     if (executionPlan.commonCliOptions.default) {
@@ -151,25 +158,25 @@ async function executePlan<Args extends OptionDefinition>(
     for (const { config, checks } of adderDetails) {
         const adderId = config.metadata.id;
 
-        const workspace = createEmptyWorkspace<Args>();
-        await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+        const adderWorkspace = createEmptyWorkspace<Args>();
+        await populateWorkspaceDetails(adderWorkspace, executionPlan.workingDirectory);
         if (executionPlan.cliOptionsByAdderId) {
             for (const [key, value] of Object.entries(executionPlan.cliOptionsByAdderId[adderId])) {
-                addPropertyToWorkspaceOption(workspace, key, value);
+                addPropertyToWorkspaceOption(adderWorkspace, key, value);
             }
         }
 
         const isInstall = true;
         if (config.integrationType === "inline") {
             const localConfig = config as InlineAdderConfig<OptionDefinition>;
-            await processInlineAdder(localConfig, workspace, isInstall);
+            await processInlineAdder(localConfig, adderWorkspace, isInstall);
         } else if (config.integrationType === "external") {
             await processExternalAdder(config, executionPlan.workingDirectory, isTesting);
         } else {
             throw new Error(`Unknown integration type`);
         }
 
-        const unmetAdderPostconditions = await checkPostconditions(config, checks, workspace, adderDetails.length > 1);
+        const unmetAdderPostconditions = await checkPostconditions(config, checks, adderWorkspace, isExecutingMultipleAdders);
         unmetPostconditions.push(...unmetAdderPostconditions);
     }
 
@@ -185,7 +192,10 @@ async function executePlan<Args extends OptionDefinition>(
     if (!isTesting) endPrompts("You're all set!");
 }
 
-async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[]): Promise<string[]> {
+async function askForAddersToApply<Args extends OptionDefinition>(
+    adderDetails: AdderDetails<Args>[],
+    projectType: ProjectType,
+): Promise<string[]> {
     const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
     const selectedAdders: string[] = [];
     const totalCategories = Object.keys(categories).length;
@@ -198,12 +208,20 @@ async function askForAddersToApply<Args extends OptionDefinition>(adderDetails: 
         const promptOptions: PromptOption<string>[] = [];
         for (const adder of adders) {
             const adderMetadata = adder.config.metadata;
+
+            // if we detected a kit project, and the adder is not available for kit, ignore it.
+            if (projectType === "kit" && !adderMetadata.environments.kit) continue;
+            // if we detected a svelte project, and the adder is not available for svelte, ignore it.
+            if (projectType === "svelte" && !adderMetadata.environments.svelte) continue;
+
             promptOptions.push({
                 label: adderMetadata.name,
                 value: adderMetadata.id,
                 hint: adderMetadata.description,
             });
         }
+
+        if (promptOptions.length == 0) continue;
 
         const promptDescription = `${categoryDetails.name} (${currentCategoryIndex.toString()} / ${totalCategories.toString()})`;
         const selectedValues = await multiSelectPrompt(promptDescription, promptOptions);
