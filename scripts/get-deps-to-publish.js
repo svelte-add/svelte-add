@@ -27,7 +27,7 @@ const toPublish = Array.from(packagesToPublish).join(" ");
 execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${toPublish}`, { stdio: "inherit" });
 
 /**
- * Finds all dependents and their relative paths.
+ * Finds all dependents and returns their relative paths.
  * @param {string} path
  * @return {string[]}
  */
