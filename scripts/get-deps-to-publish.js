@@ -13,8 +13,9 @@ const dirs = process.env.CHANGED_DIRS.split(" ");
 const packagesToPublish = /** @type {Set<string>} */ (new Set(dirs));
 
 // keep looping until we've acquired all dependents
-let prev = packagesToPublish.size;
-while (packagesToPublish.size === prev) {
+let prev = 0;
+while (packagesToPublish.size !== prev) {
+    prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
         const dependents = getDependents(pkg);
         dependents.forEach((dep) => packagesToPublish.add(dep));
