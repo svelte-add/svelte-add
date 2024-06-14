@@ -5,7 +5,7 @@ import { relative } from "node:path";
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
 const depsMapJson = execSync(`pnpm -r list --only-projects --json`).toString("utf8");
-const depsMap = /** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string }>} */ (
+const depsMap = /** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string, private?: boolean }>} */ (
     JSON.parse(depsMapJson)
 );
 
@@ -35,6 +35,8 @@ function getDependents(path) {
     const pkg = depsMap.find((pkg) => pkg.path.endsWith(path));
     if (!pkg) throw new Error("couldn't find package in dependency map");
 
-    const dependents = depsMap.filter((dep) => dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name]);
+    const dependents = depsMap.filter(
+        (dep) => (dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name]) && dep.private !== true,
+    );
     return dependents.map((dep) => relative(".", dep.path));
 }
