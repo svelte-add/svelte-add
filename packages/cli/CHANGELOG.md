@@ -1,5 +1,20 @@
 # svelte-add
 
+## 2.0.11
+
+### Patch Changes
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`9a116d4057407b15a99258541e54eaee6c8b7f1b`](https://github.com/svelte-add/svelte-add/commit/9a116d4057407b15a99258541e54eaee6c8b7f1b), [`0cc6c47ff80c6a7611b5f3a7ca8cf9842c4ae25f`](https://github.com/svelte-add/svelte-add/commit/0cc6c47ff80c6a7611b5f3a7ca8cf9842c4ae25f), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/core@2.5.0
+    -   @svelte-add/storybook@1.0.11
+    -   @svelte-add/tailwindcss@1.0.11
+    -   @svelte-add/bootstrap@1.0.11
+    -   @svelte-add/threlte@1.0.11
+    -   @svelte-add/mdsvex@1.0.11
+    -   @svelte-add/bulma@1.0.11
+    -   @svelte-add/routify@1.0.11
+    -   svelte-add@2.0.11
+
 ## 2.0.10
 
 ### Patch Changes
