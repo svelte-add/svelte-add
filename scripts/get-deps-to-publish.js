@@ -1,5 +1,7 @@
 import { execSync } from "node:child_process";
 
+if (process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
+
 const dirs = process.env.CHANGED_DIRS.split(" ");
 
 const packagesToPublish = new Set();
