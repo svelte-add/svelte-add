@@ -1,7 +1,7 @@
 name: Publish Preview Release
 on:
     pull_request:
-        types: [ready_for_review, synchronize]
+        types: [ready_for_review, synchronize, opened]
 
 jobs:
     preview-release:
