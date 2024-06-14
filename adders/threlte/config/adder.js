@@ -41,7 +41,7 @@ export const adder = defineAdderConfig({
             content: ({ data }) => {
                 if (!data.compilerOptions) data.compilerOptions = {};
 
-                if (data.compilerOptions.moduleResolution.toLowerCase() !== "bundler") {
+                if (!data.compilerOptions.moduleResolution || data.compilerOptions.moduleResolution.toLowerCase() !== "bundler") {
                     data.compilerOptions.moduleResolution = "bundler";
                 }
             },
