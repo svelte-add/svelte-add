@@ -31,7 +31,6 @@ async function executeCli() {
 }
 
 async function getAdderConfig(name: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/build/index.js`);
 
     return adder.default;

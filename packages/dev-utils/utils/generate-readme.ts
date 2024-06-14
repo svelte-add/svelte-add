@@ -61,13 +61,11 @@ function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx:
 
     const options = Object.entries(adder.options);
     for (const [key, value] of options) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const optionDefaultValue = value.default.toString() as string;
         markdown += `\n- \`${key}\` (default: ${optionDefaultValue}) - ${value.question}`;
     }
 
     const [firstOptionKey, firstOptionValue] = options[0];
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const firstOptionDefaultValue = firstOptionValue.default.toString() as string;
 
     markdown += `\n\n

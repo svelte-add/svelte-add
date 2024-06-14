@@ -42,7 +42,6 @@ export {
 };
 
 export function parseScript(content: string): AstTypes.Program {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const recastOutput: { program: AstTypes.Program } = recastParse(content, {
         parser: {
             parse: tsParse,

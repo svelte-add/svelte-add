@@ -57,7 +57,6 @@ async function getAdder(adderName) {
     remoteControl.enable();
 
     /** @type {{default: import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs}} */
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const adderModule = await import(`../../adders/${adderName}/build/index.js`);
     const adder = adderModule.default;
 

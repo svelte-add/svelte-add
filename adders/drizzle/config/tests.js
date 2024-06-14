@@ -73,7 +73,6 @@ export const tests = defineAdderTests({
             contentType: "json",
             content: ({ data }) => {
                 // executes after pnpm install
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 data.scripts["postinstall"] ??= "pnpm run db:push";
             },
         },

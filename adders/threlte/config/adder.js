@@ -39,11 +39,9 @@ export const adder = defineAdderConfig({
             contentType: "json",
             condition: ({ typescript }) => typescript.installed,
             content: ({ data }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 if (!data.compilerOptions) data.compilerOptions = {};
 
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                if (!data.compilerOptions.moduleResolution.toLowerCase() !== "bundler") {
+                if (data.compilerOptions.moduleResolution.toLowerCase() !== "bundler") {
                     data.compilerOptions.moduleResolution = "bundler";
                 }
             },

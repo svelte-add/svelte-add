@@ -153,9 +153,7 @@ export const adder = defineAdderConfig({
             name: () => `package.json`,
             contentType: "json",
             content: ({ data, options }) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 data.scripts ??= {};
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
                 const scripts = /** @type {Record<string, string>} */ (data.scripts);
                 if (options.docker) scripts["db:start"] ??= "docker compose up";
                 scripts["db:push"] ??= "drizzle-kit push";
