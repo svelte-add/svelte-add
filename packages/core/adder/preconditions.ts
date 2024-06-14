@@ -36,7 +36,7 @@ function getGlobalPreconditions(
 
                         return { success: true, message: undefined };
                     } catch (error) {
-                        return { success: false, message: "Not a git repository" };
+                        return { success: true, message: "Not a git repository" };
                     }
                 },
             },
