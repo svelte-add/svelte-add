@@ -105,7 +105,9 @@ async function executePlan<Args extends OptionDefinition>(
     // create project if required
     if (executionPlan.createProject) {
         const cwd = executionPlan.commonCliOptions.path ?? executionPlan.workingDirectory;
-        const { projectCreated, directory } = await createProject(cwd);
+        const supportKit = adderDetails.reduce((value, x) => value || x.config.metadata.environments.kit, false);
+        const supportSvelte = adderDetails.reduce((value, x) => value || x.config.metadata.environments.svelte, false);
+        const { projectCreated, directory } = await createProject(cwd, supportKit, supportSvelte);
         if (!projectCreated) return;
         executionPlan.workingDirectory = directory;
     }
