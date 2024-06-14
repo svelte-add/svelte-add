@@ -1,11 +1,11 @@
-name: Publish Preview Release
+name: Publish Approved Pull Requests
 on:
-    pull_request:
     issue_comment:
         types: [edited, created]
 
 jobs:
     preview-release:
+        if: github.repository == 'svelte-add/svelte-add' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/publish-preview')
         timeout-minutes: 30
         runs-on: ubuntu-latest
         steps:
