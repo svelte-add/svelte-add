@@ -1,6 +1,7 @@
 import { getAdderInfos } from "$lib/adder.js";
 import { categories } from "@svelte-add/core";
 import { availableCliOptions } from "@svelte-add/core/internal";
+import type { CategoryKeys } from "../../../../../core/adder/categories.js";
 
 export async function load({ params }) {
     const infos = await getAdderInfos(params.category);
@@ -16,7 +17,7 @@ export async function load({ params }) {
 
     return {
         adderCategories: infos,
-        category: categories[params.category],
+        category: categories[params.category as CategoryKeys],
         keywords: keywords,
         availableCliOptions,
     };

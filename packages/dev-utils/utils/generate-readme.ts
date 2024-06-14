@@ -61,10 +61,14 @@ function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx:
 
     const options = Object.entries(adder.options);
     for (const [key, value] of options) {
-        markdown += `\n- \`${key}\` (default: ${value.default.toString()}) - ${value.question}`;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        const optionDefaultValue = value.default.toString() as string;
+        markdown += `\n- \`${key}\` (default: ${optionDefaultValue}) - ${value.question}`;
     }
 
     const [firstOptionKey, firstOptionValue] = options[0];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const firstOptionDefaultValue = firstOptionValue.default.toString() as string;
 
     markdown += `\n\n
 Option syntax
@@ -74,7 +78,7 @@ ${codeTagEnd}
 
 Specific example
 ${codeTagStart}
-${adderNpx} --${firstOptionKey} ${firstOptionValue.default.toString()}
+${adderNpx} --${firstOptionKey} ${firstOptionDefaultValue}
 ${codeTagEnd}
 
 You can combine as many options as you want. The usage of options is optional. If you don't specify an option value via the command line, the CLI will ask you the questions interactively.

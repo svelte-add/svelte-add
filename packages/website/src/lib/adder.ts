@@ -1,7 +1,7 @@
 import { getAdderConfig, getAdderList } from "svelte-add/website";
 import { groupBy } from "@svelte-add/core/internal";
 import type { Question } from "../../../core/adder/options.js";
-import type { AdderConfigMetadata } from "../../../core/adder/config.js";
+import type { AdderConfig, AdderConfigMetadata } from "../../../core/adder/config.js";
 import type { CategoryInfo } from "../../../core/adder/categories.js";
 
 export type AdderMetadataWithOptions = {
@@ -15,7 +15,6 @@ export async function getAdderInfos(category?: string) {
     const adders: AdderMetadataWithOptions[] = [];
     for (const adderName of addersNames) {
         const config = await getAdderDetails(adderName);
-        serializeConditions(config);
 
         if (category && config.metadata.category.id !== category) {
             continue;
@@ -30,7 +29,7 @@ export async function getAdderInfos(category?: string) {
 }
 
 // serializes the functions that evaluate a question's conditions
-function serializeConditions(adder: AdderMetadataWithOptions) {
+function serializeConditions(adder: AdderConfig<Record<string, Question>>) {
     for (const question of Object.values(adder.options!)) {
         if (question?.condition) {
             question.condition = question.condition.toString();

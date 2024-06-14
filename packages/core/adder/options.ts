@@ -17,6 +17,7 @@ export type NumberQuestion = {
     default: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SelectQuestion<Value = any> = {
     type: "select";
     default: Value;
@@ -26,6 +27,7 @@ export type SelectQuestion<Value = any> = {
 export type BaseQuestion = {
     question: string;
     // TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     condition?: (options: OptionValues<any>) => boolean;
 };
 

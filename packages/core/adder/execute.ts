@@ -18,7 +18,7 @@ import {
     AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
-import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig, Precondition } from "./config.js";
+import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { serializeJson } from "@svelte-add/ast-tooling";
@@ -69,7 +69,8 @@ export async function executeAdders<Args extends OptionDefinition>(
 
     const cliOptions = !isTesting ? prepareAndParseCliOptions(adderDetails) : {};
     const commonCliOptions = extractCommonCliOptions(cliOptions);
-    const cliOptionsByAdderId = !isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions;
+    const cliOptionsByAdderId =
+        (!isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions) ?? {};
     validateOptionTypes(adderDetails, cliOptionsByAdderId);
 
     let workingDirectory: string | null;
@@ -123,6 +124,7 @@ async function executePlan<Args extends OptionDefinition>(
     const addersToRemove = adderDetails.filter((x) => !userSelectedAdders.includes(x.config.metadata.id));
     for (const adderToRemove of addersToRemove) {
         const adderId = adderToRemove.config.metadata.id;
+
         delete executionPlan.cliOptionsByAdderId[adderId];
     }
     adderDetails = adderDetails.filter((x) => userSelectedAdders.includes(x.config.metadata.id));
@@ -174,7 +176,7 @@ async function executePlan<Args extends OptionDefinition>(
     if (isTesting && unmetPostconditions.length > 0) {
         throw new Error("Postconditions not met: " + unmetPostconditions.join(" / "));
     } else if (unmetPostconditions.length > 0) {
-        await printUnmetPostconditions(unmetPostconditions);
+        printUnmetPostconditions(unmetPostconditions);
     }
 
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)

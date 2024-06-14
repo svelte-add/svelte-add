@@ -75,7 +75,7 @@ export function serializeHtml(ast: Document) {
     return serializeDom(ast, { encodeEntities: "utf8", selfClosingTags: true });
 }
 
-export function stripAst<T extends unknown>(node: T, propToRemove: string): T {
+export function stripAst<T>(node: T, propToRemove: string): T {
     if (typeof node !== "object" || node === null) return node;
     if (propToRemove in node) delete node[propToRemove as keyof T];
 
@@ -84,7 +84,7 @@ export function stripAst<T extends unknown>(node: T, propToRemove: string): T {
         const child = node[key];
         if (child && typeof child === "object") {
             if (Array.isArray(child)) {
-                child.forEach((c) => stripAst(c, propToRemove));
+                child.forEach((element) => stripAst<unknown>(element, propToRemove));
             } else {
                 stripAst(child, propToRemove);
             }

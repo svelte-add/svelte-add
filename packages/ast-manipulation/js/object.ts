@@ -30,7 +30,6 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
             value: propertyValue,
         };
 
-        if (!objectExpression.properties) objectExpression.properties = [];
         objectExpression.properties.push(property);
     }
 

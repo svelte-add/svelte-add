@@ -23,6 +23,12 @@ export default tseslint.config(
         rules: {
             "@typescript-eslint/no-unnecessary-condition": "off",
             "@typescript-eslint/no-dynamic-delete": "off",
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                {
+                    caughtErrors: "none",
+                },
+            ],
         },
     },
     {
@@ -40,6 +46,7 @@ export default tseslint.config(
             "packages/tests/build",
             "packages/website/.svelte-kit",
             "packages/website/build",
+            "packages/website",
             "temp",
         ],
     },

@@ -81,6 +81,5 @@ function stopDocker() {
     usingDocker = false;
 }
 
-const cleanup = async () => stopDocker();
-process.on("exit", cleanup);
-process.on("SIGINT", cleanup);
+process.on("exit", stopDocker);
+process.on("SIGINT", stopDocker);
