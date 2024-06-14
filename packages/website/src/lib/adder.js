@@ -9,7 +9,6 @@ import { groupBy } from "@svelte-add/core/internal";
 
 /**
  * @param {string} [category]
- * @returns
  */
 export async function getAdderInfos(category) {
     const addersNames = getAdderList();
