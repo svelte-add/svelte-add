@@ -60,7 +60,9 @@ export async function validatePreconditions<Args extends OptionDefinition>(
             preconditions: checks.preconditions,
         };
     });
-    const combinedPreconditions = [getGlobalPreconditions(executingCliName, workingDirectory), ...adderPreconditions];
+    const combinedPreconditions = isTesting
+        ? adderPreconditions
+        : [getGlobalPreconditions(executingCliName, workingDirectory), ...adderPreconditions];
 
     for (const { name, preconditions } of combinedPreconditions) {
         if (!preconditions) continue;
@@ -102,7 +104,6 @@ export async function validatePreconditions<Args extends OptionDefinition>(
         if (!allPreconditionsPassed && isTesting) {
             throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
         }
-
         if (isTesting) return;
 
         messagePrompt("Preconditions:", allMessages);

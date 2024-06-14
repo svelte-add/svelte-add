@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
+import path from "node:path";
+import { execSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { testAdders } from "@svelte-add/testing-library";
 import { getAdderList } from "svelte-add/website";
 import { remoteControl } from "@svelte-add/core/internal";
-import path from "path";
+
+let usingDocker = false;
 
 /** @type {import("../testing-library/index.js").TestOptions} */
 const testOptions = {
@@ -38,6 +42,9 @@ async function executeTests(addersToTest) {
         adders.push(await getAdder(adderName));
     }
 
+    usingDocker = !!adders.find((adder) => adder.config.metadata.id === "drizzle");
+    if (usingDocker) startDocker();
+
     await testAdders(adders, testOptions);
 }
 
@@ -57,3 +64,22 @@ async function getAdder(adderName) {
 
     return adder;
 }
+
+const cwd = path.resolve(fileURLToPath(import.meta.url), "..");
+
+// We're using `execSync` instead of our `executeCli` because we need the cleanup to be synchronous
+function startDocker() {
+    console.log("Starting docker containers");
+    execSync("docker compose up --detach", { cwd, stdio: "pipe" });
+}
+
+function stopDocker() {
+    if (!usingDocker) return;
+    console.log("Stopping docker containers");
+    execSync("docker compose down --volumes", { cwd, stdio: "pipe" });
+    usingDocker = false;
+}
+
+const cleanup = async () => stopDocker();
+process.on("exit", cleanup);
+process.on("SIGINT", cleanup);

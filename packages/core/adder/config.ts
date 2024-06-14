@@ -119,7 +119,7 @@ export function defineAdderTests<Args extends OptionDefinition>(tests: AdderTest
     return tests;
 }
 
-export function defineAdderOptions<Args extends OptionDefinition>(options: Args) {
+export function defineAdderOptions<const Args extends OptionDefinition>(options: Args) {
     return options;
 }
 

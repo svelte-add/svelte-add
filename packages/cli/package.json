@@ -5,7 +5,8 @@
     "type": "module",
     "exports": {
         "./website": {
-            "import": "./build/website.js"
+            "types": "./build/website.d.ts",
+            "default": "./build/website.js"
         }
     },
     "dependencies": {
