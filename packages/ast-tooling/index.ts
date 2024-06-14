@@ -40,7 +40,7 @@ export {
     // ast walker
     Walker,
 };
-
+// temp
 export function parseScript(content: string): AstTypes.Program {
     const recastOutput: { program: AstTypes.Program } = recastParse(content, {
         parser: {
