@@ -5,8 +5,7 @@ import { availableCliOptions } from "@svelte-add/core/internal";
 export async function load({ params }) {
     const infos = await getAdderInfos(params.category);
 
-    /** @type {string[]} */
-    const keywords = [];
+    const keywords: string[] = [];
     for (const adders of infos.values()) {
         for (const adder of adders) {
             if (!adder.metadata.website) continue;

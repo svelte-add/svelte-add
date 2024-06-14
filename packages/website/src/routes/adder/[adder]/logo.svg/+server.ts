@@ -1,10 +1,11 @@
+import path from "node:path";
 import { readFile } from "fs/promises";
 import { getAdderConfig } from "svelte-add/website";
-import path from "path";
+import type { RequestHandler } from "./$types.js";
 
 export const prerender = true;
 
-export const GET = async ({ params }) => {
+export const GET: RequestHandler = async ({ params }) => {
     const config = await getAdderConfig(params.adder);
     const data = await readFile(path.join(`../../adders/${config.metadata.id}`, config.metadata.website?.logo));
 
