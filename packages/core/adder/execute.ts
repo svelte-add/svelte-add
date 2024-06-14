@@ -26,6 +26,7 @@ import { validatePreconditions } from "./preconditions.js";
 import { PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
 import { CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
+import { gray } from "picocolors";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -100,7 +101,10 @@ async function executePlan<Args extends OptionDefinition>(
     const isTesting = remoteControlled && remoteControlOptions.isTesting;
     const isExecutingMultipleAdders = adderDetails.length > 1;
 
-    if (!isTesting) startPrompts(`Welcome to ${executingAdder.name}@${executingAdder.version}`);
+    if (!isTesting) {
+        console.log(gray(`${executingAdder.name} version ${executingAdder.version}\n`));
+        startPrompts(`Welcome to Svelte Add!`);
+    }
 
     // create project if required
     if (executionPlan.createProject) {
