@@ -21,7 +21,7 @@ export async function writeFile(workspace: WorkspaceWithoutExplicitArgs, filePat
     const fullDirectoryPath = path.dirname(fullFilePath);
 
     if (!(await directoryExists(fullDirectoryPath))) {
-        await fs.mkdir(fullDirectoryPath);
+        await fs.mkdir(fullDirectoryPath, { recursive: true });
     }
 
     await fs.writeFile(fullFilePath, content);

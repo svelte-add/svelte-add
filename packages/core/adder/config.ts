@@ -5,6 +5,7 @@ import { CategoryInfo } from "./categories.js";
 import { OptionDefinition, OptionValues, Question } from "./options.js";
 import { FileTypes } from "../files/processors.js";
 import { Workspace } from "../utils/workspace.js";
+import { Postcondition } from "./postconditions.js";
 
 export { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
@@ -118,7 +119,7 @@ export function defineAdderTests<Args extends OptionDefinition>(tests: AdderTest
     return tests;
 }
 
-export function defineAdderOptions<Args extends OptionDefinition>(options: Args) {
+export function defineAdderOptions<const Args extends OptionDefinition>(options: Args) {
     return options;
 }
 
@@ -130,6 +131,7 @@ export type Precondition = {
 export type AdderCheckConfig<Args extends OptionDefinition> = {
     options: Args;
     preconditions?: Precondition[];
+    postconditions?: Postcondition<Args>[];
 };
 
 export function defineAdderChecks<Args extends OptionDefinition>(checks: AdderCheckConfig<Args>) {
