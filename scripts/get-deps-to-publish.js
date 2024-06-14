@@ -36,7 +36,7 @@ function getDependents(path) {
     if (!pkg) throw new Error("couldn't find package in dependency map");
 
     const dependents = depsMap.filter(
-        (dep) => (dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name]) && dep.private !== true,
+        (dep) => dep.private !== true && (dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name]),
     );
     return dependents.map((dep) => relative(".", dep.path));
 }
