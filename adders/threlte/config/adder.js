@@ -43,7 +43,9 @@ export const adder = defineAdderConfig({
                 if (!data.compilerOptions) data.compilerOptions = {};
 
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                data.compilerOptions.moduleResolution = "Bundler";
+                if (!data.compilerOptions.moduleResolution.toLowerCase() !== "bundler") {
+                    data.compilerOptions.moduleResolution = "bundler";
+                }
             },
         },
         {
