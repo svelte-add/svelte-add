@@ -1,5 +1,25 @@
 # @svelte-add/core
 
+## 2.5.0
+
+### Minor Changes
+
+-   feat: added Select questions for adder options ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   add postconditions ([#388](https://github.com/svelte-add/svelte-add/pull/388))
+
+### Patch Changes
+
+-   fix: directories are now recursively created for files created by an adder ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   fix: global preconditions are now ignored during tests ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   chore: bump dependencies ([#392](https://github.com/svelte-add/svelte-add/pull/392))
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/ast-manipulation@2.1.0
+    -   @svelte-add/ast-tooling@2.1.0
+
 ## 2.4.0
 
 ### Minor Changes

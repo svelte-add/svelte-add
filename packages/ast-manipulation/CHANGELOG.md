@@ -1,5 +1,16 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.0
+
+### Minor Changes
+
+-   feat: added `zimmerframe` and a few ast utilities ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+### Patch Changes
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/ast-tooling@2.1.0
+
 ## 2.0.5
 
 ### Patch Changes

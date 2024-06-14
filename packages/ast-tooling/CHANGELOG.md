@@ -1,5 +1,15 @@
 # @svelte-add/ast-tooling
 
+## 2.1.0
+
+### Minor Changes
+
+-   feat: added `zimmerframe` and a few ast utilities ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+### Patch Changes
+
+-   chore: bump dependencies ([#392](https://github.com/svelte-add/svelte-add/pull/392))
+
 ## 2.0.4
 
 ### Patch Changes
