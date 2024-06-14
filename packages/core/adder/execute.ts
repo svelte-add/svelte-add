@@ -238,8 +238,8 @@ async function processExternalAdder<Args extends OptionDefinition>(
             stdio: isTesting ? "pipe" : "inherit",
         });
     } catch (error) {
-        const errorString = error as string;
-        throw new Error("Failed executing external command: " + errorString);
+        const typedError = error as Error;
+        throw new Error("Failed executing external command: " + typedError.message);
     }
 }
 

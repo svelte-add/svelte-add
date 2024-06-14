@@ -26,8 +26,8 @@ export async function startDevServer(
             },
         });
     } catch (error) {
-        const errorString = error as string;
-        throw new Error("Failed to start dev server" + errorString);
+        const typedError = error as Error;
+        throw new Error("Failed to start dev server" + typedError.message);
     }
 }
 

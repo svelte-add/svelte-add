@@ -37,8 +37,8 @@ export async function createProject(output: string, projectType: string) {
         try {
             await executeCli("pnpm", args, join(output, ".."));
         } catch (error) {
-            const errorString = error as string;
-            throw new Error("Failed initializing vite project: " + errorString);
+            const typedError = error as Error;
+            throw new Error("Failed initializing vite project: " + typedError.message);
         }
     }
 }

@@ -105,8 +105,8 @@ export async function createProject(cwd: string) {
         console.clear();
     } catch (error) {
         loadingSpinner.stop("Failed initializing template!");
-        const errorString = error as string;
-        console.log("cancelled or failed " + errorString);
+        const typedError = error as Error;
+        console.log("cancelled or failed " + typedError.message);
         return { projectCreated: false, directory: "" };
     }
 

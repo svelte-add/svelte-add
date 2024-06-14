@@ -16,8 +16,8 @@ export async function installDependencies(output: string) {
         // we need to add the `--ignore-workspace` flag so that our root lockfile isn't modified
         await executeCli("pnpm", ["install", "--ignore-workspace"], output, { stdio: "pipe" });
     } catch (error) {
-        const errorString = error as string;
-        throw new Error("unable to install dependencies: " + errorString);
+        const typedError = error as Error;
+        throw new Error("unable to install dependencies: " + typedError.message);
     }
 }
 

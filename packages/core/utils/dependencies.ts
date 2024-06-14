@@ -50,7 +50,7 @@ async function installDependencies(command: string, args: string[], workingDirec
     try {
         await executeCli(command, args, workingDirectory);
     } catch (error) {
-        const errorString = error as string;
-        throw new Error("unable to install dependencies: " + errorString);
+        const typedError = error as Error;
+        throw new Error("unable to install dependencies: " + typedError.message);
     }
 }
