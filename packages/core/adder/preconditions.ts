@@ -101,8 +101,8 @@ export async function validatePreconditions<Args extends OptionDefinition>(
 
     if (allPreconditionsPassed) {
         return;
-    } 
-    
+    }
+
     if (isTesting) {
         throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
     }
