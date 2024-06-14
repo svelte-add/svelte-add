@@ -1,11 +1,11 @@
 name: Publish Approved Pull Requests
 on:
-    issue_comment:
-        types: [edited, created]
+    pull_request:
+        types: [ready_for_review, synchronize]
 
 jobs:
     preview-release:
-        if: github.repository == 'svelte-add/svelte-add' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/publish-preview')
+        if: github.repository == 'svelte-add/svelte-add' && !github.event.pull_request.draft
         timeout-minutes: 30
         runs-on: ubuntu-latest
         steps:
@@ -43,4 +43,4 @@ jobs:
 
             - name: publish preview
               if: ${{ steps.changed-files.outputs.any_changed }}
-              run: pnpm pkg-pr-new publish --pnpm ${{ steps.changed-files.outputs.all_changed_files }}
+              run: pnpm dlx pkg-pr-new@0.0 publish --pnpm ${{ steps.changed-files.outputs.all_changed_files }}
