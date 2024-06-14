@@ -1,5 +1,24 @@
 # @svelte-add/testing-library
 
+## 2.0.12
+
+### Patch Changes
+
+-   chore: bump dependencies ([#392](https://github.com/svelte-add/svelte-add/pull/392))
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`9a116d4057407b15a99258541e54eaee6c8b7f1b`](https://github.com/svelte-add/svelte-add/commit/9a116d4057407b15a99258541e54eaee6c8b7f1b), [`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/core@2.5.0
+    -   @svelte-add/ast-tooling@2.1.0
+    -   svelte-add@2.0.11
+
+## 2.0.11
+
+### Patch Changes
+
+-   chore: use `pnpm` instead of `npm` ([#384](https://github.com/svelte-add/svelte-add/pull/384))
+
+-   chore: improve test output ([#380](https://github.com/svelte-add/svelte-add/pull/380))
+
 ## 2.0.10
 
 ### Patch Changes

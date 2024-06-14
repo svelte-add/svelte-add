@@ -1,6 +1,6 @@
-import { AdderWithoutExplicitArgs, Tests } from "@svelte-add/core/adder/config";
-import { OptionValues, Question } from "@svelte-add/core/adder/options";
-import { Page } from "puppeteer";
+import type { AdderWithoutExplicitArgs, Tests } from "@svelte-add/core/adder/config";
+import type { OptionValues, Question } from "@svelte-add/core/adder/options";
+import type { Page } from "playwright";
 
 export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, options: OptionValues<Record<string, Question>>) {
     const tests: Tests = {
@@ -10,8 +10,8 @@ export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, opti
         elementExists: async (selector) => {
             await elementExists(page, selector);
         },
-        click: async (selector, waitForNavigation) => {
-            await click(page, selector, waitForNavigation);
+        click: async (selector, path) => {
+            await click(page, selector, path);
         },
         // eslint-disable-next-line @typescript-eslint/require-await
         expectUrlPath: async (path) => {
@@ -45,15 +45,21 @@ async function elementExists(page: Page, selector: string) {
     return elementToCheck;
 }
 
-async function click(page: Page, selector: string, waitForNavigation: boolean) {
+/**
+ * @param path If the click action results in a navigation, provide the expected path
+ *
+ * @example
+ * ```js
+ * await click(page, "a.some-link", "/some-path");
+ * ```
+ */
+async function click(page: Page, selector: string, path?: string) {
     await elementExists(page, selector);
 
-    if (!waitForNavigation) {
-        await page.click(selector);
-    } else {
-        // if a click triggers a page reload, this is the correct
-        // syntax according to puppeteer documentation
-        await Promise.all([page.waitForNavigation(), page.click(selector)]);
+    await page.click(selector);
+
+    if (path) {
+        await page.waitForURL((url) => url.pathname === path);
     }
 }
 
@@ -68,11 +74,10 @@ function expectUrlPath(page: Page, path: string) {
 async function expectProperty(page: Page, selector: string, property: string, expectedValue: string) {
     const elementToCheck = await elementExists(page, selector);
 
-    const computedStyle = await page.evaluate(
-        (element, pV) => window.getComputedStyle(element).getPropertyValue(pV),
+    const computedStyle = await page.evaluate(([element, pV]) => window.getComputedStyle(element).getPropertyValue(pV), [
         elementToCheck,
         property,
-    );
+    ] as const);
 
     if (computedStyle !== expectedValue) {
         throw new Error(`Expected '${expectedValue}' but got '${computedStyle}' for selector '${selector}'`);

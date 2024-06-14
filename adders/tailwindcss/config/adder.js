@@ -18,13 +18,13 @@ export const adder = defineAdderConfig({
     options,
     integrationType: "inline",
     packages: [
-        { name: "tailwindcss", version: "^3.4.3", dev: true },
+        { name: "tailwindcss", version: "^3.4.4", dev: true },
         { name: "postcss", version: "^8.4.38", dev: true },
         { name: "autoprefixer", version: "^10.4.19", dev: true },
         { name: "@tailwindcss/typography", version: "^0.5.13", dev: true, condition: ({ options }) => options.typography },
         {
             name: "prettier-plugin-tailwindcss",
-            version: "^0.5.14",
+            version: "^0.6.4",
             dev: true,
             condition: ({ prettier }) => prettier.installed,
         },

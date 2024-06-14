@@ -1,6 +1,6 @@
 {
-    "name": "@svelte-add/tailwindcss",
-    "version": "1.0.11",
+    "name": "@svelte-add/drizzle",
+    "version": "1.0.1",
     "bin": "build/index.js",
     "type": "module",
     "license": "MIT",
@@ -10,12 +10,14 @@
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
         "type": "git",
-        "url": "https://github.com/svelte-add/svelte-add/tree/main/adders/tailwindcss"
+        "url": "https://github.com/svelte-add/svelte-add/tree/main/adders/drizzle"
     },
     "keywords": [
-        "tailwind",
-        "postcss",
-        "autoprefixer",
+        "drizzle",
+        "drizzle-orm",
+        "drizzle-kit",
+        "database",
+        "orm",
         "svelte",
         "kit",
         "svelte-kit"

@@ -1,25 +1,37 @@
-<script>
+<script lang="ts">
+    import { browser } from "$app/environment";
     import Box from "./Box.svelte";
     import CopyCommand from "./CopyCommand.svelte";
+    import type { AvailableCliOptions } from "@svelte-add/core/internal";
+    import type { AdderMetadataWithOptions } from "./adder.js";
 
-    /** @type {import("./adder").AdderMetadataWithOptions[]} */
-    export let adders = [];
+    export let adders: AdderMetadataWithOptions[] = [];
 
-    /** @type {import("@svelte-add/core/internal").AvailableCliOptions} */
-    export let availableCliOptions;
+    export let availableCliOptions: AvailableCliOptions;
 
-    /** @type {any} */
-    const selectedOptions = {};
+    type AdderId = string;
+    type OptionId = string;
+    type OptionValue = unknown;
+    type SelectedOptions = Record<AdderId, Record<OptionId, OptionValue>>;
+    const selectedOptions: SelectedOptions = {};
     let command = "";
 
+    $: if (browser) deserializeConditions(adders);
     $: generateCommandArgs(selectedOptions);
     $: prepareDefaultValues(adders);
 
-    /**
-     *
-     * @param {any} args
-     */
-    function generateCommandArgs(args) {
+    function deserializeConditions(adders: AdderMetadataWithOptions[]) {
+        for (const adder of adders) {
+            for (const option of Object.values(adder.options ?? {})) {
+                if (typeof option.condition === "string") {
+                    const condition = new Function("return " + option.condition)();
+                    option.condition = condition;
+                }
+            }
+        }
+    }
+
+    function generateCommandArgs(args: SelectedOptions) {
         const argumentEntries = Object.entries(args);
         const multipleAdders = argumentEntries.length > 1;
         const firstAdderId = Object.keys(args)[0];
@@ -30,14 +42,21 @@
             return;
         }
 
-        if (!multipleAdders) command += "@svelte-add/" + firstAdderId + "@latest";
-        else {
+        if (multipleAdders) {
             const adderIds = Object.keys(args).join(" ");
             command += `svelte-add@latest --adder ${adderIds}`;
+        } else {
+            command += "@svelte-add/" + firstAdderId + "@latest";
         }
 
         for (const [adderId, options] of argumentEntries) {
+            const adder = adders.find((a) => a.metadata.id === adderId)!;
             for (const [key, optionValue] of Object.entries(options)) {
+                // @ts-expect-error we already know that this exists given that we're iterating over the adder's options
+                const condition: ((arg: any) => boolean) | undefined = adder.options[key].condition;
+                // for conditional questions, we'll only show them if their condition is satisfied
+                if (typeof condition === "function" && condition(options) === false) continue;
+
                 if (multipleAdders) {
                     command += ` --${adderId}-${key} ${optionValue}`;
                 } else {
@@ -50,9 +69,8 @@
     /**
      * Prepares the default values for each adder and deletes values
      * for adders that are not present anymore
-     * @param {import("./adder").AdderMetadataWithOptions[]} adders
      */
-    function prepareDefaultValues(adders) {
+    function prepareDefaultValues(adders: AdderMetadataWithOptions[]) {
         // Once a adders has been added and an option values that differs
         // from the default value has been chosen we are not allowed to
         // update the adders anymore, as this would destroy the users choice.
@@ -72,12 +90,17 @@
 
         // Set default property values of new adders
         for (const { metadata, options } of newAdders) {
-            if (!selectedOptions[metadata.id]) selectedOptions[metadata.id] = {};
-
             if (!options) continue;
 
+            selectedOptions[metadata.id] ??= {};
+
             for (const [key, value] of Object.entries(options)) {
-                selectedOptions[metadata.id][key] = value.default;
+                if (value.default === undefined && value.type === "select") {
+                    // for select questions, we'll set the first option as the default
+                    selectedOptions[metadata.id][key] = value.options[0].value;
+                } else {
+                    selectedOptions[metadata.id][key] = value.default;
+                }
             }
         }
 
@@ -96,24 +119,32 @@
         <div class="font-bold underline">{metadata.name}</div>
         {#if options && Object.entries(options).length > 0}
             {#each Object.entries(options) as [key, value]}
-                <div>
-                    <span class="w-2/3 inline-block">{value.question}</span>
+                {#if typeof value.condition !== "function" || value.condition(selectedOptions[metadata.id])}
+                    <div>
+                        <span class="w-2/3 inline-block">{value.question}</span>
 
-                    {#if value.type == "boolean"}
-                        <label>
-                            <input type="radio" value={true} bind:group={selectedOptions[metadata.id][key]} />
-                            Yes
-                        </label>
-                        <label>
-                            <input type="radio" value={false} bind:group={selectedOptions[metadata.id][key]} />
-                            No
-                        </label>
-                    {:else if value.type == "number"}
-                        <input type="number" bind:value={selectedOptions[metadata.id][key]} />
-                    {:else if value.type == "string"}
-                        <input type="text" bind:value={selectedOptions[metadata.id][key]} />
-                    {/if}
-                </div>
+                        {#if value.type == "boolean"}
+                            <label>
+                                <input type="radio" value={true} bind:group={selectedOptions[metadata.id][key]} />
+                                Yes
+                            </label>
+                            <label>
+                                <input type="radio" value={false} bind:group={selectedOptions[metadata.id][key]} />
+                                No
+                            </label>
+                        {:else if value.type == "number"}
+                            <input type="number" bind:value={selectedOptions[metadata.id][key]} />
+                        {:else if value.type == "string"}
+                            <input type="text" bind:value={selectedOptions[metadata.id][key]} />
+                        {:else if value.type === "select"}
+                            <select class="m-1" bind:value={selectedOptions[metadata.id][key]}>
+                                {#each value.options as option}
+                                    <option value={option.value}>{option.label}</option>
+                                {/each}
+                            </select>
+                        {/if}
+                    </div>
+                {/if}
             {/each}
         {:else}
             <p>This adder does not have any options.</p>

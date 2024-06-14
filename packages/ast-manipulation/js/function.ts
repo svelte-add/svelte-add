@@ -20,6 +20,27 @@ export function call(name: string, args: string[]) {
     return callExpression;
 }
 
+export function callByIdentifier(name: string, args: string[]) {
+    const callExpression: AstTypes.CallExpression = {
+        type: "CallExpression",
+        callee: {
+            type: "Identifier",
+            name,
+        },
+        arguments: [],
+    };
+
+    for (const argument of args) {
+        const identifier: AstTypes.Identifier = {
+            type: "Identifier",
+            name: argument,
+        };
+        callExpression.arguments.push(identifier);
+    }
+
+    return callExpression;
+}
+
 export function arrowFunction(async: boolean, body: AstKinds.ExpressionKind | AstTypes.BlockStatement) {
     const arrowFunction: AstTypes.ArrowFunctionExpression = {
         type: "ArrowFunctionExpression",

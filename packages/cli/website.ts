@@ -1,5 +1,5 @@
-import { AdderConfig } from "@svelte-add/core/adder/config";
-import { Question } from "@svelte-add/core/adder/options";
+import type { AdderConfig } from "@svelte-add/core/adder/config";
+import type { Question } from "@svelte-add/core/adder/options";
 
 export function getAdderList(): string[] {
     // @ts-expect-error The list is assembled during build and injected by rollup.

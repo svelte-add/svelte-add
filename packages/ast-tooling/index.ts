@@ -9,12 +9,13 @@ import { parse as postcssParse } from "postcss";
 import { namedTypes as AstTypes } from "ast-types";
 import * as AstKinds from "ast-types/gen/kinds";
 import * as fleece from "silver-fleece";
+import * as Walker from "zimmerframe";
 
 /**
  * Most of the AST tooling is pretty big in bundle size and bundling takes forever.
  * Nevertheless bundling of these tools seems smart, as they add many dependencies to each install.
  * In order to avoid long bundling during development, all of the AST tools have been extracted
- * into this separate packe and are bundled only here. This package has been marked as external
+ * into this separate package and are bundled only here. This package has been marked as external
  * and will not be bundled into all other projects / bundles.
  */
 
@@ -35,6 +36,9 @@ export {
     // js
     AstTypes,
     AstKinds,
+
+    // ast walker
+    Walker,
 };
 
 export function parseScript(content: string): AstTypes.Program {
@@ -45,7 +49,7 @@ export function parseScript(content: string): AstTypes.Program {
         },
     });
 
-    return recastOutput.program;
+    return stripAst(recastOutput.program, "loc");
 }
 
 export function serializeScript(ast: AstTypes.ASTNode) {
@@ -69,6 +73,26 @@ export function parseHtml(content: string) {
 
 export function serializeHtml(ast: Document) {
     return serializeDom(ast, { encodeEntities: "utf8", selfClosingTags: true });
+}
+
+export function stripAst<T extends unknown>(node: T, propToRemove: string): T {
+    if (typeof node !== "object" || node === null) return node;
+    if (propToRemove in node) delete node[propToRemove as keyof T];
+
+    // node traversal
+    for (const key in node) {
+        const child = node[key];
+        if (child && typeof child === "object") {
+            if (Array.isArray(child)) {
+                child.forEach((c) => stripAst(c, propToRemove));
+            } else {
+                stripAst(child, propToRemove);
+            }
+        }
+    }
+
+    // we do this to transform nodes into POJOs
+    return structuredClone(node);
 }
 
 export type SvelteAst = {

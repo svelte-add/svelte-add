@@ -4,10 +4,12 @@ import { readFile, writeFile } from "fs/promises";
 import { AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
 import { Package } from "@svelte-add/core/utils/common";
+import { spawnSync } from "child_process";
 
 export async function updateDependencies() {
     await updatePackageJson();
     await updateAdderDependencies();
+    spawnSync("pnpm", ["install"], { stdio: "inherit" });
 }
 
 async function updateAdderDependencies() {

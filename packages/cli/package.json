@@ -1,11 +1,12 @@
 {
     "name": "svelte-add",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "bin": "build/index.js",
     "type": "module",
     "exports": {
         "./website": {
-            "import": "./build/website.js"
+            "types": "./build/website.d.ts",
+            "default": "./build/website.js"
         }
     },
     "dependencies": {
