@@ -16,7 +16,7 @@ const packagesToPublish = /** @type {Set<string>} */ (new Set(dirs));
 let prev = packagesToPublish.size;
 while (packagesToPublish.size === prev) {
     for (const pkg of packagesToPublish) {
-        const dependents = addDependents(pkg);
+        const dependents = getDependents(pkg);
         dependents.forEach((dep) => packagesToPublish.add(dep));
     }
 }
@@ -30,7 +30,7 @@ execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${toPublish}`, { stdio: "inheri
  * @param {string} path
  * @return {string[]}
  */
-function addDependents(path) {
+function getDependents(path) {
     const pkg = depsMap.find((pkg) => pkg.path.endsWith(path));
     if (!pkg) throw new Error("couldn't find package in dependency map");
 
