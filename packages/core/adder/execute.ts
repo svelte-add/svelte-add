@@ -27,6 +27,7 @@ import { validatePreconditions } from "./preconditions.js";
 import { endPrompts, startPrompts, groupedMultiSelectPrompt } from "../utils/prompts.js";
 import { type CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
+import { displayNextSteps } from "./nextSteps.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -193,7 +194,10 @@ async function executePlan<Args extends OptionDefinition>(
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
         await suggestInstallingDependencies(executionPlan.workingDirectory);
 
-    if (!isTesting) endPrompts("You're all set!");
+    if (!isTesting) {
+        displayNextSteps(adderDetails, isExecutingMultipleAdders);
+        endPrompts("You're all set!");
+    }
 }
 type AdderOption = { value: string; label: string; hint: string };
 async function askForAddersToApply<Args extends OptionDefinition>(

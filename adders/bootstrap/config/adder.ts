@@ -130,6 +130,9 @@ export const adder = defineAdderConfig({
             },
         },
     ],
+    nextSteps: () => {
+        return "this is a test next step";
+    },
 });
 
 /**

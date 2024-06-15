@@ -51,6 +51,7 @@ export type InlineAdderConfig<Args extends OptionDefinition> = BaseAdderConfig<A
     integrationType: "inline";
     packages: PackageDefinition<Args>[];
     files: FileTypes<Args>[];
+    nextSteps?: () => string;
     installHook?: (workspace: Workspace<Args>) => Promise<void>;
     uninstallHook?: (workspace: Workspace<Args>) => Promise<void>;
 };
