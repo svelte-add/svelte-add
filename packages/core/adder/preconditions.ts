@@ -1,7 +1,7 @@
 import { booleanPrompt, endPrompts, messagePrompt } from "../utils/prompts.js";
 import { AdderDetails } from "./execute.js";
 import { OptionDefinition } from "./options.js";
-import pc from "picocolors";
+import { yellow } from "picocolors";
 import { Precondition } from "./config.js";
 import { executeCli } from "../utils/common.js";
 import { ProjectType } from "../utils/create-project.js";
@@ -116,7 +116,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                     message = `${name}: ${message}`;
                 }
 
-                message = pc.yellow(message);
+                message = yellow(message);
                 preconditionLog.push(message);
             }
 
