@@ -42,4 +42,7 @@ jobs:
 
             - name: publish preview
               if: ${{ steps.changed-files.outputs.all_changed_files_count > 0 }}
-              run: pnpm dlx pkg-pr-new@0.0 publish --pnpm ${{ steps.changed-files.outputs.all_changed_files }}
+              env:
+                  CHANGED_DIRS: ${{ steps.changed-files.outputs.all_changed_files }}
+              run: |
+                  node scripts/get-deps-to-publish.js
