@@ -1,3 +1,10 @@
+/**
+ * This tool is used by the pr ci to determine the packages that need to be published to the pkg-pr-new registry.
+ * In order to avoid situations where only @svelte-add/core would be published, because it's the only modified package,
+ * this tool will also determine the dependent packages and also publish those.
+ * PR: https://github.com/svelte-add/svelte-add/pull/408
+ */
+
 // @ts-check
 import { execSync } from "node:child_process";
 import { relative } from "node:path";
