@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/drizzle",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "bin": "build/index.js",
     "type": "module",
     "license": "MIT",

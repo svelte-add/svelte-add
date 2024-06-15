@@ -1,5 +1,11 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.1
+
+### Patch Changes
+
+-   chore: enforce stricter eslint rules ([#378](https://github.com/svelte-add/svelte-add/pull/378))
+
 ## 2.1.0
 
 ### Minor Changes
