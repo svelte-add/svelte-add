@@ -1,6 +1,6 @@
-import { executeCli } from "@svelte-add/core";
-import { ChildProcessWithoutNullStreams } from "child_process";
 import terminate from "terminate";
+import { executeCli } from "@svelte-add/core";
+import type { ChildProcessWithoutNullStreams } from "node:child_process";
 
 export async function startDevServer(
     output: string,

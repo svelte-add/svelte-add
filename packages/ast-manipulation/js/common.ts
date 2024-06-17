@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes, Walker, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import { type AstKinds, type AstTypes, Walker, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 
 export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
     const comment: AstTypes.CommentBlock = {

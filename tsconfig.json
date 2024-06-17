@@ -8,9 +8,11 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "declaration": true,
-        "allowSyntheticDefaultImports": true,
         "sourceMap": true,
         "strict": true,
-        "outDir": "build/"
+        "outDir": "build/",
+        "esModuleInterop": true,
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true
     }
 }

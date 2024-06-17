@@ -1,5 +1,5 @@
-import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 import { areNodesEqual } from "./common";
+import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
 export function createEmpty() {
     const arrayExpression: AstTypes.ArrayExpression = {

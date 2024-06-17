@@ -1,4 +1,4 @@
-import { AstTypes } from "@svelte-add/ast-tooling";
+import type { AstTypes } from "@svelte-add/ast-tooling";
 import { areNodesEqual } from "./common.js";
 
 export function addEmpty(ast: AstTypes.Program, importFrom: string) {

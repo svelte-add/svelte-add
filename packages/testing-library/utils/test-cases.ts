@@ -1,17 +1,17 @@
+import { join } from "node:path";
+import { mkdir } from "node:fs/promises";
 import { ProjectTypesList } from "./create-project";
-import { join } from "path";
 import { runTests } from "./test";
 import { uid } from "uid";
-import { mkdir } from "fs/promises";
 import { startDevServer, stopDevServer } from "./dev-server";
 import { startBrowser, stopBrowser } from "./browser-control";
 import { getTemplatesDirectory, installDependencies, prepareWorkspaceWithTemplate, saveOptionsFile } from "./workspace";
 import { runAdder } from "./adder";
 import { textPrompt } from "@svelte-add/core/internal";
 import * as Throttle from "promise-parallel-throttle";
-import { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
-import { TestOptions } from "..";
-import { OptionValues, Question } from "@svelte-add/core/adder/options";
+import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
+import type { TestOptions } from "..";
+import type { OptionValues, Question } from "@svelte-add/core/adder/options";
 
 export type TestCase = {
     template: string;
