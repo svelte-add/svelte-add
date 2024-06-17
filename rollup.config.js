@@ -1,11 +1,11 @@
+import fs from "node:fs";
+import path from "node:path";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import dynamicImportVars from "@rollup/plugin-dynamic-import-vars";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
-import typescript from "@rollup/plugin-typescript";
-import * as fs from "fs";
-import path from "path";
+import esbuild from "rollup-plugin-esbuild";
 
 const adderFolders = fs
     .readdirSync("./adders/", { withFileTypes: true })
@@ -29,15 +29,7 @@ function getConfig(project, isAdder) {
 
         outDir = `./packages/${project}/build`;
     } else {
-        /**
-         * Let's keep the adders in JavaScript, in order to preserve compilation speed.
-         * In JavaScript each adders takes about 50-100ms. When we change the file types to
-         * Typescript without changing anything else, we already get 1000-1500ms. Since
-         * we plan to have many adders, it would make it pretty hard to work with this repo.
-         * Since the adders are still typed by JSDoc and have access to all types from the
-         * other packages, all the intellisense and so on is still working flawlessly.
-         */
-        inputs.push(`./adders/${project}/index.js`);
+        inputs.push(`./adders/${project}/index.ts`);
 
         outDir = `./adders/${project}/build`;
     }
@@ -56,7 +48,7 @@ function getConfig(project, isAdder) {
         external: [/^@svelte-add.*/, "prettier", "create-svelte", "playwright", "npm-check-updates"],
         plugins: [
             preserveShebangs(),
-            typescript({ project: "./tsconfig.json", outDir, rootDir: projectRoot, sourceRoot: projectRoot }),
+            esbuild({ tsconfig: "./tsconfig.json", sourceRoot: projectRoot }),
             nodeResolve({ preferBuiltins: true }),
             commonjs(),
             json(),
