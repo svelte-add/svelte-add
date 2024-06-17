@@ -1,5 +1,7 @@
 import { defineAdderTests } from "@svelte-add/core";
 import { options } from "./options";
+import type { OptionDefinition } from "@svelte-add/core/adder/options.js";
+import type { SvelteFileEditorArgs } from "@svelte-add/core/files/processors.js";
 
 const divId = "myDiv";
 const typographyDivId = "myTypographyDiv";
@@ -52,20 +54,12 @@ export const tests = defineAdderTests({
     ],
 });
 
-/**
- * @template {import("@svelte-add/core/adder/options.js").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function prepareCoreTest({ html }) {
+function prepareCoreTest<Args extends OptionDefinition>({ html }: SvelteFileEditorArgs<Args>) {
     const div = html.div({ class: "bg-slate-600 border-gray-50 border-4 mt-1", id: divId });
     html.appendElement(html.ast.childNodes, div);
 }
 
-/**
- * @template {import("@svelte-add/core/adder/options.js").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function prepareTypographyTest({ html }) {
+function prepareTypographyTest<Args extends OptionDefinition>({ html }: SvelteFileEditorArgs<Args>) {
     const div = html.element("p", { class: "text-lg text-right line-through", id: typographyDivId });
     html.appendElement(html.ast.childNodes, div);
 }

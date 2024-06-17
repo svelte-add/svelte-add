@@ -1,6 +1,7 @@
 import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options.js";
+import type { HtmlAstEditor, JsAstEditor } from "@svelte-add/core/adder/config.js";
 
 export const adder = defineAdderConfig({
     metadata: {
@@ -28,7 +29,7 @@ export const adder = defineAdderConfig({
             contentType: "css",
             condition: ({ options }) => options.useSass,
             content: ({ ast, addAtRule, addComment, addDeclaration }) => {
-                const baseImport = (/** @type {string} */ component) => `"bootstrap/scss/${component}"`;
+                const baseImport = (component: string) => `"bootstrap/scss/${component}"`;
                 const importRule = "import";
 
                 addComment(ast, "1. Include functions first (so you can manipulate colors, SVGs, calc, etc)");
@@ -133,11 +134,8 @@ export const adder = defineAdderConfig({
 
 /**
  * Add a small JS snippet to support JS bootstrap components
- * @param {import("@svelte-add/core/adder/config.js").JsAstEditor} js
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} html
- * @param {boolean} isKit
  */
-function addBootstrapJavaScript(js, html, isKit) {
+function addBootstrapJavaScript(js: JsAstEditor, html: HtmlAstEditor, isKit: boolean) {
     js.imports.addNamed(js.ast, "svelte", { onMount: "onMount" });
     if (isKit) {
         js.imports.addNamed(js.ast, "$app/environment", { browser: "browser" });

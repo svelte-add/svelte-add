@@ -1,6 +1,7 @@
 import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options.js";
+import type { HtmlAstEditor, JsAstEditor } from "@svelte-add/core/adder/config.js";
 
 export const adder = defineAdderConfig({
     metadata: {
@@ -83,10 +84,8 @@ export const adder = defineAdderConfig({
 
 /**
  * Add a small JS snippet to support JS bootstrap components
- * @param {import("@svelte-add/core/adder/config.js").JsAstEditor} js
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} html
  */
-function addDemoScene(js, html) {
+function addDemoScene(js: JsAstEditor, html: HtmlAstEditor) {
     js.imports.addNamed(js.ast, "@threlte/core", { T: "T" });
 
     const htmlString = `
@@ -99,11 +98,8 @@ function addDemoScene(js, html) {
 
 /**
  * Add a small JS snippet to support JS bootstrap components
- * @param {import("@svelte-add/core/adder/config.js").JsAstEditor} js
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} html
- * @param {boolean} isKit
  */
-function addDemoSceneUsage(js, html, isKit) {
+function addDemoSceneUsage(js: JsAstEditor, html: HtmlAstEditor, isKit: boolean) {
     js.imports.addNamed(js.ast, "@threlte/core", { Canvas: "Canvas" });
     if (isKit) {
         js.imports.addDefault(js.ast, "$lib/Scene.svelte", "Scene");

@@ -1,5 +1,6 @@
 import { defineAdderTests } from "@svelte-add/core";
 import { options } from "./options.js";
+import type { HtmlAstEditor } from "@svelte-add/core/adder/config.js";
 
 export const tests = defineAdderTests({
     options,
@@ -65,10 +66,7 @@ export const tests = defineAdderTests({
     ],
 });
 
-/**
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} jsEditor
- */
-function prepareButtonTest({ ast, addFromRawHtml }) {
+function prepareButtonTest({ ast, addFromRawHtml }: HtmlAstEditor) {
     const buttonHtml = `
 <button class="btn btn-primary">Test</button>
 <button class="btn btn-success">Test</button>
@@ -77,10 +75,7 @@ function prepareButtonTest({ ast, addFromRawHtml }) {
     addFromRawHtml(ast.childNodes, buttonHtml);
 }
 
-/**
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} jsEditor
- */
-function prepareTypographyTest({ ast, addFromRawHtml }) {
+function prepareTypographyTest({ ast, addFromRawHtml }: HtmlAstEditor) {
     const typographyHtml = `
 <p class="h1">Test</p>
 <p class="text-decoration-line-through">Test</p>
@@ -88,10 +83,7 @@ function prepareTypographyTest({ ast, addFromRawHtml }) {
     addFromRawHtml(ast.childNodes, typographyHtml);
 }
 
-/**
- * @param {import("@svelte-add/core/adder/config.js").HtmlAstEditor} jsEditor
- */
-function prepareDropdownTest({ ast, addFromRawHtml }) {
+function prepareDropdownTest({ ast, addFromRawHtml }: HtmlAstEditor) {
     const typographyHtml = `
 <div class="dropdown">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
