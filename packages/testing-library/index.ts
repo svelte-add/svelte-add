@@ -1,9 +1,9 @@
-import { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
+import { rm } from "node:fs/promises";
 import { generateTestCases, runTestCases } from "./utils/test-cases";
-import { rm } from "fs/promises";
 import { getTemplatesDirectory } from "./utils/workspace";
 import { downloadProjectTemplates } from "./utils/create-project";
 import { remoteControl } from "@svelte-add/core/internal";
+import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
 
 export type TestOptions = {
     headless: boolean;

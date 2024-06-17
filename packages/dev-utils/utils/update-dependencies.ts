@@ -1,10 +1,10 @@
+import { readdirSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
 import { run } from "npm-check-updates";
-import { readdirSync } from "fs";
-import { readFile, writeFile } from "fs/promises";
-import { AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import { type AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
-import { Package } from "@svelte-add/core/utils/common";
-import { spawnSync } from "child_process";
+import type { Package } from "@svelte-add/core/utils/common";
 
 export async function updateDependencies() {
     await updatePackageJson();

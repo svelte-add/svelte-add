@@ -1,15 +1,15 @@
 import { parse as tsParse } from "recast/parsers/typescript.js";
 import { parse as recastParse, print as recastPrint } from "recast";
-import { Document, Element, Text, ChildNode } from "domhandler";
+import { Document, Element, Text, type ChildNode } from "domhandler";
 import { ElementType, parseDocument } from "htmlparser2";
 import { appendChild, removeElement, textContent } from "domutils";
 import serializeDom from "dom-serializer";
 import { Root as CssAst, Declaration, Rule, AtRule, Comment } from "postcss";
 import { parse as postcssParse } from "postcss";
-import { namedTypes as AstTypes } from "ast-types";
-import * as AstKinds from "ast-types/gen/kinds";
 import * as fleece from "silver-fleece";
 import * as Walker from "zimmerframe";
+import type { namedTypes as AstTypes } from "ast-types";
+import type * as AstKinds from "ast-types/gen/kinds";
 
 /**
  * Most of the AST tooling is pretty big in bundle size and bundling takes forever.
@@ -24,7 +24,6 @@ export {
     Document as HtmlDocument,
     Element as HtmlElement,
     ElementType as HtmlElementType,
-    ChildNode as HtmlChildNode,
 
     // css
     CssAst,
@@ -33,12 +32,17 @@ export {
     AtRule,
     Comment,
 
+    // ast walker
+    Walker,
+};
+
+export type {
+    // html
+    ChildNode as HtmlChildNode,
+
     // js
     AstTypes,
     AstKinds,
-
-    // ast walker
-    Walker,
 };
 
 export function parseScript(content: string): AstTypes.Program {
