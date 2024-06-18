@@ -15,7 +15,7 @@
         "website:build": "pnpm -C ./packages/website build",
         "website:preview": "pnpm -C ./packages/website preview",
         "test": "node ./packages/tests/index.js",
-        "types:check": "tsc --project tsconfig.json",
+        "types:check": "tsc --project tsconfig.json --noEmit",
         "utils:readmes": "node ./packages/dev-utils/build/index.js readmes",
         "utils:packages": "node ./packages/dev-utils/build/index.js packages",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
