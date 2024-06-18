@@ -6,12 +6,18 @@ import json from "@rollup/plugin-json";
 import dynamicImportVars from "@rollup/plugin-dynamic-import-vars";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import esbuild from "rollup-plugin-esbuild";
+import dts from "@rollup/plugin-typescript";
+
+const inWatchMode = process.argv.includes("--watch");
 
 const adderFolders = fs
     .readdirSync("./adders/", { withFileTypes: true })
     .filter((item) => item.isDirectory())
     .map((item) => item.name);
 const adderNamesAsString = adderFolders.map((x) => `"${x}"`);
+
+/** @type {import("rollup").RollupOptions[]} */
+const dtsConfigs = [];
 
 /**
  * @param {string} project
@@ -37,6 +43,11 @@ function getConfig(project, isAdder) {
     const projectRoot = path.resolve(path.join(outDir, ".."));
     fs.rmSync(outDir, { force: true, recursive: true });
 
+    /** @type {import("./packages/core/utils/common.js").Package} */
+    const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, "package.json"), "utf8"));
+    // any dep under `dependencies` is considered external
+    const externalDeps = Object.keys(pkg.dependencies ?? {});
+
     const config = {
         input: inputs,
         output: {
@@ -45,16 +56,37 @@ function getConfig(project, isAdder) {
             sourcemap: true,
             intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined,
         },
-        external: [/^@svelte-add.*/, "prettier", "create-svelte", "playwright", "npm-check-updates"],
+        external: [/^@svelte-add.*/, ...externalDeps],
         plugins: [
             preserveShebangs(),
-            esbuild({ tsconfig: "./tsconfig.json", sourceRoot: projectRoot }),
-            nodeResolve({ preferBuiltins: true }),
+            esbuild({ tsconfig: "tsconfig.json", sourceRoot: projectRoot }),
+            nodeResolve({ preferBuiltins: true, rootDir: projectRoot }),
             commonjs(),
             json(),
             dynamicImportVars(),
         ],
     };
+
+    // generate dts files for libs
+    if (!inWatchMode && project !== "cli" && !isAdder)
+        dtsConfigs.push({
+            input: inputs,
+            output: {
+                dir: outDir,
+            },
+            external: [/^@svelte-add.*/, ...externalDeps],
+            plugins: [
+                dts({
+                    outDir,
+                    rootDir: projectRoot,
+                    declaration: true,
+                    emitDeclarationOnly: true,
+                    tsconfig: "tsconfig.json",
+                }),
+                nodeResolve({ preferBuiltins: true, rootDir: projectRoot }),
+                commonjs(),
+            ],
+        });
 
     return config;
 }
@@ -72,4 +104,5 @@ export default [
     getConfig("cli", false),
     getConfig("testing-library", false),
     getConfig("dev-utils", false),
+    ...dtsConfigs,
 ];
