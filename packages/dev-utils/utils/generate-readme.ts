@@ -1,5 +1,5 @@
+import { writeFile } from "node:fs/promises";
 import { getAdderConfig, getAdderList } from "svelte-add/website";
-import { writeFile } from "fs/promises";
 import { availableCliOptions } from "@svelte-add/core/internal";
 import type { AdderConfig } from "@svelte-add/core/adder/config";
 import type { Question } from "@svelte-add/core/adder/options";

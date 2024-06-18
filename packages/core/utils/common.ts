@@ -1,7 +1,7 @@
 import { parseJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import type { WorkspaceWithoutExplicitArgs } from "./workspace.js";
-import { type ChildProcess, spawn } from "child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 
 export type Package = {
     name: string;
