@@ -3,7 +3,15 @@
     "version": "2.1.1",
     "license": "MIT",
     "type": "module",
-    "exports": "./build/index.js",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        }
+    },
+    "files": [
+        "build"
+    ],
     "dependencies": {
         "@svelte-add/ast-tooling": "workspace:^"
     },

@@ -9,6 +9,9 @@
             "default": "./build/website.js"
         }
     },
+    "files": [
+        "build"
+    ],
     "dependencies": {
         "@svelte-add/core": "workspace:*"
     },
