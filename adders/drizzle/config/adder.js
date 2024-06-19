@@ -348,10 +348,11 @@ export const adder = defineAdderConfig({
  */
 function addEnvVar(content, key, value) {
     if (!content.includes(key + "=")) {
-        content = content.trimEnd() + `\n${key}=${value}`;
+        content = appendEnvContent(content, `\n${key}=${value}`);
     }
     return content;
 }
+
 /**
  * @param {string} content
  * @param {string} comment
@@ -360,7 +361,17 @@ function addEnvVar(content, key, value) {
 function addEnvComment(content, comment) {
     const commented = `# ${comment}`;
     if (!content.includes(commented)) {
-        content = content.trimEnd() + "\n" + commented;
+        content = appendEnvContent(content, commented);
     }
     return content;
+}
+
+/**
+ * @param {string} existing
+ * @param {string} content
+ * @returns {string}
+ */
+function appendEnvContent(existing, content) {
+    const withNewLine = !existing.length || existing.endsWith("\n") ? existing : existing + "\n";
+    return withNewLine + content + "\n";
 }
