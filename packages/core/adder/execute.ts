@@ -196,7 +196,7 @@ async function executePlan<Args extends OptionDefinition>(
         await suggestInstallingDependencies(executionPlan.workingDirectory);
 
     if (!isTesting) {
-        displayNextSteps(adderDetails, isApplyingMultipleAdders);
+        displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
         endPrompts("You're all set!");
     }
 }
