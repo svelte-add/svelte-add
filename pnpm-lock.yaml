@@ -114,12 +114,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
-  adders/threlte:
-    dependencies:
-      '@svelte-add/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-
   packages/ast-manipulation:
     dependencies:
       '@svelte-add/ast-tooling':
@@ -182,9 +176,6 @@ importers:
       '@svelte-add/tailwindcss':
         specifier: workspace:^
         version: link:../../adders/tailwindcss
-      '@svelte-add/threlte':
-        specifier: workspace:^
-        version: link:../../adders/threlte
       svelte-add:
         specifier: workspace:^
         version: 'link:'
