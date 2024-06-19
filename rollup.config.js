@@ -6,7 +6,7 @@ import json from "@rollup/plugin-json";
 import dynamicImportVars from "@rollup/plugin-dynamic-import-vars";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import esbuild from "rollup-plugin-esbuild";
-import dts from "@rollup/plugin-typescript";
+import dts from "rollup-plugin-dts";
 
 const adderFolders = fs
     .readdirSync("./adders/", { withFileTypes: true })
@@ -69,8 +69,8 @@ function getConfig(project, isAdder) {
         ],
     };
 
-    // generate dts files for all packages/*
-    if (!isAdder && project !== "cli")
+    // only generate dts files for libs
+    if ("exports" in pkg) {
         dtsConfigs.push({
             input: inputs,
             output: {
@@ -78,19 +78,9 @@ function getConfig(project, isAdder) {
                 intro,
             },
             external,
-            plugins: [
-                dts({
-                    outDir,
-                    rootDir: projectRoot,
-                    declaration: true,
-                    emitDeclarationOnly: true,
-                    tsconfig: "tsconfig.json",
-                }),
-                nodeResolve({ preferBuiltins: true, rootDir: projectRoot }),
-                commonjs(),
-                json(),
-            ],
+            plugins: [dts()],
         });
+    }
 
     return config;
 }
