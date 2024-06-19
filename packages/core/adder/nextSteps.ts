@@ -1,7 +1,7 @@
 import { messagePrompt } from "../utils/prompts";
-import { InlineAdderConfig } from "./config";
-import { AdderDetails, AddersExecutionPlan } from "./execute";
-import { OptionDefinition, OptionValues } from "./options";
+import type { InlineAdderConfig } from "./config";
+import type { AdderDetails, AddersExecutionPlan } from "./execute";
+import type { OptionDefinition, OptionValues } from "./options";
 import pc from "picocolors";
 
 export function displayNextSteps<Args extends OptionDefinition>(
