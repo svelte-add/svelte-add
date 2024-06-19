@@ -47,7 +47,9 @@ function getConfig(project, isAdder) {
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
     const intro = project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined;
-    const external = [/^@svelte-add.*/, ...externalDeps];
+    const external = [/^@?svelte-add/, ...externalDeps];
+
+    /** @type {import("rollup").RollupOptions} */
     const config = {
         input: inputs,
         output: {
@@ -68,7 +70,7 @@ function getConfig(project, isAdder) {
     };
 
     // generate dts files for all packages/*
-    if (!isAdder)
+    if (!isAdder && project !== "cli")
         dtsConfigs.push({
             input: inputs,
             output: {
