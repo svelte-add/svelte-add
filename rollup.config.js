@@ -46,7 +46,6 @@ function getConfig(project, isAdder) {
     // any dep under `dependencies` is considered external
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
-    const intro = project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined;
     const external = [/^@?svelte-add/, ...externalDeps];
 
     /** @type {import("rollup").RollupOptions} */
@@ -56,7 +55,7 @@ function getConfig(project, isAdder) {
             dir: outDir,
             format: "esm",
             sourcemap: true,
-            intro,
+            intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined,
         },
         external,
         plugins: [
@@ -71,15 +70,19 @@ function getConfig(project, isAdder) {
 
     // only generate dts files for libs
     if ("exports" in pkg) {
-        dtsConfigs.push({
-            input: inputs,
-            output: {
-                dir: outDir,
-                intro,
-            },
-            external,
-            plugins: [dts()],
-        });
+        // entry points need to have their own individual configs,
+        // otherwise the `build` dir will generate unnecessary nested dirs
+        // e.g. `packages/cli/build/packages/cli/index.d.ts` as opposed to: `packages/cli/build/index.d.ts`
+        for (const input of inputs) {
+            dtsConfigs.push({
+                input,
+                output: {
+                    dir: outDir,
+                },
+                external,
+                plugins: [dts()],
+            });
+        }
     }
 
     return config;
