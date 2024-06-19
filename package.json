@@ -9,7 +9,7 @@
         "prettier:fix": "pnpm prettier . --write",
         "eslint:check": "pnpm eslint .",
         "eslint:fix": "pnpm eslint --fix .",
-        "build:dev": "rollup -c --watch",
+        "build:dev": "rollup --config --watch",
         "build:prod": "rollup -c",
         "website:dev": "pnpm -C ./packages/website dev",
         "website:build": "pnpm -C ./packages/website build",
