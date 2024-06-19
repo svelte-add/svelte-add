@@ -47,6 +47,7 @@ function getConfig(project, isAdder) {
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
     const intro = project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined;
+    const external = [/^@svelte-add.*/, ...externalDeps];
     const config = {
         input: inputs,
         output: {
@@ -55,7 +56,7 @@ function getConfig(project, isAdder) {
             sourcemap: true,
             intro,
         },
-        external: [/^@svelte-add.*/, ...externalDeps],
+        external,
         plugins: [
             preserveShebangs(),
             esbuild({ tsconfig: "tsconfig.json", sourceRoot: projectRoot }),
@@ -74,7 +75,7 @@ function getConfig(project, isAdder) {
                 dir: outDir,
                 intro,
             },
-            external: [/^@svelte-add.*/, ...externalDeps],
+            external,
             plugins: [
                 dts({
                     outDir,
