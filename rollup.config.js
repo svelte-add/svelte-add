@@ -8,8 +8,6 @@ import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import esbuild from "rollup-plugin-esbuild";
 import dts from "@rollup/plugin-typescript";
 
-const inWatchMode = process.argv.includes("--watch");
-
 const adderFolders = fs
     .readdirSync("./adders/", { withFileTypes: true })
     .filter((item) => item.isDirectory())
@@ -60,15 +58,15 @@ function getConfig(project, isAdder) {
         plugins: [
             preserveShebangs(),
             esbuild({ tsconfig: "tsconfig.json", sourceRoot: projectRoot }),
-            nodeResolve({ preferBuiltins: true, rootDir: projectRoot }),
+            nodeResolve({ rootDir: projectRoot }),
             commonjs(),
             json(),
             dynamicImportVars(),
         ],
     };
 
-    // generate dts files for libs
-    if (!inWatchMode && project !== "cli" && !isAdder)
+    // generate dts files for all packages/*
+    if (!isAdder)
         dtsConfigs.push({
             input: inputs,
             output: {
@@ -83,8 +81,9 @@ function getConfig(project, isAdder) {
                     emitDeclarationOnly: true,
                     tsconfig: "tsconfig.json",
                 }),
-                nodeResolve({ preferBuiltins: true, rootDir: projectRoot }),
+                nodeResolve({ rootDir: projectRoot }),
                 commonjs(),
+                json(),
             ],
         });
 
