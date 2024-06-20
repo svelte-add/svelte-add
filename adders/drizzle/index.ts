@@ -6,4 +6,3 @@ import { checks } from "./config/checks.js";
 import { tests } from "./config/tests.js";
 
 export default defineAdder(adder, checks, tests);
-//
