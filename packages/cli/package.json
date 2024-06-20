@@ -1,6 +1,6 @@
 {
     "name": "svelte-add",
-    "version": "2.0.12",
+    "version": "2.1.0",
     "bin": "build/index.js",
     "type": "module",
     "exports": {

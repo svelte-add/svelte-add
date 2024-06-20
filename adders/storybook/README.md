@@ -19,7 +19,7 @@ In case you already have a directory in mind, you can use this:
 npx @svelte-add/storybook@latest --path ./your-project
 ```
 
-undefined
+
 
 
 ## Available options (common)
