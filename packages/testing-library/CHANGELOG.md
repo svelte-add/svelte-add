@@ -1,5 +1,16 @@
 # @svelte-add/testing-library
 
+## 2.0.14
+
+### Patch Changes
+
+-   chore: fixed type imports and exports ([#412](https://github.com/svelte-add/svelte-add/pull/412))
+
+-   Updated dependencies [[`21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7`](https://github.com/svelte-add/svelte-add/commit/21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7), [`b9700726741839071b387bbec46692058b8daefd`](https://github.com/svelte-add/svelte-add/commit/b9700726741839071b387bbec46692058b8daefd)]:
+    -   @svelte-add/ast-tooling@2.1.1
+    -   @svelte-add/core@2.5.2
+    -   svelte-add@3.0.0
+
 ## 2.0.13
 
 ### Patch Changes

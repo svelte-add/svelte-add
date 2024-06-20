@@ -1,5 +1,13 @@
 # @svelte-add/website
 
+## 2.1.5
+
+### Patch Changes
+
+-   Updated dependencies [[`21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7`](https://github.com/svelte-add/svelte-add/commit/21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7), [`b9700726741839071b387bbec46692058b8daefd`](https://github.com/svelte-add/svelte-add/commit/b9700726741839071b387bbec46692058b8daefd)]:
+    -   @svelte-add/core@2.5.2
+    -   svelte-add@3.0.0
+
 ## 2.1.4
 
 ### Patch Changes
