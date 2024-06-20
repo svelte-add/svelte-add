@@ -31,7 +31,7 @@ async function executeCli() {
 }
 
 async function getAdderConfig(name: string) {
-    const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/build/index.js`);
+    const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/index.ts`);
 
     return adder.default;
 }

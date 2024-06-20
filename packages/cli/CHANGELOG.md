@@ -1,5 +1,23 @@
 # svelte-add
 
+## 2.1.0
+
+### Minor Changes
+
+-   feat: remove threlte adder in favor of simplified threlte setup instructions ([#415](https://github.com/svelte-add/svelte-add/pull/415))
+
+### Patch Changes
+
+-   Updated dependencies [[`21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7`](https://github.com/svelte-add/svelte-add/commit/21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7), [`b9700726741839071b387bbec46692058b8daefd`](https://github.com/svelte-add/svelte-add/commit/b9700726741839071b387bbec46692058b8daefd)]:
+    -   @svelte-add/core@2.5.2
+    -   svelte-add@2.1.0
+    -   @svelte-add/bootstrap@1.0.13
+    -   @svelte-add/bulma@1.0.13
+    -   @svelte-add/mdsvex@1.0.13
+    -   @svelte-add/routify@1.0.13
+    -   @svelte-add/storybook@1.0.13
+    -   @svelte-add/tailwindcss@1.0.13
+
 ## 2.0.12
 
 ### Patch Changes

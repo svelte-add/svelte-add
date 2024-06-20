@@ -2,11 +2,11 @@ import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/co
 import pkg from "../package.json";
 import { options } from "./options";
 
-const PORTS = /** @type {const} */ ({
+const PORTS = {
     mysql: "3306",
     postgresql: "5432",
     sqlite: "",
-});
+} as const;
 
 export const adder = defineAdderConfig({
     metadata: {
@@ -154,7 +154,7 @@ export const adder = defineAdderConfig({
             contentType: "json",
             content: ({ data, options }) => {
                 data.scripts ??= {};
-                const scripts = /** @type {Record<string, string>} */ (data.scripts);
+                const scripts: Record<string, string> = data.scripts;
                 if (options.docker) scripts["db:start"] ??= "docker compose up";
                 scripts["db:push"] ??= "drizzle-kit push";
                 scripts["db:migrate"] ??= "drizzle-kit migrate";
@@ -340,25 +340,14 @@ export const adder = defineAdderConfig({
     ],
 });
 
-/**
- * @param {string} content
- * @param {string} key
- * @param {string} value
- * @returns {string}
- */
-function addEnvVar(content, key, value) {
+function addEnvVar(content: string, key: string, value: string) {
     if (!content.includes(key + "=")) {
         content = appendEnvContent(content, `\n${key}=${value}`);
     }
     return content;
 }
 
-/**
- * @param {string} content
- * @param {string} comment
- * @returns {string}
- */
-function addEnvComment(content, comment) {
+function addEnvComment(content: string, comment: string) {
     const commented = `# ${comment}`;
     if (!content.includes(commented)) {
         content = appendEnvContent(content, commented);
@@ -366,12 +355,7 @@ function addEnvComment(content, comment) {
     return content;
 }
 
-/**
- * @param {string} existing
- * @param {string} content
- * @returns {string}
- */
-function appendEnvContent(existing, content) {
+function appendEnvContent(existing: string, content: string) {
     const withNewLine = !existing.length || existing.endsWith("\n") ? existing : existing + "\n";
     return withNewLine + content + "\n";
 }

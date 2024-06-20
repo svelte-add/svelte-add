@@ -35,7 +35,7 @@ export const adder = defineAdderConfig({
             contentType: "script",
             content: ({ options, ast, array, object, common, functions, exports, typescript, imports }) => {
                 let root;
-                let rootExport = object.createEmpty();
+                const rootExport = object.createEmpty();
                 if (typescript.installed) {
                     imports.addNamed(ast, "tailwindcss", { Config: "Config" }, true);
                     root = common.typeAnnotateExpression(rootExport, "Config");

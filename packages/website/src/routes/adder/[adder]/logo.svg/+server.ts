@@ -1,5 +1,5 @@
 import path from "node:path";
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 import { getAdderConfig } from "svelte-add/website";
 import type { RequestHandler } from "./$types.js";
 

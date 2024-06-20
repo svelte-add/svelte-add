@@ -1,20 +1,28 @@
 {
     "name": "@svelte-add/testing-library",
-    "version": "2.0.13",
+    "version": "2.0.14",
     "type": "module",
     "license": "MIT",
-    "exports": "./build/index.js",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        }
+    },
+    "files": [
+        "build"
+    ],
+    "dependencies": {
+        "@svelte-add/ast-tooling": "workspace:^",
+        "@svelte-add/core": "workspace:^",
+        "playwright": "^1.44.1",
+        "create-svelte": "^6.3.0",
+        "svelte-add": "workspace:^"
+    },
     "devDependencies": {
         "promise-parallel-throttle": "^3.5.0",
         "terminate": "^2.6.1",
         "uid": "^2.0.2"
-    },
-    "dependencies": {
-        "@svelte-add/ast-tooling": "workspace:^",
-        "@svelte-add/core": "workspace:^",
-        "create-svelte": "^6.3.0",
-        "playwright": "^1.44.1",
-        "svelte-add": "workspace:^"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {

@@ -1,5 +1,5 @@
+import { writeFile } from "node:fs/promises";
 import { getAdderConfig, getAdderList } from "svelte-add/website";
-import { writeFile } from "fs/promises";
 import { availableCliOptions } from "@svelte-add/core/internal";
 import type { AdderConfig } from "@svelte-add/core/adder/config";
 import type { Question } from "@svelte-add/core/adder/options";
@@ -61,7 +61,7 @@ function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx:
 
     const options = Object.entries(adder.options);
     for (const [key, value] of options) {
-        const optionDefaultValue = value.default.toString() as string;
+        const optionDefaultValue = value.default?.toString() as string;
         markdown += `\n- \`${key}\` (default: ${optionDefaultValue}) - ${value.question}`;
     }
 

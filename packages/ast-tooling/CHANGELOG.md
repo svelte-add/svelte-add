@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.1.1
+
+### Patch Changes
+
+-   chore: fixed type imports and exports ([#412](https://github.com/svelte-add/svelte-add/pull/412))
+
 ## 2.1.0
 
 ### Minor Changes

@@ -1,9 +1,17 @@
 {
     "name": "@svelte-add/ast-tooling",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "license": "MIT",
     "type": "module",
-    "exports": "./build/index.js",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        }
+    },
+    "files": [
+        "build"
+    ],
     "devDependencies": {
         "@babel/parser": "^7.24.7",
         "ast-types": "^0.14.2",

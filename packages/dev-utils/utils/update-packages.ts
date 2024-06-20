@@ -1,5 +1,5 @@
+import { readFile, writeFile } from "node:fs/promises";
 import { getAdderConfig, getAdderList } from "svelte-add/website";
-import { readFile, writeFile } from "fs/promises";
 import type { Question } from "@svelte-add/core/adder/options";
 import type { AdderConfig } from "@svelte-add/core/adder/config";
 import type { Package } from "@svelte-add/core/utils/common";

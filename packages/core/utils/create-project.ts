@@ -1,4 +1,4 @@
-import * as path from "path";
+import path from "node:path";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
 import { type PromptOption, booleanPrompt, selectPrompt, textPrompt, endPrompts } from "./prompts.js";
 import { executeCli, getPackageJson } from "./common.js";
