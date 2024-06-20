@@ -1,0 +1,30 @@
+{
+    "name": "@svelte-add/clack-core",
+    "version": "0.4.0",
+    "type": "module",
+    "module": "./build/index.mjs",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "types": "./build/index.d.ts",
+    "bugs": "https://github.com/svelte-add/svelte-add/issues",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/svelte-add/svelte-add/tree/main/packages/clack-prompts"
+    },
+    "files": [
+        "build"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "sisteransi": "^1.0.5"
+    },
+    "devDependencies": {
+        "picocolors": "^1.0.0",
+        "wrap-ansi": "^8.1.0"
+    }
+}

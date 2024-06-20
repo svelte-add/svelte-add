@@ -94,6 +94,8 @@ for (const adder of adderFolders) {
 }
 
 export default [
+    getConfig("clack-core", false),
+    getConfig("clack-prompts", false),
     getConfig("ast-tooling", false),
     getConfig("ast-manipulation", false),
     getConfig("core", false),
