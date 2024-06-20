@@ -5,7 +5,7 @@
     "type": "module",
     "license": "MIT",
     "bin": "./index.js",
-    "devDependencies": {
+    "dependencies": {
         "@svelte-add/ast-manipulation": "workspace:^",
         "@svelte-add/ast-tooling": "workspace:^",
         "@svelte-add/core": "workspace:^",

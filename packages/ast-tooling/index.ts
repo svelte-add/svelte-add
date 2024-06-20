@@ -107,7 +107,7 @@ export type SvelteAst = {
 export function parseSvelteFile(content: string): SvelteAst {
     const htmlAst = parseHtml(content);
 
-    let scriptTag, styleTag: Element | undefined;
+    let scriptTag, styleTag;
     for (const node of htmlAst.childNodes) {
         if (node.type === ElementType.Script) {
             scriptTag = node;

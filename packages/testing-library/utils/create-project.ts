@@ -1,6 +1,6 @@
-import { mkdir, rm } from "fs/promises";
+import { join } from "node:path";
+import { mkdir, rm } from "node:fs/promises";
 import { create } from "create-svelte";
-import { join } from "path";
 import { executeCli } from "@svelte-add/core";
 
 export const ProjectTypes = {

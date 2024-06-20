@@ -1,5 +1,7 @@
 import { defineAdderTests } from "@svelte-add/core";
 import { options } from "./options.js";
+import type { OptionDefinition } from "@svelte-add/core/adder/options.js";
+import type { SvelteFileEditorArgs } from "@svelte-add/core/files/processors.js";
 
 const boxId = "myBox";
 
@@ -45,20 +47,12 @@ export const tests = defineAdderTests({
     ],
 });
 
-/**
- * @template {import("@svelte-add/core/adder/options.js").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function prepareBoxTest({ html }) {
+function prepareBoxTest<Args extends OptionDefinition>({ html }: SvelteFileEditorArgs<Args>) {
     const div = html.div({ class: "box", id: boxId });
     html.appendElement(html.ast.childNodes, div);
 }
 
-/**
- * @template {import("@svelte-add/core/adder/options.js").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function prepareFormTest({ html }) {
+function prepareFormTest<Args extends OptionDefinition>({ html }: SvelteFileEditorArgs<Args>) {
     const rawHtmlTest = `<div class="field">
     <label class="label">Name</label>
     <div class="control">
@@ -68,11 +62,7 @@ function prepareFormTest({ html }) {
     html.addFromRawHtml(html.ast.childNodes, rawHtmlTest);
 }
 
-/**
- * @template {import("@svelte-add/core/adder/options.js").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function prepareTests(editor) {
+function prepareTests<Args extends OptionDefinition>(editor: SvelteFileEditorArgs<Args>) {
     prepareBoxTest(editor);
     prepareFormTest(editor);
 }

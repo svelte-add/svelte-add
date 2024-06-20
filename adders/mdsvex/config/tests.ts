@@ -1,5 +1,7 @@
 import { defineAdderTests } from "@svelte-add/core";
 import { options } from "./options";
+import type { SvelteFileEditorArgs, TextFileEditorArgs } from "@svelte-add/core/files/processors.js";
+import type { OptionDefinition } from "@svelte-add/core/adder/options.js";
 
 export const tests = defineAdderTests({
     files: [
@@ -42,11 +44,7 @@ export const tests = defineAdderTests({
     ],
 });
 
-/**
- * @template {import("@svelte-add/core/adder/options").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").TextFileEditorArgs<Args>} editor
- */
-function addMarkdownFile(editor) {
+function addMarkdownFile<Args extends OptionDefinition>(editor: TextFileEditorArgs<Args>) {
     // example taken from website: https://mdsvex.pngwn.io
     return (
         editor.content +
@@ -64,11 +62,7 @@ Markdown is pretty good but sometimes you just need more.
     );
 }
 
-/**
- * @template {import("@svelte-add/core/adder/options").OptionDefinition} Args
- * @param {import("@svelte-add/core/files/processors.js").SvelteFileEditorArgs<Args>} editor
- */
-function useMarkdownFile({ js, html }) {
+function useMarkdownFile<Args extends OptionDefinition>({ js, html }: SvelteFileEditorArgs<Args>) {
     js.imports.addDefault(js.ast, "./Demo.svx", "Demo");
 
     const div = html.div({ class: "mdsvex" });
