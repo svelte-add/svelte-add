@@ -1,8 +1,8 @@
 import { getAdderConfig, getAdderList } from "svelte-add/website";
 import { readFile, writeFile } from "fs/promises";
-import { Question } from "@svelte-add/core/adder/options";
-import { AdderConfig } from "@svelte-add/core/adder/config";
-import { Package } from "@svelte-add/core/utils/common";
+import type { Question } from "@svelte-add/core/adder/options";
+import type { AdderConfig } from "@svelte-add/core/adder/config";
+import type { Package } from "@svelte-add/core/utils/common";
 
 const repoUrl = "https://github.com/svelte-add/svelte-add";
 

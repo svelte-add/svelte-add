@@ -1,8 +1,10 @@
-import path from "path";
+import path from "node:path";
+import * as pc from "picocolors";
+import { serializeJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
+import { type Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -15,18 +17,16 @@ import {
     prepareAndParseCliOptions,
     extractCommonCliOptions,
     extractAdderCliOptions,
-    AvailableCliOptionValues,
+    type AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
 import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
-import { serializeJson } from "@svelte-add/ast-tooling";
 import { validatePreconditions } from "./preconditions.js";
-import { PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
-import { CategoryKeys, categories } from "./categories.js";
+import { type PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
+import { type CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
-import { gray } from "picocolors";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -102,7 +102,7 @@ async function executePlan<Args extends OptionDefinition>(
     const isExecutingMultipleAdders = adderDetails.length > 1;
 
     if (!isTesting) {
-        console.log(gray(`${executingAdder.name} version ${executingAdder.version}\n`));
+        console.log(pc.gray(`${executingAdder.name} version ${executingAdder.version}\n`));
         startPrompts(`Welcome to Svelte Add!`);
     }
 

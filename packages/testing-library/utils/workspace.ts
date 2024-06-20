@@ -1,8 +1,8 @@
-import { cp, mkdir, writeFile } from "fs/promises";
-import { join } from "path";
-import { TestOptions } from "..";
+import { join } from "node:path";
+import { cp, mkdir, writeFile } from "node:fs/promises";
 import { executeCli } from "@svelte-add/core";
-import { OptionValues, Question } from "@svelte-add/core/adder/options";
+import type { TestOptions } from "..";
+import type { OptionValues, Question } from "@svelte-add/core/adder/options";
 
 const templatesDirectory = "templates";
 

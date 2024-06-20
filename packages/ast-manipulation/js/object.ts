@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
+import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
 export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier>(
     ast: AstTypes.ObjectExpression,

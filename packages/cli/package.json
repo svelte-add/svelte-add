@@ -1,6 +1,6 @@
 {
     "name": "svelte-add",
-    "version": "2.0.11",
+    "version": "2.0.12",
     "bin": "build/index.js",
     "type": "module",
     "exports": {
@@ -18,7 +18,6 @@
         "@svelte-add/mdsvex": "workspace:^",
         "@svelte-add/routify": "workspace:^",
         "@svelte-add/tailwindcss": "workspace:^",
-        "@svelte-add/threlte": "workspace:^",
         "@svelte-add/storybook": "workspace:^",
         "svelte-add": "workspace:^"
     },

@@ -1,8 +1,8 @@
 import {
-    CssAstEditor,
-    HtmlAstEditor,
-    JsAstEditor,
-    SvelteAstEditor,
+    type CssAstEditor,
+    type HtmlAstEditor,
+    type JsAstEditor,
+    type SvelteAstEditor,
     getCssAstEditor,
     getHtmlAstEditor,
     getJsAstEditor,
@@ -20,9 +20,9 @@ import {
     serializeSvelteFile,
 } from "@svelte-add/ast-tooling";
 import { fileExistsWorkspace, format, readFile, writeFile } from "./utils.js";
-import { ConditionDefinition } from "../adder/config.js";
-import { OptionDefinition } from "../adder/options.js";
-import { Workspace } from "../utils/workspace.js";
+import type { ConditionDefinition } from "../adder/config.js";
+import type { OptionDefinition } from "../adder/options.js";
+import type { Workspace } from "../utils/workspace.js";
 
 export type BaseFile<Args extends OptionDefinition> = {
     name: (options: Workspace<Args>) => string;

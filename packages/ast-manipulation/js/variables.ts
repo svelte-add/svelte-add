@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
+import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
 export function declaration(
     ast: AstTypes.Program | AstKinds.DeclarationKind,

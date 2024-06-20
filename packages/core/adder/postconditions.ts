@@ -1,9 +1,9 @@
-import { Workspace } from "../utils/workspace";
-import { AdderCheckConfig, AdderConfig } from "./config";
-import { OptionDefinition } from "./options";
-import { fileExistsWorkspace, readFile } from "../files/utils";
-import { yellow } from "picocolors";
+import * as pc from "picocolors";
 import { messagePrompt } from "../utils/prompts";
+import { fileExistsWorkspace, readFile } from "../files/utils";
+import type { Workspace } from "../utils/workspace";
+import type { AdderCheckConfig, AdderConfig } from "./config";
+import type { OptionDefinition } from "./options";
 
 export type PreconditionParameters<Args extends OptionDefinition> = {
     workspace: Workspace<Args>;
@@ -61,7 +61,7 @@ async function fileContains<Args extends OptionDefinition>(
 }
 
 export function printUnmetPostconditions(unmetPostconditions: string[]) {
-    const postconditionList = unmetPostconditions.map((x) => yellow(`- ${x}`)).join("\n");
+    const postconditionList = unmetPostconditions.map((x) => pc.yellow(`- ${x}`)).join("\n");
     const additionalText = `Postconditions are not supposed to fail.
 Please open an issue providing the full console output:
 https://github.com/svelte-add/svelte-add/issues/new/choose`;

@@ -5,7 +5,7 @@ import * as FunctionUtils from "./function.js";
 import * as ImportUtils from "./imports.js";
 import * as VariableUtils from "./variables.js";
 import * as ExportUtils from "./exports.js";
-import { AstTypes } from "@svelte-add/ast-tooling";
+import type { AstTypes } from "@svelte-add/ast-tooling";
 
 export type JsAstEditor = {
     ast: AstTypes.Program;

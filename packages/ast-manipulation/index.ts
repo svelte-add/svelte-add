@@ -1,8 +1,8 @@
-import { getCssAstEditor, CssAstEditor } from "./css/index.js";
-import { getHtmlAstEditor, HtmlAstEditor } from "./html/index.js";
-import { getJsAstEditor, JsAstEditor } from "./js/index.js";
+import { getCssAstEditor, type CssAstEditor } from "./css/index.js";
+import { getHtmlAstEditor, type HtmlAstEditor } from "./html/index.js";
+import { getJsAstEditor, type JsAstEditor } from "./js/index.js";
 
-export { getCssAstEditor, getHtmlAstEditor, getJsAstEditor, CssAstEditor, HtmlAstEditor, JsAstEditor };
+export { getCssAstEditor, getHtmlAstEditor, getJsAstEditor, type CssAstEditor, type HtmlAstEditor, type JsAstEditor };
 
 export type SvelteAstEditor = {
     js: JsAstEditor;

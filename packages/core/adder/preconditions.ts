@@ -1,10 +1,10 @@
+import * as pc from "picocolors";
 import { booleanPrompt, endPrompts, messagePrompt } from "../utils/prompts.js";
-import { AdderDetails } from "./execute.js";
-import { OptionDefinition } from "./options.js";
-import { yellow } from "picocolors";
-import { Precondition } from "./config.js";
 import { executeCli } from "../utils/common.js";
-import { ProjectType } from "../utils/create-project.js";
+import type { AdderDetails } from "./execute.js";
+import type { Precondition } from "./config.js";
+import type { OptionDefinition } from "./options.js";
+import type { ProjectType } from "../utils/create-project.js";
 
 function getGlobalPreconditions<Args extends OptionDefinition>(
     executingCli: string,
@@ -116,7 +116,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                     message = `${name}: ${message}`;
                 }
 
-                message = yellow(message);
+                message = pc.yellow(message);
                 preconditionLog.push(message);
             }
 

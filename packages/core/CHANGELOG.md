@@ -1,5 +1,22 @@
 # @svelte-add/core
 
+## 2.5.1
+
+### Patch Changes
+
+-   chore: improve welcome message ([#407](https://github.com/svelte-add/svelte-add/pull/407))
+
+-   chore: enforce stricter eslint rules ([#378](https://github.com/svelte-add/svelte-add/pull/378))
+
+-   fix: only check dirty git repo precondition if in git repo ([#400](https://github.com/svelte-add/svelte-add/pull/400))
+
+-   fix: avoid adding adders to unsupported project types ([#402](https://github.com/svelte-add/svelte-add/pull/402))
+
+-   fix: only print failed preconditions ([#401](https://github.com/svelte-add/svelte-add/pull/401))
+
+-   Updated dependencies [[`128be6cb88d382744c61d4eb2efe595b46ff2dc0`](https://github.com/svelte-add/svelte-add/commit/128be6cb88d382744c61d4eb2efe595b46ff2dc0)]:
+    -   @svelte-add/ast-manipulation@2.1.1
+
 ## 2.5.0
 
 ### Minor Changes

@@ -1,13 +1,13 @@
-import { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
-import { executeAdder } from "./execute.js";
 import * as remoteControl from "./remoteControl.js";
-import { CategoryInfo } from "./categories.js";
-import { OptionDefinition, OptionValues, Question } from "./options.js";
-import { FileTypes } from "../files/processors.js";
-import { Workspace } from "../utils/workspace.js";
-import { Postcondition } from "./postconditions.js";
+import { executeAdder } from "./execute.js";
+import type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
+import type { CategoryInfo } from "./categories.js";
+import type { OptionDefinition, OptionValues, Question } from "./options.js";
+import type { FileTypes } from "../files/processors.js";
+import type { Workspace } from "../utils/workspace.js";
+import type { Postcondition } from "./postconditions.js";
 
-export { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
+export type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
 export type ConditionDefinition<Args extends OptionDefinition> = (Workspace: Workspace<Args>) => boolean;
 export type ConditionDefinitionWithoutExplicitArgs = ConditionDefinition<Record<string, Question>>;
