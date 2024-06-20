@@ -3,7 +3,7 @@ import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js"
 import { type PromptOption, booleanPrompt, selectPrompt, textPrompt, endPrompts } from "./prompts.js";
 import { executeCli, getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
-import { spinner } from "@clack/prompts";
+import { spinner } from "@svelte-add/clack-prompts";
 
 export type ProjectType = "svelte" | "kit";
 

@@ -24,7 +24,7 @@ import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderCon
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { validatePreconditions } from "./preconditions.js";
-import { type PromptOption, endPrompts, multiSelectPrompt, startPrompts } from "../utils/prompts.js";
+import { endPrompts, startPrompts, groupedMultiSelectPrompt } from "../utils/prompts.js";
 import { type CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 
@@ -195,21 +195,18 @@ async function executePlan<Args extends OptionDefinition>(
 
     if (!isTesting) endPrompts("You're all set!");
 }
-
+type AdderOption = { value: string; label: string; hint: string };
 async function askForAddersToApply<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
     projectType: ProjectType,
 ): Promise<string[]> {
     const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
-    const selectedAdders: string[] = [];
-    const totalCategories = Object.keys(categories).length;
-    let currentCategoryIndex = 0;
+    const promptOptions: Record<string, AdderOption[]> = {};
 
     for (const [categoryId, adders] of groupedByCategory) {
-        currentCategoryIndex++;
         const categoryDetails = categories[categoryId as CategoryKeys];
+        const options: AdderOption[] = [];
 
-        const promptOptions: PromptOption<string>[] = [];
         for (const adder of adders) {
             const adderMetadata = adder.config.metadata;
 
@@ -218,19 +215,16 @@ async function askForAddersToApply<Args extends OptionDefinition>(
             // if we detected a svelte project, and the adder is not available for svelte, ignore it.
             if (projectType === "svelte" && !adderMetadata.environments.svelte) continue;
 
-            promptOptions.push({
+            options.push({
                 label: adderMetadata.name,
                 value: adderMetadata.id,
                 hint: adderMetadata.description,
             });
         }
 
-        if (promptOptions.length == 0) continue;
-
-        const promptDescription = `${categoryDetails.name} (${currentCategoryIndex.toString()} / ${totalCategories.toString()})`;
-        const selectedValues = await multiSelectPrompt(promptDescription, promptOptions);
-        selectedAdders.push(...selectedValues);
+        promptOptions[categoryDetails.name] = options;
     }
+    const selectedAdders = await groupedMultiSelectPrompt("What would you like to add to your project?", promptOptions);
 
     return selectedAdders;
 }
