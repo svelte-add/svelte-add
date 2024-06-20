@@ -342,7 +342,7 @@ export const adder = defineAdderConfig({
 
 function addEnvVar(content: string, key: string, value: string) {
     if (!content.includes(key + "=")) {
-        content = appendEnvContent(content, `\n${key}=${value}`);
+        content = appendEnvContent(content, `${key}=${value}`);
     }
     return content;
 }
