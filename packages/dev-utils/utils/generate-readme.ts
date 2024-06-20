@@ -61,7 +61,7 @@ function generateOptions(adder: AdderConfig<Record<string, Question>>, adderNpx:
 
     const options = Object.entries(adder.options);
     for (const [key, value] of options) {
-        const optionDefaultValue = value.default.toString() as string;
+        const optionDefaultValue = value.default?.toString() as string;
         markdown += `\n- \`${key}\` (default: ${optionDefaultValue}) - ${value.question}`;
     }
 
