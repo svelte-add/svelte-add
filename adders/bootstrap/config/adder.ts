@@ -130,13 +130,6 @@ export const adder = defineAdderConfig({
             },
         },
     ],
-    nextSteps: ({ options, cwd, colors, docs }) => {
-        var steps = ["this is a test next step other", "cwd: " + cwd, "select sass: " + colors.green(options.useSass.toString())];
-
-        if (docs) steps.push("docs: " + colors.cyan(docs));
-
-        return steps;
-    },
 });
 
 /**
