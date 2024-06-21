@@ -151,33 +151,31 @@ importers:
         version: 1.1.2
 
   packages/clack-core:
-    dependencies:
-      sisteransi:
-        specifier: ^1.0.5
-        version: 1.0.5
     devDependencies:
       picocolors:
         specifier: ^1.0.0
         version: 1.0.1
+      sisteransi:
+        specifier: ^1.0.5
+        version: 1.0.5
       wrap-ansi:
         specifier: ^8.1.0
         version: 8.1.0
 
   packages/clack-prompts:
-    dependencies:
+    devDependencies:
       '@svelte-add/clack-core':
         specifier: workspace:*
         version: link:../clack-core
-      sisteransi:
-        specifier: ^1.0.5
-        version: 1.0.5
-    devDependencies:
       is-unicode-supported:
         specifier: ^1.3.0
         version: 1.3.0
       picocolors:
         specifier: ^1.0.0
         version: 1.0.1
+      sisteransi:
+        specifier: ^1.0.5
+        version: 1.0.5
 
   packages/cli:
     dependencies:
@@ -218,9 +216,6 @@ importers:
       '@svelte-add/ast-tooling':
         specifier: workspace:*
         version: link:../ast-tooling
-      '@svelte-add/clack-prompts':
-        specifier: workspace:*
-        version: link:../clack-prompts
       prettier:
         specifier: ^3.3.2
         version: 3.3.2
@@ -228,6 +223,9 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(prettier@3.3.2)(svelte@4.2.18)
     devDependencies:
+      '@svelte-add/clack-prompts':
+        specifier: workspace:*
+        version: link:../clack-prompts
       commander:
         specifier: ^12.1.0
         version: 12.1.0

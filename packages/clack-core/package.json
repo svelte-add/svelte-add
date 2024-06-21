@@ -1,5 +1,6 @@
 {
     "name": "@svelte-add/clack-core",
+    "private": true,
     "version": "0.4.0",
     "type": "module",
     "module": "./build/index.mjs",
@@ -20,10 +21,8 @@
         "build"
     ],
     "license": "MIT",
-    "dependencies": {
-        "sisteransi": "^1.0.5"
-    },
     "devDependencies": {
+        "sisteransi": "^1.0.5",
         "picocolors": "^1.0.0",
         "wrap-ansi": "^8.1.0"
     }

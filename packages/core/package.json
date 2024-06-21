@@ -17,6 +17,7 @@
         "build"
     ],
     "devDependencies": {
+        "@svelte-add/clack-prompts": "workspace:*",
         "commander": "^12.1.0",
         "picocolors": "^1.0.1",
         "preferred-pm": "^3.1.3"
@@ -24,7 +25,6 @@
     "dependencies": {
         "@svelte-add/ast-manipulation": "workspace:*",
         "@svelte-add/ast-tooling": "workspace:*",
-        "@svelte-add/clack-prompts": "workspace:*",
         "prettier": "^3.3.2",
         "prettier-plugin-svelte": "^3.2.4"
     },

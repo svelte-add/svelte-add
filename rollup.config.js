@@ -46,7 +46,8 @@ function getConfig(project, isAdder) {
     // any dep under `dependencies` is considered external
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
-    const external = [/^@?svelte-add/, ...externalDeps];
+    // externalizes `svelte-add` and `@svelte-add/` deps while also bundling `/clack`
+    const external = [/^(svelte-add|@svelte-add\/(?!clack)\w*)/g, ...externalDeps];
 
     /** @type {import("rollup").RollupOptions} */
     const config = {
