@@ -3,20 +3,30 @@ export type CategoryInfo = {
     name: string;
     description: string;
 };
-export type CategoryKeys = "styling" | "tools";
+export type CategoryKeys = "css" | "tools" | "db" | "markdown";
 export type CategoryDetails = {
     [K in CategoryKeys]: CategoryInfo;
 };
 
 export const categories: CategoryDetails = {
-    styling: {
-        id: "styling",
-        name: "Styling",
+    css: {
+        id: "css",
+        name: "CSS",
         description: "Can be used to style your components",
     },
     tools: {
         id: "tools",
         name: "Tools",
         description: "Different tools",
+    },
+    db: {
+        id: "db",
+        name: "Database",
+        description: "",
+    },
+    markdown: {
+        id: "markdown",
+        name: "Markdown",
+        description: "",
     },
 };

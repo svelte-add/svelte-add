@@ -13,7 +13,7 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Drizzle",
         description: "Headless ORM for NodeJS, TypeScript and JavaScript",
-        category: categories.tools,
+        category: categories.db,
         environments: { svelte: false, kit: true },
         website: {
             logo: "./drizzle.svg",

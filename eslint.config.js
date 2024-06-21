@@ -50,6 +50,8 @@ export default tseslint.config(
             "packages/website/.svelte-kit",
             "packages/website/build",
             "packages/website",
+            "packages/clack-core",
+            "packages/clack-prompts",
             "temp",
         ],
     },

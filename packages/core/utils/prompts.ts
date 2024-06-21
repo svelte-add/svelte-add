@@ -1,4 +1,4 @@
-import { cancel, intro, isCancel, outro, select, text, multiselect, note } from "@clack/prompts";
+import { cancel, intro, isCancel, outro, select, text, multiselect, note, groupMultiselect } from "@svelte-add/clack-prompts";
 
 type Primitive = Readonly<string | boolean | number>;
 export type PromptOption<Value> = Value extends Primitive
@@ -50,10 +50,21 @@ export async function textPrompt(question: string, placeholder: string = "", ini
 }
 
 export async function multiSelectPrompt<T>(question: string, options: PromptOption<T>[]) {
-    const value = await multiselect<PromptOption<T>[], T>({
+    const value = await multiselect<T>({
         message: question,
         options,
         required: false,
+    });
+
+    return cancelIfRequired(value);
+}
+
+export async function groupedMultiSelectPrompt<T>(question: string, options: Record<string, PromptOption<T>[]>) {
+    const value = await groupMultiselect<T>({
+        message: question,
+        options,
+        required: false,
+        selectableGroups: false,
     });
 
     return cancelIfRequired(value);

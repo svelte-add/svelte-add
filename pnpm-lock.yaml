@@ -150,6 +150,33 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
 
+  packages/clack-core:
+    devDependencies:
+      picocolors:
+        specifier: ^1.0.0
+        version: 1.0.1
+      sisteransi:
+        specifier: ^1.0.5
+        version: 1.0.5
+      wrap-ansi:
+        specifier: ^8.1.0
+        version: 8.1.0
+
+  packages/clack-prompts:
+    devDependencies:
+      '@svelte-add/clack-core':
+        specifier: workspace:*
+        version: link:../clack-core
+      is-unicode-supported:
+        specifier: ^1.3.0
+        version: 1.3.0
+      picocolors:
+        specifier: ^1.0.0
+        version: 1.0.1
+      sisteransi:
+        specifier: ^1.0.5
+        version: 1.0.5
+
   packages/cli:
     dependencies:
       '@svelte-add/bootstrap':
@@ -196,9 +223,9 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(prettier@3.3.2)(svelte@4.2.18)
     devDependencies:
-      '@clack/prompts':
-        specifier: ^0.7.0
-        version: 0.7.0
+      '@svelte-add/clack-prompts':
+        specifier: workspace:*
+        version: link:../clack-prompts
       commander:
         specifier: ^12.1.0
         version: 12.1.0
@@ -2161,6 +2188,10 @@ packages:
 
   is-typedarray@1.0.0:
     resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
+
+  is-unicode-supported@1.3.0:
+    resolution: {integrity: sha512-43r2mRvz+8JRIKnWJ+3j8JtjRKZ6GmjzfaE/qiBJnikNnYv/6bagRJ1kUhNk8R5EX/GkobD+r+sfxCPJsiKBLQ==}
+    engines: {node: '>=12'}
 
   is-weakref@1.0.2:
     resolution: {integrity: sha512-qctsuLZmIQ0+vSSMfoVvyFe2+GSEvnmZ2ezTup1SBse9+twCCeial6EEi3Nc2KFcf6+qz2FBPnjXsk8xhKSaPQ==}
@@ -5719,6 +5750,8 @@ snapshots:
       which-typed-array: 1.1.15
 
   is-typedarray@1.0.0: {}
+
+  is-unicode-supported@1.3.0: {}
 
   is-weakref@1.0.2:
     dependencies:

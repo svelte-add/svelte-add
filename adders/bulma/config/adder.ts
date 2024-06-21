@@ -7,7 +7,7 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Bulma",
         description: "The modern CSS framework that just works",
-        category: categories.styling,
+        category: categories.css,
         environments: { kit: true, svelte: true },
         website: {
             logo: "./bulma.svg",

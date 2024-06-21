@@ -1,6 +1,6 @@
 import { selectPrompt } from "./prompts";
 import preferredPackageManager from "preferred-pm";
-import { spinner } from "@clack/prompts";
+import { spinner } from "@svelte-add/clack-prompts";
 import { executeCli } from "./common";
 
 export async function suggestInstallingDependencies(workingDirectory: string) {
