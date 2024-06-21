@@ -1,5 +1,11 @@
 # @svelte-add/drizzle
 
+## 1.0.4
+
+### Patch Changes
+
+-   fix: improve formatting of `.env` file ([#416](https://github.com/svelte-add/svelte-add/pull/416))
+
 ## 1.0.3
 
 ### Patch Changes

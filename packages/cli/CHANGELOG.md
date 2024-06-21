@@ -1,5 +1,13 @@
 # svelte-add
 
+## 2.1.1
+
+### Patch Changes
+
+-   Updated dependencies [[`7f5db7656ee6e17d143ab07548809b73ca3acb9b`](https://github.com/svelte-add/svelte-add/commit/7f5db7656ee6e17d143ab07548809b73ca3acb9b)]:
+    -   @svelte-add/drizzle@1.0.4
+    -   svelte-add@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
