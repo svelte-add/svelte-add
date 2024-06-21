@@ -8,7 +8,7 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Bootstrap",
         description: "Build fast, responsive sites with Bootstrap",
-        category: categories.styling,
+        category: categories.css,
         environments: { kit: true, svelte: true },
         website: {
             logo: "./bootstrap.svg",
