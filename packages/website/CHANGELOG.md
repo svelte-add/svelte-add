@@ -1,5 +1,12 @@
 # @svelte-add/website
 
+## 2.1.6
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   svelte-add@2.1.1
+
 ## 2.1.5
 
 ### Patch Changes
