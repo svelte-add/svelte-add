@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "Bulma",
-        description: "The modern CSS framework that just works.",
+        description: "The modern CSS framework that just works",
         category: categories.styling,
         environments: { kit: true, svelte: true },
         website: {
