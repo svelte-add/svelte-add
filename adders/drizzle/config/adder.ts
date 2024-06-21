@@ -342,14 +342,20 @@ export const adder = defineAdderConfig({
 
 function addEnvVar(content: string, key: string, value: string) {
     if (!content.includes(key + "=")) {
-        content = content.trimEnd() + `\n${key}=${value}`;
+        content = appendEnvContent(content, `${key}=${value}`);
     }
     return content;
 }
+
 function addEnvComment(content: string, comment: string) {
     const commented = `# ${comment}`;
     if (!content.includes(commented)) {
-        content = content.trimEnd() + "\n" + commented;
+        content = appendEnvContent(content, commented);
     }
     return content;
+}
+
+function appendEnvContent(existing: string, content: string) {
+    const withNewLine = !existing.length || existing.endsWith("\n") ? existing : existing + "\n";
+    return withNewLine + content + "\n";
 }
