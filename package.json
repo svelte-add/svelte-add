@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "ci:version": "pnpm utils:readmes && pnpm utils:packages && pnpm changeset version",
-        "ci:publish": "pnpm publish -r --no-git-checks --filter @svelte-add/* --filter svelte-add --filter !@svelte-add/website --filter !@svelte-add/repo-root --filter !@svelte-add/tests --filter !@svelte-add/dev-utils --access public && changeset tag",
+        "ci:publish": "changeset publish",
         "prettier:check": "pnpm prettier . --check",
         "prettier:fix": "pnpm prettier . --write",
         "eslint:check": "pnpm eslint .",
