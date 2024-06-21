@@ -2,4 +2,4 @@
 "svelte-add": patch
 ---
 
-fix: Update `svelte-add` README.md
+chore: Update `svelte-add` README.md
