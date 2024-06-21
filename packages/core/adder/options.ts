@@ -113,7 +113,7 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
     }
 
     if (multipleAdders) {
-        program.option("--adder <string...>", "List of adders to install");
+        program.argument("<adders...>", "List of adders to install");
     }
 
     const addersWithOptions = adderDetails.filter((x) => Object.keys(x.config.options).length > 0);
@@ -135,6 +135,11 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
 
     program.parse();
     const options = program.opts();
+
+    if (multipleAdders) {
+        options.adder = program.args;
+    }
+
     return options;
 }
 
