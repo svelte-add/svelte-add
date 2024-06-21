@@ -339,7 +339,7 @@ export const adder = defineAdderConfig({
         },
     ],
     nextSteps: () => {
-        const steps = ["You will need to set the DATABASE_URL in your production environment"];
+        const steps = ["You will need to set DATABASE_URL in your production environment"];
 
         return steps;
     },
