@@ -6,7 +6,7 @@ import type { OptionDefinition, OptionValues, Question } from "./options.js";
 import type { FileTypes } from "../files/processors.js";
 import type { Workspace } from "../utils/workspace.js";
 import type { Postcondition } from "./postconditions.js";
-import { Colors } from "picocolors/types.js";
+import type { Colors } from "picocolors/types.js";
 
 export type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
