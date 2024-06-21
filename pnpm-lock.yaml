@@ -176,9 +176,6 @@ importers:
       '@svelte-add/tailwindcss':
         specifier: workspace:^
         version: link:../../adders/tailwindcss
-      svelte-add:
-        specifier: workspace:^
-        version: 'link:'
     devDependencies:
       commander:
         specifier: ^12.1.0
