@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "mdsvex",
-        description: "svelte in markdown",
+        description: "Use Svelte in markdown and markdown in Svelte",
         category: categories.markdown,
         environments: { svelte: true, kit: true },
         website: {

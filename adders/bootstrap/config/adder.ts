@@ -7,7 +7,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "Bootstrap",
-        description: "Build fast, responsive sites with Bootstrap",
+        description: "Sass-based CSS framework. 31.0% user retention - stateofcss.com",
         category: categories.css,
         environments: { kit: true, svelte: true },
         website: {
