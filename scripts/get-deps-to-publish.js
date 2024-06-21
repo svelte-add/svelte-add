@@ -13,7 +13,7 @@ if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
 const json = execSync(`pnpm -r list --only-projects --json`).toString("utf8");
 const repoPackages =
-    /** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string, private: boolean }>} */ (
+    /** @type {Array<import("../packages/core/utils/common.ts").Package & { path: string, private: boolean, peerDependencies?: Record<string, string> }>} */ (
         JSON.parse(json)
     );
 
@@ -44,7 +44,8 @@ function getDependents(path) {
     if (!pkg) throw new Error("couldn't find package in dependency map");
 
     const dependents = repoPackages.filter(
-        (dep) => !dep.private && (dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name]),
+        (dep) =>
+            !dep.private && (dep.dependencies?.[pkg.name] || dep.devDependencies?.[pkg.name] || dep.peerDependencies?.[pkg.name]),
     );
     return dependents.map((dep) => relative(".", dep.path));
 }

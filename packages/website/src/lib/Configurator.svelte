@@ -44,7 +44,7 @@
 
         if (multipleAdders) {
             const adderIds = Object.keys(args).join(" ");
-            command += `svelte-add@latest --adder ${adderIds}`;
+            command += `svelte-add@latest ${adderIds}`;
         } else {
             command += "@svelte-add/" + firstAdderId + "@latest";
         }

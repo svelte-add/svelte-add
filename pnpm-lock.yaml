@@ -188,6 +188,9 @@ importers:
       '@svelte-add/core':
         specifier: workspace:*
         version: link:../core
+      '@svelte-add/drizzle':
+        specifier: workspace:^
+        version: link:../../adders/drizzle
       '@svelte-add/mdsvex':
         specifier: workspace:^
         version: link:../../adders/mdsvex

@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "TailwindCSS",
-        description: "Rapidly build modern websites without ever leaving your HTML.",
+        description: "Rapidly build modern websites without ever leaving your HTML",
         category: categories.css,
         environments: { svelte: true, kit: true },
         website: {

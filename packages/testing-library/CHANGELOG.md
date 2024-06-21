@@ -1,5 +1,12 @@
 # @svelte-add/testing-library
 
+## 2.0.15
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   svelte-add@2.1.1
+
 ## 2.0.14
 
 ### Patch Changes

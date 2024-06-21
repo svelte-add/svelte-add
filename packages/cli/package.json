@@ -1,6 +1,6 @@
 {
     "name": "svelte-add",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "bin": "build/index.js",
     "type": "module",
     "exports": {
@@ -18,10 +18,11 @@
     "peerDependencies": {
         "@svelte-add/bootstrap": "workspace:^",
         "@svelte-add/bulma": "workspace:^",
+        "@svelte-add/drizzle": "workspace:^",
         "@svelte-add/mdsvex": "workspace:^",
         "@svelte-add/routify": "workspace:^",
-        "@svelte-add/tailwindcss": "workspace:^",
         "@svelte-add/storybook": "workspace:^",
+        "@svelte-add/tailwindcss": "workspace:^",
         "svelte-add": "workspace:^"
     },
     "devDependencies": {
