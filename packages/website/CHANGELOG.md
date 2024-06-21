@@ -1,5 +1,11 @@
 # @svelte-add/website
 
+## 2.1.8
+
+### Patch Changes
+
+-   test website publishing #2 ([`e8366c35ecad5270cbcf7674c93924c625f85daf`](https://github.com/svelte-add/svelte-add/commit/e8366c35ecad5270cbcf7674c93924c625f85daf))
+
 ## 2.1.7
 
 ### Patch Changes
