@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
     metadata: {
         ...generateAdderInfo(pkg),
         name: "TailwindCSS",
-        description: "CSS framework based on utility classes. 75.7% user retention - stateofcss.com",
+        description: "CSS framework based on utility classes",
         category: categories.css,
         environments: { svelte: true, kit: true },
         website: {
