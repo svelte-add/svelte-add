@@ -47,6 +47,9 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
 
+            - name: published packages
+              run: echo '${{ steps.changesets.outputs.publishedPackages }}'
+
             - name: Publish website
               if: steps.changesets.outputs.published == 'true' && contains(steps.changesets.outputs.publishedPackages, '@svelte-add/website')
               uses: peaceiris/actions-gh-pages@v3
