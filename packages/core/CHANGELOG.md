@@ -1,5 +1,13 @@
 # @svelte-add/core
 
+## 2.6.0
+
+### Minor Changes
+
+-   feat: simplify cli usage ([#429](https://github.com/svelte-add/svelte-add/pull/429))
+
+-   feat: tool selection prompt is now a flat and grouped list ([#421](https://github.com/svelte-add/svelte-add/pull/421))
+
 ## 2.5.2
 
 ### Patch Changes

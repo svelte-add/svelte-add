@@ -1,5 +1,23 @@
 # svelte-add
 
+## 2.2.0
+
+### Minor Changes
+
+-   feat: simplify cli usage ([#429](https://github.com/svelte-add/svelte-add/pull/429))
+
+### Patch Changes
+
+-   Updated dependencies [[`fc8703e4ddafee771f379e2b51eeded99affc178`](https://github.com/svelte-add/svelte-add/commit/fc8703e4ddafee771f379e2b51eeded99affc178), [`10726041ef5f61d77a21c018289bced905fcfdd8`](https://github.com/svelte-add/svelte-add/commit/10726041ef5f61d77a21c018289bced905fcfdd8), [`c345f26532ca67b9a8cbface421555673e3d1bbe`](https://github.com/svelte-add/svelte-add/commit/c345f26532ca67b9a8cbface421555673e3d1bbe)]:
+    -   @svelte-add/core@2.6.0
+    -   @svelte-add/tailwindcss@1.0.14
+    -   @svelte-add/bulma@1.0.14
+    -   @svelte-add/bootstrap@1.0.14
+    -   @svelte-add/drizzle@1.0.5
+    -   @svelte-add/mdsvex@1.0.14
+    -   @svelte-add/routify@1.0.14
+    -   @svelte-add/storybook@1.0.14
+
 ## 2.1.1
 
 ### Patch Changes
