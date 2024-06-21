@@ -22,4 +22,4 @@ If you want to install multiple adders at once, you can use this command:
 npx svelte-add@latest bulma mdsvex
 ```
 
-You can also directly pass through options for each adder. Please refer to the website [this site](https://svelte-add.com) to generate such commands. Alternatively you can refer to the individual adder options.
+You can also directly pass through options for each adder. Please refer to the [website](https://svelte-add.com) to generate such commands. Alternatively you can refer to the individual adder options.
