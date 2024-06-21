@@ -8,9 +8,7 @@
     ],
     "ignore": [
         "@svelte-add/tests",
-        "@svelte-add/dev-utils",
-        "@svelte-add/clack-core",
-        "@svelte-add/clack-prompts"
+        "@svelte-add/dev-utils"
     ],
     "commit": false,
     "access": "public",
