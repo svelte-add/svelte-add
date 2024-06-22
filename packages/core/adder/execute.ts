@@ -27,6 +27,7 @@ import { validatePreconditions } from "./preconditions.js";
 import { endPrompts, startPrompts, groupedMultiSelectPrompt } from "../utils/prompts.js";
 import { type CategoryKeys, categories } from "./categories.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
+import { displayNextSteps } from "./nextSteps.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -99,7 +100,7 @@ async function executePlan<Args extends OptionDefinition>(
 ) {
     const remoteControlled = remoteControlOptions !== undefined;
     const isTesting = remoteControlled && remoteControlOptions.isTesting;
-    const isExecutingMultipleAdders = adderDetails.length > 1;
+    const isRunningCli = adderDetails.length > 1;
 
     if (!isTesting) {
         console.log(pc.gray(`${executingAdder.name} version ${executingAdder.version}\n`));
@@ -122,14 +123,15 @@ async function executePlan<Args extends OptionDefinition>(
 
     // select appropriate adders
     let userSelectedAdders = executionPlan.commonCliOptions.adders ?? [];
-    if (userSelectedAdders.length == 0 && isExecutingMultipleAdders) {
+    if (userSelectedAdders.length == 0 && isRunningCli) {
         // if the user has not selected any adders via the cli and we are currently executing for more than one adder
         // the user should have the possibility to select the adders he want's to add.
         userSelectedAdders = await askForAddersToApply(adderDetails, projectType);
-    } else if (userSelectedAdders.length == 0 && !isExecutingMultipleAdders) {
+    } else if (userSelectedAdders.length == 0 && !isRunningCli) {
         // if we are executing only one adder, then we can safely assume that this adder should be added
         userSelectedAdders = [adderDetails[0].config.metadata.id];
     }
+    const isApplyingMultipleAdders = userSelectedAdders.length > 1;
 
     // remove unselected adder data
     const addersToRemove = adderDetails.filter((x) => !userSelectedAdders.includes(x.config.metadata.id));
@@ -180,7 +182,7 @@ async function executePlan<Args extends OptionDefinition>(
             throw new Error(`Unknown integration type`);
         }
 
-        const unmetAdderPostconditions = await checkPostconditions(config, checks, adderWorkspace, isExecutingMultipleAdders);
+        const unmetAdderPostconditions = await checkPostconditions(config, checks, adderWorkspace, isApplyingMultipleAdders);
         unmetPostconditions.push(...unmetAdderPostconditions);
     }
 
@@ -193,7 +195,10 @@ async function executePlan<Args extends OptionDefinition>(
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
         await suggestInstallingDependencies(executionPlan.workingDirectory);
 
-    if (!isTesting) endPrompts("You're all set!");
+    if (!isTesting) {
+        displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
+        endPrompts("You're all set!");
+    }
 }
 type AdderOption = { value: string; label: string; hint: string };
 async function askForAddersToApply<Args extends OptionDefinition>(
