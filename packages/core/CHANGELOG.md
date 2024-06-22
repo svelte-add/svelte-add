@@ -1,5 +1,13 @@
 # @svelte-add/core
 
+## 2.7.0
+
+### Minor Changes
+
+-   feat: display website documentation url in hint ([#435](https://github.com/svelte-add/svelte-add/pull/435))
+
+-   feat: display next steps after running the adders ([#409](https://github.com/svelte-add/svelte-add/pull/409))
+
 ## 2.6.0
 
 ### Minor Changes
