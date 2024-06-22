@@ -1,8 +1,7 @@
-import { getAdderConfig, getAdderList } from "svelte-add/website";
-import { groupBy } from "@svelte-add/core/internal";
+import { getAdderConfig } from "svelte-add/website";
+import { adderCategories, categories, type CategoryInfo, type CategoryKeys } from "@svelte-add/config";
 import type { Question } from "../../../core/adder/options.js";
 import type { AdderConfig, AdderConfigMetadata } from "../../../core/adder/config.js";
-import type { CategoryInfo } from "../../../core/adder/categories.js";
 
 export type AdderMetadataWithOptions = {
     metadata: AdderConfigMetadata;
@@ -10,22 +9,27 @@ export type AdderMetadataWithOptions = {
 };
 
 export async function getAdderInfos(category?: string) {
-    const addersNames = getAdderList();
+    const categoryKey = category as CategoryKeys | undefined;
+    let filteredCategoryKeys: CategoryKeys[];
 
-    const adders: AdderMetadataWithOptions[] = [];
-    for (const adderName of addersNames) {
-        const config = await getAdderDetails(adderName);
-
-        if (category && config.metadata.category.id !== category) {
-            continue;
-        }
-
-        adders.push(config);
+    if (categoryKey) {
+        filteredCategoryKeys = [categoryKey];
+    } else {
+        filteredCategoryKeys = Object.keys(categories) as CategoryKeys[];
     }
 
-    const groupedByCategory = groupAddersByCategory(adders);
+    const categoryAdders: Map<CategoryInfo, AdderMetadataWithOptions[]> = new Map();
+    for (const categoryId of filteredCategoryKeys) {
+        const adders: AdderMetadataWithOptions[] = [];
+        categoryAdders.set(categories[categoryId], adders);
 
-    return groupedByCategory;
+        for (const adderId of adderCategories[categoryId]) {
+            const config = await getAdderDetails(adderId);
+            adders.push(config);
+        }
+    }
+
+    return categoryAdders;
 }
 
 // serializes the functions that evaluate a question's conditions
@@ -45,8 +49,4 @@ export async function getAdderDetails(name: string): Promise<AdderMetadataWithOp
         metadata: config.metadata,
         options: config.options,
     };
-}
-
-function groupAddersByCategory(adders: AdderMetadataWithOptions[]): Map<CategoryInfo, AdderMetadataWithOptions[]> {
-    return groupBy(adders, (adder) => adder.metadata.category);
 }

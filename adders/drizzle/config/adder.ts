@@ -1,4 +1,4 @@
-import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
+import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options";
 
@@ -13,7 +13,6 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Drizzle",
         description: "Headless ORM for NodeJS, TypeScript and JavaScript",
-        category: categories.db,
         environments: { svelte: false, kit: true },
         website: {
             logo: "./drizzle.svg",

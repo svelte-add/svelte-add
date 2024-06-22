@@ -7,7 +7,7 @@ import { startDevServer, stopDevServer } from "./dev-server";
 import { startBrowser, stopBrowser } from "./browser-control";
 import { getTemplatesDirectory, installDependencies, prepareWorkspaceWithTemplate, saveOptionsFile } from "./workspace";
 import { runAdder } from "./adder";
-import { textPrompt } from "@svelte-add/core/internal";
+import { prompts } from "@svelte-add/core/internal";
 import * as Throttle from "promise-parallel-throttle";
 import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
 import type { TestOptions } from "..";
@@ -79,7 +79,7 @@ export async function runAdderTests(
         if (errorOcurred) throw new Error("Dev server failed to start correctly. Vite errors present");
 
         if (testOptions.pauseExecutionAfterBrowser) {
-            await textPrompt("Browser opened! Press any key to continue!");
+            await prompts.textPrompt("Browser opened! Press any key to continue!");
         }
 
         await runTests(page, adder, options);

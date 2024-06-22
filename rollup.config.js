@@ -12,7 +12,6 @@ const adderFolders = fs
     .readdirSync("./adders/", { withFileTypes: true })
     .filter((item) => item.isDirectory())
     .map((item) => item.name);
-const adderNamesAsString = adderFolders.map((x) => `"${x}"`);
 
 /** @type {import("rollup").RollupOptions[]} */
 const dtsConfigs = [];
@@ -56,7 +55,6 @@ function getConfig(project, isAdder) {
             dir: outDir,
             format: "esm",
             sourcemap: true,
-            intro: project === "cli" ? `const ADDER_LIST = [${adderNamesAsString.join(",")}];` : undefined,
         },
         external,
         plugins: [
@@ -99,6 +97,7 @@ export default [
     getConfig("clack-prompts", false),
     getConfig("ast-tooling", false),
     getConfig("ast-manipulation", false),
+    getConfig("config", false),
     getConfig("core", false),
     ...adderConfigs,
     getConfig("cli", false),

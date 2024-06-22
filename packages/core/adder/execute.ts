@@ -4,7 +4,7 @@ import { serializeJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { type Package, executeCli, getPackageJson, groupBy } from "../utils/common.js";
+import { type Package, executeCli, getPackageJson } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -20,12 +20,11 @@ import {
     type AvailableCliOptionValues,
     requestMissingOptionsFromUser,
 } from "./options.js";
-import type { AdderCheckConfig, AdderConfig, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
+import type { AdderCheckConfig, AdderConfig, AdderConfigMetadata, ExternalAdderConfig, InlineAdderConfig } from "./config.js";
 import type { RemoteControlOptions } from "./remoteControl.js";
 import { suggestInstallingDependencies } from "../utils/dependencies.js";
 import { validatePreconditions } from "./preconditions.js";
-import { endPrompts, startPrompts, groupedMultiSelectPrompt } from "../utils/prompts.js";
-import { type CategoryKeys, categories } from "./categories.js";
+import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
 
@@ -39,11 +38,18 @@ export type ExecutingAdderInfo = {
     version: string;
 };
 
+export type AddersToApplySelectorParams = {
+    projectType: ProjectType;
+    addersMetadata: AdderConfigMetadata[];
+};
+export type AddersToApplySelector = (params: AddersToApplySelectorParams) => Promise<string[]>;
+
 export type AddersExecutionPlan = {
     createProject: boolean;
     commonCliOptions: AvailableCliOptionValues;
     cliOptionsByAdderId: Record<string, Record<string, unknown>>;
     workingDirectory: string;
+    selectAddersToApply?: AddersToApplySelector;
 };
 
 export async function executeAdder<Args extends OptionDefinition>(
@@ -62,6 +68,7 @@ export async function executeAdders<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
     executingAdder: ExecutingAdderInfo,
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
+    selectAddersToApply: AddersToApplySelector | undefined = undefined,
 ) {
     const adderDetailsByAdderId: Map<string, AdderDetails<Args>> = new Map();
     adderDetails.map((x) => adderDetailsByAdderId.set(x.config.metadata.id, x));
@@ -87,6 +94,7 @@ export async function executeAdders<Args extends OptionDefinition>(
         createProject,
         commonCliOptions,
         cliOptionsByAdderId,
+        selectAddersToApply,
     };
 
     await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
@@ -126,7 +134,13 @@ async function executePlan<Args extends OptionDefinition>(
     if (userSelectedAdders.length == 0 && isRunningCli) {
         // if the user has not selected any adders via the cli and we are currently executing for more than one adder
         // the user should have the possibility to select the adders he want's to add.
-        userSelectedAdders = await askForAddersToApply(adderDetails, projectType);
+        if (!executionPlan.selectAddersToApply) throw new Error("selectAddersToApply must be provided!");
+
+        const addersMetadata = adderDetails.map((x) => x.config.metadata);
+        userSelectedAdders = await executionPlan.selectAddersToApply({
+            projectType,
+            addersMetadata,
+        });
     } else if (userSelectedAdders.length == 0 && !isRunningCli) {
         // if we are executing only one adder, then we can safely assume that this adder should be added
         userSelectedAdders = [adderDetails[0].config.metadata.id];
@@ -199,39 +213,6 @@ async function executePlan<Args extends OptionDefinition>(
         displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
         endPrompts("You're all set!");
     }
-}
-type AdderOption = { value: string; label: string; hint: string };
-async function askForAddersToApply<Args extends OptionDefinition>(
-    adderDetails: AdderDetails<Args>[],
-    projectType: ProjectType,
-): Promise<string[]> {
-    const groupedByCategory = groupBy(adderDetails, (x) => x.config.metadata.category.id);
-    const promptOptions: Record<string, AdderOption[]> = {};
-
-    for (const [categoryId, adders] of groupedByCategory) {
-        const categoryDetails = categories[categoryId as CategoryKeys];
-        const options: AdderOption[] = [];
-
-        for (const adder of adders) {
-            const adderMetadata = adder.config.metadata;
-
-            // if we detected a kit project, and the adder is not available for kit, ignore it.
-            if (projectType === "kit" && !adderMetadata.environments.kit) continue;
-            // if we detected a svelte project, and the adder is not available for svelte, ignore it.
-            if (projectType === "svelte" && !adderMetadata.environments.svelte) continue;
-
-            options.push({
-                label: adderMetadata.name,
-                value: adderMetadata.id,
-                hint: adderMetadata.website?.documentation || "",
-            });
-        }
-
-        promptOptions[categoryDetails.name] = options;
-    }
-    const selectedAdders = await groupedMultiSelectPrompt("What would you like to add to your project?", promptOptions);
-
-    return selectedAdders;
 }
 
 async function processInlineAdder<Args extends OptionDefinition>(

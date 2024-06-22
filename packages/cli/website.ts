@@ -1,11 +1,9 @@
 import type { AdderConfig } from "@svelte-add/core/adder/config";
 import type { Question } from "@svelte-add/core/adder/options";
+import { adderIds } from "@svelte-add/config";
 
 export function getAdderList(): string[] {
-    // @ts-expect-error The list is assembled during build and injected by rollup.
-    // If you don't see all required adders, please restart your dev server.
-
-    return ADDER_LIST as string[];
+    return adderIds;
 }
 
 export async function getAdderConfig(name: string) {

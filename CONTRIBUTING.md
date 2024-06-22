@@ -40,6 +40,7 @@ pnpm changeset
 -   add the new adders as a peer dependency to `svelte-add`
 -   set an appropriate package name & version version in `package.json`
 -   run `pnpm install` (ignore the warnings)
+-   add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
 -   start development server `pnpm build:dev`
 -   once you have finished developing your adder, don't forget to generate the readme `pnpm utils:readmes` & the `package.json` with `pnpm utils:packages`
 

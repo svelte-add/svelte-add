@@ -3,9 +3,14 @@ export type CategoryInfo = {
     name: string;
     description: string;
 };
+
 export type CategoryKeys = "css" | "tools" | "db" | "markdown";
 export type CategoryDetails = {
     [K in CategoryKeys]: CategoryInfo;
+};
+
+export type AdderCategories = {
+    [K in CategoryKeys]: string[];
 };
 
 export const categories: CategoryDetails = {
