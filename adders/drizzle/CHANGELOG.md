@@ -1,5 +1,14 @@
 # @svelte-add/drizzle
 
+## 1.0.6
+
+### Patch Changes
+
+-   feat: display next steps after running the drizzle ([#409](https://github.com/svelte-add/svelte-add/pull/409))
+
+-   Updated dependencies [[`6823a8f01798867ddab8bda266f9e52727378a86`](https://github.com/svelte-add/svelte-add/commit/6823a8f01798867ddab8bda266f9e52727378a86), [`0a20a359f854cfc06efd19871dc760e09eec956b`](https://github.com/svelte-add/svelte-add/commit/0a20a359f854cfc06efd19871dc760e09eec956b)]:
+    -   @svelte-add/core@2.7.0
+
 ## 1.0.5
 
 ### Patch Changes
