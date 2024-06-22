@@ -11,7 +11,7 @@ export const adder = defineAdderConfig({
         website: {
             logo: "./routify.svg",
             keywords: ["routify", "svelte", "router"],
-            documentation: "https://routify.dev/",
+            documentation: "https://routify.dev",
         },
     },
     options,

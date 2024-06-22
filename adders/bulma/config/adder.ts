@@ -11,7 +11,7 @@ export const adder = defineAdderConfig({
         website: {
             logo: "./bulma.svg",
             keywords: ["bulma", "css", "sass", "scss"],
-            documentation: "https://bulma.io/documentation/",
+            documentation: "https://bulma.io/documentation",
         },
     },
     options,

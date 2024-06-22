@@ -11,7 +11,7 @@ export const adder = defineAdderConfig({
         website: {
             logo: "./tailwindcss.svg",
             keywords: ["tailwind", "postcss", "autoprefixer"],
-            documentation: "https://tailwindcss.com/docs/",
+            documentation: "https://tailwindcss.com/docs",
         },
     },
     options,

@@ -12,7 +12,7 @@ export const adder = defineAdderConfig({
         website: {
             logo: "./bootstrap.svg",
             keywords: ["bootstrap", "css", "sass", "scss"],
-            documentation: "https://getbootstrap.com/docs/",
+            documentation: "https://getbootstrap.com/docs",
         },
     },
     options,
