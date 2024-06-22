@@ -218,7 +218,7 @@ async function askForAddersToApply<Args extends OptionDefinition>(
             options.push({
                 label: adderMetadata.name,
                 value: adderMetadata.id,
-                hint: adderMetadata.description,
+                hint: adderMetadata.website?.documentation || "",
             });
         }
 
