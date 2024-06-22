@@ -33,5 +33,5 @@ export function displayNextSteps<Args extends OptionDefinition>(
             return adderMessage;
         })
         .join("\n\n");
-    messagePrompt("Next steps", allAddersMessage);
+    if (allAddersMessage) messagePrompt("Next steps", allAddersMessage);
 }
