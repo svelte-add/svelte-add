@@ -5,13 +5,9 @@ export type CategoryInfo = {
 };
 
 export type CategoryKeys = "css" | "tools" | "db" | "markdown";
-export type CategoryDetails = {
-    [K in CategoryKeys]: CategoryInfo;
-};
+export type CategoryDetails = Record<CategoryKeys, CategoryInfo>;
 
-export type AdderCategories = {
-    [K in CategoryKeys]: string[];
-};
+export type AdderCategories = Record<CategoryKeys, string[]>;
 
 export const categories: CategoryDetails = {
     css: {
