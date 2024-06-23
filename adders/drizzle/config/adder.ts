@@ -1,4 +1,4 @@
-import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
+import { defineAdderConfig, generateAdderInfo, dedent } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options";
 
@@ -118,33 +118,35 @@ export const adder = defineAdderConfig({
                 const imageName = options.database === "mysql" ? "mysql" : "postgres";
                 const port = PORTS[options.database];
 
-                content = `
+                const USER = "root";
+                const PASSWORD = "mysecretpassword";
+                const DB_NAME = "local";
+
+                let dbSpecificContent = "";
+                if (options.mysql === "mysql2") {
+                    dbSpecificContent = `
+                      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+                      MYSQL_DATABASE: ${DB_NAME}
+                `;
+                }
+                if (options.postgresql === "postgres.js") {
+                    dbSpecificContent = `
+                      POSTGRES_USER: ${USER}
+                      POSTGRES_PASSWORD: ${PASSWORD}
+                      POSTGRES_DB: ${DB_NAME}
+                `;
+                }
+
+                content = dedent`
                 services:
                   db:
                     image: ${imageName}
                     restart: always
                     ports:
                       - ${port}:${port}
-                    environment:
+                    environment: ${dbSpecificContent}
                 `;
 
-                const USER = "root";
-                const PASSWORD = "mysecretpassword";
-                const DB_NAME = "local";
-
-                if (options.mysql === "mysql2") {
-                    content += `
-                      MYSQL_ROOT_PASSWORD: ${PASSWORD}
-                      MYSQL_DATABASE: ${DB_NAME}
-                `;
-                }
-                if (options.postgresql === "postgres.js") {
-                    content += `
-                      POSTGRES_USER: ${USER}
-                      POSTGRES_PASSWORD: ${PASSWORD}
-                      POSTGRES_DB: ${DB_NAME}
-                `;
-                }
                 return content;
             },
         },
