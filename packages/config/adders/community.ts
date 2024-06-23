@@ -7,11 +7,4 @@ export type CommunityAdder = {
 
 export type CommunityAdders = CommunityAdder[];
 
-export const communityAdders: CommunityAdders = [
-    {
-        id: "test",
-        displayName: "Test",
-        description: "Test description",
-        package: "@test/setup",
-    },
-];
+export const communityAdders: CommunityAdders = [];
