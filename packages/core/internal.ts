@@ -1,11 +1,10 @@
 import * as remoteControl from "./adder/remoteControl.js";
-import { executeAdder, executeAdders, determineWorkingDirectory } from "./adder/execute.js";
+import { executeAdder, executeAdders, determineWorkingDirectory, type AddersToApplySelectorParams } from "./adder/execute.js";
 import { createOrUpdateFiles } from "./files/processors.js";
 import { createEmptyWorkspace, populateWorkspaceDetails } from "./utils/workspace.js";
-import { type PromptOption, endPrompts, multiSelectPrompt, textPrompt, startPrompts } from "./utils/prompts.js";
 import { suggestInstallingDependencies } from "./utils/dependencies.js";
-import { groupBy } from "./utils/common.js";
 import { availableCliOptions, type AvailableCliOptions } from "./adder/options.js";
+import * as prompts from "./utils/prompts.js";
 
 export {
     remoteControl,
@@ -15,13 +14,9 @@ export {
     executeAdders,
     populateWorkspaceDetails,
     determineWorkingDirectory,
-    endPrompts,
-    multiSelectPrompt,
-    textPrompt,
-    startPrompts,
+    prompts,
     suggestInstallingDependencies,
-    groupBy,
     availableCliOptions,
 };
 
-export type { PromptOption, AvailableCliOptions };
+export type { AvailableCliOptions, AddersToApplySelectorParams };

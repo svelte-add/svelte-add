@@ -1,4 +1,4 @@
-import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
+import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options.js";
 
@@ -7,7 +7,6 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "Storybook",
         description: "Build UIs without the grunt work",
-        category: categories.tools,
         environments: { kit: true, svelte: true },
         website: {
             logo: "./storybook.svg",

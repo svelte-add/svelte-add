@@ -1,4 +1,4 @@
-import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
+import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options";
 
@@ -7,12 +7,11 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "routify",
         description: "The Router that Grows With You",
-        category: categories.tools,
         environments: { svelte: true, kit: false },
         website: {
             logo: "./routify.svg",
             keywords: ["routify", "svelte", "router"],
-            documentation: "https://routify.dev/",
+            documentation: "https://routify.dev",
         },
     },
     options,

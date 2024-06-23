@@ -1,7 +1,6 @@
 import * as remoteControl from "./remoteControl.js";
 import { executeAdder } from "./execute.js";
 import type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
-import type { CategoryInfo } from "./categories.js";
 import type { OptionDefinition, OptionValues, Question } from "./options.js";
 import type { FileTypes } from "../files/processors.js";
 import type { Workspace } from "../utils/workspace.js";
@@ -30,7 +29,6 @@ export type AdderConfigMetadata = {
     version: string;
     name: string;
     description: string;
-    category: CategoryInfo;
     environments: AdderConfigEnvironments;
     website?: WebsiteMetadata;
 };

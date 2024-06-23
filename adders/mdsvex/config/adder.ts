@@ -1,4 +1,4 @@
-import { categories, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
+import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
 import pkg from "../package.json";
 import { options } from "./options";
 
@@ -7,7 +7,6 @@ export const adder = defineAdderConfig({
         ...generateAdderInfo(pkg),
         name: "mdsvex",
         description: "svelte in markdown",
-        category: categories.markdown,
         environments: { svelte: true, kit: true },
         website: {
             logo: "./mdsvex.svg",
