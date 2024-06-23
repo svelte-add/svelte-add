@@ -2,4 +2,4 @@
 "@svelte-add/core": minor
 ---
 
-feat: provide dedent utility
+feat: provide `dedent` utility
