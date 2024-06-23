@@ -16,8 +16,7 @@
         "@svelte-add/ast-tooling": "workspace:^",
         "@svelte-add/core": "workspace:^",
         "playwright": "^1.44.1",
-        "create-svelte": "^6.3.0",
-        "svelte-add": "workspace:^"
+        "create-svelte": "^6.3.0"
     },
     "devDependencies": {
         "promise-parallel-throttle": "^3.5.0",

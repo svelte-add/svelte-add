@@ -273,9 +273,6 @@ importers:
       playwright:
         specifier: ^1.44.1
         version: 1.44.1
-      svelte-add:
-        specifier: workspace:^
-        version: link:../cli
     devDependencies:
       promise-parallel-throttle:
         specifier: ^3.5.0
