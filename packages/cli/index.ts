@@ -54,7 +54,9 @@ async function selectAddersToApply({ projectType, addersMetadata }: AddersToAppl
             });
         }
 
-        promptOptions[categoryDetails.name] = options;
+        if (options.length > 0) {
+            promptOptions[categoryDetails.name] = options;
+        }
     }
     const selectedAdders = await prompts.groupedMultiSelectPrompt("What would you like to add to your project?", promptOptions);
 
