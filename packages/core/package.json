@@ -19,6 +19,7 @@
     "devDependencies": {
         "@svelte-add/clack-prompts": "workspace:*",
         "commander": "^12.1.0",
+        "dedent": "^1.5.3",
         "picocolors": "^1.0.1",
         "preferred-pm": "^3.1.3"
     },
