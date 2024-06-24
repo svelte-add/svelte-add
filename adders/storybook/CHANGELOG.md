@@ -1,5 +1,12 @@
 # @svelte-add/storybook
 
+## 1.0.16
+
+### Patch Changes
+
+-   Updated dependencies [[`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`b42e0a0169a717b9381843e0689d135a64c3f1f3`](https://github.com/svelte-add/svelte-add/commit/b42e0a0169a717b9381843e0689d135a64c3f1f3)]:
+    -   @svelte-add/core@2.8.0
+
 ## 1.0.15
 
 ### Patch Changes

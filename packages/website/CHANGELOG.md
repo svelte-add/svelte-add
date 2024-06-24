@@ -1,5 +1,18 @@
 # @svelte-add/website
 
+## 2.3.0
+
+### Minor Changes
+
+-   feat: custom ordered adders ([#437](https://github.com/svelte-add/svelte-add/pull/437))
+
+### Patch Changes
+
+-   Updated dependencies [[`a2ac2ca4e317d15d6233ab0d1831bb3a6ac1027c`](https://github.com/svelte-add/svelte-add/commit/a2ac2ca4e317d15d6233ab0d1831bb3a6ac1027c), [`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`b42e0a0169a717b9381843e0689d135a64c3f1f3`](https://github.com/svelte-add/svelte-add/commit/b42e0a0169a717b9381843e0689d135a64c3f1f3)]:
+    -   svelte-add@2.3.0
+    -   @svelte-add/core@2.8.0
+    -   @svelte-add/config@1.1.0
+
 ## 2.2.1
 
 ### Patch Changes

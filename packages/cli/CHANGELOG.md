@@ -1,5 +1,26 @@
 # svelte-add
 
+## 2.3.0
+
+### Minor Changes
+
+-   feat: custom ordered adders ([#437](https://github.com/svelte-add/svelte-add/pull/437))
+
+### Patch Changes
+
+-   fix: do not display empty categories in cli ([#439](https://github.com/svelte-add/svelte-add/pull/439))
+
+-   Updated dependencies [[`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`b42e0a0169a717b9381843e0689d135a64c3f1f3`](https://github.com/svelte-add/svelte-add/commit/b42e0a0169a717b9381843e0689d135a64c3f1f3)]:
+    -   @svelte-add/drizzle@1.0.7
+    -   @svelte-add/core@2.8.0
+    -   @svelte-add/config@1.1.0
+    -   @svelte-add/bootstrap@1.0.16
+    -   @svelte-add/bulma@1.0.16
+    -   @svelte-add/mdsvex@1.0.16
+    -   @svelte-add/routify@1.0.16
+    -   @svelte-add/storybook@1.0.16
+    -   @svelte-add/tailwindcss@1.0.16
+
 ## 2.2.1
 
 ### Patch Changes

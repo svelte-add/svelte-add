@@ -1,5 +1,14 @@
 # @svelte-add/drizzle
 
+## 1.0.7
+
+### Patch Changes
+
+-   fix: `docker-compose.yml` indentation ([#440](https://github.com/svelte-add/svelte-add/pull/440))
+
+-   Updated dependencies [[`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`b42e0a0169a717b9381843e0689d135a64c3f1f3`](https://github.com/svelte-add/svelte-add/commit/b42e0a0169a717b9381843e0689d135a64c3f1f3)]:
+    -   @svelte-add/core@2.8.0
+
 ## 1.0.6
 
 ### Patch Changes

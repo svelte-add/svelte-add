@@ -1,5 +1,13 @@
 # @svelte-add/core
 
+## 2.8.0
+
+### Minor Changes
+
+-   feat: provide `dedent` utility ([#440](https://github.com/svelte-add/svelte-add/pull/440))
+
+-   feat: custom ordered adders ([#437](https://github.com/svelte-add/svelte-add/pull/437))
+
 ## 2.7.0
 
 ### Minor Changes
