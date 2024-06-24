@@ -425,7 +425,7 @@ export const groupMultiselect = <Value>(opts: GroupMultiSelectOptions<Value>) =>
         const next = isItem && (options[options.indexOf(option) + 1] ?? { group: true });
         // @ts-ignore
         const isLast = isItem && next.group === true;
-        const prefix = isItem ? `${isLast ? S_BAR_END : S_BAR} ` : "";
+        const prefix = isItem ? (selectableGroups ? `${isLast ? S_BAR_END : S_BAR} ` : " ") : "";
 
         if (state === "active") {
             return `${color.dim(prefix)}${color.cyan(S_CHECKBOX_ACTIVE)} ${label} ${
