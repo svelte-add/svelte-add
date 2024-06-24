@@ -1,5 +1,18 @@
 # @svelte-add/testing-library
 
+## 2.1.0
+
+### Minor Changes
+
+-   feat: custom ordered adders ([#437](https://github.com/svelte-add/svelte-add/pull/437))
+
+### Patch Changes
+
+-   chore: remove unneeded `svelte-add` dependency ([#439](https://github.com/svelte-add/svelte-add/pull/439))
+
+-   Updated dependencies [[`a79d04b9323b11b83e8c9f638f355191dadd85d3`](https://github.com/svelte-add/svelte-add/commit/a79d04b9323b11b83e8c9f638f355191dadd85d3), [`b42e0a0169a717b9381843e0689d135a64c3f1f3`](https://github.com/svelte-add/svelte-add/commit/b42e0a0169a717b9381843e0689d135a64c3f1f3)]:
+    -   @svelte-add/core@2.8.0
+
 ## 2.0.17
 
 ### Patch Changes
