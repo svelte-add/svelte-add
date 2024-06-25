@@ -93,6 +93,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  adders/prettier:
+    dependencies:
+      '@svelte-add/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   adders/routify:
     dependencies:
       '@svelte-add/core':
