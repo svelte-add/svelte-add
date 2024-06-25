@@ -65,6 +65,7 @@ export async function groupedMultiSelectPrompt<T>(question: string, options: Rec
         options,
         required: false,
         selectableGroups: false,
+        spacedGroups: true,
     });
 
     return cancelIfRequired(value);
