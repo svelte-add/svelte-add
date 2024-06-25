@@ -142,6 +142,7 @@ function handleJsonFile<Args extends OptionDefinition>(
     fileDetails: JsonFileType<Args>,
     workspace: Workspace<Args>,
 ) {
+    if (!content) content = "{}";
     const data: unknown = parseJson(content);
     fileDetails.content({ data, ...workspace });
     content = serializeJson(content, data);
