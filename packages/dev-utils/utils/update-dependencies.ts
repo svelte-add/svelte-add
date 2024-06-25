@@ -13,12 +13,12 @@ export async function updateDependencies() {
 }
 
 async function updateAdderDependencies() {
-    const adderFolders = readdirSync("./adders/", { withFileTypes: true })
+    const adderFolders = readdirSync("./packages/adders/", { withFileTypes: true })
         .filter((item) => item.isDirectory())
         .map((item) => item.name);
 
     for (const adderId of adderFolders) {
-        const filePath = `./adders/${adderId}/config/adder.js`;
+        const filePath = `./packages/adders/${adderId}/config/adder.js`;
         const content = (await readFile(filePath)).toString();
         const { ast, exports, functions, object, array, variables, common } = getJsAstEditor(parseScript(content));
 
