@@ -2,4 +2,4 @@
 "svelte-add": patch
 ---
 
-chore: left align group headers
+chore: adjust group headers alignment
