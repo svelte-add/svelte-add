@@ -143,16 +143,16 @@ importers:
 
   packages/cli:
     dependencies:
-      '@svelte-add/adders':
-        specifier: workspace:*
-        version: link:../../adders
       '@svelte-add/config':
         specifier: workspace:^
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
     devDependencies:
+      '@svelte-add/adders':
+        specifier: workspace:^
+        version: link:../../adders
       commander:
         specifier: ^12.1.0
         version: 12.1.0
@@ -185,7 +185,7 @@ importers:
         version: 3.1.3
 
   packages/dev-utils:
-    dependencies:
+    devDependencies:
       '@svelte-add/ast-manipulation':
         specifier: workspace:^
         version: link:../ast-manipulation
@@ -198,15 +198,9 @@ importers:
       npm-check-updates:
         specifier: ^16.14.20
         version: 16.14.20
-      svelte-add:
-        specifier: workspace:^
-        version: link:../cli
 
   packages/testing-library:
     dependencies:
-      '@svelte-add/ast-tooling':
-        specifier: workspace:^
-        version: link:../ast-tooling
       '@svelte-add/core':
         specifier: workspace:^
         version: link:../core
@@ -229,27 +223,30 @@ importers:
 
   packages/tests:
     devDependencies:
-      '@svelte-add/core':
+      '@svelte-add/adders':
         specifier: workspace:^
-        version: link:../core
-      '@svelte-add/testing-library':
-        specifier: workspace:^
-        version: link:../testing-library
-      svelte-add:
-        specifier: workspace:^
-        version: link:../cli
-
-  packages/website:
-    dependencies:
+        version: link:../../adders
       '@svelte-add/config':
         specifier: workspace:^
         version: link:../config
       '@svelte-add/core':
         specifier: workspace:^
         version: link:../core
-      svelte-add:
+      '@svelte-add/testing-library':
         specifier: workspace:^
-        version: link:../cli
+        version: link:../testing-library
+
+  packages/website:
+    dependencies:
+      '@svelte-add/adders':
+        specifier: workspace:^
+        version: link:../../adders
+      '@svelte-add/config':
+        specifier: workspace:^
+        version: link:../config
+      '@svelte-add/core':
+        specifier: workspace:^
+        version: link:../core
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.1

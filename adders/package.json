@@ -2,10 +2,7 @@
     "name": "@svelte-add/adders",
     "version": "1.0.0",
     "type": "module",
-    "private": true,
-    "files": [
-        "build"
-    ],
+    "module": "./index.ts",
     "dependencies": {
         "@svelte-add/core": "workspace:*"
     }

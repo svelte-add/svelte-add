@@ -20,7 +20,6 @@ function getConfig(project) {
 
     inputs.push(`./packages/${project}/index.ts`);
 
-    if (project == "cli") inputs.push(`./packages/${project}/website.ts`);
     if (project == "core") inputs.push(`./packages/${project}/internal.ts`);
 
     outDir = `./packages/${project}/build`;
@@ -33,8 +32,8 @@ function getConfig(project) {
     // any dep under `dependencies` is considered external
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
-    // externalizes `svelte-add` and `@svelte-add/` deps while also bundling `/clack`
-    const external = [/^(svelte-add|@svelte-add\/(?!clack)\w*)/g, ...externalDeps];
+    // externalizes `svelte-add` and `@svelte-add/` deps while also bundling `/clack` and `/adders`
+    const external = [/^(svelte-add|@svelte-add\/(?!clack|adders)\w*)/g, ...externalDeps];
 
     /** @type {import("rollup").RollupOptions} */
     const config = {
