@@ -69,6 +69,12 @@ importers:
         specifier: 8.0.0-alpha.30
         version: 8.0.0-alpha.30(eslint@9.4.0)(typescript@5.4.5)
 
+  adders:
+    dependencies:
+      '@svelte-add/core':
+        specifier: workspace:*
+        version: link:../packages/core
+
   packages/ast-manipulation:
     dependencies:
       '@svelte-add/ast-tooling':
@@ -137,6 +143,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@svelte-add/adders':
+        specifier: workspace:*
+        version: link:../../adders
       '@svelte-add/config':
         specifier: workspace:^
         version: link:../config

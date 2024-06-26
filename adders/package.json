@@ -1,0 +1,12 @@
+{
+    "name": "@svelte-add/adders",
+    "version": "1.0.0",
+    "type": "module",
+    "private": true,
+    "files": [
+        "build"
+    ],
+    "dependencies": {
+        "@svelte-add/core": "workspace:*"
+    }
+}

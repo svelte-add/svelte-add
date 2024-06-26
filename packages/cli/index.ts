@@ -64,7 +64,7 @@ async function selectAddersToApply({ projectType, addersMetadata }: AddersToAppl
 }
 
 async function getAdderConfig(name: string) {
-    const adder: { default: AdderWithoutExplicitArgs } = await import(`./adders/${name}/index.ts`);
+    const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/index.ts`);
 
     return adder.default;
 }

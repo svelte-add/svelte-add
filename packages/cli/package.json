@@ -14,7 +14,8 @@
     ],
     "dependencies": {
         "@svelte-add/config": "workspace:^",
-        "@svelte-add/core": "workspace:*"
+        "@svelte-add/core": "workspace:*",
+        "@svelte-add/adders": "workspace:*"
     },
     "devDependencies": {
         "commander": "^12.1.0"

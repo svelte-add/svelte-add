@@ -30,7 +30,7 @@ async function test() {
  * Executes the tests
  * @param {string[]} addersToTest
  */
-async function executeTests(addersToTest) {
+async function executeTests(addersToTest: string[]) {
     const filterAdders = addersToTest.length > 0;
     const adderNames = getAdderList();
 
@@ -57,7 +57,7 @@ async function executeTests(addersToTest) {
 async function getAdder(adderName: string) {
     remoteControl.enable();
 
-    const adderModule = (await import(`../cli/adders/${adderName}/index.ts`)) as { default: AdderWithoutExplicitArgs };
+    const adderModule = (await import(`../../adders/${adderName}/index.ts`)) as { default: AdderWithoutExplicitArgs };
     const adder = adderModule.default;
 
     remoteControl.disable();
