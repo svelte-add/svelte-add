@@ -241,15 +241,11 @@ export default class Prompt {
                 const pos: number = this.cursor;
 
                 // page starting position
-                let start: number;
-                if (pos <= OFFSET) {
-                    start = OFFSET;
-                } else {
-                    start = pos;
-                }
+                const start = pos <= OFFSET ? OFFSET : pos;
                 const end = start + PAGE_SIZE;
 
                 // paging implementation: keeping for now but not using since it felt a bit more jarring
+                // const start: number;
                 // if (pos > lines.length - PAGE_SIZE) {
                 //     start = lines.length - PAGE_SIZE;
                 // } else {
