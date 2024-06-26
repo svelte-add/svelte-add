@@ -62,7 +62,6 @@ export default class Prompt {
     public state: State = "initial";
     public value: any;
     public error: string = "";
-    public cursor: number = 0;
 
     constructor({ render, input = stdin, output = stdout, ...opts }: PromptOptions<Prompt>, trackValue: boolean = true) {
         this.opts = opts;
@@ -241,6 +240,7 @@ export default class Prompt {
                 // page start and ending positions
                 let start: number;
                 let end: number | undefined;
+                // @ts-expect-error `cursor` is a property that's implemented by prompts extending this class.
                 const pos: number = this.cursor;
 
                 // TODO: consider implementing paging
