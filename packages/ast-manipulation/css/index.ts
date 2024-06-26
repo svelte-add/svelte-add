@@ -1,4 +1,4 @@
-import { Declaration, Rule, AtRule, Comment, CssAst } from "@svelte-add/ast-tooling";
+import { Declaration, Rule, AtRule, Comment, type CssAst } from "@svelte-add/ast-tooling";
 
 export type CssAstEditor = {
     ast: CssAst;

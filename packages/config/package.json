@@ -9,7 +9,6 @@
         }
     },
     "type": "module",
-    "devDependencies": {},
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
         "type": "git",
