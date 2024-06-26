@@ -240,18 +240,9 @@ export default class Prompt {
                 // @ts-expect-error `cursor` is a property that's implemented by prompts extending this class.
                 const pos: number = this.cursor;
 
-                // page starting position
+                // page positions
                 const start = pos <= OFFSET ? OFFSET : pos;
                 const end = start + PAGE_SIZE;
-
-                // paging implementation: keeping for now but not using since it felt a bit more jarring
-                // const start: number;
-                // if (pos > lines.length - PAGE_SIZE) {
-                //     start = lines.length - PAGE_SIZE;
-                // } else {
-                //     const rem = pos % Math.ceil(PAGE_SIZE * 0.66);
-                //     start = OFFSET + (rem === 0 ? pos : pos - rem);
-                // }
 
                 this.output.write(erase.down());
 
