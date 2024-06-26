@@ -227,7 +227,7 @@ export default class Prompt {
         if (diff) {
             const diffLine = diff[0];
             const lines = frame.split("\n");
-            let newLines = [];
+            let newLines: string[] = [];
 
             // If we don't have enough vertical space to print all of the lines simultaneously,
             // then we'll sticky the prompt message (first 3 lines) to the top so it's always shown.
@@ -237,29 +237,32 @@ export default class Prompt {
                 const OFFSET = 3;
                 const PAGE_SIZE = process.stdout.rows - OFFSET;
 
-                // page start and ending positions
-                let start: number;
-                let end: number | undefined;
                 // @ts-expect-error `cursor` is a property that's implemented by prompts extending this class.
                 const pos: number = this.cursor;
 
-                // TODO: consider implementing paging
-                // (i.e. rather than incrementing the viewable list by 1 every time the cursor moves,
-                // increment the list in blocks of `PAGE_SIZE` so it feels less jittery)
+                // page starting position
+                let start: number;
                 if (pos <= OFFSET) {
                     start = OFFSET;
-                    end = PAGE_SIZE + OFFSET;
                 } else {
                     start = pos;
-                    end = pos + PAGE_SIZE;
                 }
+                const end = start + PAGE_SIZE;
+
+                // paging implementation: keeping for now but not using since it felt a bit more jarring
+                // if (pos > lines.length - PAGE_SIZE) {
+                //     start = lines.length - PAGE_SIZE;
+                // } else {
+                //     const rem = pos % Math.ceil(PAGE_SIZE * 0.66);
+                //     start = OFFSET + (rem === 0 ? pos : pos - rem);
+                // }
 
                 this.output.write(erase.down());
 
                 // stickied headers
-                newLines = lines.slice(0, OFFSET);
+                const header = lines.slice(0, OFFSET);
                 const content = lines.slice(start, end);
-                newLines = newLines.concat(content);
+                newLines = newLines.concat(header, content);
             } else {
                 this.output.write(cursor.move(0, diffLine));
                 this.output.write(erase.down());
