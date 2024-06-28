@@ -21,8 +21,6 @@ const repoPackages =
 const modifiedDirs = process.env.CHANGED_DIRS.split(" ").filter((dir) => existsSync(join(dir, "package.json")));
 const packagesToPublish = new Set(modifiedDirs);
 
-const IGNORED_PACKAGE_DIRS = ["adders"];
-
 // keep looping until we've acquired all dependents
 let prev = 0;
 while (packagesToPublish.size !== prev) {
@@ -33,11 +31,11 @@ while (packagesToPublish.size !== prev) {
     }
 }
 
-// remove ignored package dirs
-IGNORED_PACKAGE_DIRS.forEach((pkg) => packagesToPublish.delete(pkg));
-
 // publishes packages to pkg-pr-new
-const paths = Array.from(packagesToPublish).join(" ");
+const paths = Array.from(packagesToPublish)
+    // remove all private packages
+    .filter((dir) => repoPackages.find((pkg) => pkg.path.endsWith(dir))?.private === false)
+    .join(" ");
 execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
 
 /**
