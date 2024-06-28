@@ -3,7 +3,11 @@ import preferredPackageManager from "preferred-pm";
 import { spinner } from "@svelte-add/clack-prompts";
 import { executeCli } from "./common";
 
-export async function suggestInstallingDependencies(workingDirectory: string) {
+/**
+ * @param workingDirectory
+ * @returns the install status of dependencies
+ */
+export async function suggestInstallingDependencies(workingDirectory: string): Promise<"installed" | "skipped"> {
     type PackageManager = keyof typeof packageManagers | undefined;
     const packageManagers = {
         // Prevents npm from crashing if the peer-deps don't match.
@@ -32,7 +36,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     }
 
     if (!selectedPm || !packageManagers[selectedPm]) {
-        return;
+        return "skipped";
     }
 
     const selectedCommand = packageManagers[selectedPm];
@@ -44,6 +48,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     loadingSpinner.start("Installing dependencies...");
     await installDependencies(command, args, workingDirectory);
     loadingSpinner.stop("Successfully installed dependencies");
+    return "installed";
 }
 
 async function installDependencies(command: string, args: string[], workingDirectory: string) {

@@ -27,6 +27,7 @@ import { validatePreconditions } from "./preconditions.js";
 import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
+import { spinner, log } from "@svelte-add/clack-prompts";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -175,6 +176,7 @@ async function executePlan<Args extends OptionDefinition>(
 
     // apply the adders
     const unmetPostconditions: string[] = [];
+    const filesToFormat = new Set<string>();
     for (const { config, checks } of adderDetails) {
         const adderId = config.metadata.id;
 
@@ -189,7 +191,8 @@ async function executePlan<Args extends OptionDefinition>(
         const isInstall = true;
         if (config.integrationType === "inline") {
             const localConfig = config as InlineAdderConfig<OptionDefinition>;
-            await processInlineAdder(localConfig, adderWorkspace, isInstall);
+            const changedFiles = await processInlineAdder(localConfig, adderWorkspace, isInstall);
+            changedFiles.forEach((file) => filesToFormat.add(file));
         } else if (config.integrationType === "external") {
             await processExternalAdder(config, executionPlan.workingDirectory, isTesting);
         } else {
@@ -206,8 +209,21 @@ async function executePlan<Args extends OptionDefinition>(
         printUnmetPostconditions(unmetPostconditions);
     }
 
+    let installStatus;
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
-        await suggestInstallingDependencies(executionPlan.workingDirectory);
+        installStatus = await suggestInstallingDependencies(executionPlan.workingDirectory);
+
+    if (installStatus === "installed" && workspace.prettier.installed) {
+        const formatSpinner = spinner();
+        formatSpinner.start("Formatting modified files");
+        try {
+            await format(workspace, Array.from(filesToFormat));
+            formatSpinner.stop("Successfully formatted modified files");
+        } catch (e) {
+            formatSpinner.stop(`Failed to format files`);
+            if (e instanceof Error) log.error(e.message);
+        }
+    }
 
     if (!isTesting) {
         displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
@@ -220,9 +236,12 @@ async function processInlineAdder<Args extends OptionDefinition>(
     workspace: Workspace<Args>,
     isInstall: boolean,
 ) {
-    await installPackages(config, workspace);
-    await createOrUpdateFiles(config.files, workspace);
+    const pkgPath = await installPackages(config, workspace);
+    const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
     await runHooks(config, workspace, isInstall);
+
+    const changedFiles = [pkgPath, ...updatedOrCreatedFiles];
+    return changedFiles;
 }
 
 async function processExternalAdder<Args extends OptionDefinition>(
@@ -280,8 +299,8 @@ export async function installPackages<Args extends OptionDefinition>(
         }
     }
 
-    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
-    await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
+    await writeFile(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
+    return commonFilePaths.packageJsonFilePath;
 }
 
 async function runHooks<Args extends OptionDefinition>(

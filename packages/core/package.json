@@ -25,9 +25,7 @@
     },
     "dependencies": {
         "@svelte-add/ast-manipulation": "workspace:*",
-        "@svelte-add/ast-tooling": "workspace:*",
-        "prettier": "^3.3.2",
-        "prettier-plugin-svelte": "^3.2.4"
+        "@svelte-add/ast-tooling": "workspace:*"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {

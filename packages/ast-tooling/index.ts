@@ -140,19 +140,25 @@ export function serializeSvelteFile(asts: SvelteAst) {
     const css = serializePostcss(cssAst);
     const newScriptValue = serializeScript(jsAst);
 
-    const scriptTag = new Element("script", {}, undefined, ElementType.ElementType.Script);
-    for (const child of scriptTag.children) {
-        removeElement(child);
-    }
-    appendChild(scriptTag, new Text(newScriptValue));
-    appendChild(htmlAst, scriptTag);
+    if (newScriptValue.length > 0) {
+        const scriptTag = new Element("script", {}, undefined, ElementType.ElementType.Script);
+        for (const child of scriptTag.children) {
+            removeElement(child);
+        }
 
-    const styleTag = new Element("style", {}, undefined, ElementType.ElementType.Style);
-    for (const child of styleTag.children) {
-        removeElement(child);
+        appendChild(scriptTag, new Text(newScriptValue));
+        appendChild(htmlAst, scriptTag);
     }
-    appendChild(styleTag, new Text(css));
-    appendChild(htmlAst, styleTag);
+
+    if (css.length > 0) {
+        const styleTag = new Element("style", {}, undefined, ElementType.ElementType.Style);
+        for (const child of styleTag.children) {
+            removeElement(child);
+        }
+
+        appendChild(styleTag, new Text(css));
+        appendChild(htmlAst, styleTag);
+    }
 
     const content = serializeHtml(htmlAst);
     return content;
