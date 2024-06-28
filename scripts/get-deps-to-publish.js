@@ -40,6 +40,7 @@ execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" }
  * @return {string[]}
  */
 function getDependents(path) {
+    console.log(repoPackages, path);
     const pkg = repoPackages.find((pkg) => pkg.path.endsWith(path));
     if (!pkg) throw new Error("couldn't find package in dependency map");
 
