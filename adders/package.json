@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "type": "module",
     "module": "./index.ts",
-    "dependencies": {
+    "devDependencies": {
         "@svelte-add/core": "workspace:*"
     }
 }
