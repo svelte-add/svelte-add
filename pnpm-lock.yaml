@@ -157,16 +157,6 @@ importers:
         specifier: ^12.1.0
         version: 12.1.0
 
-  packages/community-adder:
-    dependencies:
-      '@svelte-add/core':
-        specifier: workspace:^
-        version: link:../core
-    devDependencies:
-      '@svelte-add/testing-library':
-        specifier: workspace:^
-        version: link:../testing-library
-
   packages/config: {}
 
   packages/core:

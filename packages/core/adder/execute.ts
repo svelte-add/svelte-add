@@ -4,7 +4,7 @@ import { serializeJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { executeCli, getPackageJson } from "../utils/common.js";
+import { getPackageJson } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -28,6 +28,7 @@ import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
 import { spinner, log } from "@svelte-add/clack-prompts";
+import { executeCli } from "../utils/cli.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
