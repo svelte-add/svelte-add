@@ -8,7 +8,7 @@
 // @ts-check
 import { execSync } from "node:child_process";
 import { relative } from "node:path";
-import { exists } from "node:fs/promises";
+import { existsSync } from "node:fs";
 
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
@@ -26,7 +26,7 @@ let prev = 0;
 while (packagesToPublish.size !== prev) {
     prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
-        if (!(await exists(pkg))) {
+        if (!existsSync(pkg)) {
             // if a package directory does not exist anymore, it should not be published.
             continue;
         }
