@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.1.2
+
+### Patch Changes
+
+-   fix: empty style and script tags are no longer included ([#444](https://github.com/svelte-add/svelte-add/pull/444))
+
 ## 2.1.1
 
 ### Patch Changes

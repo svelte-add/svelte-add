@@ -1,5 +1,12 @@
 # @svelte-add/bulma
 
+## 1.0.17
+
+### Patch Changes
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/core@2.8.1
+
 ## 1.0.16
 
 ### Patch Changes
