@@ -185,6 +185,10 @@ importers:
         version: 3.1.3
 
   packages/dev-utils:
+    dependencies:
+      npm-check-updates:
+        specifier: ^16.14.20
+        version: 16.14.20
     devDependencies:
       '@svelte-add/ast-manipulation':
         specifier: workspace:^
@@ -195,9 +199,6 @@ importers:
       '@svelte-add/core':
         specifier: workspace:^
         version: link:../core
-      npm-check-updates:
-        specifier: ^16.14.20
-        version: 16.14.20
 
   packages/testing-library:
     dependencies:
@@ -2540,9 +2541,9 @@ packages:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
 
-  parse-github-url@1.0.2:
-    resolution: {integrity: sha512-kgBf6avCbO3Cn6+RnzRGLkUsv4ZVqv/VfAYkRsyBcgkshNvVBkRn1FEZcW0Jb+npXQWm2vHPnnOqFteZxRRGNw==}
-    engines: {node: '>=0.10.0'}
+  parse-github-url@1.0.3:
+    resolution: {integrity: sha512-tfalY5/4SqGaV/GIGzWyHnFjlpTPTNpENR9Ea2lLldSJ8EWXMsvacWucqY3m3I4YPtas15IxTLQVQ5NSYXPrww==}
+    engines: {node: '>= 0.10'}
     hasBin: true
 
   parse-json@5.2.0:
@@ -5872,7 +5873,7 @@ snapshots:
       minimatch: 9.0.4
       p-map: 4.0.0
       pacote: 15.2.0
-      parse-github-url: 1.0.2
+      parse-github-url: 1.0.3
       progress: 2.0.3
       prompts-ncu: 3.0.0
       rc-config-loader: 4.1.3
@@ -6030,7 +6031,7 @@ snapshots:
     dependencies:
       callsites: 3.1.0
 
-  parse-github-url@1.0.2: {}
+  parse-github-url@1.0.3: {}
 
   parse-json@5.2.0:
     dependencies:
