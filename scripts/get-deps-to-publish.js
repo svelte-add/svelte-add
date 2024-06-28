@@ -10,7 +10,6 @@ import { execSync } from "node:child_process";
 import { relative } from "node:path";
 import { existsSync } from "node:fs";
 
-process.env.CHANGED_DIRS = "adders/bootstrap";
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
 const json = execSync(`pnpm -r list --only-projects --json`).toString("utf8");
@@ -19,7 +18,7 @@ const repoPackages =
         JSON.parse(json)
     );
 
-const modifiedDirs = process.env.CHANGED_DIRS.split(" ");
+const modifiedDirs = process.env.CHANGED_DIRS.split(" ").map((dir) => (dir.startsWith("adders") ? "adders" : dir));
 const packagesToPublish = new Set(modifiedDirs);
 
 // keep looping until we've acquired all dependents
@@ -27,9 +26,8 @@ let prev = 0;
 while (packagesToPublish.size !== prev) {
     prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
-        if (!existsSync(pkg) || !existsSync(`${pkg}/package.json`)) {
+        if (!existsSync(pkg)) {
             // if a package directory does not exist anymore, it should not be published.
-            packagesToPublish.delete(pkg);
             continue;
         }
 
@@ -49,10 +47,7 @@ execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" }
  */
 function getDependents(path) {
     const pkg = repoPackages.find((pkg) => pkg.path.endsWith(path));
-    if (!pkg) {
-        // package has been removed and thus does not have any dependencies
-        return [];
-    }
+    if (!pkg) throw new Error(`package ${path} doesn't exist in this repo`);
 
     const dependents = repoPackages.filter(
         (dep) =>
