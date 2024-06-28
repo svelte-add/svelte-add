@@ -10,6 +10,7 @@ import { execSync } from "node:child_process";
 import { relative } from "node:path";
 import { existsSync } from "node:fs";
 
+process.env.CHANGED_DIRS = "adders/bootstrap";
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
 const json = execSync(`pnpm -r list --only-projects --json`).toString("utf8");
@@ -26,8 +27,9 @@ let prev = 0;
 while (packagesToPublish.size !== prev) {
     prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
-        if (!existsSync(pkg)) {
+        if (!existsSync(pkg) || !existsSync(`${pkg}/package.json`)) {
             // if a package directory does not exist anymore, it should not be published.
+            packagesToPublish.delete(pkg);
             continue;
         }
 
