@@ -41,7 +41,10 @@ execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" }
  */
 function getDependents(path) {
     const pkg = repoPackages.find((pkg) => pkg.path.endsWith(path));
-    if (!pkg) throw new Error("couldn't find package in dependency map");
+    if (!pkg) {
+        // package has been removed and thus does not have any dependencies
+        return [];
+    }
 
     const dependents = repoPackages.filter(
         (dep) =>
