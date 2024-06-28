@@ -7,7 +7,7 @@
 
 // @ts-check
 import { execSync } from "node:child_process";
-import { relative } from "node:path";
+import { relative, join } from "node:path";
 import { existsSync } from "node:fs";
 
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
@@ -18,23 +18,23 @@ const repoPackages =
         JSON.parse(json)
     );
 
-const modifiedDirs = process.env.CHANGED_DIRS.split(" ").map((dir) => (dir.startsWith("adders") ? "adders" : dir));
+const modifiedDirs = process.env.CHANGED_DIRS.split(" ").filter((dir) => existsSync(join(dir, "package.json")));
 const packagesToPublish = new Set(modifiedDirs);
+
+const IGNORED_PACKAGE_DIRS = ["adders"];
 
 // keep looping until we've acquired all dependents
 let prev = 0;
 while (packagesToPublish.size !== prev) {
     prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
-        if (!existsSync(pkg)) {
-            // if a package directory does not exist anymore, it should not be published.
-            continue;
-        }
-
         const dependents = getDependents(pkg);
         dependents.forEach((dep) => packagesToPublish.add(dep));
     }
 }
+
+// remove ignored package dirs
+IGNORED_PACKAGE_DIRS.forEach((pkg) => packagesToPublish.delete(pkg));
 
 // publishes packages to pkg-pr-new
 const paths = Array.from(packagesToPublish).join(" ");
