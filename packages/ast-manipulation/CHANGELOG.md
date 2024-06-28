@@ -1,5 +1,12 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.3
+
+### Patch Changes
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/ast-tooling@2.1.2
+
 ## 2.1.2
 
 ### Patch Changes

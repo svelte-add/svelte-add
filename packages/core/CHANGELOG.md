@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.8.1
+
+### Patch Changes
+
+-   chore: removed `prettier` as a direct dependency and use the project's local installation of `prettier` for formatting ([#444](https://github.com/svelte-add/svelte-add/pull/444))
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/ast-tooling@2.1.2
+    -   @svelte-add/ast-manipulation@2.1.3
+
 ## 2.8.0
 
 ### Minor Changes

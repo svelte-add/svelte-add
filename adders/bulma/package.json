@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/bulma",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "bin": "build/index.js",
     "type": "module",
     "license": "MIT",
