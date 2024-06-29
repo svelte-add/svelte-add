@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.1.3
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
 ## 2.1.2
 
 ### Patch Changes
