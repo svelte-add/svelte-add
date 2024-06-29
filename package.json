@@ -3,7 +3,6 @@
     "version": "2.0.0",
     "description": "",
     "scripts": {
-        "ci:version": "pnpm utils:readmes && pnpm utils:packages && pnpm changeset version",
         "ci:publish": "changeset publish",
         "prettier:check": "pnpm prettier . --check",
         "prettier:fix": "pnpm prettier . --write",
