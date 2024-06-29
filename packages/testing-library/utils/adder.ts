@@ -14,7 +14,7 @@ export async function runAdder(
 
     await executeAdder(
         { config: adder.config, checks: adder.checks },
-        { name: "testing-cli", version: "tbd" },
+        { name: "@svelte-add/testing-library", version: "latest" },
         remoteControlOptions,
     );
 
