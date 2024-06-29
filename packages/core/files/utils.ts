@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { executeCli } from "../utils/common.js";
+import { executeCli } from "../utils/cli.js";
 import type { WorkspaceWithoutExplicitArgs } from "../utils/workspace";
 
 export async function readFile(workspace: WorkspaceWithoutExplicitArgs, filePath: string) {

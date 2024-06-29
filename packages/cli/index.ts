@@ -1,24 +1,22 @@
 #!/usr/bin/env node
 
 import { remoteControl, executeAdders, prompts } from "@svelte-add/core/internal";
-import { getAdderList } from "./website";
-import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
 import pkg from "./package.json";
 import type { Question } from "@svelte-add/core/adder/options";
 import type { AdderDetails, AddersToApplySelectorParams, ExecutingAdderInfo } from "@svelte-add/core/adder/execute";
-import { adderCategories, categories } from "@svelte-add/config";
+import { adderCategories, categories, adderIds } from "@svelte-add/config";
 import type { CategoryKeys } from "@svelte-add/config";
+import { getAdderDetails } from "@svelte-add/adders";
 
 void executeCli();
 
 async function executeCli() {
     remoteControl.enable();
 
-    const addersList = getAdderList();
     const adderDetails: AdderDetails<Record<string, Question>>[] = [];
 
-    for (const adderName of addersList) {
-        const adder = await getAdderConfig(adderName);
+    for (const adderName of adderIds) {
+        const adder = await getAdderDetails(adderName);
         adderDetails.push({ config: adder.config, checks: adder.checks });
     }
 
@@ -61,10 +59,4 @@ async function selectAddersToApply({ projectType, addersMetadata }: AddersToAppl
     const selectedAdders = await prompts.groupedMultiSelectPrompt("What would you like to add to your project?", promptOptions);
 
     return selectedAdders;
-}
-
-async function getAdderConfig(name: string) {
-    const adder: { default: AdderWithoutExplicitArgs } = await import(`../../adders/${name}/index.ts`);
-
-    return adder.default;
 }

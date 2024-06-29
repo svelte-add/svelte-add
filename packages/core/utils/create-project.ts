@@ -1,9 +1,10 @@
 import path from "node:path";
 import { commonFilePaths, directoryExists, fileExists } from "../files/utils.js";
 import { type PromptOption, booleanPrompt, selectPrompt, textPrompt, endPrompts } from "./prompts.js";
-import { executeCli, getPackageJson } from "./common.js";
+import { getPackageJson } from "./common.js";
 import { createEmptyWorkspace } from "./workspace.js";
 import { spinner } from "@svelte-add/clack-prompts";
+import { executeCli } from "./cli.js";
 
 export type ProjectType = "svelte" | "kit";
 

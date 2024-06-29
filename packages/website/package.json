@@ -26,6 +26,6 @@
     "dependencies": {
         "@svelte-add/core": "workspace:^",
         "@svelte-add/config": "workspace:^",
-        "svelte-add": "workspace:^"
+        "@svelte-add/adders": "workspace:^"
     }
 }

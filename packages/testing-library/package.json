@@ -13,7 +13,6 @@
         "build"
     ],
     "dependencies": {
-        "@svelte-add/ast-tooling": "workspace:^",
         "@svelte-add/core": "workspace:^",
         "playwright": "^1.44.1",
         "create-svelte": "^6.3.0"

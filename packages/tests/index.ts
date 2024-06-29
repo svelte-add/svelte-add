@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
-import path from "node:path";
+import * as path from "node:path";
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { testAdders } from "@svelte-add/testing-library";
-import { getAdderList } from "svelte-add/website";
+import { adderIds } from "@svelte-add/config";
 import { remoteControl } from "@svelte-add/core/internal";
+import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
+import { getAdderDetails } from "@svelte-add/adders";
 
 let usingDocker = false;
 
@@ -29,14 +31,12 @@ async function test() {
  * Executes the tests
  * @param {string[]} addersToTest
  */
-async function executeTests(addersToTest) {
+async function executeTests(addersToTest: string[]) {
     const filterAdders = addersToTest.length > 0;
-    const adderNames = getAdderList();
 
-    /** @type {import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs[]} */
-    const adders = [];
+    const adders: AdderWithoutExplicitArgs[] = [];
 
-    for (const adderName of adderNames) {
+    for (const adderName of adderIds) {
         if (filterAdders && !addersToTest.includes(adderName)) continue;
 
         adders.push(await getAdder(adderName));
@@ -48,17 +48,10 @@ async function executeTests(addersToTest) {
     await testAdders(adders, testOptions);
 }
 
-/**
- * Fetches the adder and all it's details
- * @param {string} adderName
- * @returns
- */
-async function getAdder(adderName) {
+async function getAdder(adderName: string) {
     remoteControl.enable();
 
-    /** @type {{default: import("@svelte-add/core/adder/config.js").AdderWithoutExplicitArgs}} */
-    const adderModule = await import(`../../adders/${adderName}/build/index.js`);
-    const adder = adderModule.default;
+    const adder = await getAdderDetails(adderName);
 
     remoteControl.disable();
 

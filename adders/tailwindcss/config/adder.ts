@@ -1,10 +1,9 @@
-import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
-import pkg from "../package.json";
+import { defineAdderConfig } from "@svelte-add/core";
 import { options } from "./options";
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
+        id: "tailwindcss",
         name: "TailwindCSS",
         description: "Rapidly build modern websites without ever leaving your HTML",
         environments: { svelte: true, kit: true },

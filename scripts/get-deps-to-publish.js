@@ -7,7 +7,8 @@
 
 // @ts-check
 import { execSync } from "node:child_process";
-import { relative } from "node:path";
+import { relative, join } from "node:path";
+import { existsSync } from "node:fs";
 
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
 
@@ -17,7 +18,7 @@ const repoPackages =
         JSON.parse(json)
     );
 
-const modifiedDirs = process.env.CHANGED_DIRS.split(" ");
+const modifiedDirs = process.env.CHANGED_DIRS.split(" ").filter((dir) => existsSync(join(dir, "package.json")));
 const packagesToPublish = new Set(modifiedDirs);
 
 // keep looping until we've acquired all dependents
@@ -31,7 +32,10 @@ while (packagesToPublish.size !== prev) {
 }
 
 // publishes packages to pkg-pr-new
-const paths = Array.from(packagesToPublish).join(" ");
+const paths = Array.from(packagesToPublish)
+    // remove all private packages
+    .filter((dir) => repoPackages.find((pkg) => pkg.path.endsWith(dir))?.private === false)
+    .join(" ");
 execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
 
 /**
@@ -41,7 +45,7 @@ execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" }
  */
 function getDependents(path) {
     const pkg = repoPackages.find((pkg) => pkg.path.endsWith(path));
-    if (!pkg) throw new Error("couldn't find package in dependency map");
+    if (!pkg) throw new Error(`package ${path} doesn't exist in this repo`);
 
     const dependents = repoPackages.filter(
         (dep) =>

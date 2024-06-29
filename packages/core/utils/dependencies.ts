@@ -1,7 +1,7 @@
 import { selectPrompt } from "./prompts";
 import preferredPackageManager from "preferred-pm";
 import { spinner } from "@svelte-add/clack-prompts";
-import { executeCli } from "./common";
+import { executeCli } from "./cli.js";
 
 /**
  * @param workingDirectory

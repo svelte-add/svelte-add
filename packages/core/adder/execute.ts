@@ -4,7 +4,7 @@ import { serializeJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { type Package, executeCli, getPackageJson } from "../utils/common.js";
+import { getPackageJson } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -28,6 +28,7 @@ import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
 import { spinner, log } from "@svelte-add/clack-prompts";
+import { executeCli } from "../utils/cli.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -55,13 +56,9 @@ export type AddersExecutionPlan = {
 
 export async function executeAdder<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>,
+    executingAdderInfo: ExecutingAdderInfo,
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
-    const adderMetadata = adderDetails.config.metadata;
-    const executingAdderInfo: ExecutingAdderInfo = {
-        name: adderMetadata.package,
-        version: adderMetadata.version,
-    };
     await executeAdders([adderDetails], executingAdderInfo, remoteControlOptions);
 }
 
@@ -310,20 +307,4 @@ async function runHooks<Args extends OptionDefinition>(
 ) {
     if (isInstall && config.installHook) await config.installHook(workspace);
     else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
-}
-
-export function generateAdderInfo(data: unknown): {
-    id: string;
-    package: string;
-    version: string;
-} {
-    const packageContent = data as Package;
-    const name = packageContent.name;
-    const id = name.replace("@svelte-add/", "");
-
-    return {
-        id,
-        package: name,
-        version: packageContent.version,
-    };
 }

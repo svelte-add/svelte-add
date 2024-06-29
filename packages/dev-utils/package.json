@@ -5,11 +5,12 @@
     "type": "module",
     "license": "MIT",
     "bin": "./index.js",
-    "dependencies": {
+    "devDependencies": {
         "@svelte-add/ast-manipulation": "workspace:^",
         "@svelte-add/ast-tooling": "workspace:^",
-        "@svelte-add/core": "workspace:^",
-        "npm-check-updates": "^16.14.20",
-        "svelte-add": "workspace:^"
+        "@svelte-add/core": "workspace:^"
+    },
+    "dependencies": {
+        "npm-check-updates": "^16.14.20"
     }
 }

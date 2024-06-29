@@ -3,7 +3,7 @@
     import BoxWrapper from "./BoxWrapper.svelte";
     import AdderImage from "./AdderImage.svelte";
     import SupportedEnvironments from "./SupportedEnvironments.svelte";
-    import type { CategoryInfo } from "../../../core/adder/categories";
+    import type { CategoryInfo } from "@svelte-add/config";
     import type { AdderMetadataWithOptions } from "./adder.js";
 
     export let adderCategories = new Map<CategoryInfo, AdderMetadataWithOptions[]>();

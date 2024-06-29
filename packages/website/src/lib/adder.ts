@@ -1,4 +1,4 @@
-import { getAdderConfig } from "svelte-add/website";
+import { getAdderConfig } from "@svelte-add/adders";
 import { adderCategories, categories, type CategoryInfo, type CategoryKeys } from "@svelte-add/config";
 import type { Question } from "../../../core/adder/options.js";
 import type { AdderConfig, AdderConfigMetadata } from "../../../core/adder/config.js";

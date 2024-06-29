@@ -8,34 +8,21 @@ import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import esbuild from "rollup-plugin-esbuild";
 import dts from "rollup-plugin-dts";
 
-const adderFolders = fs
-    .readdirSync("./adders/", { withFileTypes: true })
-    .filter((item) => item.isDirectory())
-    .map((item) => item.name);
-
 /** @type {import("rollup").RollupOptions[]} */
 const dtsConfigs = [];
 
 /**
  * @param {string} project
- * @param {boolean} isAdder
  */
-function getConfig(project, isAdder) {
+function getConfig(project) {
     const inputs = [];
     let outDir = "";
 
-    if (!isAdder) {
-        inputs.push(`./packages/${project}/index.ts`);
+    inputs.push(`./packages/${project}/index.ts`);
 
-        if (project == "cli") inputs.push(`./packages/${project}/website.ts`);
-        if (project == "core") inputs.push(`./packages/${project}/internal.ts`);
+    if (project == "core") inputs.push(`./packages/${project}/internal.ts`);
 
-        outDir = `./packages/${project}/build`;
-    } else {
-        inputs.push(`./adders/${project}/index.ts`);
-
-        outDir = `./adders/${project}/build`;
-    }
+    outDir = `./packages/${project}/build`;
 
     const projectRoot = path.resolve(path.join(outDir, ".."));
     fs.rmSync(outDir, { force: true, recursive: true });
@@ -45,8 +32,8 @@ function getConfig(project, isAdder) {
     // any dep under `dependencies` is considered external
     const externalDeps = Object.keys(pkg.dependencies ?? {});
 
-    // externalizes `svelte-add` and `@svelte-add/` deps while also bundling `/clack`
-    const external = [/^(svelte-add|@svelte-add\/(?!clack)\w*)/g, ...externalDeps];
+    // externalizes `svelte-add` and `@svelte-add/` deps while also bundling `/clack` and `/adders`
+    const external = [/^(svelte-add|@svelte-add\/(?!clack|adders)\w*)/g, ...externalDeps];
 
     /** @type {import("rollup").RollupOptions} */
     const config = {
@@ -87,21 +74,16 @@ function getConfig(project, isAdder) {
     return config;
 }
 
-const adderConfigs = [];
-for (const adder of adderFolders) {
-    adderConfigs.push(getConfig(adder, true));
-}
-
 export default [
-    getConfig("clack-core", false),
-    getConfig("clack-prompts", false),
-    getConfig("ast-tooling", false),
-    getConfig("ast-manipulation", false),
-    getConfig("config", false),
-    getConfig("core", false),
-    ...adderConfigs,
-    getConfig("cli", false),
-    getConfig("testing-library", false),
-    getConfig("dev-utils", false),
+    getConfig("clack-core"),
+    getConfig("clack-prompts"),
+    getConfig("ast-tooling"),
+    getConfig("ast-manipulation"),
+    getConfig("config"),
+    getConfig("core"),
+    getConfig("cli"),
+    getConfig("testing-library"),
+    getConfig("tests"),
+    getConfig("dev-utils"),
     ...dtsConfigs,
 ];

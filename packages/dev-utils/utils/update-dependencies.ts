@@ -15,10 +15,11 @@ export async function updateDependencies() {
 async function updateAdderDependencies() {
     const adderFolders = readdirSync("./adders/", { withFileTypes: true })
         .filter((item) => item.isDirectory())
-        .map((item) => item.name);
+        .map((item) => item.name)
+        .filter((x) => x != "node_modules");
 
     for (const adderId of adderFolders) {
-        const filePath = `./adders/${adderId}/config/adder.js`;
+        const filePath = `./adders/${adderId}/config/adder.ts`;
         const content = (await readFile(filePath)).toString();
         const { ast, exports, functions, object, array, variables, common } = getJsAstEditor(parseScript(content));
 

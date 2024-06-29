@@ -1,5 +1,4 @@
-import { defineAdderConfig, generateAdderInfo, dedent } from "@svelte-add/core";
-import pkg from "../package.json";
+import { defineAdderConfig, dedent } from "@svelte-add/core";
 import { options } from "./options";
 
 const PORTS = {
@@ -10,7 +9,7 @@ const PORTS = {
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
+        id: "drizzle",
         name: "Drizzle",
         description: "Headless ORM for NodeJS, TypeScript and JavaScript",
         environments: { svelte: false, kit: true },

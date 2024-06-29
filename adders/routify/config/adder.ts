@@ -1,11 +1,10 @@
-import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
-import pkg from "../package.json";
+import { defineAdderConfig } from "@svelte-add/core";
 import { options } from "./options";
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
-        name: "routify",
+        id: "routify",
+        name: "Routify",
         description: "The Router that Grows With You",
         environments: { svelte: true, kit: false },
         website: {

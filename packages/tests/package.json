@@ -4,10 +4,11 @@
     "version": "2.0.0",
     "type": "module",
     "license": "MIT",
-    "bin": "./index.js",
+    "bin": "./build/index.js",
     "devDependencies": {
         "@svelte-add/testing-library": "workspace:^",
-        "svelte-add": "workspace:^",
-        "@svelte-add/core": "workspace:^"
+        "@svelte-add/adders": "workspace:^",
+        "@svelte-add/core": "workspace:^",
+        "@svelte-add/config": "workspace:^"
     }
 }

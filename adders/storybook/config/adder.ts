@@ -1,10 +1,9 @@
-import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
-import pkg from "../package.json";
+import { defineAdderConfig } from "@svelte-add/core";
 import { options } from "./options.js";
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
+        id: "storybook",
         name: "Storybook",
         description: "Build UIs without the grunt work",
         environments: { kit: true, svelte: true },
