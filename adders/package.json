@@ -1,9 +1,14 @@
 {
     "name": "@svelte-add/adders",
+    "private": true,
     "version": "1.0.0",
     "type": "module",
-    "module": "./index.ts",
-    "private": true,
+    "exports": {
+        ".": {
+            "types": "./index.ts",
+            "default": "./index.ts"
+        }
+    },
     "devDependencies": {
         "@svelte-add/core": "workspace:*"
     }

@@ -7,7 +7,7 @@
 
 // @ts-check
 import { execSync } from "node:child_process";
-import { relative } from "node:path";
+import { relative, join } from "node:path";
 import { existsSync } from "node:fs";
 
 if (!process.env.CHANGED_DIRS) throw new Error("CHANGED_DIRS is missing");
@@ -18,7 +18,7 @@ const repoPackages =
         JSON.parse(json)
     );
 
-const modifiedDirs = process.env.CHANGED_DIRS.split(" ").map((dir) => (dir.startsWith("adders") ? "adders" : dir));
+const modifiedDirs = process.env.CHANGED_DIRS.split(" ").filter((dir) => existsSync(join(dir, "package.json")));
 const packagesToPublish = new Set(modifiedDirs);
 
 // keep looping until we've acquired all dependents
@@ -26,18 +26,16 @@ let prev = 0;
 while (packagesToPublish.size !== prev) {
     prev = packagesToPublish.size;
     for (const pkg of packagesToPublish) {
-        if (!existsSync(pkg)) {
-            // if a package directory does not exist anymore, it should not be published.
-            continue;
-        }
-
         const dependents = getDependents(pkg);
         dependents.forEach((dep) => packagesToPublish.add(dep));
     }
 }
 
 // publishes packages to pkg-pr-new
-const paths = Array.from(packagesToPublish).join(" ");
+const paths = Array.from(packagesToPublish)
+    // remove all private packages
+    .filter((dir) => repoPackages.find((pkg) => pkg.path.endsWith(dir))?.private === false)
+    .join(" ");
 execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
 
 /**
