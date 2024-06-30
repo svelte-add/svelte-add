@@ -1,16 +1,15 @@
-import { dedent, defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
-import pkg from "../package.json";
-import { options } from "./options";
+import { dedent, defineAdderConfig } from "@svelte-add/core";
+import { options } from "./options.js";
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
+        id: "prettier",
         name: "Prettier",
-        description: "Formatter",
+        description: "An opinionated code formatter",
         environments: { svelte: true, kit: true },
         website: {
             logo: "./prettier.svg",
-            keywords: ["prettier", "postcss", "autoprefixer"],
+            keywords: ["prettier", "code", "formatter", "formatting"],
             documentation: "https://prettier.io",
         },
     },
