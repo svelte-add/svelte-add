@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.8.2
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+-   Updated dependencies [[`46cbc00b7d3aef64c932616bc31f6285c9fd4abb`](https://github.com/svelte-add/svelte-add/commit/46cbc00b7d3aef64c932616bc31f6285c9fd4abb)]:
+    -   @svelte-add/ast-manipulation@2.1.4
+    -   @svelte-add/ast-tooling@2.1.3
+
 ## 2.8.1
 
 ### Patch Changes
