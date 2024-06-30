@@ -1,5 +1,31 @@
 # svelte-add
 
+## 2.3.2
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+-   Updated dependencies [[`46cbc00b7d3aef64c932616bc31f6285c9fd4abb`](https://github.com/svelte-add/svelte-add/commit/46cbc00b7d3aef64c932616bc31f6285c9fd4abb)]:
+    -   @svelte-add/config@1.1.1
+    -   @svelte-add/core@2.8.2
+
+## 2.3.1
+
+### Patch Changes
+
+-   chore: adjust group headers alignment ([#443](https://github.com/svelte-add/svelte-add/pull/443))
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/core@2.8.1
+    -   @svelte-add/bootstrap@1.0.17
+    -   @svelte-add/bulma@1.0.17
+    -   @svelte-add/drizzle@1.0.8
+    -   @svelte-add/mdsvex@1.0.17
+    -   @svelte-add/routify@1.0.17
+    -   @svelte-add/storybook@1.0.17
+    -   @svelte-add/tailwindcss@1.0.17
+
 ## 2.3.0
 
 ### Minor Changes

@@ -19,7 +19,7 @@ import {
     serializeScript,
     serializeSvelteFile,
 } from "@svelte-add/ast-tooling";
-import { fileExistsWorkspace, format, readFile, writeFile } from "./utils.js";
+import { fileExistsWorkspace, readFile, writeFile } from "./utils.js";
 import type { ConditionDefinition } from "../adder/config.js";
 import type { OptionDefinition } from "../adder/options.js";
 import type { Workspace } from "../utils/workspace.js";
@@ -80,7 +80,16 @@ export type FileTypes<Args extends OptionDefinition> =
     | HtmlFile<Args>
     | CssFile<Args>;
 
-export async function createOrUpdateFiles<Args extends OptionDefinition>(files: FileTypes<Args>[], workspace: Workspace<Args>) {
+/**
+ * @param files
+ * @param workspace
+ * @returns a list of paths of changed or created files
+ */
+export async function createOrUpdateFiles<Args extends OptionDefinition>(
+    files: FileTypes<Args>[],
+    workspace: Workspace<Args>,
+): Promise<string[]> {
+    const changedFiles = [];
     for (const fileDetails of files) {
         if (fileDetails.condition && !fileDetails.condition(workspace)) {
             continue;
@@ -109,9 +118,10 @@ export async function createOrUpdateFiles<Args extends OptionDefinition>(files: 
             content = handleHtmlFile(content, fileDetails, workspace);
         }
 
-        content = await format(workspace, fileDetails.name(workspace), content);
         await writeFile(workspace, fileDetails.name(workspace), content);
+        changedFiles.push(fileDetails.name(workspace));
     }
+    return changedFiles;
 }
 
 function handleHtmlFile<Args extends OptionDefinition>(

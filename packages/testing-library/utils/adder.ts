@@ -12,7 +12,11 @@ export async function runAdder(
     adderOptions[adder.config.metadata.id] = optionValues;
     const remoteControlOptions: RemoteControlOptions = { workingDirectory, isTesting: true, adderOptions };
 
-    await executeAdder({ config: adder.config, checks: adder.checks }, remoteControlOptions);
+    await executeAdder(
+        { config: adder.config, checks: adder.checks },
+        { name: "@svelte-add/testing-library", version: "latest" },
+        remoteControlOptions,
+    );
 
     const workspace = createEmptyWorkspace();
     workspace.cwd = workingDirectory;

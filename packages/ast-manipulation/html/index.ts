@@ -1,4 +1,4 @@
-import { type HtmlChildNode, HtmlDocument, HtmlElement, HtmlElementType, parseHtml } from "@svelte-add/ast-tooling";
+import { type HtmlChildNode, type HtmlDocument, HtmlElement, HtmlElementType, parseHtml } from "@svelte-add/ast-tooling";
 
 export type HtmlAstEditor = {
     ast: HtmlDocument;

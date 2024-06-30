@@ -220,32 +220,46 @@ export default class Prompt {
 
         if (this.state === "initial") {
             this.output.write(cursor.hide);
-        } else {
-            const diff = diffLines(this._prevFrame, frame);
-            this.restoreCursor();
-            // If a single line has changed, only update that line
-            if (diff && diff?.length === 1) {
-                const diffLine = diff[0];
-                this.output.write(cursor.move(0, diffLine));
-                this.output.write(erase.lines(1));
-                const lines = frame.split("\n");
-                this.output.write(lines[diffLine]);
-                this._prevFrame = frame;
-                this.output.write(cursor.move(0, lines.length - diffLine - 1));
-                return;
-                // If many lines have changed, rerender everything past the first line
-            } else if (diff && diff?.length > 1) {
-                const diffLine = diff[0];
+        }
+
+        const diff = diffLines(this._prevFrame, frame);
+        this.restoreCursor();
+        if (diff) {
+            const diffLine = diff[0];
+            const lines = frame.split("\n");
+            let newLines: string[] = [];
+
+            // If we don't have enough vertical space to print all of the lines simultaneously,
+            // then we'll sticky the prompt message (first 3 lines) to the top so it's always shown.
+            // We'll then take the remaining space and render a snippet of the list that's relative
+            // to the currently selected option
+            if (lines.length > process.stdout.rows) {
+                const OFFSET = 3;
+                const PAGE_SIZE = process.stdout.rows - OFFSET;
+
+                // @ts-expect-error `cursor` is a property that's implemented by prompts extending this class.
+                const pos: number = this.cursor;
+
+                // page positions
+                const start = pos <= OFFSET ? OFFSET : pos;
+                const end = start + PAGE_SIZE;
+
+                this.output.write(erase.down());
+
+                // stickied headers
+                const header = lines.slice(0, OFFSET);
+                const content = lines.slice(start, end);
+                newLines = newLines.concat(header, content);
+            } else {
                 this.output.write(cursor.move(0, diffLine));
                 this.output.write(erase.down());
-                const lines = frame.split("\n");
-                const newLines = lines.slice(diffLine);
-                this.output.write(newLines.join("\n"));
-                this._prevFrame = frame;
-                return;
+
+                newLines = lines.slice(diffLine);
             }
 
-            this.output.write(erase.down());
+            this.output.write(newLines.join("\n"));
+            this._prevFrame = frame;
+            return;
         }
 
         this.output.write(frame);

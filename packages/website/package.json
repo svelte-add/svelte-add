@@ -1,6 +1,6 @@
 {
     "name": "@svelte-add/website",
-    "version": "2.3.0",
+    "version": "2.3.2",
     "type": "module",
     "license": "MIT",
     "scripts": {
@@ -26,6 +26,6 @@
     "dependencies": {
         "@svelte-add/core": "workspace:^",
         "@svelte-add/config": "workspace:^",
-        "svelte-add": "workspace:^"
+        "@svelte-add/adders": "workspace:^"
     }
 }

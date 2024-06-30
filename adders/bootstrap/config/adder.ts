@@ -1,11 +1,10 @@
-import { defineAdderConfig, generateAdderInfo } from "@svelte-add/core";
-import pkg from "../package.json";
+import { defineAdderConfig } from "@svelte-add/core";
 import { options } from "./options.js";
 import type { HtmlAstEditor, JsAstEditor } from "@svelte-add/core/adder/config.js";
 
 export const adder = defineAdderConfig({
     metadata: {
-        ...generateAdderInfo(pkg),
+        id: "bootstrap",
         name: "Bootstrap",
         description: "Build fast, responsive sites with Bootstrap",
         environments: { kit: true, svelte: true },

@@ -1,5 +1,3 @@
-import * as remoteControl from "./remoteControl.js";
-import { executeAdder } from "./execute.js";
 import type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
 import type { OptionDefinition, OptionValues, Question } from "./options.js";
 import type { FileTypes } from "../files/processors.js";
@@ -25,8 +23,6 @@ export type AdderConfigEnvironments = {
 
 export type AdderConfigMetadata = {
     id: string;
-    package: string;
-    version: string;
     name: string;
     description: string;
     environments: AdderConfigEnvironments;
@@ -81,14 +77,6 @@ export function defineAdder<Args extends OptionDefinition>(
     checks: AdderCheckConfig<Args>,
     tests?: AdderTestConfig<Args>,
 ) {
-    const remoteControlled = remoteControl.isRemoteControlled();
-    if (!remoteControlled) {
-        void executeAdder({
-            config,
-            checks,
-        });
-    }
-
     const adder: Adder<Args> = { config, checks, tests };
     return adder;
 }

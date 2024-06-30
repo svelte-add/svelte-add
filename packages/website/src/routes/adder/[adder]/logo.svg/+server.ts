@@ -1,6 +1,6 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
-import { getAdderConfig } from "svelte-add/website";
+import { getAdderConfig } from "@svelte-add/adders";
 import type { RequestHandler } from "./$types.js";
 
 export const prerender = true;

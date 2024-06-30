@@ -1,6 +1,6 @@
 import * as pc from "picocolors";
 import { booleanPrompt, endPrompts, messagePrompt } from "../utils/prompts.js";
-import { executeCli } from "../utils/common.js";
+import { executeCli } from "../utils/cli.js";
 import type { AdderDetails } from "./execute.js";
 import type { Precondition } from "./config.js";
 import type { OptionDefinition } from "./options.js";

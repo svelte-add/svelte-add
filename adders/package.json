@@ -1,0 +1,15 @@
+{
+    "name": "@svelte-add/adders",
+    "private": true,
+    "version": "1.0.1",
+    "type": "module",
+    "exports": {
+        ".": {
+            "types": "./index.ts",
+            "default": "./index.ts"
+        }
+    },
+    "devDependencies": {
+        "@svelte-add/core": "workspace:*"
+    }
+}

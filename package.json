@@ -3,7 +3,6 @@
     "version": "2.0.0",
     "description": "",
     "scripts": {
-        "ci:version": "pnpm utils:readmes && pnpm utils:packages && pnpm changeset version",
         "ci:publish": "changeset publish",
         "prettier:check": "pnpm prettier . --check",
         "prettier:fix": "pnpm prettier . --write",
@@ -14,10 +13,8 @@
         "website:dev": "pnpm -C ./packages/website dev",
         "website:build": "pnpm -C ./packages/website build",
         "website:preview": "pnpm -C ./packages/website preview",
-        "test": "node ./packages/tests/index.js",
+        "test": "node ./packages/tests/build/index.js",
         "types:check": "tsc --project tsconfig.json --noEmit",
-        "utils:readmes": "node ./packages/dev-utils/build/index.js readmes",
-        "utils:packages": "node ./packages/dev-utils/build/index.js packages",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
         "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
         "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium"

@@ -4,7 +4,7 @@ import { serializeJson } from "@svelte-add/ast-tooling";
 import { commonFilePaths, format, writeFile } from "../files/utils.js";
 import { type ProjectType, createProject, detectSvelteDirectory } from "../utils/create-project.js";
 import { createOrUpdateFiles } from "../files/processors.js";
-import { type Package, executeCli, getPackageJson } from "../utils/common.js";
+import { getPackageJson } from "../utils/common.js";
 import {
     type Workspace,
     createEmptyWorkspace,
@@ -27,6 +27,8 @@ import { validatePreconditions } from "./preconditions.js";
 import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
+import { spinner, log } from "@svelte-add/clack-prompts";
+import { executeCli } from "../utils/cli.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
     config: AdderConfig<Args>;
@@ -54,13 +56,9 @@ export type AddersExecutionPlan = {
 
 export async function executeAdder<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>,
+    executingAdderInfo: ExecutingAdderInfo,
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
-    const adderMetadata = adderDetails.config.metadata;
-    const executingAdderInfo: ExecutingAdderInfo = {
-        name: adderMetadata.package,
-        version: adderMetadata.version,
-    };
     await executeAdders([adderDetails], executingAdderInfo, remoteControlOptions);
 }
 
@@ -175,6 +173,7 @@ async function executePlan<Args extends OptionDefinition>(
 
     // apply the adders
     const unmetPostconditions: string[] = [];
+    const filesToFormat = new Set<string>();
     for (const { config, checks } of adderDetails) {
         const adderId = config.metadata.id;
 
@@ -189,7 +188,8 @@ async function executePlan<Args extends OptionDefinition>(
         const isInstall = true;
         if (config.integrationType === "inline") {
             const localConfig = config as InlineAdderConfig<OptionDefinition>;
-            await processInlineAdder(localConfig, adderWorkspace, isInstall);
+            const changedFiles = await processInlineAdder(localConfig, adderWorkspace, isInstall);
+            changedFiles.forEach((file) => filesToFormat.add(file));
         } else if (config.integrationType === "external") {
             await processExternalAdder(config, executionPlan.workingDirectory, isTesting);
         } else {
@@ -206,8 +206,21 @@ async function executePlan<Args extends OptionDefinition>(
         printUnmetPostconditions(unmetPostconditions);
     }
 
+    let installStatus;
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
-        await suggestInstallingDependencies(executionPlan.workingDirectory);
+        installStatus = await suggestInstallingDependencies(executionPlan.workingDirectory);
+
+    if (installStatus === "installed" && workspace.prettier.installed) {
+        const formatSpinner = spinner();
+        formatSpinner.start("Formatting modified files");
+        try {
+            await format(workspace, Array.from(filesToFormat));
+            formatSpinner.stop("Successfully formatted modified files");
+        } catch (e) {
+            formatSpinner.stop(`Failed to format files`);
+            if (e instanceof Error) log.error(e.message);
+        }
+    }
 
     if (!isTesting) {
         displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
@@ -220,9 +233,12 @@ async function processInlineAdder<Args extends OptionDefinition>(
     workspace: Workspace<Args>,
     isInstall: boolean,
 ) {
-    await installPackages(config, workspace);
-    await createOrUpdateFiles(config.files, workspace);
+    const pkgPath = await installPackages(config, workspace);
+    const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
     await runHooks(config, workspace, isInstall);
+
+    const changedFiles = [pkgPath, ...updatedOrCreatedFiles];
+    return changedFiles;
 }
 
 async function processExternalAdder<Args extends OptionDefinition>(
@@ -280,8 +296,8 @@ export async function installPackages<Args extends OptionDefinition>(
         }
     }
 
-    const packageText = await format(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
-    await writeFile(workspace, commonFilePaths.packageJsonFilePath, packageText);
+    await writeFile(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
+    return commonFilePaths.packageJsonFilePath;
 }
 
 async function runHooks<Args extends OptionDefinition>(
@@ -291,20 +307,4 @@ async function runHooks<Args extends OptionDefinition>(
 ) {
     if (isInstall && config.installHook) await config.installHook(workspace);
     else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
-}
-
-export function generateAdderInfo(data: unknown): {
-    id: string;
-    package: string;
-    version: string;
-} {
-    const packageContent = data as Package;
-    const name = packageContent.name;
-    const id = name.replace("@svelte-add/", "");
-
-    return {
-        id,
-        package: name,
-        version: packageContent.version,
-    };
 }

@@ -1,5 +1,24 @@
 # @svelte-add/website
 
+## 2.3.2
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+-   Updated dependencies [[`46cbc00b7d3aef64c932616bc31f6285c9fd4abb`](https://github.com/svelte-add/svelte-add/commit/46cbc00b7d3aef64c932616bc31f6285c9fd4abb)]:
+    -   @svelte-add/config@1.1.1
+    -   @svelte-add/core@2.8.2
+    -   @svelte-add/adders@1.0.1
+
+## 2.3.1
+
+### Patch Changes
+
+-   Updated dependencies [[`d1e3653a932baecd616e9861a636124e2bdb153a`](https://github.com/svelte-add/svelte-add/commit/d1e3653a932baecd616e9861a636124e2bdb153a), [`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   svelte-add@2.3.1
+    -   @svelte-add/core@2.8.1
+
 ## 2.3.0
 
 ### Minor Changes
