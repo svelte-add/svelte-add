@@ -5,6 +5,7 @@ export const adderCategories: AdderCategories = {
     db: ["drizzle"],
     markdown: ["mdsvex"],
     tools: ["storybook", "routify"],
+    devTools: ["prettier"],
 };
 
 export const adderIds = Object.values(adderCategories).flatMap((x) => x);

@@ -4,7 +4,7 @@ export type CategoryInfo = {
     description: string;
 };
 
-export type CategoryKeys = "css" | "tools" | "db" | "markdown";
+export type CategoryKeys = "css" | "tools" | "db" | "markdown" | "devTools";
 export type CategoryDetails = Record<CategoryKeys, CategoryInfo>;
 
 export type AdderCategories = Record<CategoryKeys, string[]>;
@@ -28,6 +28,11 @@ export const categories: CategoryDetails = {
     markdown: {
         id: "markdown",
         name: "Markdown",
+        description: "",
+    },
+    devTools: {
+        id: "devTools",
+        name: "Developer tools",
         description: "",
     },
 };
