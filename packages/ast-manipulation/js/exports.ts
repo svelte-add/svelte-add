@@ -20,7 +20,7 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
         return { astNode: node, value: fallbackDeclaration };
     }
 
-    const exportDefaultDeclaration = existingNode as AstTypes.ExportDefaultDeclaration;
+    const exportDefaultDeclaration = existingNode;
 
     if (exportDefaultDeclaration.declaration.type == "Identifier") {
         // in this case the export default declaration is only referencing a variable, get that variable
