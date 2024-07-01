@@ -4,12 +4,17 @@ export type CategoryInfo = {
     description: string;
 };
 
-export type CategoryKeys = "css" | "db" | "devTools" | "markdown" | "tools";
+export type CategoryKeys = "common" | "css" | "db" | "markdown" | "tools";
 export type CategoryDetails = Record<CategoryKeys, CategoryInfo>;
 
 export type AdderCategories = Record<CategoryKeys, string[]>;
 
 export const categories: CategoryDetails = {
+    common: {
+        id: "common",
+        name: "Common Tooling",
+        description: "",
+    },
     css: {
         id: "css",
         name: "CSS",
@@ -28,11 +33,6 @@ export const categories: CategoryDetails = {
     markdown: {
         id: "markdown",
         name: "Markdown",
-        description: "",
-    },
-    devTools: {
-        id: "devTools",
-        name: "Developer tools",
         description: "",
     },
 };
