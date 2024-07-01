@@ -1,7 +1,7 @@
 import type { AdderCategories } from "../categories";
 
 export const adderCategories: AdderCategories = {
-    common: ["prettier"],
+    linters: ["prettier"],
     css: ["tailwindcss", "bulma", "bootstrap"],
     db: ["drizzle"],
     markdown: ["mdsvex"],
