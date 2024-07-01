@@ -296,8 +296,20 @@ export async function installPackages<Args extends OptionDefinition>(
         }
     }
 
+    if (data.dependencies) data.dependencies = alphabetizeProperties(data.dependencies);
+    if (data.devDependencies) data.devDependencies = alphabetizeProperties(data.devDependencies);
+
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
     return commonFilePaths.packageJsonFilePath;
+}
+
+function alphabetizeProperties(obj: Record<string, string>) {
+    const orderedObj: Record<string, string> = {};
+    const sortedEntries = Object.entries(obj).sort(([a], [b]) => a.localeCompare(b));
+    for (const [key, value] of sortedEntries) {
+        orderedObj[key] = value;
+    }
+    return orderedObj;
 }
 
 async function runHooks<Args extends OptionDefinition>(
