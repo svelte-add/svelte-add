@@ -173,9 +173,9 @@ export function parseJson(content: string) {
     return fleece.evaluate(content);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function serializeJson(originalInput: string, data: any) {
+export function serializeJson(originalInput: string, data: unknown) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.
-    return fleece.patch(originalInput, data);
+    // return fleece.patch(originalInput, data);
+    return fleece.stringify(data);
 }
