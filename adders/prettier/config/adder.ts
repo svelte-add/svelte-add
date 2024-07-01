@@ -43,10 +43,15 @@ export const adder = defineAdderConfig({
             name: () => ".prettierrc",
             contentType: "json",
             content: ({ data }) => {
-                data.useTabs ??= true;
-                data.singleQuote ??= true;
-                data.trailingComma ??= "none";
-                data.printWidth ??= 100;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                if (Object.keys(data).length === 0) {
+                    // we'll only set these defaults if there is no pre-existing config
+                    data.useTabs = true;
+                    data.singleQuote = true;
+                    data.trailingComma = "none";
+                    data.printWidth = 100;
+                }
+
                 data.plugins ??= [];
                 data.overrides ??= [];
 
@@ -70,11 +75,12 @@ export const adder = defineAdderConfig({
                 const scripts: Record<string, string> = data.scripts;
                 const CHECK_CMD = "prettier --check .";
                 scripts["format"] ??= "prettier --write .";
-                scripts["format:check"] ??= CHECK_CMD;
 
                 if (hasEslint(dependencies)) {
                     scripts["lint"] ??= `${CHECK_CMD} && eslint .`;
                     if (!scripts["lint"].includes(CHECK_CMD)) scripts["lint"] += ` && ${CHECK_CMD}`;
+                } else {
+                    scripts["lint"] ??= CHECK_CMD;
                 }
             },
         },
