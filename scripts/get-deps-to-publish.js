@@ -39,8 +39,7 @@ const paths = Array.from(packagesToPublish)
     .filter((dir) => repoPackages.find((pkg) => pkg.path.endsWith(dir))?.private === false)
     .join(" ");
 
-console.log(paths);
-// execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
+execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
 
 /**
  * Finds all dependents and returns their relative paths.
