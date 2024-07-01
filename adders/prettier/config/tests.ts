@@ -5,10 +5,5 @@ export const tests = defineAdderTests({
     files: [],
     options,
     optionValues: [],
-    tests: [
-        {
-            name: "todo",
-            run: async () => {},
-        },
-    ],
+    tests: [],
 });
