@@ -23,7 +23,7 @@
     "license": "MIT",
     "devDependencies": {
         "sisteransi": "^1.0.5",
-        "picocolors": "^1.0.0",
+        "picocolors": "^1.0.1",
         "wrap-ansi": "^8.1.0"
     }
 }
