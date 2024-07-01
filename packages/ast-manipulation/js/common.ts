@@ -21,6 +21,13 @@ export function typeAnnotateExpression(node: AstKinds.ExpressionKind, type: stri
     return expression;
 }
 
+export function createSpreadElement(expression: AstKinds.ExpressionKind): AstTypes.SpreadElement {
+    return {
+        type: "SpreadElement",
+        argument: expression,
+    };
+}
+
 export function createLiteral(value: string | null = null) {
     const literal: AstTypes.Literal = {
         type: "Literal",
