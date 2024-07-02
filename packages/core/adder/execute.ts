@@ -181,6 +181,10 @@ async function executePlan<Args extends OptionDefinition>(
 
         return a.config.runsAfter.includes(b.config.metadata.id) ? 1 : b.config.runsAfter.includes(a.config.metadata.id) ? -1 : 0;
     });
+    console.log(
+        "adder order: ",
+        adderDetails.map((x) => x.config.metadata.id),
+    );
 
     // apply the adders
     const unmetPostconditions: string[] = [];
