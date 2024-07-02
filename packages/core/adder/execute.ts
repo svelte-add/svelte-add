@@ -171,6 +171,17 @@ async function executePlan<Args extends OptionDefinition>(
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
 
+    // adders might specify that they should be executed after another adder.
+    // this orders the adders to (ideally) have adders without dependencies run first
+    // and adders with dependencies runs later on, based on the adders they depend on.
+    // based on https://stackoverflow.com/a/72030336/16075084
+    adderDetails = adderDetails.sort((a, b) => {
+        if (!a.config.runsAfter) return -1;
+        if (!b.config.runsAfter) return 1;
+
+        return a.config.runsAfter.includes(b.config.metadata.id) ? 1 : b.config.runsAfter.includes(a.config.metadata.id) ? -1 : 0;
+    });
+
     // apply the adders
     const unmetPostconditions: string[] = [];
     const filesToFormat = new Set<string>();
