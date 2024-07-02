@@ -39,13 +39,13 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
 export function overrideProperty<T extends AstKinds.ExpressionKind>(ast: AstTypes.ObjectExpression, name: string, value: T) {
     const objectExpression = ast;
     const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty");
-    const property = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
+    const prop = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
 
-    if (!property) {
-        throw new Error(`cannot override non existent property '${name}'`);
+    if (!prop) {
+        return property(ast, name, value);
     }
 
-    property.value = value;
+    prop.value = value;
 
     return value;
 }
