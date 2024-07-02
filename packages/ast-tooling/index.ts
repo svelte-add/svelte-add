@@ -2,7 +2,7 @@ import { parse as tsParse } from "recast/parsers/typescript.js";
 import { parse as recastParse, print as recastPrint } from "recast";
 import { Document, Element, Text, type ChildNode } from "domhandler";
 import { ElementType, parseDocument } from "htmlparser2";
-import { appendChild, removeElement, textContent } from "domutils";
+import { appendChild, prependChild, removeElement, textContent } from "domutils";
 import serializeDom from "dom-serializer";
 import { Root as CssAst, Declaration, Rule, AtRule, Comment } from "postcss";
 import { parse as postcssParse } from "postcss";
@@ -147,7 +147,7 @@ export function serializeSvelteFile(asts: SvelteAst) {
         }
 
         appendChild(scriptTag, new Text(newScriptValue));
-        appendChild(htmlAst, scriptTag);
+        prependChild(htmlAst, scriptTag);
     }
 
     if (css.length > 0) {
