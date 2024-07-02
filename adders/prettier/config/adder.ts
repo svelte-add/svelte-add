@@ -1,4 +1,4 @@
-import { dedent, defineAdderConfig } from "@svelte-add/core";
+import { dedent, defineAdderConfig, log, colors } from "@svelte-add/core";
 import { options } from "./options.js";
 
 export const adder = defineAdderConfig({
@@ -87,7 +87,15 @@ export const adder = defineAdderConfig({
         {
             name: () => "eslint.config.js",
             contentType: "script",
-            condition: ({ dependencies }) => hasEslint(dependencies),
+            condition: ({ dependencies }) => {
+                const isInstalled = hasEslint(dependencies);
+                if (!isInstalled) {
+                    log.warn(
+                        `An older major version of ${colors.yellow("eslint")} was detected. Skipping ${colors.yellow("eslint-config-prettier")} installation.`,
+                    );
+                }
+                return isInstalled;
+            },
             content: ({ ast, imports, exports, common }) => {
                 // TODO: maybe this could be more intelligent and we can detect the name of the default import?
                 imports.addDefault(ast, "eslint-plugin-svelte", "svelte");
