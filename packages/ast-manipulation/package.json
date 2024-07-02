@@ -13,7 +13,8 @@
         "build"
     ],
     "dependencies": {
-        "@svelte-add/ast-tooling": "workspace:^"
+        "@svelte-add/ast-tooling": "workspace:^",
+        "decircular": "^1.0.0"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {

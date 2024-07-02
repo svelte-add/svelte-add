@@ -80,6 +80,9 @@ importers:
       '@svelte-add/ast-tooling':
         specifier: workspace:^
         version: link:../ast-tooling
+      decircular:
+        specifier: ^1.0.0
+        version: 1.0.0
 
   packages/ast-tooling:
     devDependencies:
@@ -1261,6 +1264,10 @@ packages:
     peerDependenciesMeta:
       supports-color:
         optional: true
+
+  decircular@1.0.0:
+    resolution: {integrity: sha512-YhCtYW0jQs9+gzL2vDLxanRhMHeKa55kw5z2oheI6D+MQA7KafrqtiGKhhpKCLZQurm2a9h0LkP9T5z5gy+A0A==}
+    engines: {node: '>=18'}
 
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
@@ -4143,6 +4150,8 @@ snapshots:
   debug@4.3.5:
     dependencies:
       ms: 2.1.2
+
+  decircular@1.0.0: {}
 
   decompress-response@6.0.0:
     dependencies:
