@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.8.3
+
+### Patch Changes
+
+-   fix: `dependencies` and `devDependencies` are now properly sorted after modification ([#463](https://github.com/svelte-add/svelte-add/pull/463))
+
 ## 2.8.2
 
 ### Patch Changes
