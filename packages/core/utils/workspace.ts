@@ -24,6 +24,7 @@ export type Workspace<Args extends OptionDefinition> = {
     prettier: PrettierData;
     typescript: TypescriptData;
     kit: SvelteKitData;
+    dependencies: Record<string, string>;
 };
 
 export type WorkspaceWithoutExplicitArgs = Workspace<Record<string, Question>>;
@@ -71,6 +72,11 @@ export async function populateWorkspaceDetails(workspace: WorkspaceWithoutExplic
         workspace.typescript.installed = "tslib" in packageJson.devDependencies;
         workspace.prettier.installed = "prettier" in packageJson.devDependencies;
         workspace.kit.installed = "@sveltejs/kit" in packageJson.devDependencies;
+        workspace.dependencies = { ...packageJson.devDependencies, ...packageJson.dependencies };
+        for (const [key, value] of Object.entries(workspace.dependencies)) {
+            // removes the version ranges (e.g. `^` is removed from: `^9.0.0`)
+            workspace.dependencies[key] = value.replaceAll(/[^\d|.]/g, "");
+        }
     }
 
     await parseSvelteConfigIntoWorkspace(workspace);
