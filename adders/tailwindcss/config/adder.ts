@@ -92,8 +92,7 @@ export const adder = defineAdderConfig({
             content: ({ js, html }) => {
                 js.imports.addEmpty(js.ast, "../app.css");
                 const slot = html.element("slot");
-                // @ts-expect-error should be compatible
-                if (!js.common.hasNode(html.ast.childNodes, slot)) {
+                if (html.ast.childNodes.length === 0) {
                     html.ast.childNodes.push(slot);
                 }
             },
