@@ -52,7 +52,7 @@ export function parseScript(content: string): AstTypes.Program {
         },
     });
 
-    return stripAst(recastOutput.program, "loc");
+    return recastOutput.program;
 }
 
 export function serializeScript(ast: AstTypes.ASTNode) {
@@ -94,8 +94,7 @@ export function stripAst<T>(node: T, propToRemove: string): T {
         }
     }
 
-    // we do this to transform nodes into POJOs
-    return structuredClone(node);
+    return node;
 }
 
 export type SvelteAst = {

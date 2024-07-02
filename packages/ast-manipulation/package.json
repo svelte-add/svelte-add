@@ -15,6 +15,9 @@
     "dependencies": {
         "@svelte-add/ast-tooling": "workspace:^"
     },
+    "devDependencies": {
+        "decircular": "^1.0.0"
+    },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
         "type": "git",
