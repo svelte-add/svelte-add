@@ -137,10 +137,25 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
     const options = program.opts();
 
     if (multipleAdders) {
-        options.adder = program.args;
+        const selectedAdderIds: string[] = program.args ?? [];
+        validateAddersOrExit<Args>(adderDetails, selectedAdderIds);
+
+        options.adder = selectedAdderIds;
     }
 
     return options;
+}
+
+function validateAddersOrExit<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[], selectedAdderIds: string[]) {
+    const validAdderIds = adderDetails.map((x) => x.config.metadata.id);
+    const invalidAdders = selectedAdderIds.filter((x) => !validAdderIds.includes(x));
+
+    if (invalidAdders.length > 0) {
+        console.log("Invalid adder(s) selected:", invalidAdders.join(", "));
+        process.exit(0);
+    }
+
+    return selectedAdderIds;
 }
 
 export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
