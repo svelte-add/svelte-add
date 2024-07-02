@@ -91,8 +91,8 @@ export const adder = defineAdderConfig({
             contentType: "svelte",
             content: ({ js, html }) => {
                 js.imports.addEmpty(js.ast, "../app.css");
-                const slot = html.element("slot");
                 if (html.ast.childNodes.length === 0) {
+                    const slot = html.element("slot");
                     html.ast.childNodes.push(slot);
                 }
             },
