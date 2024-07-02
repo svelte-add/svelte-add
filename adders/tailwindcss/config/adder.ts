@@ -92,7 +92,9 @@ export const adder = defineAdderConfig({
             content: ({ js, html }) => {
                 js.imports.addEmpty(js.ast, "../app.css");
                 const slot = html.element("slot");
-                html.ast.childNodes.push(slot);
+                if (html.ast.childNodes.length === 0) {
+                    html.ast.childNodes.push(slot);
+                }
             },
             condition: ({ kit }) => kit.installed,
         },
