@@ -80,6 +80,7 @@ importers:
       '@svelte-add/ast-tooling':
         specifier: workspace:^
         version: link:../ast-tooling
+    devDependencies:
       decircular:
         specifier: ^1.0.0
         version: 1.0.0
