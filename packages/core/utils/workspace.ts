@@ -82,11 +82,8 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
     const ast = parseScript(configText);
     const editor = getJsAstEditor(ast);
 
-    let defaultExport = ast.body.find((s) => s.type === "ExportDefaultDeclaration");
-    if (!defaultExport) {
-        defaultExport = { type: "ExportDefaultDeclaration", declaration: editor.object.createEmpty() };
-        ast.body.push(defaultExport);
-    }
+    const defaultExport = ast.body.find((s) => s.type === "ExportDefaultDeclaration");
+    if (!defaultExport) throw Error("Missing default export in `svelte.config.js`");
 
     let objectExpression: AstTypes.ObjectExpression | undefined;
     if (defaultExport.declaration.type === "Identifier") {
