@@ -96,8 +96,7 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
             if (statement.type !== "VariableDeclaration") continue;
             // prettier-ignore
             Walker.walk(statement as AstTypes.ASTNode, {}, {
-                    VariableDeclarator(node, ctx) {
-                        if (objectExpression) ctx.stop();
+                    VariableDeclarator(node) {
                         if (node.id.type === "Identifier" && node.id.name === configIdentifier) {
                             if (node.init?.type !== "ObjectExpression")
                                 throw Error("Unable to find svelte config object expression from `svelte.config.js`");
