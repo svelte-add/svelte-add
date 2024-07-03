@@ -87,14 +87,15 @@ export const adder = defineAdderConfig({
         {
             name: () => "eslint.config.js",
             contentType: "script",
-            condition: ({ dependencies }) => {
-                const isInstalled = hasEslint(dependencies);
-                if (!isInstalled) {
+            condition: ({ dependencies: deps }) => {
+                // We only want this to execute when it's `false`, not falsy
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+                if (deps["eslint"]?.startsWith(SUPPORTED_ESLINT_VERSION) === false) {
                     log.warn(
                         `An older major version of ${colors.yellow("eslint")} was detected. Skipping ${colors.yellow("eslint-config-prettier")} installation.`,
                     );
                 }
-                return isInstalled;
+                return hasEslint(deps);
             },
             content: ({ ast, imports, exports, common }) => {
                 // TODO: maybe this could be more intelligent and we can detect the name of the default import?
@@ -137,6 +138,8 @@ export const adder = defineAdderConfig({
     ],
 });
 
+const SUPPORTED_ESLINT_VERSION = "9";
+
 function hasEslint(deps: Record<string, string>): boolean {
-    return !!deps["eslint"] && deps["eslint"].startsWith("9");
+    return !!deps["eslint"] && deps["eslint"].startsWith(SUPPORTED_ESLINT_VERSION);
 }
