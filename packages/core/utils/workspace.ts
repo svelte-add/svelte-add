@@ -94,10 +94,8 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
         const configIdentifier = defaultExport.declaration.name;
         for (const statement of ast.body) {
             if (statement.type !== "VariableDeclaration") continue;
-            Walker.walk(
-                statement as AstTypes.ASTNode,
-                {},
-                {
+            // prettier-ignore
+            Walker.walk(statement as AstTypes.ASTNode, {}, {
                     VariableDeclarator(node, ctx) {
                         if (objectExpression) ctx.stop();
                         if (node.id.type === "Identifier" && node.id.name === configIdentifier) {
