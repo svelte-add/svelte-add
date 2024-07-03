@@ -1,4 +1,5 @@
 import { type AstKinds, type AstTypes, Walker, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import dedent from "dedent";
 
 export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
     const comment: AstTypes.CommentBlock = {
@@ -51,7 +52,7 @@ export function expressionStatement(expression: AstKinds.ExpressionKind) {
 }
 
 export function addFromString(ast: AstTypes.BlockStatement | AstTypes.Program, value: string) {
-    const program = parseScript(value);
+    const program = parseScript(dedent(value));
 
     for (const childNode of program.body) {
         ast.body.push(childNode);
@@ -59,7 +60,7 @@ export function addFromString(ast: AstTypes.BlockStatement | AstTypes.Program, v
 }
 
 export function expressionFromString(value: string): AstKinds.ExpressionKind {
-    const program = parseScript(value);
+    const program = parseScript(dedent(value));
     const statement = program.body[0];
     if (statement.type !== "ExpressionStatement") {
         throw new Error("value passed was not an expression");
@@ -69,7 +70,7 @@ export function expressionFromString(value: string): AstKinds.ExpressionKind {
 }
 
 export function statementFromString(value: string): AstKinds.StatementKind {
-    const program = parseScript(value);
+    const program = parseScript(dedent(value));
     const statement = program.body[0];
 
     return statement;
