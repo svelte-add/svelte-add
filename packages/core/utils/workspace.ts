@@ -1,4 +1,4 @@
-import { type AstTypes, parseScript, Walker } from "@svelte-add/ast-tooling";
+import { type AstTypes, parseScript } from "@svelte-add/ast-tooling";
 import { getPackageJson } from "./common.js";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
@@ -91,20 +91,19 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
     let objectExpression: AstTypes.ObjectExpression | undefined;
     if (defaultExport.declaration.type === "Identifier") {
         // e.g. `export default config;`
-        const configIdentifier = defaultExport.declaration.name;
-        for (const statement of ast.body) {
-            if (statement.type !== "VariableDeclaration") continue;
-            // prettier-ignore
-            Walker.walk(statement as AstTypes.ASTNode, {}, {
-                    VariableDeclarator(node) {
-                        if (node.id.type === "Identifier" && node.id.name === configIdentifier) {
-                            if (node.init?.type !== "ObjectExpression")
-                                throw Error("Unable to find svelte config object expression from `svelte.config.js`");
-                            objectExpression = node.init;
-                        }
-                    },
-                },
+        const identifier = defaultExport.declaration;
+        for (const declaration of ast.body) {
+            if (declaration.type !== "VariableDeclaration") continue;
+
+            const declarator = declaration.declarations.find(
+                (d): d is AstTypes.VariableDeclarator =>
+                    d.type === "VariableDeclarator" && d.id.type === "Identifier" && d.id.name === identifier.name,
             );
+
+            if (declarator?.init?.type !== "ObjectExpression")
+                throw Error("Unable to find svelte config object expression from `svelte.config.js`");
+
+            objectExpression = declarator.init;
         }
     } else if (defaultExport.declaration.type === "ObjectExpression") {
         // e.g. `export default { ... };`
