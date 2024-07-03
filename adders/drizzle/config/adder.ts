@@ -195,16 +195,19 @@ export const adder = defineAdderConfig({
                 const authToken =
                     options.sqlite === "turso" ? common.expressionFromString("process.env.DATABASE_AUTH_TOKEN") : undefined;
 
-                object.overrideProperties(objExpression, {
+                object.properties(objExpression, {
                     schema: common.createLiteral(`./src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`),
-                    dialect: common.createLiteral(options.database),
-                    driver: driver,
                     dbCredentials: object.create({
                         url: common.expressionFromString("process.env.DATABASE_URL"),
                         authToken: authToken,
                     }),
                     verbose: { type: "BooleanLiteral", value: true },
                     strict: { type: "BooleanLiteral", value: true },
+                });
+
+                object.overrideProperties(objExpression, {
+                    dialect: common.createLiteral(options.database),
+                    driver: driver,
                 });
             },
         },
