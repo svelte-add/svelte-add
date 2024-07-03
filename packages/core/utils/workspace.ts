@@ -100,7 +100,7 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
                         if (objectExpression) ctx.stop();
                         if (node.id.type === "Identifier" && node.id.name === configIdentifier) {
                             if (node.init?.type !== "ObjectExpression")
-                                throw Error("Unable to find svelte config object from `svelte.config.js`");
+                                throw Error("Unable to find svelte config object expression from `svelte.config.js`");
                             objectExpression = node.init;
                         }
                     },
