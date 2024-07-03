@@ -50,6 +50,27 @@ export function overrideProperty<T extends AstKinds.ExpressionKind>(ast: AstType
     return value;
 }
 
+export function overrideProperties<T extends AstKinds.ExpressionKind>(
+    ast: AstTypes.ObjectExpression,
+    obj: Record<string, T | undefined>,
+) {
+    for (const [prop, value] of Object.entries(obj)) {
+        if (value === undefined) continue;
+        overrideProperty(ast, prop, value);
+    }
+}
+
+export function create<T extends AstKinds.ExpressionKind>(obj: Record<string, T | undefined>): AstTypes.ObjectExpression {
+    const objExpression = createEmpty();
+
+    for (const [prop, value] of Object.entries(obj)) {
+        if (value === undefined) continue;
+        property(objExpression, prop, value);
+    }
+
+    return objExpression;
+}
+
 export function createEmpty() {
     const objectExpression: AstTypes.ObjectExpression = {
         type: "ObjectExpression",

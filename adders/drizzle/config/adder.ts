@@ -191,25 +191,21 @@ export const adder = defineAdderConfig({
                 const objExpression = exportDefault.arguments?.[0];
                 if (!objExpression || objExpression.type !== "ObjectExpression") return;
 
-                const schemaPath = common.createLiteral(`./src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`);
-                object.overrideProperty(objExpression, "schema", schemaPath);
-                object.overrideProperty(objExpression, "dialect", common.createLiteral(options.database));
+                const driver = options.sqlite === "turso" ? common.createLiteral("turso") : undefined;
+                const authToken =
+                    options.sqlite === "turso" ? common.expressionFromString("process.env.DATABASE_AUTH_TOKEN") : undefined;
 
-                const dbCredentials = object.createEmpty();
-                object.overrideProperty(dbCredentials, "url", common.expressionFromString("process.env.DATABASE_URL"));
-
-                if (options.sqlite === "turso") {
-                    object.overrideProperty(objExpression, "driver", common.createLiteral("turso"));
-                    object.overrideProperty(
-                        dbCredentials,
-                        "authToken",
-                        common.expressionFromString("process.env.DATABASE_AUTH_TOKEN"),
-                    );
-                }
-
-                object.overrideProperty(objExpression, "dbCredentials", dbCredentials);
-                object.overrideProperty(objExpression, "verbose", { type: "BooleanLiteral", value: true });
-                object.overrideProperty(objExpression, "strict", { type: "BooleanLiteral", value: true });
+                object.overrideProperties(objExpression, {
+                    schema: common.createLiteral(`./src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`),
+                    dialect: common.createLiteral(options.database),
+                    driver: driver,
+                    dbCredentials: object.create({
+                        url: common.expressionFromString("process.env.DATABASE_URL"),
+                        authToken: authToken,
+                    }),
+                    verbose: { type: "BooleanLiteral", value: true },
+                    strict: { type: "BooleanLiteral", value: true },
+                });
             },
         },
         {
