@@ -57,8 +57,3 @@ export function createEmpty() {
     };
     return objectExpression;
 }
-
-export type ExportDefaultReturn<T> = {
-    astNode: AstTypes.ExportDefaultDeclaration;
-    value: T;
-};
