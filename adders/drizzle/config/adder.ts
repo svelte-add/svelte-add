@@ -203,12 +203,16 @@ export const adder = defineAdderConfig({
                     }),
                     verbose: { type: "BooleanLiteral", value: true },
                     strict: { type: "BooleanLiteral", value: true },
+                    driver,
                 });
 
                 object.overrideProperties(objExpression, {
                     dialect: common.createLiteral(options.database),
-                    driver: driver,
                 });
+
+                // The `driver` property is only required for _some_ sqlite DBs.
+                // We'll need to remove it if it's anything but sqlite
+                if (options.database !== "sqlite") object.removeProperty(objExpression, "driver");
             },
         },
         {
