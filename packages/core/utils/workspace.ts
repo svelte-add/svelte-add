@@ -1,4 +1,4 @@
-import { type AstTypes, parseScript } from "@svelte-add/ast-tooling";
+import { type AstTypes, parseScript, Walker } from "@svelte-add/ast-tooling";
 import { getPackageJson } from "./common.js";
 import { commonFilePaths, readFile } from "../files/utils.js";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
@@ -81,9 +81,36 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
     const configText = await readFile(workspace, commonFilePaths.svelteConfigFilePath);
     const ast = parseScript(configText);
     const editor = getJsAstEditor(ast);
-    const variableDeclaration = ast.body.find((x) => x.type == "VariableDeclaration") as AstTypes.VariableDeclaration;
-    const variableDeclarator = variableDeclaration.declarations[0] as AstTypes.VariableDeclarator;
-    const objectExpression = variableDeclarator.init as AstTypes.ObjectExpression;
+
+    const { astNode: defaultExport } = editor.exports.defaultExport(ast, editor.object.createEmpty());
+
+    let objectExpression: AstTypes.ObjectExpression | undefined;
+    if (defaultExport.declaration.type === "Identifier") {
+        // e.g. `export default config;`
+        const configIdentifier = defaultExport.declaration.name;
+        for (const statement of ast.body) {
+            if (statement.type !== "VariableDeclaration") return false;
+            Walker.walk(
+                statement as AstTypes.ASTNode,
+                {},
+                {
+                    VariableDeclarator(node, ctx) {
+                        if (objectExpression) ctx.stop();
+                        if (node.id.type === "Identifier" && node.id.name === configIdentifier) {
+                            if (node.init?.type !== "ObjectExpression")
+                                throw Error("Unable to find svelte config object from `svelte.config.js`");
+                            objectExpression = node.init;
+                        }
+                    },
+                },
+            );
+        }
+    } else if (defaultExport.declaration.type === "ObjectExpression") {
+        // e.g. `export default { ... };`
+        objectExpression = defaultExport.declaration;
+    }
+    // We'll error out since we can't safely determine the config object
+    if (!objectExpression) throw new Error("Unexpected svelte config shape from `svelte.config.js`");
 
     const kit = editor.object.property(objectExpression, "kit", editor.object.createEmpty());
     const files = editor.object.property(kit, "files", editor.object.createEmpty());
