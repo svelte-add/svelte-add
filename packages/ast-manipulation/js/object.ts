@@ -70,6 +70,15 @@ export function properties<T extends AstKinds.ExpressionKind>(
     }
 }
 
+export function removeProperty(ast: AstTypes.ObjectExpression, property: string) {
+    const properties = ast.properties.filter((x): x is AstTypes.ObjectProperty => x.type === "ObjectProperty");
+    const prop = properties.findIndex((x) => (x.key as AstTypes.Identifier).name === property);
+
+    if (prop !== -1) {
+        ast.properties = ast.properties.splice(prop, 1);
+    }
+}
+
 export function create<T extends AstKinds.ExpressionKind>(obj: Record<string, T | undefined>): AstTypes.ObjectExpression {
     const objExpression = createEmpty();
 
