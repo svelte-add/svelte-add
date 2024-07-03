@@ -82,14 +82,18 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
     const ast = parseScript(configText);
     const editor = getJsAstEditor(ast);
 
-    const { astNode: defaultExport } = editor.exports.defaultExport(ast, editor.object.createEmpty());
+    let defaultExport = ast.body.find((s) => s.type === "ExportDefaultDeclaration");
+    if (!defaultExport) {
+        defaultExport = { type: "ExportDefaultDeclaration", declaration: editor.object.createEmpty() };
+        ast.body.push(defaultExport);
+    }
 
     let objectExpression: AstTypes.ObjectExpression | undefined;
     if (defaultExport.declaration.type === "Identifier") {
         // e.g. `export default config;`
         const configIdentifier = defaultExport.declaration.name;
         for (const statement of ast.body) {
-            if (statement.type !== "VariableDeclaration") return false;
+            if (statement.type !== "VariableDeclaration") continue;
             Walker.walk(
                 statement as AstTypes.ASTNode,
                 {},
