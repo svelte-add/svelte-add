@@ -97,11 +97,12 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
                     d.type === "VariableDeclarator" && d.id.type === "Identifier" && d.id.name === identifier.name,
             );
 
-            if (declarator?.init?.type !== "ObjectExpression")
-                throw Error("Unable to find svelte config object expression from `svelte.config.js`");
+            if (declarator?.init?.type !== "ObjectExpression") continue;
 
             objectExpression = declarator.init;
         }
+
+        if (!objectExpression) throw Error("Unable to find svelte config object expression from `svelte.config.js`");
     } else if (defaultExport.declaration.type === "ObjectExpression") {
         // e.g. `export default { ... };`
         objectExpression = defaultExport.declaration;
