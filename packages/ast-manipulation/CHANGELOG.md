@@ -1,5 +1,11 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.5
+
+### Patch Changes
+
+-   chore: `overrideProperty` will now create the property if it's missing ([#470](https://github.com/svelte-add/svelte-add/pull/470))
+
 ## 2.1.4
 
 ### Patch Changes
