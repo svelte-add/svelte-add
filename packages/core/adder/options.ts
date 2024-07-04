@@ -137,8 +137,8 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
     const options = program.opts();
 
     if (multipleAdders) {
-        const selectedAdderIds: string[] = program.args ?? [];
-        validateAddersOrExit<Args>(adderDetails, selectedAdderIds);
+        const selectedAdderIds = program.args ?? [];
+        validateAdders(adderDetails, selectedAdderIds);
 
         options.adder = selectedAdderIds;
     }
@@ -146,16 +146,14 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
     return options;
 }
 
-function validateAddersOrExit<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[], selectedAdderIds: string[]) {
+function validateAdders<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[], selectedAdderIds: string[]) {
     const validAdderIds = adderDetails.map((x) => x.config.metadata.id);
     const invalidAdders = selectedAdderIds.filter((x) => !validAdderIds.includes(x));
 
     if (invalidAdders.length > 0) {
-        console.log("Invalid adder(s) selected:", invalidAdders.join(", "));
-        process.exit(0);
+        console.error(`Invalid adder${invalidAdders.length > 1 ? "s" : ""} selected:`, invalidAdders.join(", "));
+        process.exit(1);
     }
-
-    return selectedAdderIds;
 }
 
 export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
