@@ -1,5 +1,12 @@
 # @svelte-add/testing-library
 
+## 2.1.4
+
+### Patch Changes
+
+-   Updated dependencies [[`2324fd36aee97fa3c4ebd98af30f69b8c1d982f9`](https://github.com/svelte-add/svelte-add/commit/2324fd36aee97fa3c4ebd98af30f69b8c1d982f9), [`bd5fb8fda0523cccc6874f56758e2d5ec2498cc5`](https://github.com/svelte-add/svelte-add/commit/bd5fb8fda0523cccc6874f56758e2d5ec2498cc5), [`b5d984e7926b9058dc25a9dc6c40eebc908edf12`](https://github.com/svelte-add/svelte-add/commit/b5d984e7926b9058dc25a9dc6c40eebc908edf12), [`8c9dcebebecd42d485c35fd9eab607e4467f874e`](https://github.com/svelte-add/svelte-add/commit/8c9dcebebecd42d485c35fd9eab607e4467f874e)]:
+    -   @svelte-add/core@2.9.0
+
 ## 2.1.3
 
 ### Patch Changes
