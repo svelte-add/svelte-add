@@ -15,7 +15,6 @@ export const adder = defineAdderConfig({
     },
     options,
     integrationType: "inline",
-    runsAfter: ["tailwindcss", "bootstrap"],
     packages: [
         { name: "bulma", version: "^1.0.1", dev: true },
         { name: "sass", version: "^1.77.5", dev: true, condition: ({ options }) => options.useSass },

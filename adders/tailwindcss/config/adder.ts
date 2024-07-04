@@ -15,7 +15,6 @@ export const adder = defineAdderConfig({
     },
     options,
     integrationType: "inline",
-    runsAfter: ["mdsvex"],
     packages: [
         { name: "tailwindcss", version: "^3.4.4", dev: true },
         { name: "postcss", version: "^8.4.38", dev: true },
