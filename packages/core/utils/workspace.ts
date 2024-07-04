@@ -81,9 +81,34 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
     const configText = await readFile(workspace, commonFilePaths.svelteConfigFilePath);
     const ast = parseScript(configText);
     const editor = getJsAstEditor(ast);
-    const variableDeclaration = ast.body.find((x) => x.type == "VariableDeclaration") as AstTypes.VariableDeclaration;
-    const variableDeclarator = variableDeclaration.declarations[0] as AstTypes.VariableDeclarator;
-    const objectExpression = variableDeclarator.init as AstTypes.ObjectExpression;
+
+    const defaultExport = ast.body.find((s) => s.type === "ExportDefaultDeclaration");
+    if (!defaultExport) throw Error("Missing default export in `svelte.config.js`");
+
+    let objectExpression: AstTypes.ObjectExpression | undefined;
+    if (defaultExport.declaration.type === "Identifier") {
+        // e.g. `export default config;`
+        const identifier = defaultExport.declaration;
+        for (const declaration of ast.body) {
+            if (declaration.type !== "VariableDeclaration") continue;
+
+            const declarator = declaration.declarations.find(
+                (d): d is AstTypes.VariableDeclarator =>
+                    d.type === "VariableDeclarator" && d.id.type === "Identifier" && d.id.name === identifier.name,
+            );
+
+            if (declarator?.init?.type !== "ObjectExpression") continue;
+
+            objectExpression = declarator.init;
+        }
+
+        if (!objectExpression) throw Error("Unable to find svelte config object expression from `svelte.config.js`");
+    } else if (defaultExport.declaration.type === "ObjectExpression") {
+        // e.g. `export default { ... };`
+        objectExpression = defaultExport.declaration;
+    }
+    // We'll error out since we can't safely determine the config object
+    if (!objectExpression) throw new Error("Unexpected svelte config shape from `svelte.config.js`");
 
     const kit = editor.object.property(objectExpression, "kit", editor.object.createEmpty());
     const files = editor.object.property(kit, "files", editor.object.createEmpty());
