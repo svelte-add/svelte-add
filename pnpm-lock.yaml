@@ -80,6 +80,10 @@ importers:
       '@svelte-add/ast-tooling':
         specifier: workspace:^
         version: link:../ast-tooling
+    devDependencies:
+      dedent:
+        specifier: ^1.5.3
+        version: 1.5.3
 
   packages/ast-tooling:
     devDependencies:
