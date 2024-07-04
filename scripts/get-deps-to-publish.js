@@ -18,7 +18,9 @@ const repoPackages =
         JSON.parse(json)
     );
 
-const modifiedDirs = process.env.CHANGED_DIRS.split(" ").filter((dir) => existsSync(join(dir, "package.json")));
+const modifiedDirs = process.env.CHANGED_DIRS.split(" ")
+    .map((dir) => (dir.startsWith("adders") ? "adders" : dir))
+    .filter((dir) => existsSync(join(dir, "package.json")));
 const packagesToPublish = new Set(modifiedDirs);
 
 // keep looping until we've acquired all dependents
@@ -36,6 +38,7 @@ const paths = Array.from(packagesToPublish)
     // remove all private packages
     .filter((dir) => repoPackages.find((pkg) => pkg.path.endsWith(dir))?.private === false)
     .join(" ");
+
 execSync(`pnpm dlx pkg-pr-new@0.0 publish --pnpm ${paths}`, { stdio: "inherit" });
 
 /**
