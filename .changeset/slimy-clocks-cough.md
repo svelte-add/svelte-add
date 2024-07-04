@@ -2,4 +2,4 @@
 "@svelte-add/adders": patch
 ---
 
-fix: improve robustness of drizzle adder
+fix: `drizzle` improve adder robustness
