@@ -1,13 +1,12 @@
-#!/usr/bin/env node
-
 import * as path from "node:path";
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { testAdders } from "@svelte-add/testing-library";
+import { generateTestCases, prepareTests, runAdderTests } from "@svelte-add/testing-library";
 import { adderIds } from "@svelte-add/config";
 import { remoteControl } from "@svelte-add/core/internal";
 import type { AdderWithoutExplicitArgs } from "@svelte-add/core/adder/config";
 import { getAdderDetails } from "@svelte-add/adders";
+import { test, describe, beforeAll } from "vitest";
 
 let usingDocker = false;
 
@@ -15,37 +14,40 @@ let usingDocker = false;
 const testOptions = {
     headless: true,
     pauseExecutionAfterBrowser: false,
-    outputDirectory: path.join(process.cwd(), "packages", "tests", ".outputs"),
+    outputDirectory: path.join(process.cwd(), ".outputs"),
 };
 
-void test();
+beforeAll(async () => {
+    await prepareTests(testOptions);
+});
 
-async function test() {
-    const addersToTest = process.argv.slice(2);
-    if (addersToTest.length > 0) console.log("Only testing the following adders", addersToTest);
-
-    await executeTests(addersToTest);
-}
-
-/**
- * Executes the tests
- * @param {string[]} addersToTest
- */
-async function executeTests(addersToTest: string[]) {
-    const filterAdders = addersToTest.length > 0;
-
+async function executeTests() {
     const adders: AdderWithoutExplicitArgs[] = [];
 
     for (const adderName of adderIds) {
-        if (filterAdders && !addersToTest.includes(adderName)) continue;
-
         adders.push(await getAdder(adderName));
     }
 
     usingDocker = !!adders.find((adder) => adder.config.metadata.id === "drizzle");
     if (usingDocker) startDocker();
 
-    await testAdders(adders, testOptions);
+    const adderTestCases = generateTestCases(adders);
+    for (const [adderId, testCases] of adderTestCases) {
+        describe(adderId, () => {
+            for (const testCase of testCases) {
+                let testName = `${adderId} / ${testCase.template}`;
+
+                // only add options to name, if the test case has options
+                if (testCase.options && Object.keys(testCase.options).length > 0)
+                    testName = `${testName} / ${JSON.stringify(testCase.options)}`;
+
+                const testMethod = testCase.runSynchronously ? test : test.concurrent;
+                testMethod(testName, async () => {
+                    await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
+                });
+            }
+        });
+    }
 }
 
 async function getAdder(adderName: string) {
@@ -75,3 +77,5 @@ function stopDocker() {
 
 process.on("exit", stopDocker);
 process.on("SIGINT", stopDocker);
+
+await executeTests();

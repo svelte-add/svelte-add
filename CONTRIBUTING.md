@@ -49,13 +49,13 @@ pnpm changeset
 The easiest way to test a adder is to run it's cli directly.
 
 ```sh
-npx ./adders/bulma
+node ./packages/cli/build/index.js tailwindcss
 ```
 
 Alternatively you can also run the testsuite of a adder with this command:
 
 ```sh
-pnpm test bulma mdsvex
+pnpm test -t tailwindcss
 ```
 
 And if you have made changes to the core packages, you should probably run the full test suite for all adders. But keep in mind, this takes time!

@@ -6,9 +6,11 @@
     "license": "MIT",
     "bin": "./build/index.js",
     "devDependencies": {
-        "@svelte-add/testing-library": "workspace:^",
         "@svelte-add/adders": "workspace:^",
+        "@svelte-add/config": "workspace:^",
         "@svelte-add/core": "workspace:^",
-        "@svelte-add/config": "workspace:^"
+        "@svelte-add/testing-library": "workspace:^",
+        "@vitest/ui": "^1.6.0",
+        "vitest": "^1.6.0"
     }
 }
