@@ -4,7 +4,7 @@ import { options } from "./options";
 export const adder = defineAdderConfig({
     metadata: {
         id: "tailwindcss",
-        name: "TailwindCSS",
+        name: "Tailwind CSS",
         description: "Rapidly build modern websites without ever leaving your HTML",
         environments: { svelte: true, kit: true },
         website: {
