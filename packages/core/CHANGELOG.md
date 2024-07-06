@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.9.1
+
+### Patch Changes
+
+-   fix: correct typo in package manager prompt ([#483](https://github.com/svelte-add/svelte-add/pull/483))
+
 ## 2.9.0
 
 ### Minor Changes
