@@ -2,7 +2,7 @@ import { parse as tsParse } from "recast/parsers/typescript.js";
 import { parse as recastParse, print as recastPrint } from "recast";
 import { Document, Element, Text, type ChildNode } from "domhandler";
 import { ElementType, parseDocument } from "htmlparser2";
-import { appendChild, removeElement, textContent } from "domutils";
+import { appendChild, prependChild, removeElement, textContent } from "domutils";
 import serializeDom from "dom-serializer";
 import { Root as CssAst, Declaration, Rule, AtRule, Comment } from "postcss";
 import { parse as postcssParse } from "postcss";
@@ -147,7 +147,7 @@ export function serializeSvelteFile(asts: SvelteAst) {
         }
 
         appendChild(scriptTag, new Text(newScriptValue));
-        appendChild(htmlAst, scriptTag);
+        prependChild(htmlAst, scriptTag);
     }
 
     if (css.length > 0) {
@@ -173,9 +173,42 @@ export function parseJson(content: string) {
     return fleece.evaluate(content);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function serializeJson(originalInput: string, data: any) {
+export function serializeJson(originalInput: string, data: unknown) {
     // some of the files we need to process contain comments. The default
     // node JSON.parse fails parsing those comments.
-    return fleece.patch(originalInput, data);
+    const spaces = guessIndentString(originalInput);
+    return fleece.stringify(data, { spaces });
+}
+
+// Sourced from `golden-fleece`
+// https://github.com/Rich-Harris/golden-fleece/blob/f2446f331640f325e13609ed99b74b6a45e755c2/src/patch.ts#L302
+function guessIndentString(str: string): number | undefined {
+    const lines = str.split("\n");
+
+    let tabs = 0;
+    let spaces = 0;
+    let minSpaces = 8;
+
+    lines.forEach((line) => {
+        const match = /^(?: +|\t+)/.exec(line);
+        if (!match) return;
+
+        const whitespace = match[0];
+        if (whitespace.length === line.length) return;
+
+        if (whitespace[0] === "\t") {
+            tabs += 1;
+        } else {
+            spaces += 1;
+            if (whitespace.length > 1 && whitespace.length < minSpaces) {
+                minSpaces = whitespace.length;
+            }
+        }
+    });
+
+    if (spaces > tabs) {
+        let result = "";
+        while (minSpaces--) result += " ";
+        return result.length;
+    }
 }

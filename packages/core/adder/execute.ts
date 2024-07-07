@@ -27,7 +27,7 @@ import { validatePreconditions } from "./preconditions.js";
 import { endPrompts, startPrompts } from "../utils/prompts.js";
 import { checkPostconditions, printUnmetPostconditions } from "./postconditions.js";
 import { displayNextSteps } from "./nextSteps.js";
-import { spinner, log } from "@svelte-add/clack-prompts";
+import { spinner, log, cancel } from "@svelte-add/clack-prompts";
 import { executeCli } from "../utils/cli.js";
 
 export type AdderDetails<Args extends OptionDefinition> = {
@@ -68,34 +68,41 @@ export async function executeAdders<Args extends OptionDefinition>(
     remoteControlOptions: RemoteControlOptions | undefined = undefined,
     selectAddersToApply: AddersToApplySelector | undefined = undefined,
 ) {
-    const adderDetailsByAdderId: Map<string, AdderDetails<Args>> = new Map();
-    adderDetails.map((x) => adderDetailsByAdderId.set(x.config.metadata.id, x));
+    try {
+        const adderDetailsByAdderId: Map<string, AdderDetails<Args>> = new Map();
+        adderDetails.map((x) => adderDetailsByAdderId.set(x.config.metadata.id, x));
 
-    const remoteControlled = remoteControlOptions !== undefined;
-    const isTesting = remoteControlled && remoteControlOptions.isTesting;
+        const remoteControlled = remoteControlOptions !== undefined;
+        const isTesting = remoteControlled && remoteControlOptions.isTesting;
 
-    const cliOptions = !isTesting ? prepareAndParseCliOptions(adderDetails) : {};
-    const commonCliOptions = extractCommonCliOptions(cliOptions);
-    const cliOptionsByAdderId =
-        (!isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions) ?? {};
-    validateOptionTypes(adderDetails, cliOptionsByAdderId);
+        const cliOptions = !isTesting ? prepareAndParseCliOptions(adderDetails) : {};
+        const commonCliOptions = extractCommonCliOptions(cliOptions);
+        const cliOptionsByAdderId =
+            (!isTesting ? extractAdderCliOptions(cliOptions, adderDetails) : remoteControlOptions.adderOptions) ?? {};
+        validateOptionTypes(adderDetails, cliOptionsByAdderId);
 
-    let workingDirectory: string | null;
-    if (isTesting) workingDirectory = remoteControlOptions.workingDirectory;
-    else workingDirectory = determineWorkingDirectory(commonCliOptions.path);
-    workingDirectory = await detectSvelteDirectory(workingDirectory);
-    const createProject = workingDirectory == null;
-    if (!workingDirectory) workingDirectory = process.cwd();
+        let workingDirectory: string | null;
+        if (isTesting) workingDirectory = remoteControlOptions.workingDirectory;
+        else workingDirectory = determineWorkingDirectory(commonCliOptions.path);
+        workingDirectory = await detectSvelteDirectory(workingDirectory);
+        const createProject = workingDirectory == null;
+        if (!workingDirectory) workingDirectory = process.cwd();
 
-    const executionPlan: AddersExecutionPlan = {
-        workingDirectory,
-        createProject,
-        commonCliOptions,
-        cliOptionsByAdderId,
-        selectAddersToApply,
-    };
+        const executionPlan: AddersExecutionPlan = {
+            workingDirectory,
+            createProject,
+            commonCliOptions,
+            cliOptionsByAdderId,
+            selectAddersToApply,
+        };
 
-    await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
+        await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
+    } catch (e) {
+        if (e instanceof Error) cancel(e.message);
+        else cancel("Something went wrong.");
+        console.error(e);
+        process.exit(1);
+    }
 }
 
 async function executePlan<Args extends OptionDefinition>(
@@ -170,6 +177,17 @@ async function executePlan<Args extends OptionDefinition>(
 
     // ask the user questions about unselected options
     await requestMissingOptionsFromUser(adderDetails, executionPlan);
+
+    // adders might specify that they should be executed after another adder.
+    // this orders the adders to (ideally) have adders without dependencies run first
+    // and adders with dependencies runs later on, based on the adders they depend on.
+    // based on https://stackoverflow.com/a/72030336/16075084
+    adderDetails = adderDetails.sort((a, b) => {
+        if (!a.config.runsAfter) return -1;
+        if (!b.config.runsAfter) return 1;
+
+        return a.config.runsAfter.includes(b.config.metadata.id) ? 1 : b.config.runsAfter.includes(a.config.metadata.id) ? -1 : 0;
+    });
 
     // apply the adders
     const unmetPostconditions: string[] = [];
@@ -299,8 +317,20 @@ export async function installPackages<Args extends OptionDefinition>(
         }
     }
 
+    if (data.dependencies) data.dependencies = alphabetizeProperties(data.dependencies);
+    if (data.devDependencies) data.devDependencies = alphabetizeProperties(data.devDependencies);
+
     await writeFile(workspace, commonFilePaths.packageJsonFilePath, serializeJson(originalText, data));
     return commonFilePaths.packageJsonFilePath;
+}
+
+function alphabetizeProperties(obj: Record<string, string>) {
+    const orderedObj: Record<string, string> = {};
+    const sortedEntries = Object.entries(obj).sort(([a], [b]) => a.localeCompare(b));
+    for (const [key, value] of sortedEntries) {
+        orderedObj[key] = value;
+    }
+    return orderedObj;
 }
 
 async function runHooks<Args extends OptionDefinition>(

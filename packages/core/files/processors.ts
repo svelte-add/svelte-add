@@ -91,35 +91,40 @@ export async function createOrUpdateFiles<Args extends OptionDefinition>(
 ): Promise<string[]> {
     const changedFiles = [];
     for (const fileDetails of files) {
-        if (fileDetails.condition && !fileDetails.condition(workspace)) {
-            continue;
+        try {
+            if (fileDetails.condition && !fileDetails.condition(workspace)) {
+                continue;
+            }
+
+            const exists = await fileExistsWorkspace(workspace, fileDetails.name(workspace));
+
+            let content = "";
+            if (!exists) {
+                content = "";
+            } else {
+                content = await readFile(workspace, fileDetails.name(workspace));
+            }
+
+            if (fileDetails.contentType == "script") {
+                content = handleScriptFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "text") {
+                content = handleTextFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "svelte") {
+                content = handleSvelteFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "json") {
+                content = handleJsonFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "css") {
+                content = handleCssFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "html") {
+                content = handleHtmlFile(content, fileDetails, workspace);
+            }
+
+            await writeFile(workspace, fileDetails.name(workspace), content);
+            changedFiles.push(fileDetails.name(workspace));
+        } catch (e) {
+            if (e instanceof Error) throw new Error(`Unable to process '${fileDetails.name(workspace)}'. Reason: ${e.message}`);
+            throw e;
         }
-
-        const exists = await fileExistsWorkspace(workspace, fileDetails.name(workspace));
-
-        let content = "";
-        if (!exists) {
-            content = "";
-        } else {
-            content = await readFile(workspace, fileDetails.name(workspace));
-        }
-
-        if (fileDetails.contentType == "script") {
-            content = handleScriptFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "text") {
-            content = handleTextFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "svelte") {
-            content = handleSvelteFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "json") {
-            content = handleJsonFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "css") {
-            content = handleCssFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "html") {
-            content = handleHtmlFile(content, fileDetails, workspace);
-        }
-
-        await writeFile(workspace, fileDetails.name(workspace), content);
-        changedFiles.push(fileDetails.name(workspace));
     }
     return changedFiles;
 }

@@ -65,7 +65,7 @@ export const tests = defineAdderTests({
             contentType: "text",
             condition: ({ kit }) => kit.installed,
             content: ({ content }) => {
-                return content.replace("strict: true", "");
+                return content.replace("strict: true,", "");
             },
         },
         {
