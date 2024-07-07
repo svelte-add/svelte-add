@@ -1,5 +1,11 @@
 # @svelte-add/config
 
+## 1.2.0
+
+### Minor Changes
+
+-   feat: `prettier` adder ([#453](https://github.com/svelte-add/svelte-add/pull/453))
+
 ## 1.1.1
 
 ### Patch Changes
