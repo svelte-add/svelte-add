@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.9.2
+
+### Patch Changes
+
+-   fix: correctly parse newly created json files ([#486](https://github.com/svelte-add/svelte-add/pull/486))
+
 ## 2.9.1
 
 ### Patch Changes
