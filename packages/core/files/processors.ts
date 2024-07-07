@@ -112,7 +112,7 @@ export async function createOrUpdateFiles<Args extends OptionDefinition>(
             } else if (fileDetails.contentType == "svelte") {
                 content = handleSvelteFile(content, fileDetails, workspace);
             } else if (fileDetails.contentType == "json") {
-                content = handleJsonFile(content, fileDetails, workspace);
+                content = handleJsonFile(content, fileDetails, workspace, exists);
             } else if (fileDetails.contentType == "css") {
                 content = handleCssFile(content, fileDetails, workspace);
             } else if (fileDetails.contentType == "html") {
@@ -156,8 +156,9 @@ function handleJsonFile<Args extends OptionDefinition>(
     content: string,
     fileDetails: JsonFileType<Args>,
     workspace: Workspace<Args>,
+    fileExists: boolean,
 ) {
-    const data: unknown = parseJson(content);
+    const data: unknown = fileExists ? parseJson(content) : {};
     fileDetails.content({ data, ...workspace });
     content = serializeJson(content, data);
     return content;
