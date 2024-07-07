@@ -224,6 +224,9 @@ async function executePlan<Args extends OptionDefinition>(
         printUnmetPostconditions(unmetPostconditions);
     }
 
+    // reload workspace as adders might have changed i.e. dependencies
+    await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+
     let installStatus;
     if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
         installStatus = await suggestInstallingDependencies(executionPlan.workingDirectory);
