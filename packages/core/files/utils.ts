@@ -50,7 +50,7 @@ export function getFilePath(cwd: string, fileName: string) {
 }
 
 export async function format(workspace: WorkspaceWithoutExplicitArgs, paths: string[]) {
-    await executeCli("npx", ["prettier", "--write", ...paths], workspace.cwd, { stdio: "pipe" });
+    await executeCli("npx", ["prettier", "--write", "--ignore-unknown", ...paths], workspace.cwd, { stdio: "pipe" });
 }
 
 export const commonFilePaths = {

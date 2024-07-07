@@ -39,6 +39,7 @@ export type PackageDefinition<Args extends OptionDefinition> = {
 export type BaseAdderConfig<Args extends OptionDefinition> = {
     metadata: AdderConfigMetadata;
     options: Args;
+    runsAfter?: string[];
     integrationType: string;
 };
 

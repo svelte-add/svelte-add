@@ -1,5 +1,29 @@
 # @svelte-add/website
 
+## 2.3.6
+
+### Patch Changes
+
+-   Updated dependencies [[`aa06afd655d08fa8ba6a08d40dd6aeca049ac116`](https://github.com/svelte-add/svelte-add/commit/aa06afd655d08fa8ba6a08d40dd6aeca049ac116)]:
+    -   @svelte-add/core@2.9.2
+    -   @svelte-add/adders@1.0.2
+
+## 2.3.5
+
+### Patch Changes
+
+-   Updated dependencies [[`3cc0371713b32f679b81d09065625c010d386165`](https://github.com/svelte-add/svelte-add/commit/3cc0371713b32f679b81d09065625c010d386165)]:
+    -   @svelte-add/core@2.9.1
+    -   @svelte-add/adders@1.0.2
+
+## 2.3.4
+
+### Patch Changes
+
+-   Updated dependencies [[`ebcaba6ed5ec38d27dfaf9ae176820cf1b9eba57`](https://github.com/svelte-add/svelte-add/commit/ebcaba6ed5ec38d27dfaf9ae176820cf1b9eba57), [`2324fd36aee97fa3c4ebd98af30f69b8c1d982f9`](https://github.com/svelte-add/svelte-add/commit/2324fd36aee97fa3c4ebd98af30f69b8c1d982f9), [`bd5fb8fda0523cccc6874f56758e2d5ec2498cc5`](https://github.com/svelte-add/svelte-add/commit/bd5fb8fda0523cccc6874f56758e2d5ec2498cc5), [`b5d984e7926b9058dc25a9dc6c40eebc908edf12`](https://github.com/svelte-add/svelte-add/commit/b5d984e7926b9058dc25a9dc6c40eebc908edf12), [`d2ae7633b07f16eeaaaaeda526a64e5bf15fc484`](https://github.com/svelte-add/svelte-add/commit/d2ae7633b07f16eeaaaaeda526a64e5bf15fc484), [`8c9dcebebecd42d485c35fd9eab607e4467f874e`](https://github.com/svelte-add/svelte-add/commit/8c9dcebebecd42d485c35fd9eab607e4467f874e)]:
+    -   @svelte-add/adders@1.0.2
+    -   @svelte-add/core@2.9.0
+
 ## 2.3.3
 
 ### Patch Changes

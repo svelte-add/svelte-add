@@ -22,7 +22,7 @@ export async function suggestInstallingDependencies(workingDirectory: string): P
     const detectedPm = await preferredPackageManager(workingDirectory);
     let selectedPm: PackageManager;
     if (!detectedPm) {
-        selectedPm = await selectPrompt("Which package manager to want to install dependencies with?", undefined, [
+        selectedPm = await selectPrompt("Which package manager do you want to install dependencies with?", undefined, [
             {
                 label: "None",
                 value: undefined,

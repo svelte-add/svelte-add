@@ -4,7 +4,7 @@ import { options } from "./options";
 export const adder = defineAdderConfig({
     metadata: {
         id: "tailwindcss",
-        name: "TailwindCSS",
+        name: "Tailwind CSS",
         description: "Rapidly build modern websites without ever leaving your HTML",
         environments: { svelte: true, kit: true },
         website: {
@@ -91,8 +91,10 @@ export const adder = defineAdderConfig({
             contentType: "svelte",
             content: ({ js, html }) => {
                 js.imports.addEmpty(js.ast, "../app.css");
-                const slot = html.element("slot");
-                html.ast.childNodes.push(slot);
+                if (html.ast.childNodes.length === 0) {
+                    const slot = html.element("slot");
+                    html.ast.childNodes.push(slot);
+                }
             },
             condition: ({ kit }) => kit.installed,
         },

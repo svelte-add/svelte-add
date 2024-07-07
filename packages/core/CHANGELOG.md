@@ -1,5 +1,34 @@
 # @svelte-add/core
 
+## 2.9.2
+
+### Patch Changes
+
+-   fix: correctly parse newly created json files ([#486](https://github.com/svelte-add/svelte-add/pull/486))
+
+## 2.9.1
+
+### Patch Changes
+
+-   fix: correct typo in package manager prompt ([#483](https://github.com/svelte-add/svelte-add/pull/483))
+
+## 2.9.0
+
+### Minor Changes
+
+-   feat: allow adders to run after another adder ([#466](https://github.com/svelte-add/svelte-add/pull/466))
+
+### Patch Changes
+
+-   fix: improved parser for `svelte.config.js` ([#474](https://github.com/svelte-add/svelte-add/pull/474))
+
+-   fix: validate cli adder names ([#469](https://github.com/svelte-add/svelte-add/pull/469))
+
+-   fix: better file error handling ([#478](https://github.com/svelte-add/svelte-add/pull/478))
+
+-   Updated dependencies [[`d2ae7633b07f16eeaaaaeda526a64e5bf15fc484`](https://github.com/svelte-add/svelte-add/commit/d2ae7633b07f16eeaaaaeda526a64e5bf15fc484)]:
+    -   @svelte-add/ast-manipulation@2.1.5
+
 ## 2.8.3
 
 ### Patch Changes

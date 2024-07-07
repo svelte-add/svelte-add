@@ -176,38 +176,43 @@ export const adder = defineAdderConfig({
         {
             name: ({ typescript }) => `drizzle.config.${typescript.installed ? "ts" : "js"}`,
             contentType: "script",
-            content: ({ options, ast, common, exports, typescript, imports }) => {
+            content: ({ options, ast, common, exports, typescript, imports, object }) => {
                 imports.addNamed(ast, "drizzle-kit", { defineConfig: "defineConfig" });
-
-                const isBetterSqlite = options.sqlite === "better-sqlite3";
-                if (isBetterSqlite) {
-                    imports.addNamed(ast, "node:url", { pathToFileURL: "pathToFileURL" });
-                }
 
                 const envCheckStatement = common.statementFromString(
                     `if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');`,
                 );
                 common.addStatement(ast, envCheckStatement);
 
-                // specifies the turso driver for the config
-                const driver = options.sqlite === "turso" ? "driver: 'turso'," : "";
-                const authToken = options.sqlite === "turso" ? "authToken: process.env.DATABASE_AUTH_TOKEN" : "";
+                const fallback = common.expressionFromString("defineConfig({})");
+                const { value: exportDefault } = exports.defaultExport(ast, fallback);
+                if (exportDefault.type !== "CallExpression") return;
 
-                const defaultExport = common.expressionFromString(`
-                    defineConfig({
-                        schema: './src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}',
-                        dialect: '${options.database}', 
-                        ${driver}
-                        dbCredentials: {
-                            url: process.env.DATABASE_URL,
-                            ${authToken}
-                        },
-                        verbose: true,
-                        strict: true
-                    })
-                `);
+                const objExpression = exportDefault.arguments?.[0];
+                if (!objExpression || objExpression.type !== "ObjectExpression") return;
 
-                exports.defaultExport(ast, defaultExport);
+                const driver = options.sqlite === "turso" ? common.createLiteral("turso") : undefined;
+                const authToken =
+                    options.sqlite === "turso" ? common.expressionFromString("process.env.DATABASE_AUTH_TOKEN") : undefined;
+
+                object.properties(objExpression, {
+                    schema: common.createLiteral(`./src/lib/server/db/schema.${typescript.installed ? "ts" : "js"}`),
+                    dbCredentials: object.create({
+                        url: common.expressionFromString("process.env.DATABASE_URL"),
+                        authToken: authToken,
+                    }),
+                    verbose: { type: "BooleanLiteral", value: true },
+                    strict: { type: "BooleanLiteral", value: true },
+                    driver,
+                });
+
+                object.overrideProperties(objExpression, {
+                    dialect: common.createLiteral(options.database),
+                });
+
+                // The `driver` property is only required for _some_ sqlite DBs.
+                // We'll need to remove it if it's anything but sqlite
+                if (options.database !== "sqlite") object.removeProperty(objExpression, "driver");
             },
         },
         {

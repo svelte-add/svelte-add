@@ -84,6 +84,9 @@ importers:
       decircular:
         specifier: ^1.0.0
         version: 1.0.0
+      dedent:
+        specifier: ^1.5.3
+        version: 1.5.3
 
   packages/ast-tooling:
     devDependencies:

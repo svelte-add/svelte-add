@@ -39,15 +39,55 @@ export function property<T extends AstKinds.ExpressionKind | AstTypes.Identifier
 export function overrideProperty<T extends AstKinds.ExpressionKind>(ast: AstTypes.ObjectExpression, name: string, value: T) {
     const objectExpression = ast;
     const properties = objectExpression.properties.filter((x): x is AstTypes.ObjectProperty => x.type == "ObjectProperty");
-    const property = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
+    const prop = properties.find((x) => (x.key as AstTypes.Identifier).name == name);
 
-    if (!property) {
-        throw new Error(`cannot override non existent property '${name}'`);
+    if (!prop) {
+        return property(ast, name, value);
     }
 
-    property.value = value;
+    prop.value = value;
 
     return value;
+}
+
+export function overrideProperties<T extends AstKinds.ExpressionKind>(
+    ast: AstTypes.ObjectExpression,
+    obj: Record<string, T | undefined>,
+) {
+    for (const [prop, value] of Object.entries(obj)) {
+        if (value === undefined) continue;
+        overrideProperty(ast, prop, value);
+    }
+}
+
+export function properties<T extends AstKinds.ExpressionKind>(
+    ast: AstTypes.ObjectExpression,
+    obj: Record<string, T | undefined>,
+) {
+    for (const [prop, value] of Object.entries(obj)) {
+        if (value === undefined) continue;
+        property(ast, prop, value);
+    }
+}
+
+export function removeProperty(ast: AstTypes.ObjectExpression, property: string) {
+    const properties = ast.properties.filter((x): x is AstTypes.ObjectProperty => x.type === "ObjectProperty");
+    const propIdx = properties.findIndex((x) => (x.key as AstTypes.Identifier).name === property);
+
+    if (propIdx !== -1) {
+        ast.properties.splice(propIdx, 1);
+    }
+}
+
+export function create<T extends AstKinds.ExpressionKind>(obj: Record<string, T | undefined>): AstTypes.ObjectExpression {
+    const objExpression = createEmpty();
+
+    for (const [prop, value] of Object.entries(obj)) {
+        if (value === undefined) continue;
+        property(objExpression, prop, value);
+    }
+
+    return objExpression;
 }
 
 export function createEmpty() {
@@ -57,8 +97,3 @@ export function createEmpty() {
     };
     return objectExpression;
 }
-
-export type ExportDefaultReturn<T> = {
-    astNode: AstTypes.ExportDefaultDeclaration;
-    value: T;
-};
