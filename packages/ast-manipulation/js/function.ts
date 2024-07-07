@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
+import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
 export function call(name: string, args: string[]) {
     const callExpression: AstTypes.CallExpression = {
@@ -15,6 +15,27 @@ export function call(name: string, args: string[]) {
             type: "Literal",
             value: argument,
         });
+    }
+
+    return callExpression;
+}
+
+export function callByIdentifier(name: string, args: string[]) {
+    const callExpression: AstTypes.CallExpression = {
+        type: "CallExpression",
+        callee: {
+            type: "Identifier",
+            name,
+        },
+        arguments: [],
+    };
+
+    for (const argument of args) {
+        const identifier: AstTypes.Identifier = {
+            type: "Identifier",
+            name: argument,
+        };
+        callExpression.arguments.push(identifier);
     }
 
     return callExpression;

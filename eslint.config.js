@@ -1,9 +1,12 @@
 import js from "@eslint/js";
 import eslintPrettier from "eslint-plugin-prettier/recommended";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
-export default [
+export default tseslint.config(
     js.configs.recommended,
+    ...tseslint.configs.strictTypeChecked,
+    // ...tseslint.configs.stylisticTypeChecked,
     eslintPrettier,
     {
         languageOptions: {
@@ -12,8 +15,24 @@ export default [
             globals: {
                 ...globals.node,
             },
+            parserOptions: {
+                project: ["./tsconfig.json", "./packages/website/tsconfig.json"],
+                tsconfigRootDir: import.meta.dirname,
+            },
         },
-        rules: {},
+        rules: {
+            "@typescript-eslint/no-unnecessary-condition": "off",
+            "@typescript-eslint/no-dynamic-delete": "off",
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                {
+                    caughtErrors: "none",
+                },
+            ],
+            "@typescript-eslint/no-unsafe-call": "off",
+            "@typescript-eslint/no-unsafe-member-access": "off",
+            "@typescript-eslint/no-unsafe-assignment": "off",
+        },
     },
     {
         ignores: [
@@ -30,7 +49,10 @@ export default [
             "packages/tests/build",
             "packages/website/.svelte-kit",
             "packages/website/build",
+            "packages/website",
+            "packages/clack-core",
+            "packages/clack-prompts",
             "temp",
         ],
     },
-];
+);

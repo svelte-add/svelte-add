@@ -1,23 +1,27 @@
+import { readdirSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
 import { run } from "npm-check-updates";
-import { readdirSync } from "fs";
-import { readFile, writeFile } from "fs/promises";
-import { AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import { type AstTypes, parseScript, serializeScript } from "@svelte-add/ast-tooling";
 import { getJsAstEditor } from "@svelte-add/ast-manipulation";
+import type { Package } from "@svelte-add/core/utils/common";
 
 export async function updateDependencies() {
     await updatePackageJson();
     await updateAdderDependencies();
+    spawnSync("pnpm", ["install"], { stdio: "inherit" });
 }
 
 async function updateAdderDependencies() {
     const adderFolders = readdirSync("./adders/", { withFileTypes: true })
         .filter((item) => item.isDirectory())
-        .map((item) => item.name);
+        .map((item) => item.name)
+        .filter((x) => x != "node_modules");
 
     for (const adderId of adderFolders) {
-        const filePath = `./adders/${adderId}/config/adder.js`;
+        const filePath = `./adders/${adderId}/config/adder.ts`;
         const content = (await readFile(filePath)).toString();
-        const { ast, exports, functions, object, array, variables, common } = await getJsAstEditor(parseScript(content));
+        const { ast, exports, functions, object, array, variables, common } = getJsAstEditor(parseScript(content));
 
         const defineAdderConfig = functions.call("defineAdderConfig", []);
         const assignment = variables.declaration(ast, "const", "adder", defineAdderConfig);
@@ -54,7 +58,7 @@ async function updateAdderDependencies() {
 
 async function getLatestVersion(name: string) {
     const response = await fetch(`https://registry.npmjs.org/${name}/latest`);
-    const json = await response.json();
+    const json = (await response.json()) as Package;
     return json.version;
 }
 

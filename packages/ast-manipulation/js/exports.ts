@@ -1,4 +1,4 @@
-import { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
+import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
 
 export type ExportDefaultReturn<T> = {
     astNode: AstTypes.ExportDefaultDeclaration;
@@ -9,7 +9,7 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
     ast: AstTypes.Program,
     fallbackDeclaration: T,
 ): ExportDefaultReturn<T> {
-    const existingNode = ast.body.find((x) => x.type == "ExportDefaultDeclaration");
+    const existingNode = ast.body.find((x) => x.type === "ExportDefaultDeclaration");
     if (!existingNode) {
         const node: AstTypes.ExportDefaultDeclaration = {
             type: "ExportDefaultDeclaration",
@@ -20,23 +20,26 @@ export function defaultExport<T extends AstKinds.ExpressionKind>(
         return { astNode: node, value: fallbackDeclaration };
     }
 
-    const exportDefaultDeclaration = existingNode as AstTypes.ExportDefaultDeclaration;
+    const exportDefaultDeclaration = existingNode;
 
-    if (exportDefaultDeclaration.declaration.type == "Identifier") {
+    if (exportDefaultDeclaration.declaration.type === "Identifier") {
         // in this case the export default declaration is only referencing a variable, get that variable
-        const exportDefaultDeclarationDeclaration = exportDefaultDeclaration.declaration as AstTypes.Identifier;
+        const identifier = exportDefaultDeclaration.declaration;
 
-        const variableDeclarations = ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration");
-        const variableDeclaration = variableDeclarations.find((x) => {
-            const variableDeclaration = x.declarations[0] as AstTypes.VariableDeclarator;
-            const variableIdentifier = variableDeclaration.id as AstTypes.Identifier;
+        let variableDeclaration: AstTypes.VariableDeclaration | undefined;
+        let variableDeclarator: AstTypes.VariableDeclarator | undefined;
+        for (const declaration of ast.body) {
+            if (declaration.type !== "VariableDeclaration") continue;
 
-            return variableIdentifier.name == exportDefaultDeclarationDeclaration.name;
-        });
-        if (!variableDeclaration)
-            throw new Error(`Unable to find exported variable '${exportDefaultDeclarationDeclaration.name}'`);
+            const declarator = declaration.declarations.find(
+                (d): d is AstTypes.VariableDeclarator =>
+                    d.type === "VariableDeclarator" && d.id.type === "Identifier" && d.id.name === identifier.name,
+            );
 
-        const variableDeclarator = variableDeclaration.declarations[0] as AstTypes.VariableDeclarator;
+            variableDeclarator = declarator;
+            variableDeclaration = declaration;
+        }
+        if (!variableDeclaration || !variableDeclarator) throw new Error(`Unable to find exported variable '${identifier.name}'`);
 
         const value = variableDeclarator.init as T;
 

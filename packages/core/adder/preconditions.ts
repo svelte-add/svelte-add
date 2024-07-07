@@ -1,13 +1,16 @@
+import * as pc from "picocolors";
 import { booleanPrompt, endPrompts, messagePrompt } from "../utils/prompts.js";
-import { AdderDetails } from "./execute.js";
-import { OptionDefinition } from "./options.js";
-import pc from "picocolors";
-import { Precondition } from "./config.js";
-import { executeCli } from "../utils/common.js";
+import { executeCli } from "../utils/cli.js";
+import type { AdderDetails } from "./execute.js";
+import type { Precondition } from "./config.js";
+import type { OptionDefinition } from "./options.js";
+import type { ProjectType } from "../utils/create-project.js";
 
-function getGlobalPreconditions(
+function getGlobalPreconditions<Args extends OptionDefinition>(
     executingCli: string,
     workingDirectory: string,
+    adderDetails: AdderDetails<Args>[],
+    projectType: ProjectType,
 ): { name: string; preconditions: Precondition[] | undefined } {
     return {
         name: executingCli,
@@ -25,7 +28,7 @@ function getGlobalPreconditions(
                         // git will exit with a failing exit code, which will trigger the catch statement.
                         // also see https://remarkablemark.org/blog/2017/10/12/check-git-dirty/#git-status
                         await executeCli("git", ["status", "--short"], workingDirectory, {
-                            onData: (data, program, resolve) => {
+                            onData: (data) => {
                                 outputText += data;
                             },
                         });
@@ -36,8 +39,29 @@ function getGlobalPreconditions(
 
                         return { success: true, message: undefined };
                     } catch (error) {
-                        return { success: false, message: "Not a git repository" };
+                        return { success: true, message: "Not a git repository" };
                     }
+                },
+            },
+            {
+                name: "supported environments",
+                run: () => {
+                    const addersForInvalidEnvironment = adderDetails.filter((x) => {
+                        const supportedEnvironments = x.config.metadata.environments;
+                        if (projectType == "kit" && !supportedEnvironments.kit) return true;
+                        if (projectType == "svelte" && !supportedEnvironments.svelte) return true;
+
+                        return false;
+                    });
+
+                    if (addersForInvalidEnvironment.length == 0) {
+                        return { success: true, message: undefined };
+                    }
+
+                    const messages = addersForInvalidEnvironment.map(
+                        (adder) => `"${adder.config.metadata.name}" does not support "${projectType.toString()}"`,
+                    );
+                    return { success: false, message: messages.join(" / ") };
                 },
             },
         ],
@@ -49,6 +73,7 @@ export async function validatePreconditions<Args extends OptionDefinition>(
     executingCliName: string,
     workingDirectory: string,
     isTesting: boolean,
+    projectType: ProjectType,
 ) {
     const multipleAdders = adderDetails.length > 1;
     let allPreconditionsPassed = true;
@@ -60,7 +85,9 @@ export async function validatePreconditions<Args extends OptionDefinition>(
             preconditions: checks.preconditions,
         };
     });
-    const combinedPreconditions = [getGlobalPreconditions(executingCliName, workingDirectory), ...adderPreconditions];
+    const combinedPreconditions = isTesting
+        ? adderPreconditions
+        : [getGlobalPreconditions(executingCliName, workingDirectory, adderDetails, projectType), ...adderPreconditions];
 
     for (const { name, preconditions } of combinedPreconditions) {
         if (!preconditions) continue;
@@ -79,38 +106,37 @@ export async function validatePreconditions<Args extends OptionDefinition>(
                     message = `${precondition.name} (${result.message ?? "No failure message provided"})`;
                 }
             } catch (error) {
+                const errorString = error as string;
                 preconditionPassed = false;
-                message = precondition.name + ` (Unexpected failure: ${error})`;
+                message = precondition.name + ` (Unexpected failure: ${errorString})`;
             }
 
-            if (multipleAdders) {
-                message = `${name}: ${message}`;
-            }
+            if (!preconditionPassed) {
+                if (multipleAdders) {
+                    message = `${name}: ${message}`;
+                }
 
-            message = preconditionPassed ? pc.green(message) : pc.yellow(message);
-            preconditionLog.push(message);
+                message = pc.yellow(message);
+                preconditionLog.push(message);
+            }
 
             if (!preconditionPassed) allPreconditionsPassed = false;
         }
     }
-    if (preconditionLog.length > 0) {
-        let allMessages = "";
-        for (const [i, message] of preconditionLog.entries()) {
-            allMessages += `- ${message}${i == preconditionLog.length - 1 ? "" : "\n"}`;
-        }
 
-        if (!allPreconditionsPassed && isTesting) {
-            throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
-        }
-
-        if (isTesting) return;
-
-        messagePrompt("Preconditions:", allMessages);
-
-        if (!allPreconditionsPassed) {
-            await askUserToContinueWithFailedPreconditions();
-        }
+    if (allPreconditionsPassed) {
+        return;
     }
+
+    if (isTesting) {
+        throw new Error(`Preconditions failed: ${preconditionLog.join(" / ")}`);
+    }
+
+    const allMessages = preconditionLog.map((msg) => `- ${msg}`).join("\n");
+
+    messagePrompt("Preconditions not met", allMessages);
+
+    await askUserToContinueWithFailedPreconditions();
 }
 
 export async function askUserToContinueWithFailedPreconditions() {

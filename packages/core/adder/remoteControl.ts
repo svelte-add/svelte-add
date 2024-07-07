@@ -3,7 +3,7 @@ let remoteControlled = false;
 export type RemoteControlOptions = {
     workingDirectory: string;
     isTesting: boolean;
-    adderOptions: Record<string, Record<string, any>>;
+    adderOptions: Record<string, Record<string, unknown>>;
 };
 
 export function enable() {

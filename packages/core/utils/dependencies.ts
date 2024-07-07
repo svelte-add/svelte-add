@@ -1,9 +1,13 @@
-import { endPrompts, selectPrompt, startPrompts } from "./prompts";
+import { selectPrompt } from "./prompts";
 import preferredPackageManager from "preferred-pm";
-import { spinner } from "@clack/prompts";
-import { executeCli } from "./common";
+import { spinner } from "@svelte-add/clack-prompts";
+import { executeCli } from "./cli.js";
 
-export async function suggestInstallingDependencies(workingDirectory: string) {
+/**
+ * @param workingDirectory
+ * @returns the install status of dependencies
+ */
+export async function suggestInstallingDependencies(workingDirectory: string): Promise<"installed" | "skipped"> {
     type PackageManager = keyof typeof packageManagers | undefined;
     const packageManagers = {
         npm: "npm install",
@@ -16,7 +20,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     const detectedPm = await preferredPackageManager(workingDirectory);
     let selectedPm: PackageManager;
     if (!detectedPm) {
-        selectedPm = await selectPrompt("Which package manager to want to install dependencies with?", undefined, [
+        selectedPm = await selectPrompt("Which package manager do you want to install dependencies with?", undefined, [
             {
                 label: "None",
                 value: undefined,
@@ -30,7 +34,7 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     }
 
     if (!selectedPm || !packageManagers[selectedPm]) {
-        return;
+        return "skipped";
     }
 
     const selectedCommand = packageManagers[selectedPm];
@@ -42,12 +46,14 @@ export async function suggestInstallingDependencies(workingDirectory: string) {
     loadingSpinner.start("Installing dependencies...");
     await installDependencies(command, args, workingDirectory);
     loadingSpinner.stop("Successfully installed dependencies");
+    return "installed";
 }
 
 async function installDependencies(command: string, args: string[], workingDirectory: string) {
     try {
         await executeCli(command, args, workingDirectory);
     } catch (error) {
-        throw new Error("unable to install dependencies: " + error);
+        const typedError = error as Error;
+        throw new Error("unable to install dependencies: " + typedError.message);
     }
 }

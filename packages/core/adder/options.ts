@@ -1,40 +1,49 @@
 import { type OptionValues as CliOptionValues, program } from "commander";
-import { AdderDetails, AddersExecutionPlan } from "./execute.js";
-import { booleanPrompt, textPrompt } from "../utils/prompts.js";
+import { booleanPrompt, selectPrompt, textPrompt, type PromptOption } from "../utils/prompts.js";
+import type { AdderDetails, AddersExecutionPlan } from "./execute.js";
 
-export type BooleanDefaultValue = {
+export type BooleanQuestion = {
     type: "boolean";
     default: boolean;
 };
 
-export type StringDefaultValue = {
+export type StringQuestion = {
     type: "string";
     default: string;
 };
 
-export type NumberDefaultValue = {
+export type NumberQuestion = {
     type: "number";
     default: number;
 };
 
-export type BaseQuestion = {
-    question: string;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SelectQuestion<Value = any> = {
+    type: "select";
+    default: Value;
+    options: PromptOption<Value>[];
 };
 
-export type BooleanQuestion = BaseQuestion & BooleanDefaultValue;
-export type StringQuestion = BaseQuestion & StringDefaultValue;
-export type NumberQuestion = BaseQuestion & NumberDefaultValue;
-export type Question = BooleanQuestion | StringQuestion | NumberQuestion;
+export type BaseQuestion = {
+    question: string;
+    // TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    condition?: (options: OptionValues<any>) => boolean;
+};
+
+export type Question = BaseQuestion & (BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion);
 
 export type OptionDefinition = Record<string, Question>;
 export type OptionValues<Args extends OptionDefinition> = {
-    [K in keyof Args]: Args[K]["type"] extends "string"
+    [K in keyof Args]: Args[K] extends StringQuestion
         ? string
-        : Args[K]["type"] extends "boolean"
+        : Args[K] extends BooleanQuestion
           ? boolean
-          : Args[K]["type"] extends "number"
+          : Args[K] extends NumberQuestion
             ? number
-            : never;
+            : Args[K] extends SelectQuestion<infer Value>
+              ? Value
+              : never;
 };
 
 export type AvailableCliOptionKeys = keyof AvailableCliOptionKeyTypes;
@@ -54,7 +63,7 @@ export type AvailableCliOption = {
     processedCliArg: string; // `commander` will transform the cli name if the arg names contains `-`
     description: string;
     allowShorthand: boolean;
-} & (BooleanDefaultValue | StringDefaultValue);
+} & (BooleanQuestion | StringQuestion);
 export type AvailableCliOptions = Record<AvailableCliOptionKeys, AvailableCliOption>;
 
 export const availableCliOptions: AvailableCliOptions = {
@@ -104,7 +113,7 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
     }
 
     if (multipleAdders) {
-        program.option("--adder <string...>", "List of adders to install");
+        program.argument("[adders...]", "List of adders to install");
     }
 
     const addersWithOptions = adderDetails.filter((x) => Object.keys(x.config.options).length > 0);
@@ -126,17 +135,31 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(adderDe
 
     program.parse();
     const options = program.opts();
+
+    if (multipleAdders) {
+        const selectedAdderIds = program.args ?? [];
+        validateAdders(adderDetails, selectedAdderIds);
+
+        options.adder = selectedAdderIds;
+    }
+
     return options;
+}
+
+function validateAdders<Args extends OptionDefinition>(adderDetails: AdderDetails<Args>[], selectedAdderIds: string[]) {
+    const validAdderIds = adderDetails.map((x) => x.config.metadata.id);
+    const invalidAdders = selectedAdderIds.filter((x) => !validAdderIds.includes(x));
+
+    if (invalidAdders.length > 0) {
+        console.error(`Invalid adder${invalidAdders.length > 1 ? "s" : ""} selected:`, invalidAdders.join(", "));
+        process.exit(1);
+    }
 }
 
 export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
     adderDetails: AdderDetails<Args>[],
-    cliOptionsByAdderId: Record<string, Record<string, any>>,
+    cliOptionsByAdderId: Record<string, Record<string, unknown>>,
 ) {
-    if (!cliOptionsByAdderId) {
-        return;
-    }
-
     let foundInvalidType = false;
 
     for (const { config } of adderDetails) {
@@ -162,6 +185,8 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
                 continue;
             } else if (option.type == "string" && typeof value == "string") {
                 continue;
+            } else if (option.type === "select") {
+                continue;
             }
 
             foundInvalidType = true;
@@ -176,12 +201,14 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
 }
 
 export function extractCommonCliOptions(cliOptions: CliOptionValues) {
+    const typedOption = <T>(name: string) => cliOptions[name] as T;
+
     const commonOptions: AvailableCliOptionValues = {
-        default: cliOptions[availableCliOptions.default.processedCliArg],
-        path: cliOptions[availableCliOptions.path.processedCliArg],
-        skipInstall: cliOptions[availableCliOptions.skipInstall.processedCliArg],
-        skipPreconditions: cliOptions[availableCliOptions.skipPreconditions.processedCliArg],
-        adders: cliOptions.adder,
+        default: typedOption(availableCliOptions.default.processedCliArg),
+        path: typedOption(availableCliOptions.path.processedCliArg),
+        skipInstall: typedOption(availableCliOptions.skipInstall.processedCliArg),
+        skipPreconditions: typedOption(availableCliOptions.skipPreconditions.processedCliArg),
+        adders: typedOption("adder"),
     };
 
     return commonOptions;
@@ -193,7 +220,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 ) {
     const multipleAdders = adderDetails.length > 1;
 
-    const options: Record<string, Record<string, any>> = {};
+    const options: Record<string, Record<string, unknown>> = {};
     for (const { config } of adderDetails) {
         const adderId = config.metadata.id;
         options[adderId] = {};
@@ -203,7 +230,7 @@ export function extractAdderCliOptions<Args extends OptionDefinition>(
 
             if (multipleAdders) cliOptionKey = `${adderId}${upperCaseFirstLetter(cliOptionKey)}`;
 
-            let optionValue = cliOptions[cliOptionKey];
+            let optionValue = cliOptions[cliOptionKey] as unknown;
             if (optionValue === "true") optionValue = true;
             else if (optionValue === "false") optionValue = false;
 
@@ -222,32 +249,34 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
     adderDetails: AdderDetails<Args>[],
     executionPlan: AddersExecutionPlan,
 ) {
-    if (!executionPlan.cliOptionsByAdderId) return;
-
     for (const { config } of adderDetails) {
         const adderId = config.metadata.id;
         const questionPrefix = adderDetails.length > 1 ? `${config.metadata.name}: ` : "";
 
         for (const optionKey of Object.keys(config.options)) {
             const option = config.options[optionKey];
+            const selectedValues = executionPlan.cliOptionsByAdderId[adderId];
+            const skipQuestion = option.condition?.(selectedValues) === false;
 
-            if (!executionPlan.cliOptionsByAdderId[adderId]) continue;
+            if (!selectedValues || skipQuestion) continue;
 
-            let optionValue = executionPlan.cliOptionsByAdderId[adderId][optionKey];
+            let optionValue = selectedValues[optionKey];
 
             // if the option already has an value, ignore it and continue
             if (optionValue !== undefined) continue;
 
             if (option.type == "number" || option.type == "string") {
-                optionValue = await textPrompt(questionPrefix + option.question, "Not sure", "" + option.default);
+                optionValue = await textPrompt(questionPrefix + option.question, "Not sure", option.default.toString());
             } else if (option.type == "boolean") {
                 optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
+            } else if (option.type == "select") {
+                optionValue = await selectPrompt(questionPrefix + option.question, option.default, option.options);
             }
 
             if (optionValue === "true") optionValue = true;
             if (optionValue === "false") optionValue = false;
 
-            executionPlan.cliOptionsByAdderId[adderId][optionKey] = optionValue;
+            selectedValues[optionKey] = optionValue;
         }
     }
 }

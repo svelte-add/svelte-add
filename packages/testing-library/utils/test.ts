@@ -13,8 +13,8 @@ export async function runTests(page: Page, adder: AdderWithoutExplicitArgs, opti
         click: async (selector, path) => {
             await click(page, selector, path);
         },
-        expectUrlPath: async (path) => {
-            await expectUrlPath(page, path);
+        expectUrlPath: (path) => {
+            expectUrlPath(page, path);
         },
     };
 
@@ -26,7 +26,7 @@ async function executeAdderTests(
     testMethods: Tests,
     options: OptionValues<Record<string, Question>>,
 ) {
-    if (!adder.tests || !adder.tests.tests || adder.tests.tests.length == 0) throw new Error(`Cannot test adder without tests!`);
+    if (!adder.tests || adder.tests.tests.length == 0) throw new Error(`Cannot test adder without tests!`);
 
     for (const test of adder.tests.tests) {
         if (test.condition && !test.condition(options)) continue;
@@ -62,7 +62,7 @@ async function click(page: Page, selector: string, path?: string) {
     }
 }
 
-async function expectUrlPath(page: Page, path: string) {
+function expectUrlPath(page: Page, path: string) {
     const url = new URL(page.url());
 
     if (url.pathname !== path) {

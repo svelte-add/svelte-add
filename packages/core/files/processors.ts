@@ -1,8 +1,8 @@
 import {
-    CssAstEditor,
-    HtmlAstEditor,
-    JsAstEditor,
-    SvelteAstEditor,
+    type CssAstEditor,
+    type HtmlAstEditor,
+    type JsAstEditor,
+    type SvelteAstEditor,
     getCssAstEditor,
     getHtmlAstEditor,
     getJsAstEditor,
@@ -19,10 +19,10 @@ import {
     serializeScript,
     serializeSvelteFile,
 } from "@svelte-add/ast-tooling";
-import { fileExistsWorkspace, format, readFile, writeFile } from "./utils.js";
-import { ConditionDefinition } from "../adder/config.js";
-import { OptionDefinition } from "../adder/options.js";
-import { Workspace } from "../utils/workspace.js";
+import { fileExistsWorkspace, readFile, writeFile } from "./utils.js";
+import type { ConditionDefinition } from "../adder/config.js";
+import type { OptionDefinition } from "../adder/options.js";
+import type { Workspace } from "../utils/workspace.js";
 
 export type BaseFile<Args extends OptionDefinition> = {
     name: (options: Workspace<Args>) => string;
@@ -50,6 +50,7 @@ export type SvelteFileType<Args extends OptionDefinition> = {
 };
 export type SvelteFile<Args extends OptionDefinition> = SvelteFileType<Args> & BaseFile<Args>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type JsonFileEditorArgs<Args extends OptionDefinition> = { data: any } & Workspace<Args>;
 export type JsonFileType<Args extends OptionDefinition> = {
     contentType: "json";
@@ -79,38 +80,53 @@ export type FileTypes<Args extends OptionDefinition> =
     | HtmlFile<Args>
     | CssFile<Args>;
 
-export async function createOrUpdateFiles<Args extends OptionDefinition>(files: FileTypes<Args>[], workspace: Workspace<Args>) {
+/**
+ * @param files
+ * @param workspace
+ * @returns a list of paths of changed or created files
+ */
+export async function createOrUpdateFiles<Args extends OptionDefinition>(
+    files: FileTypes<Args>[],
+    workspace: Workspace<Args>,
+): Promise<string[]> {
+    const changedFiles = [];
     for (const fileDetails of files) {
-        if (fileDetails.condition && !fileDetails.condition(workspace)) {
-            continue;
+        try {
+            if (fileDetails.condition && !fileDetails.condition(workspace)) {
+                continue;
+            }
+
+            const exists = await fileExistsWorkspace(workspace, fileDetails.name(workspace));
+
+            let content = "";
+            if (!exists) {
+                content = "";
+            } else {
+                content = await readFile(workspace, fileDetails.name(workspace));
+            }
+
+            if (fileDetails.contentType == "script") {
+                content = handleScriptFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "text") {
+                content = handleTextFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "svelte") {
+                content = handleSvelteFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "json") {
+                content = handleJsonFile(content, fileDetails, workspace, exists);
+            } else if (fileDetails.contentType == "css") {
+                content = handleCssFile(content, fileDetails, workspace);
+            } else if (fileDetails.contentType == "html") {
+                content = handleHtmlFile(content, fileDetails, workspace);
+            }
+
+            await writeFile(workspace, fileDetails.name(workspace), content);
+            changedFiles.push(fileDetails.name(workspace));
+        } catch (e) {
+            if (e instanceof Error) throw new Error(`Unable to process '${fileDetails.name(workspace)}'. Reason: ${e.message}`);
+            throw e;
         }
-
-        const exists = await fileExistsWorkspace(workspace, fileDetails.name(workspace));
-
-        let content = "";
-        if (!exists) {
-            content = "";
-        } else {
-            content = await readFile(workspace, fileDetails.name(workspace));
-        }
-
-        if (fileDetails.contentType == "script") {
-            content = handleScriptFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "text") {
-            content = handleTextFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "svelte") {
-            content = handleSvelteFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "json") {
-            content = handleJsonFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "css") {
-            content = handleCssFile(content, fileDetails, workspace);
-        } else if (fileDetails.contentType == "html") {
-            content = handleHtmlFile(content, fileDetails, workspace);
-        }
-
-        content = await format(workspace, fileDetails.name(workspace), content);
-        await writeFile(workspace, fileDetails.name(workspace), content);
     }
+    return changedFiles;
 }
 
 function handleHtmlFile<Args extends OptionDefinition>(
@@ -140,8 +156,9 @@ function handleJsonFile<Args extends OptionDefinition>(
     content: string,
     fileDetails: JsonFileType<Args>,
     workspace: Workspace<Args>,
+    fileExists: boolean,
 ) {
-    const data = parseJson(content);
+    const data: unknown = fileExists ? parseJson(content) : {};
     fileDetails.content({ data, ...workspace });
     content = serializeJson(content, data);
     return content;

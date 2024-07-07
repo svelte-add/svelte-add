@@ -1,6 +1,6 @@
-import { mkdir, rm } from "fs/promises";
+import { join } from "node:path";
+import { mkdir, rm } from "node:fs/promises";
 import { create } from "create-svelte";
-import { join } from "path";
 import { executeCli } from "@svelte-add/core";
 
 export const ProjectTypes = {
@@ -32,12 +32,13 @@ export async function createProject(output: string, projectType: string) {
         });
     } else {
         const template = projectType == ProjectTypes.Svelte_TS ? "svelte-ts" : "svelte";
-        let args = ["create", "vite@latest", projectType, "--yes", "--template", template];
+        const args = ["create", "vite@latest", projectType, "--yes", "--template", template];
 
         try {
             await executeCli("pnpm", args, join(output, ".."));
         } catch (error) {
-            throw new Error("Failed initializing vite project: " + error);
+            const typedError = error as Error;
+            throw new Error("Failed initializing vite project: " + typedError.message);
         }
     }
 }

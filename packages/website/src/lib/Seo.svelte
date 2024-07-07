@@ -1,7 +1,7 @@
-<script>
-    export let /** @type {string} */ title;
-    export let /** @type {string} */ description;
-    export let /** @type {string[] | undefined} */ keywords = undefined;
+<script lang="ts">
+    export let title: string;
+    export let description: string;
+    export let keywords: string[] | undefined = undefined;
 </script>
 
 <svelte:head>

@@ -1,5 +1,33 @@
 # @svelte-add/ast-tooling
 
+## 2.1.3
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+## 2.1.2
+
+### Patch Changes
+
+-   fix: empty style and script tags are no longer included ([#444](https://github.com/svelte-add/svelte-add/pull/444))
+
+## 2.1.1
+
+### Patch Changes
+
+-   chore: fixed type imports and exports ([#412](https://github.com/svelte-add/svelte-add/pull/412))
+
+## 2.1.0
+
+### Minor Changes
+
+-   feat: added `zimmerframe` and a few ast utilities ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+### Patch Changes
+
+-   chore: bump dependencies ([#392](https://github.com/svelte-add/svelte-add/pull/392))
+
 ## 2.0.4
 
 ### Patch Changes

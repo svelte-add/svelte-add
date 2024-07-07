@@ -1,9 +1,17 @@
 {
     "name": "@svelte-add/ast-manipulation",
-    "version": "2.0.5",
+    "version": "2.1.5",
     "license": "MIT",
     "type": "module",
-    "exports": "./build/index.js",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        }
+    },
+    "files": [
+        "build"
+    ],
     "dependencies": {
         "@svelte-add/ast-tooling": "workspace:^"
     },
@@ -12,5 +20,8 @@
         "type": "git",
         "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-manipulation"
     },
-    "keywords": []
+    "keywords": [],
+    "devDependencies": {
+        "dedent": "^1.5.3"
+    }
 }

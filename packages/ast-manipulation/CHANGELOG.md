@@ -1,5 +1,53 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.5
+
+### Patch Changes
+
+-   chore: `overrideProperty` will now create the property if it's missing ([#470](https://github.com/svelte-add/svelte-add/pull/470))
+
+## 2.1.4
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+-   Updated dependencies [[`46cbc00b7d3aef64c932616bc31f6285c9fd4abb`](https://github.com/svelte-add/svelte-add/commit/46cbc00b7d3aef64c932616bc31f6285c9fd4abb)]:
+    -   @svelte-add/ast-tooling@2.1.3
+
+## 2.1.3
+
+### Patch Changes
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/ast-tooling@2.1.2
+
+## 2.1.2
+
+### Patch Changes
+
+-   chore: fixed type imports and exports ([#412](https://github.com/svelte-add/svelte-add/pull/412))
+
+-   Updated dependencies [[`21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7`](https://github.com/svelte-add/svelte-add/commit/21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7)]:
+    -   @svelte-add/ast-tooling@2.1.1
+
+## 2.1.1
+
+### Patch Changes
+
+-   chore: enforce stricter eslint rules ([#378](https://github.com/svelte-add/svelte-add/pull/378))
+
+## 2.1.0
+
+### Minor Changes
+
+-   feat: added `zimmerframe` and a few ast utilities ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+### Patch Changes
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/ast-tooling@2.1.0
+
 ## 2.0.5
 
 ### Patch Changes

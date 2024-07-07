@@ -1,5 +1,131 @@
 # @svelte-add/core
 
+## 2.9.2
+
+### Patch Changes
+
+-   fix: correctly parse newly created json files ([#486](https://github.com/svelte-add/svelte-add/pull/486))
+
+## 2.9.1
+
+### Patch Changes
+
+-   fix: correct typo in package manager prompt ([#483](https://github.com/svelte-add/svelte-add/pull/483))
+
+## 2.9.0
+
+### Minor Changes
+
+-   feat: allow adders to run after another adder ([#466](https://github.com/svelte-add/svelte-add/pull/466))
+
+### Patch Changes
+
+-   fix: improved parser for `svelte.config.js` ([#474](https://github.com/svelte-add/svelte-add/pull/474))
+
+-   fix: validate cli adder names ([#469](https://github.com/svelte-add/svelte-add/pull/469))
+
+-   fix: better file error handling ([#478](https://github.com/svelte-add/svelte-add/pull/478))
+
+-   Updated dependencies [[`d2ae7633b07f16eeaaaaeda526a64e5bf15fc484`](https://github.com/svelte-add/svelte-add/commit/d2ae7633b07f16eeaaaaeda526a64e5bf15fc484)]:
+    -   @svelte-add/ast-manipulation@2.1.5
+
+## 2.8.3
+
+### Patch Changes
+
+-   fix: `dependencies` and `devDependencies` are now properly sorted after modification ([#463](https://github.com/svelte-add/svelte-add/pull/463))
+
+## 2.8.2
+
+### Patch Changes
+
+-   chore: consolidate adders into one package ([#446](https://github.com/svelte-add/svelte-add/pull/446))
+
+-   Updated dependencies [[`46cbc00b7d3aef64c932616bc31f6285c9fd4abb`](https://github.com/svelte-add/svelte-add/commit/46cbc00b7d3aef64c932616bc31f6285c9fd4abb)]:
+    -   @svelte-add/ast-manipulation@2.1.4
+    -   @svelte-add/ast-tooling@2.1.3
+
+## 2.8.1
+
+### Patch Changes
+
+-   chore: removed `prettier` as a direct dependency and use the project's local installation of `prettier` for formatting ([#444](https://github.com/svelte-add/svelte-add/pull/444))
+
+-   Updated dependencies [[`f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6`](https://github.com/svelte-add/svelte-add/commit/f41ef62f2ccd6c9bcfcc7f434e191c860fa7cfb6)]:
+    -   @svelte-add/ast-tooling@2.1.2
+    -   @svelte-add/ast-manipulation@2.1.3
+
+## 2.8.0
+
+### Minor Changes
+
+-   feat: provide `dedent` utility ([#440](https://github.com/svelte-add/svelte-add/pull/440))
+
+-   feat: custom ordered adders ([#437](https://github.com/svelte-add/svelte-add/pull/437))
+
+## 2.7.0
+
+### Minor Changes
+
+-   feat: display website documentation url in hint ([#435](https://github.com/svelte-add/svelte-add/pull/435))
+
+-   feat: display next steps after running the adders ([#409](https://github.com/svelte-add/svelte-add/pull/409))
+
+## 2.6.0
+
+### Minor Changes
+
+-   feat: simplify cli usage ([#429](https://github.com/svelte-add/svelte-add/pull/429))
+
+-   feat: tool selection prompt is now a flat and grouped list ([#421](https://github.com/svelte-add/svelte-add/pull/421))
+
+## 2.5.2
+
+### Patch Changes
+
+-   chore: fixed type imports and exports ([#412](https://github.com/svelte-add/svelte-add/pull/412))
+
+-   Updated dependencies [[`21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7`](https://github.com/svelte-add/svelte-add/commit/21cfd6a0d9b149fcadce0f41e3f80e4a35d00cc7)]:
+    -   @svelte-add/ast-manipulation@2.1.2
+    -   @svelte-add/ast-tooling@2.1.1
+
+## 2.5.1
+
+### Patch Changes
+
+-   chore: improve welcome message ([#407](https://github.com/svelte-add/svelte-add/pull/407))
+
+-   chore: enforce stricter eslint rules ([#378](https://github.com/svelte-add/svelte-add/pull/378))
+
+-   fix: only check dirty git repo precondition if in git repo ([#400](https://github.com/svelte-add/svelte-add/pull/400))
+
+-   fix: avoid adding adders to unsupported project types ([#402](https://github.com/svelte-add/svelte-add/pull/402))
+
+-   fix: only print failed preconditions ([#401](https://github.com/svelte-add/svelte-add/pull/401))
+
+-   Updated dependencies [[`128be6cb88d382744c61d4eb2efe595b46ff2dc0`](https://github.com/svelte-add/svelte-add/commit/128be6cb88d382744c61d4eb2efe595b46ff2dc0)]:
+    -   @svelte-add/ast-manipulation@2.1.1
+
+## 2.5.0
+
+### Minor Changes
+
+-   feat: added Select questions for adder options ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   add postconditions ([#388](https://github.com/svelte-add/svelte-add/pull/388))
+
+### Patch Changes
+
+-   fix: directories are now recursively created for files created by an adder ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   fix: global preconditions are now ignored during tests ([#379](https://github.com/svelte-add/svelte-add/pull/379))
+
+-   chore: bump dependencies ([#392](https://github.com/svelte-add/svelte-add/pull/392))
+
+-   Updated dependencies [[`c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb`](https://github.com/svelte-add/svelte-add/commit/c8d0622442ada1388d2f96ef9fe81c27a2f7e5eb), [`db58988066790b2cd79fb5325758b87f92ce9565`](https://github.com/svelte-add/svelte-add/commit/db58988066790b2cd79fb5325758b87f92ce9565)]:
+    -   @svelte-add/ast-manipulation@2.1.0
+    -   @svelte-add/ast-tooling@2.1.0
+
 ## 2.4.0
 
 ### Minor Changes

@@ -1,13 +1,11 @@
-import { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
-import { executeAdder } from "./execute.js";
-import * as remoteControl from "./remoteControl.js";
-import { CategoryInfo } from "./categories.js";
-import { OptionDefinition, OptionValues, Question } from "./options.js";
-import { FileTypes } from "../files/processors.js";
-import { Workspace } from "../utils/workspace.js";
-import { Postcondition } from "./postconditions.js";
+import type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor } from "@svelte-add/ast-manipulation";
+import type { OptionDefinition, OptionValues, Question } from "./options.js";
+import type { FileTypes } from "../files/processors.js";
+import type { Workspace } from "../utils/workspace.js";
+import type { Postcondition } from "./postconditions.js";
+import type { Colors } from "picocolors/types.js";
 
-export { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
+export type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
 export type ConditionDefinition<Args extends OptionDefinition> = (Workspace: Workspace<Args>) => boolean;
 export type ConditionDefinitionWithoutExplicitArgs = ConditionDefinition<Record<string, Question>>;
@@ -25,11 +23,8 @@ export type AdderConfigEnvironments = {
 
 export type AdderConfigMetadata = {
     id: string;
-    package: string;
-    version: string;
     name: string;
     description: string;
-    category: CategoryInfo;
     environments: AdderConfigEnvironments;
     website?: WebsiteMetadata;
 };
@@ -44,6 +39,7 @@ export type PackageDefinition<Args extends OptionDefinition> = {
 export type BaseAdderConfig<Args extends OptionDefinition> = {
     metadata: AdderConfigMetadata;
     options: Args;
+    runsAfter?: string[];
     integrationType: string;
 };
 
@@ -51,6 +47,7 @@ export type InlineAdderConfig<Args extends OptionDefinition> = BaseAdderConfig<A
     integrationType: "inline";
     packages: PackageDefinition<Args>[];
     files: FileTypes<Args>[];
+    nextSteps?: (data: { options: OptionValues<Args>; cwd: string; colors: Colors; docs: string | undefined }) => string[];
     installHook?: (workspace: Workspace<Args>) => Promise<void>;
     uninstallHook?: (workspace: Workspace<Args>) => Promise<void>;
 };
@@ -81,14 +78,6 @@ export function defineAdder<Args extends OptionDefinition>(
     checks: AdderCheckConfig<Args>,
     tests?: AdderTestConfig<Args>,
 ) {
-    const remoteControlled = remoteControl.isRemoteControlled();
-    if (!remoteControlled) {
-        executeAdder({
-            config,
-            checks,
-        });
-    }
-
     const adder: Adder<Args> = { config, checks, tests };
     return adder;
 }
@@ -97,7 +86,7 @@ export type Tests = {
     expectProperty: (selector: string, property: string, expectedValue: string) => Promise<void>;
     elementExists: (selector: string) => Promise<void>;
     click: (selector: string, path?: string) => Promise<void>;
-    expectUrlPath: (path: string) => Promise<void>;
+    expectUrlPath: (path: string) => void;
 };
 
 export type TestDefinition<Args extends OptionDefinition> = {
@@ -119,13 +108,15 @@ export function defineAdderTests<Args extends OptionDefinition>(tests: AdderTest
     return tests;
 }
 
-export function defineAdderOptions<Args extends OptionDefinition>(options: Args) {
+export function defineAdderOptions<const Args extends OptionDefinition>(options: Args) {
     return options;
 }
 
+type MaybePromise<T> = Promise<T> | T;
+
 export type Precondition = {
     name: string;
-    run: () => Promise<{ success: boolean; message: string | undefined }>;
+    run: () => MaybePromise<{ success: boolean; message: string | undefined }>;
 };
 
 export type AdderCheckConfig<Args extends OptionDefinition> = {

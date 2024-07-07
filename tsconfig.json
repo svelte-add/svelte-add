@@ -7,10 +7,9 @@
         "target": "es2022",
         "resolveJsonModule": true,
         "skipLibCheck": true,
-        "declaration": true,
-        "allowSyntheticDefaultImports": true,
-        "sourceMap": true,
         "strict": true,
-        "outDir": "build/"
+        "esModuleInterop": true,
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true
     }
 }

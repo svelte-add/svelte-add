@@ -1,27 +1,31 @@
 {
     "name": "@svelte-add/core",
-    "version": "2.4.0",
+    "version": "2.9.2",
     "type": "module",
     "license": "MIT",
     "exports": {
         ".": {
-            "import": "./build/index.js"
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
         },
         "./internal": {
-            "import": "./build/internal.js"
+            "types": "./build/internal.d.ts",
+            "default": "./build/internal.js"
         }
     },
+    "files": [
+        "build"
+    ],
     "devDependencies": {
-        "@clack/prompts": "^0.7.0",
+        "@svelte-add/clack-prompts": "workspace:*",
         "commander": "^12.1.0",
-        "prettier-plugin-svelte": "^3.2.3"
+        "dedent": "^1.5.3",
+        "picocolors": "^1.0.1",
+        "preferred-pm": "^3.1.3"
     },
     "dependencies": {
         "@svelte-add/ast-manipulation": "workspace:*",
-        "@svelte-add/ast-tooling": "workspace:*",
-        "picocolors": "^1.0.1",
-        "preferred-pm": "^3.1.3",
-        "prettier": "^3.2.5"
+        "@svelte-add/ast-tooling": "workspace:*"
     },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {

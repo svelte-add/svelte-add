@@ -1,24 +1,22 @@
-<script>
+<script lang="ts">
     import Box from "./Box.svelte";
     import BoxWrapper from "./BoxWrapper.svelte";
     import AdderImage from "./AdderImage.svelte";
     import SupportedEnvironments from "./SupportedEnvironments.svelte";
+    import type { CategoryInfo } from "@svelte-add/config";
+    import type { AdderMetadataWithOptions } from "./adder.js";
 
-    /** @type {Map<import("../../../core/adder/categories").CategoryInfo, import("$lib/adder.js").AdderMetadataWithOptions[]>} */
-    export let adderCategories = new Map();
+    export let adderCategories = new Map<CategoryInfo, AdderMetadataWithOptions[]>();
 
-    /** @type {import("./adder").AdderMetadataWithOptions[]}*/
-    export let selectedAdders = [];
+    export let selectedAdders: AdderMetadataWithOptions[] = [];
     export let linkCategories = false;
 
-    /** @type {string[]}*/
-    let selectedAdderIds = [];
+    let selectedAdderIds: string[] = [];
 
     /**
      * Selects or deselects a adder given it's id
-     * @param {string} adderId
      */
-    function selectOrDeselectAdder(adderId) {
+    function selectOrDeselectAdder(adderId: string) {
         if (selectedAdderIds.includes(adderId)) {
             selectedAdderIds = selectedAdderIds.filter((x) => x != adderId);
         } else {
@@ -26,8 +24,7 @@
             selectedAdderIds = selectedAdderIds;
         }
 
-        /** @type {import("$lib/adder.js").AdderMetadataWithOptions[]} */
-        const allAdders = [];
+        const allAdders: AdderMetadataWithOptions[] = [];
         for (const adders of adderCategories.values()) {
             allAdders.push(...adders);
         }

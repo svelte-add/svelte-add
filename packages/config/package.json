@@ -1,0 +1,18 @@
+{
+    "name": "@svelte-add/config",
+    "version": "1.1.1",
+    "license": "MIT",
+    "exports": {
+        ".": {
+            "types": "./build/index.d.ts",
+            "default": "./build/index.js"
+        }
+    },
+    "type": "module",
+    "bugs": "https://github.com/svelte-add/svelte-add/issues",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/config"
+    },
+    "keywords": []
+}
