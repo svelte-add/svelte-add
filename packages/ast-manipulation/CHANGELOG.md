@@ -1,5 +1,11 @@
 # @svelte-add/ast-manipulation
 
+## 2.1.6
+
+### Patch Changes
+
+-   added `createSpreadElement` utility ([#453](https://github.com/svelte-add/svelte-add/pull/453))
+
 ## 2.1.5
 
 ### Patch Changes
