@@ -1,5 +1,11 @@
 # @svelte-add/website
 
+## 2.3.8
+
+### Patch Changes
+
+-   use correct command if only selecting one adder ([#490](https://github.com/svelte-add/svelte-add/pull/490))
+
 ## 2.3.7
 
 ### Patch Changes
