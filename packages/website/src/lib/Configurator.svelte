@@ -1,9 +1,9 @@
 <script lang="ts">
     import { browser } from "$app/environment";
-    import Box from "./Box.svelte";
-    import CopyCommand from "./CopyCommand.svelte";
     import type { AvailableCliOptions } from "@svelte-add/core/internal";
     import type { AdderMetadataWithOptions } from "./adder.js";
+    import Box from "./Box.svelte";
+    import CopyCommand from "./CopyCommand.svelte";
 
     export let adders: AdderMetadataWithOptions[] = [];
 
@@ -46,7 +46,7 @@
             const adderIds = Object.keys(args).join(" ");
             command += `svelte-add@latest ${adderIds}`;
         } else {
-            command += "@svelte-add/" + firstAdderId + "@latest";
+            command += "svelte-add " + firstAdderId + "@latest";
         }
 
         for (const [adderId, options] of argumentEntries) {
