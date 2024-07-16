@@ -46,7 +46,7 @@
             const adderIds = Object.keys(args).join(" ");
             command += `svelte-add@latest ${adderIds}`;
         } else {
-            command += "svelte-add " + firstAdderId + "@latest";
+            command += "svelte-add@latest " + firstAdderId;
         }
 
         for (const [adderId, options] of argumentEntries) {
