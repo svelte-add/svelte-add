@@ -29,6 +29,7 @@ const main = async () => {
                             if (value == "") return "Please enter a description for your adder";
                         },
                         result: {
+                            // eslint-disable-next-line @typescript-eslint/require-await
                             run: async (result, { state }) => {
                                 state.description = result;
                             },
@@ -47,6 +48,7 @@ const main = async () => {
                             }
                         },
                         result: {
+                            // eslint-disable-next-line @typescript-eslint/require-await
                             run: async (result, { state }) => {
                                 state.docs = result;
                             },
@@ -57,6 +59,7 @@ const main = async () => {
                         message: "Is this an adder for Svelte?",
                         initialValue: true,
                         yes: {
+                            // eslint-disable-next-line @typescript-eslint/require-await
                             run: async ({ state }) => {
                                 state.svelte = true;
 
@@ -65,6 +68,7 @@ const main = async () => {
                                         kind: "confirm",
                                         message: "Is this an adder for SvelteKit?",
                                         yes: {
+                                            // eslint-disable-next-line @typescript-eslint/require-await
                                             run: async ({ state }) => {
                                                 state.kit = true;
                                             },
@@ -87,6 +91,7 @@ const main = async () => {
                             },
                         ],
                         result: {
+                            // eslint-disable-next-line @typescript-eslint/require-await
                             run: async (result, { state, projectName, dir }) => {
                                 const adderPath = path.join(dir, "config/adder.ts");
 

@@ -6,7 +6,7 @@ export const adder = defineAdderConfig({
         id: "ID",
         name: "NAME",
         description: "DESCRIPTION",
-        environments: { svelte: SVELTE, kit: KIT, },
+        environments: { svelte: SVELTE, kit: KIT },
         website: {
             logo: "./YOUR_SVG_HERE.svg",
             keywords: [],

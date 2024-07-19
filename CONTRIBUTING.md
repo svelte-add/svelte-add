@@ -33,7 +33,7 @@ pnpm changeset
 
 ## create new adder
 
-- Install dependencies `pnpm install`
+-   Install dependencies `pnpm install`
 
 Run the following command to create a new adder automatically:
 
@@ -41,12 +41,12 @@ Run the following command to create a new adder automatically:
 pnpm run adders:create adders/[YOUR ADDER]
 ```
 
-- Navigate to `adders/[YOUR_ADDER]`
-- Define the required dependencies under the packages property in `config/adder.ts`
-- Define any files that will need to be created or modified by the adder under the files property in `config/adder.ts`
-- The svg will be blank so you will want to find an svg for your adder
-- Define any options for your adder under `config/options.ts`
-- Define any tests for your adder under `config/tests.ts`
+-   Navigate to `adders/[YOUR_ADDER]`
+-   Define the required dependencies under the packages property in `config/adder.ts`
+-   Define any files that will need to be created or modified by the adder under the files property in `config/adder.ts`
+-   The svg will be blank so you will want to find an svg for your adder
+-   Define any options for your adder under `config/options.ts`
+-   Define any tests for your adder under `config/tests.ts`
 
 ## test a adder
 
