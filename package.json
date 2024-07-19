@@ -18,7 +18,8 @@
         "types:check": "tsc --project tsconfig.json --noEmit",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
         "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
-        "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium"
+        "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium",
+        "adders:create": "npx tsx add.ts"
     },
     "keywords": [],
     "author": "",
@@ -44,7 +45,8 @@
         "rollup-plugin-esbuild": "^6.1.1",
         "rollup-plugin-preserve-shebangs": "^0.2.0",
         "typescript": "^5.5.2",
-        "typescript-eslint": "8.0.0-alpha.37"
+        "typescript-eslint": "8.0.0-alpha.37",
+        "template-factory": "^0.2.4"
     },
     "packageManager": "pnpm@9.3.0"
 }
