@@ -207,7 +207,7 @@ importers:
   packages/testing-library:
     dependencies:
       '@svelte-add/core':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../core
       create-svelte:
         specifier: ^6.3.0
