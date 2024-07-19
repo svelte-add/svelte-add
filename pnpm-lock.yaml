@@ -78,7 +78,7 @@ importers:
   packages/ast-manipulation:
     dependencies:
       '@svelte-add/ast-tooling':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-tooling
     devDependencies:
       dedent:
@@ -148,14 +148,14 @@ importers:
   packages/cli:
     dependencies:
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
     devDependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       commander:
         specifier: ^12.1.0
@@ -195,19 +195,19 @@ importers:
         version: 16.14.20
     devDependencies:
       '@svelte-add/ast-manipulation':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-manipulation
       '@svelte-add/ast-tooling':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-tooling
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
 
   packages/testing-library:
     dependencies:
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
       create-svelte:
         specifier: ^6.3.0
@@ -229,28 +229,28 @@ importers:
   packages/tests:
     devDependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
       '@svelte-add/testing-library':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../testing-library
 
   packages/website:
     dependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
     devDependencies:
       '@sveltejs/adapter-static':
