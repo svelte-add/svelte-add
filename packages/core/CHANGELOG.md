@@ -1,5 +1,16 @@
 # @svelte-add/core
 
+## 2.9.3
+
+### Patch Changes
+
+-   fix: have prettier ignore unknown file types when formatting ([#453](https://github.com/svelte-add/svelte-add/pull/453))
+
+-   fix: initialize json files if they don't already exist ([#453](https://github.com/svelte-add/svelte-add/pull/453))
+
+-   Updated dependencies [[`0bb636bf3b9604be65e760ca09d0029c79e5a34d`](https://github.com/svelte-add/svelte-add/commit/0bb636bf3b9604be65e760ca09d0029c79e5a34d)]:
+    -   @svelte-add/ast-manipulation@2.1.6
+
 ## 2.9.2
 
 ### Patch Changes

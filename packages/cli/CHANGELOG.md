@@ -1,5 +1,13 @@
 # svelte-add
 
+## 2.3.7
+
+### Patch Changes
+
+-   Updated dependencies [[`0bb636bf3b9604be65e760ca09d0029c79e5a34d`](https://github.com/svelte-add/svelte-add/commit/0bb636bf3b9604be65e760ca09d0029c79e5a34d), [`0bb636bf3b9604be65e760ca09d0029c79e5a34d`](https://github.com/svelte-add/svelte-add/commit/0bb636bf3b9604be65e760ca09d0029c79e5a34d), [`0bb636bf3b9604be65e760ca09d0029c79e5a34d`](https://github.com/svelte-add/svelte-add/commit/0bb636bf3b9604be65e760ca09d0029c79e5a34d)]:
+    -   @svelte-add/core@2.9.3
+    -   @svelte-add/config@1.2.0
+
 ## 2.3.6
 
 ### Patch Changes

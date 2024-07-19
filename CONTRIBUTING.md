@@ -59,3 +59,14 @@ pnpm test bulma mdsvex
 ```
 
 And if you have made changes to the core packages, you should probably run the full test suite for all adders. But keep in mind, this takes time!
+
+## website
+
+Our website depends on our internal packages present in the repo. Please run the following commands to start developing on the website.
+
+```sh
+pnpm build:prod # builds all adders and their dependant projects
+pnpm website:dev # starts the website.
+```
+
+Please don't forget to add a changeset, see [changesets](#changesets)
