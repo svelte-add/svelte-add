@@ -13,7 +13,7 @@
         "build"
     ],
     "dependencies": {
-        "@svelte-add/core": "workspace:*",
+        "@svelte-add/core": "workspace:^",
         "playwright": "^1.44.1",
         "create-svelte": "^6.3.0"
     },
