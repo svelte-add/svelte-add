@@ -19,7 +19,7 @@
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
         "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
         "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium",
-        "adders:create": "npx tsx add.ts"
+        "adders:create": "npx tsx scripts/create-adder.ts"
     },
     "keywords": [],
     "author": "",

@@ -17,7 +17,7 @@ const main = async () => {
         templates: [
             {
                 name: "custom-adder",
-                path: util.relative("./adders/template", import.meta.url),
+                path: util.relative("../adders/template", import.meta.url),
                 flag: "custom-adder",
                 excludeFiles: ["README.md"],
                 state: { svelte: false, kit: false, description: "", docs: "" },
