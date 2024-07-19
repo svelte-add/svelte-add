@@ -77,13 +77,13 @@ const main = async () => {
                     {
                         kind: "select",
                         message: "What type of integration is this?",
-                        initialValue: "Inline",
+                        initialValue: "inline",
                         options: [
                             {
-                                name: "External",
+                                name: "external",
                             },
                             {
-                                name: "Inline",
+                                name: "inline",
                             },
                         ],
                         result: {
@@ -101,15 +101,9 @@ const main = async () => {
                                 adderTsContent = adderTsContent.replace("SVELTE", state.svelte.toString());
                                 adderTsContent = adderTsContent.replace("KIT", state.kit.toString());
 
-                                console.log("pre rename");
-
                                 fs.renameSync(path.join(dir, "YOUR_SVG_HERE.svg"), path.join(dir, `${projectName}.svg`));
 
-                                console.log("rename");
-
                                 fs.writeFileSync(adderPath, adderTsContent);
-
-                                console.log("wrote");
                             },
                         },
                     },
