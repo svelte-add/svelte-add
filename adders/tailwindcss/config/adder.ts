@@ -102,9 +102,12 @@ export const adder = defineAdderConfig({
             name: () => ".prettierrc",
             contentType: "json",
             content: ({ data }) => {
-                if (!data.plugins) data.plugins = [];
+                const PLUGIN_NAME = "prettier-plugin-tailwindcss";
 
-                data.plugins.push("prettier-plugin-tailwindcss");
+                data.plugins ??= [];
+                const plugins: string[] = data.plugins;
+
+                if (!plugins.includes(PLUGIN_NAME)) plugins.push(PLUGIN_NAME);
             },
             condition: ({ prettier }) => prettier.installed,
         },
