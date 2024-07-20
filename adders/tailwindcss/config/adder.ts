@@ -72,10 +72,18 @@ export const adder = defineAdderConfig({
             name: () => "src/app.css",
             contentType: "css",
             content: ({ ast, addAtRule }) => {
-                const atRules = ["utilities", "components", "base"];
-                for (const name of atRules) {
-                    addAtRule(ast, "tailwind", name);
+                const atRules = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
+                const firstNode = ast.first;
+                const nodes = atRules.map((name) => addAtRule(ast, "import", name));
+
+                if (firstNode !== nodes.at(-1) && firstNode?.type === "atrule" && firstNode.name === "import") {
+                    firstNode.raws.before = "\n";
                 }
+
+                nodes.forEach((n, i) => {
+                    // prevents a new line being added at the top of the stylesheet
+                    if (i !== nodes.length - 1) n.raws.before = "\n";
+                });
             },
         },
         {
