@@ -76,7 +76,7 @@ export const adder = defineAdderConfig({
                 const firstNode = ast.first;
                 const nodes = atRules.map((name) => addAtRule(ast, "import", name));
 
-                if (firstNode !== nodes.at(-1) && firstNode?.type === "atrule" && firstNode.name === "import") {
+                if (firstNode !== ast.first && firstNode?.type === "atrule" && firstNode.name === "import") {
                     firstNode.raws.before = "\n";
                 }
 
