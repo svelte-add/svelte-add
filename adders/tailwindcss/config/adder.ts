@@ -72,9 +72,9 @@ export const adder = defineAdderConfig({
             name: () => "src/app.css",
             contentType: "css",
             content: ({ ast, addAtRule }) => {
-                const atRules = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
+                const imports = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
                 const firstNode = ast.first;
-                const nodes = atRules.map((name) => addAtRule(ast, "import", name));
+                const nodes = imports.map((name) => addAtRule(ast, "import", name));
 
                 if (firstNode !== ast.first && firstNode?.type === "atrule" && firstNode.name === "import") {
                     firstNode.raws.before = "\n";
