@@ -72,18 +72,22 @@ export const adder = defineAdderConfig({
             name: () => "src/app.css",
             contentType: "css",
             content: ({ ast, addAtRule }) => {
+                // `addAtRule` prepends the rules to the tree, so we reverse the order
+                // such that the last element ends up at the top of the stylesheet
                 const imports = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
-                const firstNode = ast.first;
+                const originalFirst = ast.first;
                 const nodes = imports.map((name) => addAtRule(ast, "import", name));
 
-                if (firstNode !== ast.first && firstNode?.type === "atrule" && firstNode.name === "import") {
-                    firstNode.raws.before = "\n";
+                if (originalFirst !== ast.first && originalFirst?.type === "atrule" && originalFirst.name === "import") {
+                    originalFirst.raws.before = "\n";
                 }
 
-                nodes.forEach((n, i) => {
-                    // prevents a new line being added at the top of the stylesheet
-                    if (i !== nodes.length - 1) n.raws.before = "\n";
-                });
+                // We remove the last node to avoid adding a newline at the top of the stylesheet
+                nodes.pop();
+
+                // Each node is prefixed with single newline, ensuring the imports will always be single spaced.
+                // Without this, the CSS printer will vary the spacing depending on the current state of the stylesheet
+                nodes.forEach((n) => (n.raws.before = "\n"));
             },
         },
         {
