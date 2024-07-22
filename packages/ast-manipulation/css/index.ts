@@ -6,6 +6,10 @@ export type CssAstEditor = {
     addDeclaration: typeof addDeclaration;
     addAtRule: typeof addAtRule;
     addComment: typeof addComment;
+    Declaration: typeof Declaration;
+    AtRule: typeof AtRule;
+    Rule: typeof Rule;
+    Comment: typeof Comment;
 };
 
 export function getCssAstEditor(ast: CssAst) {
@@ -15,6 +19,10 @@ export function getCssAstEditor(ast: CssAst) {
         addAtRule,
         addDeclaration,
         addComment,
+        Declaration,
+        AtRule,
+        Rule,
+        Comment,
     };
 
     return editor;
