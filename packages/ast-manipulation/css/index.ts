@@ -1,4 +1,4 @@
-import { Declaration, Rule, AtRule, Comment, type CssAst } from "@svelte-add/ast-tooling";
+import { Declaration, Rule, AtRule, Comment, type CssAst, type CssChildNode } from "@svelte-add/ast-tooling";
 
 export type CssAstEditor = {
     ast: CssAst;
@@ -6,10 +6,7 @@ export type CssAstEditor = {
     addDeclaration: typeof addDeclaration;
     addAtRule: typeof addAtRule;
     addComment: typeof addComment;
-    Declaration: typeof Declaration;
-    AtRule: typeof AtRule;
-    Rule: typeof Rule;
-    Comment: typeof Comment;
+    addImports: typeof addImports;
 };
 
 export function getCssAstEditor(ast: CssAst) {
@@ -19,10 +16,7 @@ export function getCssAstEditor(ast: CssAst) {
         addAtRule,
         addDeclaration,
         addComment,
-        Declaration,
-        AtRule,
-        Rule,
-        Comment,
+        addImports,
     };
 
     return editor;
@@ -51,6 +45,23 @@ export function addDeclaration(ast: Rule | CssAst, property: string, value: stri
     } else {
         declaration.value = value;
     }
+}
+
+export function addImports(ast: Rule | CssAst, imports: string[]) {
+    let prev: CssChildNode | undefined;
+    const nodes = imports.map((param) => {
+        const found = ast.nodes.find((x) => x.type === "atrule" && x.name === "import" && x.params === param);
+
+        if (found) return (prev = found);
+
+        const rule = new AtRule({ name: "import", params: param });
+        if (prev) ast.insertAfter(prev, rule);
+        else ast.prepend(rule);
+
+        return (prev = rule);
+    });
+
+    return nodes;
 }
 
 export function addAtRule(ast: CssAst, name: string, params: string, append = false): AtRule {
