@@ -71,23 +71,11 @@ export const adder = defineAdderConfig({
         {
             name: () => "src/app.css",
             contentType: "css",
-            content: ({ ast, AtRule }) => {
-                const layers = ["base", "components", "utilities"];
+            content: ({ ast, addImports }) => {
+                const layerImports = ["base", "components", "utilities"].map((layer) => `"tailwindcss/${layer}"`);
                 const originalFirst = ast.first;
 
-                let prev: typeof originalFirst;
-                const nodes = layers.map((layer) => {
-                    const param = `"tailwindcss/${layer}"`;
-                    const found = ast.nodes.find((x) => x.type === "atrule" && x.name === "import" && x.params === param);
-
-                    if (found) return (prev = found);
-
-                    const rule = new AtRule({ name: "import", params: param });
-                    if (prev) ast.insertAfter(prev, rule);
-                    else ast.prepend(rule);
-
-                    return (prev = rule);
-                });
+                const nodes = addImports(ast, layerImports);
 
                 if (originalFirst !== ast.first && originalFirst?.type === "atrule" && originalFirst.name === "import") {
                     originalFirst.raws.before = "\n";
