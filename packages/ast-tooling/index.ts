@@ -4,7 +4,7 @@ import { Document, Element, Text, type ChildNode } from "domhandler";
 import { ElementType, parseDocument } from "htmlparser2";
 import { appendChild, prependChild, removeElement, textContent } from "domutils";
 import serializeDom from "dom-serializer";
-import { Root as CssAst, Declaration, Rule, AtRule, Comment } from "postcss";
+import { Root as CssAst, Declaration, Rule, AtRule, Comment, type ChildNode as CssChildNode } from "postcss";
 import { parse as postcssParse } from "postcss";
 import * as fleece from "silver-fleece";
 import * as Walker from "zimmerframe";
@@ -43,6 +43,9 @@ export type {
     // js
     AstTypes,
     AstKinds,
+
+    //css
+    CssChildNode,
 };
 
 export function parseScript(content: string): AstTypes.Program {
