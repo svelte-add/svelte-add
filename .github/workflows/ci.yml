@@ -56,7 +56,7 @@ jobs:
               run: pnpm types:check
 
             - name: lint
-              run: pnpm lint:check
+              run: pnpm lint
     website:
         runs-on: ubuntu-latest
         steps:
