@@ -6,7 +6,7 @@
     "scripts": {
         "ci:publish": "changeset publish",
         "prettier:check": "pnpm prettier . --check",
-        "prettier:fix": "pnpm prettier . --write",
+        "format": "prettier . --write",
         "eslint:check": "pnpm eslint .",
         "eslint:fix": "pnpm eslint --fix .",
         "dev": "rollup --config --watch",
