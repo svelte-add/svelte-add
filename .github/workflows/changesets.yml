@@ -31,7 +31,7 @@ jobs:
               run: pnpm install
 
             - name: build
-              run: pnpm build:prod
+              run: pnpm build
 
             - name: website
               run: pnpm website:build

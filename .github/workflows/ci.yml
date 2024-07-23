@@ -30,7 +30,7 @@ jobs:
               run: pnpm install
 
             - name: build
-              run: pnpm build:prod
+              run: pnpm build
 
             - name: test
               run: pnpm test
@@ -52,14 +52,11 @@ jobs:
             - name: install dependencies
               run: pnpm install
 
-            - name: types
-              run: pnpm types:check
+            - name: check types
+              run: pnpm check
 
-            - name: prettier
-              run: pnpm prettier:check
-
-            - name: eslint
-              run: pnpm eslint:check
+            - name: lint
+              run: pnpm lint
     website:
         runs-on: ubuntu-latest
         steps:
@@ -79,7 +76,7 @@ jobs:
               run: pnpm install
 
             - name: packages build
-              run: pnpm build:prod
+              run: pnpm build
 
             - name: website build
               run: pnpm website:build
