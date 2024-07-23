@@ -10,9 +10,7 @@ import { executeCli } from "./cli.js";
 export async function suggestInstallingDependencies(workingDirectory: string): Promise<"installed" | "skipped"> {
     type PackageManager = keyof typeof packageManagers | undefined;
     const packageManagers = {
-        // Prevents npm from crashing if the peer-deps don't match.
-        npm: "npm install --legacy-peer-deps",
-        // All of the other PMs should handle this more gracefully by default
+        npm: "npm install",
         pnpm: "pnpm install",
         yarn: "yarn",
         bun: "bun install",
