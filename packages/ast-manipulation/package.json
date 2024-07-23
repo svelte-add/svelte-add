@@ -15,13 +15,14 @@
     "dependencies": {
         "@svelte-add/ast-tooling": "workspace:*"
     },
+    "devDependencies": {
+        "dedent": "^1.5.3",
+        "decircular": "^1.0.0"
+    },
     "bugs": "https://github.com/svelte-add/svelte-add/issues",
     "repository": {
         "type": "git",
         "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-manipulation"
     },
-    "keywords": [],
-    "devDependencies": {
-        "dedent": "^1.5.3"
-    }
+    "keywords": []
 }

@@ -1,4 +1,5 @@
-import { type AstKinds, type AstTypes, Walker, parseScript, serializeScript } from "@svelte-add/ast-tooling";
+import { type AstKinds, type AstTypes, Walker, parseScript, serializeScript, stripAst } from "@svelte-add/ast-tooling";
+import decircular from "decircular";
 import dedent from "dedent";
 
 export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
@@ -39,7 +40,13 @@ export function createLiteral(value: string | null = null) {
 }
 
 export function areNodesEqual(ast1: AstTypes.ASTNode, ast2: AstTypes.ASTNode) {
-    return serializeScript(ast1) === serializeScript(ast2);
+    // We're deep cloning these trees so that we can strip the locations off of them for comparisons.
+    // Without this, we'd be getting false negatives due to slight differences in formatting style.
+    // These ASTs are also filled to the brim with circular references, which prevents
+    // us from using `structuredCloned` directly
+    const ast1Clone = decircular(ast1);
+    const ast2Clone = decircular(ast2);
+    return serializeScript(stripAst(ast1Clone, "loc")) === serializeScript(stripAst(ast2Clone, "loc"));
 }
 
 export function blockStatement() {

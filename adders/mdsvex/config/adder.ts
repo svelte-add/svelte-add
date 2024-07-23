@@ -20,7 +20,7 @@ export const adder = defineAdderConfig({
         {
             name: () => `svelte.config.js`,
             contentType: "script",
-            content: ({ ast, array, object, common, functions, imports, exports }) => {
+            content: ({ ast, array, object, functions, imports, exports }) => {
                 imports.addNamed(ast, "mdsvex", { mdsvex: "mdsvex" });
 
                 const { value: exportDefault } = exports.defaultExport(ast, object.createEmpty());
@@ -41,10 +41,8 @@ export const adder = defineAdderConfig({
 
                 // extensions
                 const extensionsArray = object.property(exportDefault, "extensions", array.createEmpty());
-                const svelteString = common.createLiteral(".svelte");
-                const svxString = common.createLiteral(".svx");
-                array.push(extensionsArray, svelteString);
-                array.push(extensionsArray, svxString);
+                array.push(extensionsArray, ".svelte");
+                array.push(extensionsArray, ".svx");
             },
         },
     ],
