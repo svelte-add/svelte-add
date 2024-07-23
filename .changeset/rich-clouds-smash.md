@@ -1,5 +1,5 @@
 ---
-"@svelte-add/cli": patch
+"svelte-add": patch
 "@svelte-add/core": patch
 ---
 
