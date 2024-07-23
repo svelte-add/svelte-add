@@ -7,13 +7,13 @@
 As we have multiple packages in this repo, we are using [pnpm](https://pnpm.io/) instead of `npm`.
 
 ### Let's go
-
+@svelte-add/testing-library
 -   clone the repo
 -   run `pnpm i` to install all dependencies
--   transpile typescript to javascript with `pnpm build:prod`
+-   transpile typescript to javascript with `pnpm build`
 -   execute whatever program you want.
 
-If you want to do multiple changes to the projects, consider replacing `pnpm build:prod` with `pnpm build:dev` to start the typescript transpiler in watch mode.
+If you want to do multiple changes to the projects, consider replacing `pnpm build` with `pnpm dev` to start the typescript transpiler in watch mode.
 
 ### Before you commit
 
@@ -36,7 +36,7 @@ pnpm changeset
 -   stop development server (if running)
 -   duplicate existing adder folder, and make some minor modification (like package name)
 -   add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
--   start development server `pnpm build:dev`
+-   start development server `pnpm dev`
 -   You are good to go - you can now change whatever is required for your adder.
 
 ## test a adder
@@ -60,7 +60,7 @@ And if you have made changes to the core packages, you should probably run the f
 Our website depends on our internal packages present in the repo. Please run the following commands to start developing on the website.
 
 ```sh
-pnpm build:prod # builds all adders and their dependant projects
+pnpm build # builds all adders and their dependant projects
 pnpm website:dev # starts the website.
 ```
 
