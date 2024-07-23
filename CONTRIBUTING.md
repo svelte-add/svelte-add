@@ -33,16 +33,11 @@ pnpm changeset
 
 ## create new adder
 
--   stop development server
--   duplicate existing adder, and make some minor modification (like package name)
--   delete its `node_modules` and `build` folder
--   delete the `CHANGELOG.md` file
--   add the new adders as a peer dependency to `svelte-add`
--   set an appropriate package name & version version in `package.json`
--   run `pnpm install` (ignore the warnings)
+-   stop development server (if running)
+-   duplicate existing adder folder, and make some minor modification (like package name)
 -   add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
 -   start development server `pnpm build:dev`
--   once you have finished developing your adder, don't forget to generate the readme `pnpm utils:readmes` & the `package.json` with `pnpm utils:packages`
+-   You are good to go - you can now change whatever is required for your adder.
 
 ## test a adder
 
