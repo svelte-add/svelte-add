@@ -72,9 +72,9 @@ export const adder = defineAdderConfig({
             name: () => "src/app.css",
             contentType: "css",
             content: ({ ast, addAtRule }) => {
-                const atRules = ["utilities", "components", "base"];
+                const atRules = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
                 for (const name of atRules) {
-                    addAtRule(ast, "tailwind", name);
+                    addAtRule(ast, "import", name);
                 }
             },
         },
