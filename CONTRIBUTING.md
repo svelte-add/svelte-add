@@ -7,7 +7,9 @@
 As we have multiple packages in this repo, we are using [pnpm](https://pnpm.io/) instead of `npm`.
 
 ### Let's go
+
 @svelte-add/testing-library
+
 -   clone the repo
 -   run `pnpm i` to install all dependencies
 -   transpile typescript to javascript with `pnpm build`
