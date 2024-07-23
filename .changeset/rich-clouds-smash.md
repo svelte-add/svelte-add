@@ -3,4 +3,4 @@
 "@svelte-add/core": patch
 ---
 
-chore: Revert storybook adder back to @latest when v8.2.0 releases
+chore: install packages without `--legacy-peer-deps` flag when using npm
