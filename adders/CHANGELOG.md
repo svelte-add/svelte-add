@@ -1,5 +1,15 @@
 # @svelte-add/adders
 
+## 1.1.1
+
+### Patch Changes
+
+-   fix: replaced `@tailwind` directives for `@import` ([#492](https://github.com/svelte-add/svelte-add/pull/492))
+
+-   fix: ensure `@import` rules are single spaced ([#496](https://github.com/svelte-add/svelte-add/pull/496))
+
+-   fix: only add `prettier-plugin-tailwindcss` if it doesn't exist ([#495](https://github.com/svelte-add/svelte-add/pull/495))
+
 ## 1.1.0
 
 ### Minor Changes
