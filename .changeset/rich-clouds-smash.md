@@ -1,5 +1,5 @@
 ---
-"@svelte-add/storybook": patch
+"@svelte-add/cli": patch
 "@svelte-add/core": patch
 ---
 
