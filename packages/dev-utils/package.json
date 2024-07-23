@@ -6,9 +6,9 @@
     "license": "MIT",
     "bin": "./index.js",
     "devDependencies": {
-        "@svelte-add/ast-manipulation": "workspace:^",
-        "@svelte-add/ast-tooling": "workspace:^",
-        "@svelte-add/core": "workspace:^"
+        "@svelte-add/ast-manipulation": "workspace:*",
+        "@svelte-add/ast-tooling": "workspace:*",
+        "@svelte-add/core": "workspace:*"
     },
     "dependencies": {
         "npm-check-updates": "^16.14.20"

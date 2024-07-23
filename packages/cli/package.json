@@ -7,11 +7,11 @@
         "build"
     ],
     "dependencies": {
-        "@svelte-add/config": "workspace:^",
-        "@svelte-add/core": "workspace:^"
+        "@svelte-add/config": "workspace:*",
+        "@svelte-add/core": "workspace:*"
     },
     "devDependencies": {
-        "@svelte-add/adders": "workspace:^",
+        "@svelte-add/adders": "workspace:*",
         "commander": "^12.1.0"
     }
 }

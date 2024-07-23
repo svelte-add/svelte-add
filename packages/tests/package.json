@@ -6,9 +6,9 @@
     "license": "MIT",
     "bin": "./build/index.js",
     "devDependencies": {
-        "@svelte-add/testing-library": "workspace:^",
-        "@svelte-add/adders": "workspace:^",
-        "@svelte-add/core": "workspace:^",
-        "@svelte-add/config": "workspace:^"
+        "@svelte-add/testing-library": "workspace:*",
+        "@svelte-add/adders": "workspace:*",
+        "@svelte-add/core": "workspace:*",
+        "@svelte-add/config": "workspace:*"
     }
 }
