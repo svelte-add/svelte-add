@@ -1,5 +1,14 @@
 # svelte-add
 
+## 2.3.9
+
+### Patch Changes
+
+-   chore: install packages without `--legacy-peer-deps` flag when using npm ([#393](https://github.com/svelte-add/svelte-add/pull/393))
+
+-   Updated dependencies [[`c2be67465780755b473e74a38d48f332294376ed`](https://github.com/svelte-add/svelte-add/commit/c2be67465780755b473e74a38d48f332294376ed)]:
+    -   @svelte-add/core@2.9.5
+
 ## 2.3.8
 
 ### Patch Changes
