@@ -13,9 +13,8 @@
         "website:build": "pnpm -C ./packages/website build",
         "website:preview": "pnpm -C ./packages/website preview",
         "test": "node ./packages/tests/build/index.js",
-        "types:check": "tsc --project tsconfig.json --noEmit",
+        "check": "tsc --project tsconfig.json --noEmit",
         "utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
-        "check": "pnpm eslint:check && pnpm prettier:check && pnpm types:check",
         "postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium"
     },
     "keywords": [],
