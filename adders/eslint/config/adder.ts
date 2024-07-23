@@ -25,7 +25,7 @@ export const adder = defineAdderConfig({
             name: "eslint-config-prettier",
             version: "^9.1.0",
             dev: true,
-            condition: ({ dependencies }) => hasPrettier(dependencies),
+            condition: ({ prettier }) => prettier.installed,
         },
     ],
     files: [
@@ -103,9 +103,3 @@ export const adder = defineAdderConfig({
         },
     ],
 });
-
-const SUPPORTED_ESLINT_VERSION = "3";
-
-function hasPrettier(deps: Record<string, string>): boolean {
-    return !!deps["prettier"] && deps["prettier"].startsWith(SUPPORTED_ESLINT_VERSION);
-}
