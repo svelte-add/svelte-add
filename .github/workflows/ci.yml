@@ -55,11 +55,8 @@ jobs:
             - name: types
               run: pnpm types:check
 
-            - name: prettier
-              run: pnpm prettier:check
-
-            - name: eslint
-              run: pnpm eslint:check
+            - name: lint
+              run: pnpm lint:check
     website:
         runs-on: ubuntu-latest
         steps:

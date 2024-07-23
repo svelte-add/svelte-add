@@ -5,10 +5,8 @@
     "description": "",
     "scripts": {
         "ci:publish": "changeset publish",
-        "prettier:check": "pnpm prettier . --check",
-        "format": "prettier . --write",
-        "eslint:check": "pnpm eslint .",
-        "eslint:fix": "pnpm eslint --fix .",
+        "format": "prettier . --write && pnpm eslint --fix .",
+        "lint": "pnpm prettier . --check && pnpm eslint .",
         "dev": "rollup --config --watch",
         "build": "rollup -c",
         "website:dev": "pnpm -C ./packages/website dev",
