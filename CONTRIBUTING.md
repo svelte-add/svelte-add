@@ -21,8 +21,8 @@ If you want to do multiple changes to the projects, consider replacing `pnpm bui
 
 Make sure each of the programs below executes successfully. After that, please check if you need to create a [changeset](#changesets)
 
--   `pnpm eslint:check` (run `pnpm eslint:fix` to potentially fix, manual intervention usually necessary)
--   `pnpm prettier:check` (run `pnpm prettier:fix` to fix)
+-   `pnpm lint` (run `pnpm format` to fix formatting issues. Manual intervention is usually necessary for linting issues though)
+-   `pnpm check`
 -   `pnpm test`
 
 ### Changesets
