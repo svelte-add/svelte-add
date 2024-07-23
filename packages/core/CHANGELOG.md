@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.9.4
+
+### Patch Changes
+
+-   fix: pin workspace dependencies versions ([#493](https://github.com/svelte-add/svelte-add/pull/493))
+
+-   Updated dependencies [[`3a678c00b6a40c938dcf4afef9670ae9a67236ae`](https://github.com/svelte-add/svelte-add/commit/3a678c00b6a40c938dcf4afef9670ae9a67236ae), [`0b18faf1d0f3054c42091e522c19dc7dcdbf467c`](https://github.com/svelte-add/svelte-add/commit/0b18faf1d0f3054c42091e522c19dc7dcdbf467c), [`7dfab9d875c1ccd9ae163fddf665d7f3a52af447`](https://github.com/svelte-add/svelte-add/commit/7dfab9d875c1ccd9ae163fddf665d7f3a52af447), [`0b18faf1d0f3054c42091e522c19dc7dcdbf467c`](https://github.com/svelte-add/svelte-add/commit/0b18faf1d0f3054c42091e522c19dc7dcdbf467c), [`3a678c00b6a40c938dcf4afef9670ae9a67236ae`](https://github.com/svelte-add/svelte-add/commit/3a678c00b6a40c938dcf4afef9670ae9a67236ae)]:
+    -   @svelte-add/ast-tooling@2.1.4
+    -   @svelte-add/ast-manipulation@2.2.0
+
 ## 2.9.3
 
 ### Patch Changes

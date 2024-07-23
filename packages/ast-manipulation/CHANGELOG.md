@@ -1,5 +1,20 @@
 # @svelte-add/ast-manipulation
 
+## 2.2.0
+
+### Minor Changes
+
+-   feat: added `addImports` method for CSS editor ([#496](https://github.com/svelte-add/svelte-add/pull/496))
+
+### Patch Changes
+
+-   fix: preserve formatting for JS files ([#467](https://github.com/svelte-add/svelte-add/pull/467))
+
+-   fix: pin workspace dependencies versions ([#493](https://github.com/svelte-add/svelte-add/pull/493))
+
+-   Updated dependencies [[`3a678c00b6a40c938dcf4afef9670ae9a67236ae`](https://github.com/svelte-add/svelte-add/commit/3a678c00b6a40c938dcf4afef9670ae9a67236ae), [`7dfab9d875c1ccd9ae163fddf665d7f3a52af447`](https://github.com/svelte-add/svelte-add/commit/7dfab9d875c1ccd9ae163fddf665d7f3a52af447), [`0b18faf1d0f3054c42091e522c19dc7dcdbf467c`](https://github.com/svelte-add/svelte-add/commit/0b18faf1d0f3054c42091e522c19dc7dcdbf467c)]:
+    -   @svelte-add/ast-tooling@2.1.4
+
 ## 2.1.6
 
 ### Patch Changes

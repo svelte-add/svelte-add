@@ -1,5 +1,15 @@
 # @svelte-add/ast-tooling
 
+## 2.1.4
+
+### Patch Changes
+
+-   chore: use `stringify` instead of `patch` ([#493](https://github.com/svelte-add/svelte-add/pull/493))
+
+-   fix: preserve formatting for JS files ([#467](https://github.com/svelte-add/svelte-add/pull/467))
+
+-   chore: expose `CssChildNode` ([#496](https://github.com/svelte-add/svelte-add/pull/496))
+
 ## 2.1.3
 
 ### Patch Changes

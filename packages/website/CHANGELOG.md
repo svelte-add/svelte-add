@@ -1,5 +1,15 @@
 # @svelte-add/website
 
+## 2.3.9
+
+### Patch Changes
+
+-   fix: pin workspace dependencies versions ([#493](https://github.com/svelte-add/svelte-add/pull/493))
+
+-   Updated dependencies [[`470dc1fddaad3a961a408ad95a489cbccde46b83`](https://github.com/svelte-add/svelte-add/commit/470dc1fddaad3a961a408ad95a489cbccde46b83), [`0b18faf1d0f3054c42091e522c19dc7dcdbf467c`](https://github.com/svelte-add/svelte-add/commit/0b18faf1d0f3054c42091e522c19dc7dcdbf467c), [`c5efcf13d409c4b91a902963c06706be1f1797c6`](https://github.com/svelte-add/svelte-add/commit/c5efcf13d409c4b91a902963c06706be1f1797c6), [`3a678c00b6a40c938dcf4afef9670ae9a67236ae`](https://github.com/svelte-add/svelte-add/commit/3a678c00b6a40c938dcf4afef9670ae9a67236ae)]:
+    -   @svelte-add/adders@1.1.1
+    -   @svelte-add/core@2.9.4
+
 ## 2.3.8
 
 ### Patch Changes

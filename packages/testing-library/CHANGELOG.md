@@ -1,5 +1,14 @@
 # @svelte-add/testing-library
 
+## 2.1.8
+
+### Patch Changes
+
+-   fix: pin workspace dependencies versions ([#493](https://github.com/svelte-add/svelte-add/pull/493))
+
+-   Updated dependencies [[`3a678c00b6a40c938dcf4afef9670ae9a67236ae`](https://github.com/svelte-add/svelte-add/commit/3a678c00b6a40c938dcf4afef9670ae9a67236ae)]:
+    -   @svelte-add/core@2.9.4
+
 ## 2.1.7
 
 ### Patch Changes
