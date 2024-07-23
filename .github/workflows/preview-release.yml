@@ -38,7 +38,7 @@ jobs:
               run: pnpm install
 
             - name: build
-              run: pnpm build:prod
+              run: pnpm build
 
             - name: publish preview
               if: ${{ steps.changed-files.outputs.all_changed_files_count > 0 }}
