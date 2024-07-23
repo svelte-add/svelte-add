@@ -71,11 +71,22 @@ export const adder = defineAdderConfig({
         {
             name: () => "src/app.css",
             contentType: "css",
-            content: ({ ast, addAtRule }) => {
-                const atRules = ['"tailwindcss/utilities"', '"tailwindcss/components"', '"tailwindcss/base"'];
-                for (const name of atRules) {
-                    addAtRule(ast, "import", name);
+            content: ({ ast, addImports }) => {
+                const layerImports = ["base", "components", "utilities"].map((layer) => `"tailwindcss/${layer}"`);
+                const originalFirst = ast.first;
+
+                const nodes = addImports(ast, layerImports);
+
+                if (originalFirst !== ast.first && originalFirst?.type === "atrule" && originalFirst.name === "import") {
+                    originalFirst.raws.before = "\n";
                 }
+
+                // We remove the first node to avoid adding a newline at the top of the stylesheet
+                nodes.shift();
+
+                // Each node is prefixed with single newline, ensuring the imports will always be single spaced.
+                // Without this, the CSS printer will vary the spacing depending on the current state of the stylesheet
+                nodes.forEach((n) => (n.raws.before = "\n"));
             },
         },
         {
