@@ -17,6 +17,10 @@ export const adder = defineAdderConfig({
     },
     options,
     integrationType: "inline",
+    // This isn't necessarily required, but the logic for adding the
+    // `eslint-config-prettier` plugin is simpler here, so if both adders
+    // are selected in the same session, then we'll want to run the logic here.
+    runsAfter: ["prettier"],
     packages: [
         { name: "eslint", version: "^9.7.0", dev: true },
         { name: "@types/eslint", version: "^9.6.0", dev: true },
