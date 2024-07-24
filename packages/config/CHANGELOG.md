@@ -1,5 +1,11 @@
 # @svelte-add/config
 
+## 1.2.1
+
+### Patch Changes
+
+-   chore: trigger release ([#504](https://github.com/svelte-add/svelte-add/pull/504))
+
 ## 1.2.0
 
 ### Minor Changes

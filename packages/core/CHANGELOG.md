@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.9.6
+
+### Patch Changes
+
+-   chore: trigger release ([#504](https://github.com/svelte-add/svelte-add/pull/504))
+
+-   Updated dependencies [[`6cce02c2902938e29a6c2bfa9a95435ca8b32461`](https://github.com/svelte-add/svelte-add/commit/6cce02c2902938e29a6c2bfa9a95435ca8b32461)]:
+    -   @svelte-add/ast-manipulation@2.2.1
+    -   @svelte-add/ast-tooling@2.1.5
+
 ## 2.9.5
 
 ### Patch Changes
