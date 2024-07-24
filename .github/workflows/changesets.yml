@@ -1,58 +1,58 @@
 name: Changesets
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 jobs:
-    version:
-        timeout-minutes: 15
-        runs-on: ubuntu-latest
-        steps:
-            - name: checkout code repository
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
+  version:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: setup pnpm
-              uses: pnpm/action-setup@v4
+      - name: setup pnpm
+        uses: pnpm/action-setup@v4
 
-            - name: setup node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: pnpm
+      - name: setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
 
-            - name: install dependencies
-              run: pnpm install
+      - name: install dependencies
+        run: pnpm install
 
-            - name: build
-              run: pnpm build
+      - name: build
+        run: pnpm build
 
-            - name: website
-              run: pnpm website:build
+      - name: website
+        run: pnpm website:build
 
-            - name: create and publish versions
-              id: changesets
-              uses: changesets/action@v1
-              with:
-                  publish: pnpm ci:publish
-                  createGithubReleases: false
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
+      - name: create and publish versions
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm ci:publish
+          createGithubReleases: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_2024 }}
 
-            - name: published packages
-              run: echo '${{ steps.changesets.outputs.publishedPackages }}'
+      - name: published packages
+        run: echo '${{ steps.changesets.outputs.publishedPackages }}'
 
-            - name: Publish website
-              if: steps.changesets.outputs.published == 'true' && contains(steps.changesets.outputs.publishedPackages, '@svelte-add/website')
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./packages/website/build
-                  cname: svelte-add.com
+      - name: Publish website
+        if: steps.changesets.outputs.published == 'true' && contains(steps.changesets.outputs.publishedPackages, '@svelte-add/website')
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./packages/website/build
+          cname: svelte-add.com
