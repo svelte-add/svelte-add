@@ -1,8 +1,8 @@
 export type CommunityAdder = {
-    id: string;
-    displayName: string;
-    description: string;
-    package: string;
+	id: string;
+	displayName: string;
+	description: string;
+	package: string;
 };
 
 export type CommunityAdders = CommunityAdder[];

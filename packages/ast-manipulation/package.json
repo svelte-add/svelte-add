@@ -1,28 +1,28 @@
 {
-    "name": "@svelte-add/ast-manipulation",
-    "version": "2.2.1",
-    "license": "MIT",
-    "type": "module",
-    "exports": {
-        ".": {
-            "types": "./build/index.d.ts",
-            "default": "./build/index.js"
-        }
-    },
-    "files": [
-        "build"
-    ],
-    "dependencies": {
-        "@svelte-add/ast-tooling": "workspace:*"
-    },
-    "devDependencies": {
-        "dedent": "^1.5.3",
-        "decircular": "^1.0.0"
-    },
-    "bugs": "https://github.com/svelte-add/svelte-add/issues",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-manipulation"
-    },
-    "keywords": []
+	"name": "@svelte-add/ast-manipulation",
+	"version": "2.2.1",
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./build/index.d.ts",
+			"default": "./build/index.js"
+		}
+	},
+	"files": [
+		"build"
+	],
+	"dependencies": {
+		"@svelte-add/ast-tooling": "workspace:*"
+	},
+	"devDependencies": {
+		"dedent": "^1.5.3",
+		"decircular": "^1.0.0"
+	},
+	"bugs": "https://github.com/svelte-add/svelte-add/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-manipulation"
+	},
+	"keywords": []
 }

@@ -1,6 +1,14 @@
 {
-    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-    "cSpell.words": ["ecma", "popperjs", "postcondition", "Postcondition", "postconditions", "Svex", "threlte"],
-    "eslint.useFlatConfig": true,
-    "typescript.tsdk": "./node_modules/typescript/lib"
+	"typescript.tsserver.experimental.enableProjectDiagnostics": true,
+	"cSpell.words": [
+		"ecma",
+		"popperjs",
+		"postcondition",
+		"Postcondition",
+		"postconditions",
+		"Svex",
+		"threlte"
+	],
+	"eslint.useFlatConfig": true,
+	"typescript.tsdk": "./node_modules/typescript/lib"
 }

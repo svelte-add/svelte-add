@@ -25,6 +25,6 @@ Please see the [contribution guidelines](./CONTRIBUTING.md)
 
 ## Thanks to
 
--   [J](https://github.com/babichjacob) who initially created [svelte-add](https://github.com/svelte-add/svelte-add)
--   All contributors of [svelte-add](https://github.com/svelte-add/svelte-add)
--   [BlankParticle](https://github.com/BlankParticle) who initially brought up the idea of a [full rewrite](https://github.com/svelte-add/svelte-add/issues/328)
+- [J](https://github.com/babichjacob) who initially created [svelte-add](https://github.com/svelte-add/svelte-add)
+- All contributors of [svelte-add](https://github.com/svelte-add/svelte-add)
+- [BlankParticle](https://github.com/BlankParticle) who initially brought up the idea of a [full rewrite](https://github.com/svelte-add/svelte-add/issues/328)
