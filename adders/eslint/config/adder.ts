@@ -34,7 +34,10 @@ export const adder = defineAdderConfig({
             contentType: "json",
             content: ({ data }) => {
                 data.scripts ??= {};
-                data.scripts["lint"] ??= "eslint .";
+                const scripts: Record<string, string> = data.scripts;
+                const LINT_CMD = "eslint .";
+                scripts["lint"] ??= LINT_CMD;
+                if (!scripts["lint"].includes(LINT_CMD)) scripts["lint"] += ` && ${LINT_CMD}`;
             },
         },
         {
