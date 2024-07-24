@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.1.5
+
+### Patch Changes
+
+-   chore: trigger release ([#504](https://github.com/svelte-add/svelte-add/pull/504))
+
 ## 2.1.4
 
 ### Patch Changes
