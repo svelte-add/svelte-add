@@ -53,6 +53,8 @@ export const adder = defineAdderConfig({
                 const eslintConfigs = defaultExport.value;
                 if (eslintConfigs.type !== "ArrayExpression") return;
 
+                common.addJsDocTypeComment(defaultExport.astNode, "import('eslint').Linter.Config[]");
+
                 const jsConfig = common.expressionFromString("js.configs.recommended");
                 array.push(eslintConfigs, jsConfig);
 
