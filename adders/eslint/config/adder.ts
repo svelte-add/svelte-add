@@ -1,7 +1,8 @@
-import { defineAdderConfig } from "@svelte-add/core";
-import { options } from "./options.js";
 import fs from "node:fs";
 import path from "node:path";
+import { defineAdderConfig } from "@svelte-add/core";
+import { options } from "./options.js";
+import { addEslintConfigPrettier } from "../../common.js";
 
 export const adder = defineAdderConfig({
     metadata: {
@@ -17,10 +18,6 @@ export const adder = defineAdderConfig({
     },
     options,
     integrationType: "inline",
-    // This isn't necessarily required, but the logic for adding the
-    // `eslint-config-prettier` plugin is simpler here, so if both adders
-    // are selected in the same session, then we'll want to run the logic here.
-    runsAfter: ["prettier"],
     packages: [
         { name: "eslint", version: "^9.7.0", dev: true },
         { name: "@types/eslint", version: "^9.6.0", dev: true },
@@ -61,20 +58,8 @@ export const adder = defineAdderConfig({
         {
             name: () => "eslint.config.js",
             contentType: "script",
-            content: ({ ast, imports, exports, common, typescript, prettier, array, variables, object }) => {
-                // imports
-                if (prettier.installed) imports.addDefault(ast, "eslint-config-prettier", "prettier");
-                if (typescript.installed) imports.addDefault(ast, "typescript-eslint", "ts");
-                imports.addDefault(ast, "globals", "globals");
-                imports.addDefault(ast, "eslint-plugin-svelte", "svelte");
-                imports.addDefault(ast, "@eslint/js", "js");
-
-                const fallbackConfig = array.createEmpty();
-                const defaultExport = exports.defaultExport(ast, fallbackConfig);
-                const eslintConfigs = defaultExport.value;
-                if (eslintConfigs.type !== "ArrayExpression") return;
-
-                common.addJsDocTypeComment(defaultExport.astNode, "import('eslint').Linter.Config[]");
+            content: ({ ast, imports, exports, common, typescript, array, object }) => {
+                const eslintConfigs = array.createEmpty();
 
                 const jsConfig = common.expressionFromString("js.configs.recommended");
                 array.push(eslintConfigs, jsConfig);
@@ -86,14 +71,6 @@ export const adder = defineAdderConfig({
 
                 const svelteConfig = common.expressionFromString('svelte.configs["flat/recommended"]');
                 array.push(eslintConfigs, common.createSpreadElement(svelteConfig));
-
-                if (prettier.installed) {
-                    const prettierConfig = variables.identifier("prettier");
-                    array.push(eslintConfigs, prettierConfig);
-
-                    const sveltePrettierConfig = common.expressionFromString('svelte.configs["flat/prettier"]');
-                    array.push(eslintConfigs, common.createSpreadElement(sveltePrettierConfig));
-                }
 
                 const globalsBrowser = common.createSpreadElement(common.expressionFromString("globals.browser"));
                 const globalsNode = common.createSpreadElement(common.expressionFromString("globals.node"));
@@ -122,7 +99,26 @@ export const adder = defineAdderConfig({
                     ignores: common.expressionFromString('["build/", ".svelte-kit/", "dist/"]'),
                 });
                 array.push(eslintConfigs, ignoresConfig);
+
+                const defaultExport = exports.defaultExport(ast, eslintConfigs);
+                // if it's not the config we created, then we'll leave it alone and exit out
+                if (defaultExport.value !== eslintConfigs) return;
+
+                // type annotate config
+                common.addJsDocTypeComment(defaultExport.astNode, "import('eslint').Linter.Config[]");
+
+                // imports
+                if (typescript.installed) imports.addDefault(ast, "typescript-eslint", "ts");
+                imports.addDefault(ast, "globals", "globals");
+                imports.addDefault(ast, "eslint-plugin-svelte", "svelte");
+                imports.addDefault(ast, "@eslint/js", "js");
             },
+        },
+        {
+            name: () => "eslint.config.js",
+            contentType: "script",
+            condition: ({ prettier }) => prettier.installed,
+            content: addEslintConfigPrettier,
         },
     ],
 });
