@@ -1,5 +1,7 @@
 import { defineAdderConfig } from "@svelte-add/core";
 import { options } from "./options.js";
+import fs from "node:fs";
+import path from "node:path";
 
 export const adder = defineAdderConfig({
     metadata: {
@@ -38,6 +40,18 @@ export const adder = defineAdderConfig({
                 const LINT_CMD = "eslint .";
                 scripts["lint"] ??= LINT_CMD;
                 if (!scripts["lint"].includes(LINT_CMD)) scripts["lint"] += ` && ${LINT_CMD}`;
+            },
+        },
+        {
+            name: () => `.vscode/settings.json`,
+            contentType: "json",
+            // we'll only want to run this step if the file exists
+            condition: ({ cwd }) => fs.existsSync(path.join(cwd, ".vscode", "settings.json")),
+            content: ({ data }) => {
+                const validate: string[] | undefined = data["eslint.validate"];
+                if (validate && !validate.includes("svelte")) {
+                    validate.push("svelte");
+                }
             },
         },
         {
