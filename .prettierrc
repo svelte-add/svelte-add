@@ -1,8 +1,6 @@
 {
-    "endOfLine": "auto",
-    "useTabs": false,
-    "tabWidth": 4,
-    "singleQuote": false,
-    "printWidth": 130,
-    "plugins": []
+	"useTabs": true,
+	"singleQuote": true,
+	"printWidth": 100,
+	"plugins": []
 }
