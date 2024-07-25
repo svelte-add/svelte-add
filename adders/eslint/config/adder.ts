@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { defineAdderConfig } from "@svelte-add/core";
+import { defineAdderConfig, log } from "@svelte-add/core";
 import { options } from "./options.js";
 import { addEslintConfigPrettier } from "../../common.js";
 
@@ -102,7 +102,10 @@ export const adder = defineAdderConfig({
 
                 const defaultExport = exports.defaultExport(ast, eslintConfigs);
                 // if it's not the config we created, then we'll leave it alone and exit out
-                if (defaultExport.value !== eslintConfigs) return;
+                if (defaultExport.value !== eslintConfigs) {
+                    log.warn("An eslint config is already defined. Skipping initialization.");
+                    return;
+                }
 
                 // type annotate config
                 common.addJsDocTypeComment(defaultExport.astNode, "import('eslint').Linter.Config[]");
