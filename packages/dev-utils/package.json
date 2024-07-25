@@ -1,16 +1,16 @@
 {
-    "name": "@svelte-add/dev-utils",
-    "private": true,
-    "version": "2.0.0",
-    "type": "module",
-    "license": "MIT",
-    "bin": "./index.js",
-    "devDependencies": {
-        "@svelte-add/ast-manipulation": "workspace:*",
-        "@svelte-add/ast-tooling": "workspace:*",
-        "@svelte-add/core": "workspace:*"
-    },
-    "dependencies": {
-        "npm-check-updates": "^16.14.20"
-    }
+	"name": "@svelte-add/dev-utils",
+	"private": true,
+	"version": "2.0.0",
+	"type": "module",
+	"license": "MIT",
+	"bin": "./index.js",
+	"devDependencies": {
+		"@svelte-add/ast-manipulation": "workspace:*",
+		"@svelte-add/ast-tooling": "workspace:*",
+		"@svelte-add/core": "workspace:*"
+	},
+	"dependencies": {
+		"npm-check-updates": "^16.14.20"
+	}
 }

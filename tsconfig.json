@@ -1,15 +1,15 @@
 {
-    "exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/coverage/**"],
-    "compilerOptions": {
-        "checkJs": true,
-        "module": "es2022",
-        "moduleResolution": "node",
-        "target": "es2022",
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "esModuleInterop": true,
-        "verbatimModuleSyntax": true,
-        "isolatedModules": true
-    }
+	"exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/coverage/**"],
+	"compilerOptions": {
+		"checkJs": true,
+		"module": "es2022",
+		"moduleResolution": "node",
+		"target": "es2022",
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true
+	}
 }

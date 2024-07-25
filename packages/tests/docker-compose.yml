@@ -1,20 +1,20 @@
 services:
-    db-postgres:
-        image: postgres
-        restart: always
-        shm_size: 128mb
-        ports:
-            - 5432:5432
-        environment:
-            POSTGRES_USER: root
-            POSTGRES_PASSWORD: mysecretpassword
-            POSTGRES_DB: local
-    db-mysql:
-        image: mysql
-        restart: always
-        shm_size: 128mb
-        ports:
-            - 3306:3306
-        environment:
-            MYSQL_ROOT_PASSWORD: mysecretpassword
-            MYSQL_DATABASE: local
+  db-postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: local
+  db-mysql:
+    image: mysql
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: local
