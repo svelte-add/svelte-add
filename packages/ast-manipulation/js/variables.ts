@@ -1,45 +1,45 @@
-import type { AstKinds, AstTypes } from "@svelte-add/ast-tooling";
+import type { AstKinds, AstTypes } from '@svelte-add/ast-tooling';
 
 export function declaration(
-    ast: AstTypes.Program | AstKinds.DeclarationKind,
-    kind: "const" | "let" | "var",
-    name: string,
-    value: AstKinds.ExpressionKind,
+	ast: AstTypes.Program | AstKinds.DeclarationKind,
+	kind: 'const' | 'let' | 'var',
+	name: string,
+	value: AstKinds.ExpressionKind,
 ) {
-    const declarations =
-        ast.type == "Program"
-            ? ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == "VariableDeclaration")
-            : [ast as AstTypes.VariableDeclaration];
-    let declaration = declarations.find((x) => {
-        const declarator = x.declarations[0] as AstTypes.VariableDeclarator;
-        const identifier = declarator.id as AstTypes.Identifier;
-        return identifier.name == name;
-    });
+	const declarations =
+		ast.type == 'Program'
+			? ast.body.filter((x): x is AstTypes.VariableDeclaration => x.type == 'VariableDeclaration')
+			: [ast as AstTypes.VariableDeclaration];
+	let declaration = declarations.find((x) => {
+		const declarator = x.declarations[0] as AstTypes.VariableDeclarator;
+		const identifier = declarator.id as AstTypes.Identifier;
+		return identifier.name == name;
+	});
 
-    if (declaration) return declaration;
+	if (declaration) return declaration;
 
-    declaration = {
-        type: "VariableDeclaration",
-        kind,
-        declarations: [
-            {
-                type: "VariableDeclarator",
-                id: {
-                    type: "Identifier",
-                    name,
-                },
-                init: value,
-            },
-        ],
-    };
+	declaration = {
+		type: 'VariableDeclaration',
+		kind,
+		declarations: [
+			{
+				type: 'VariableDeclarator',
+				id: {
+					type: 'Identifier',
+					name,
+				},
+				init: value,
+			},
+		],
+	};
 
-    return declaration;
+	return declaration;
 }
 
 export function identifier(name: string) {
-    const identifier: AstTypes.Identifier = {
-        type: "Identifier",
-        name,
-    };
-    return identifier;
+	const identifier: AstTypes.Identifier = {
+		type: 'Identifier',
+		name,
+	};
+	return identifier;
 }

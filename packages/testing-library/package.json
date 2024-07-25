@@ -1,40 +1,40 @@
 {
-    "name": "@svelte-add/testing-library",
-    "version": "2.1.9",
-    "type": "module",
-    "license": "MIT",
-    "exports": {
-        ".": {
-            "types": "./build/index.d.ts",
-            "default": "./build/index.js"
-        }
-    },
-    "files": [
-        "build"
-    ],
-    "dependencies": {
-        "playwright": "^1.44.1",
-        "create-svelte": "^6.3.0"
-    },
-    "devDependencies": {
-        "promise-parallel-throttle": "^3.5.0",
-        "terminate": "^2.6.1",
-        "uid": "^2.0.2"
-    },
-    "peerDependencies": {
-        "@svelte-add/core": "workspace:^"
-    },
-    "bugs": "https://github.com/svelte-add/svelte-add/issues",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/testing-library"
-    },
-    "keywords": [
-        "adders",
-        "adder",
-        "testing",
-        "svelte",
-        "kit",
-        "svelte-kit"
-    ]
+	"name": "@svelte-add/testing-library",
+	"version": "2.1.10",
+	"type": "module",
+	"license": "MIT",
+	"exports": {
+		".": {
+			"types": "./build/index.d.ts",
+			"default": "./build/index.js"
+		}
+	},
+	"files": [
+		"build"
+	],
+	"dependencies": {
+		"playwright": "^1.44.1",
+		"create-svelte": "^6.3.0"
+	},
+	"devDependencies": {
+		"promise-parallel-throttle": "^3.5.0",
+		"terminate": "^2.6.1",
+		"uid": "^2.0.2"
+	},
+	"peerDependencies": {
+		"@svelte-add/core": "workspace:^"
+	},
+	"bugs": "https://github.com/svelte-add/svelte-add/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/testing-library"
+	},
+	"keywords": [
+		"adders",
+		"adder",
+		"testing",
+		"svelte",
+		"kit",
+		"svelte-kit"
+	]
 }

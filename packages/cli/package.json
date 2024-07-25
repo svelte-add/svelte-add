@@ -1,17 +1,17 @@
 {
-    "name": "svelte-add",
-    "version": "2.3.9",
-    "bin": "build/index.js",
-    "type": "module",
-    "files": [
-        "build"
-    ],
-    "dependencies": {
-        "@svelte-add/config": "workspace:*",
-        "@svelte-add/core": "workspace:*"
-    },
-    "devDependencies": {
-        "@svelte-add/adders": "workspace:*",
-        "commander": "^12.1.0"
-    }
+	"name": "svelte-add",
+	"version": "2.3.10",
+	"bin": "build/index.js",
+	"type": "module",
+	"files": [
+		"build"
+	],
+	"dependencies": {
+		"@svelte-add/config": "workspace:*",
+		"@svelte-add/core": "workspace:*"
+	},
+	"devDependencies": {
+		"@svelte-add/adders": "workspace:*",
+		"commander": "^12.1.0"
+	}
 }

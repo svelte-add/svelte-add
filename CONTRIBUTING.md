@@ -10,10 +10,10 @@ As we have multiple packages in this repo, we are using [pnpm](https://pnpm.io/)
 
 @svelte-add/testing-library
 
--   clone the repo
--   run `pnpm i` to install all dependencies
--   transpile typescript to javascript with `pnpm build`
--   execute whatever program you want.
+- clone the repo
+- run `pnpm i` to install all dependencies
+- transpile typescript to javascript with `pnpm build`
+- execute whatever program you want.
 
 If you want to do multiple changes to the projects, consider replacing `pnpm build` with `pnpm dev` to start the typescript transpiler in watch mode.
 
@@ -21,9 +21,9 @@ If you want to do multiple changes to the projects, consider replacing `pnpm bui
 
 Make sure each of the programs below executes successfully. After that, please check if you need to create a [changeset](#changesets)
 
--   `pnpm lint` (run `pnpm format` to fix formatting issues. Manual intervention is usually necessary for linting issues though)
--   `pnpm check`
--   `pnpm test`
+- `pnpm lint` (run `pnpm format` to fix formatting issues. Manual intervention is usually necessary for linting issues though)
+- `pnpm check`
+- `pnpm test`
 
 ### Changesets
 
@@ -35,11 +35,11 @@ pnpm changeset
 
 ## create new adder
 
--   stop development server (if running)
--   duplicate existing adder folder, and make some minor modification (like package name)
--   add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
--   start development server `pnpm dev`
--   You are good to go - you can now change whatever is required for your adder.
+- stop development server (if running)
+- duplicate existing adder folder, and make some minor modification (like package name)
+- add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
+- start development server `pnpm dev`
+- You are good to go - you can now change whatever is required for your adder.
 
 ## test a adder
 
