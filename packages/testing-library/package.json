@@ -14,7 +14,7 @@
 	],
 	"dependencies": {
 		"playwright": "^1.44.1",
-		"create-svelte": "^6.3.0"
+		"create-svelte": "^6.3.4"
 	},
 	"devDependencies": {
 		"promise-parallel-throttle": "^3.5.0",

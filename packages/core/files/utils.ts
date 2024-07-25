@@ -66,3 +66,29 @@ export const commonFilePaths = {
 	packageJsonFilePath: 'package.json',
 	svelteConfigFilePath: 'svelte.config.js',
 };
+
+export async function findUp(searchPath: string, fileName: string, maxDepth?: number) {
+	// partially sourced from https://github.com/privatenumber/get-tsconfig/blob/9e78ec52d450d58743439358dd88e2066109743f/src/utils/find-up.ts#L5
+	let depth = 0;
+	while (!maxDepth || depth < maxDepth) {
+		const configPath = path.posix.join(searchPath, fileName);
+
+		try {
+			// `access` throws an exception if the file could not be found
+			await fs.access(configPath);
+			return true;
+		} catch {
+			const parentPath = path.dirname(searchPath);
+			if (parentPath === searchPath) {
+				// root directory
+				return false;
+			}
+
+			searchPath = parentPath;
+		}
+
+		depth++;
+	}
+
+	return false;
+}

@@ -1,8 +1,10 @@
 import { type AstTypes, parseScript } from '@svelte-add/ast-tooling';
 import { getPackageJson } from './common.js';
-import { commonFilePaths, readFile } from '../files/utils.js';
+import { commonFilePaths, fileExists, findUp, readFile } from '../files/utils.js';
 import { getJsAstEditor } from '@svelte-add/ast-manipulation';
 import type { OptionDefinition, OptionValues, Question } from '../adder/options.js';
+import { remoteControl } from '../internal.js';
+import path from 'path';
 
 export type PrettierData = {
 	installed: boolean;
@@ -76,7 +78,22 @@ export async function populateWorkspaceDetails(
 
 	const { data: packageJson } = await getPackageJson(workspace);
 	if (packageJson.devDependencies) {
-		workspace.typescript.installed = 'tslib' in packageJson.devDependencies;
+		const tsConfigFileName = 'tsconfig.json';
+		const viteConfigFileName = 'vite.config.ts';
+		let tsConfigExists,
+			viteConfigExists = false;
+
+		if (remoteControl.isRemoteControlled()) {
+			// while executing tests, we only look into the direct `workingDirectory`
+			// as we might detect the monorepo `tsconfig.json` otherwise.
+			tsConfigExists = await fileExists(path.join(workingDirectory, tsConfigFileName));
+			viteConfigExists = await fileExists(path.join(workingDirectory, viteConfigFileName));
+		} else {
+			tsConfigExists = await findUp(workingDirectory, tsConfigFileName);
+			viteConfigExists = await findUp(workingDirectory, viteConfigFileName);
+		}
+
+		workspace.typescript.installed = tsConfigExists || viteConfigExists;
 		workspace.prettier.installed = 'prettier' in packageJson.devDependencies;
 		workspace.kit.installed = '@sveltejs/kit' in packageJson.devDependencies;
 		workspace.dependencies = { ...packageJson.devDependencies, ...packageJson.dependencies };
