@@ -85,7 +85,7 @@ export function parseHtml(content: string) {
 }
 
 export function serializeHtml(ast: Document) {
-	return serializeDom(ast, { encodeEntities: 'utf8', selfClosingTags: true });
+	return serializeDom(ast, { encodeEntities: 'utf8', selfClosingTags: true, xmlMode: true });
 }
 
 export function stripAst<T>(node: T, propToRemove: string): T {
@@ -146,30 +146,15 @@ export function parseSvelteFile(content: string): SvelteAst {
 export function serializeSvelteFile(asts: SvelteAst) {
 	const { jsAst, htmlAst, cssAst } = asts;
 
+	const script = serializeScript(jsAst);
+	const html = serializeHtml(htmlAst);
 	const css = serializePostcss(cssAst);
-	const newScriptValue = serializeScript(jsAst);
 
-	if (newScriptValue.length > 0) {
-		const scriptTag = new Element('script', {}, undefined, ElementType.ElementType.Script);
-		for (const child of scriptTag.children) {
-			removeElement(child);
-		}
+	let content = '';
+	if (script) content += `<script>\n${script}\n</script>\n\n`;
+	if (html) content += html.trim();
+	if (css) content += `\n\n<style>${css}</style>`;
 
-		appendChild(scriptTag, new Text(newScriptValue));
-		prependChild(htmlAst, scriptTag);
-	}
-
-	if (css.length > 0) {
-		const styleTag = new Element('style', {}, undefined, ElementType.ElementType.Style);
-		for (const child of styleTag.children) {
-			removeElement(child);
-		}
-
-		appendChild(styleTag, new Text(css));
-		appendChild(htmlAst, styleTag);
-	}
-
-	const content = serializeHtml(htmlAst);
 	return content;
 }
 
