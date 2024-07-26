@@ -89,7 +89,7 @@ export async function populateWorkspaceDetails(
 		} else {
 			usesTypescript ||= await findUp(workingDirectory, tsConfigFileName);
 		}
-		
+
 		workspace.typescript.installed = usesTypescript;
 		workspace.prettier.installed = 'prettier' in packageJson.devDependencies;
 		workspace.kit.installed = '@sveltejs/kit' in packageJson.devDependencies;
