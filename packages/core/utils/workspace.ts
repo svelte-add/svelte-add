@@ -80,20 +80,17 @@ export async function populateWorkspaceDetails(
 	if (packageJson.devDependencies) {
 		const tsConfigFileName = 'tsconfig.json';
 		const viteConfigFileName = 'vite.config.ts';
-		let tsConfigExists,
-			viteConfigExists = false;
+		let usesTypescript = await fileExists(path.join(workingDirectory, viteConfigFileName));
 
 		if (remoteControl.isRemoteControlled()) {
 			// while executing tests, we only look into the direct `workingDirectory`
 			// as we might detect the monorepo `tsconfig.json` otherwise.
-			tsConfigExists = await fileExists(path.join(workingDirectory, tsConfigFileName));
-			viteConfigExists = await fileExists(path.join(workingDirectory, viteConfigFileName));
+			usesTypescript ||= await fileExists(path.join(workingDirectory, tsConfigFileName));
 		} else {
-			tsConfigExists = await findUp(workingDirectory, tsConfigFileName);
-			viteConfigExists = await findUp(workingDirectory, viteConfigFileName);
+			usesTypescript ||= await findUp(workingDirectory, tsConfigFileName);
 		}
-
-		workspace.typescript.installed = tsConfigExists || viteConfigExists;
+		
+		workspace.typescript.installed = usesTypescript;
 		workspace.prettier.installed = 'prettier' in packageJson.devDependencies;
 		workspace.kit.installed = '@sveltejs/kit' in packageJson.devDependencies;
 		workspace.dependencies = { ...packageJson.devDependencies, ...packageJson.dependencies };
