@@ -6,8 +6,24 @@ export function addEslintConfigPrettier({
 	exports,
 	common,
 }: ScriptFileEditorArgs<{}>) {
-	// TODO: maybe this could be more intelligent and we can detect the name of the default import?
-	imports.addDefault(ast, 'eslint-plugin-svelte', 'svelte');
+	// if a default import for `eslint-plugin-svelte` already exists, then we'll use their specifier's name instead
+	const importNodes = ast.body.filter((n) => n.type === 'ImportDeclaration');
+	const sveltePluginImport = importNodes.find(
+		(n) =>
+			n.type === 'ImportDeclaration' &&
+			n.source.value === 'eslint-plugin-svelte' &&
+			n.specifiers?.some((n) => n.type === 'ImportDefaultSpecifier'),
+	);
+
+	let svelteImportName: string;
+	for (const specifier of sveltePluginImport?.specifiers ?? []) {
+		if (specifier.type === 'ImportDefaultSpecifier' && specifier.local?.name) {
+			svelteImportName = specifier.local.name;
+		}
+	}
+
+	svelteImportName ??= 'svelte';
+	imports.addDefault(ast, 'eslint-plugin-svelte', svelteImportName);
 	imports.addDefault(ast, 'eslint-config-prettier', 'prettier');
 
 	const fallbackConfig = common.expressionFromString('[]');
@@ -16,7 +32,9 @@ export function addEslintConfigPrettier({
 	if (array.type !== 'ArrayExpression') return;
 
 	const prettier = common.expressionFromString('prettier');
-	const sveltePrettierConfig = common.expressionFromString("svelte.configs['flat/prettier']");
+	const sveltePrettierConfig = common.expressionFromString(
+		`${svelteImportName}.configs['flat/prettier']`,
+	);
 	const configSpread = common.createSpreadElement(sveltePrettierConfig);
 
 	const nodesToInsert = [];
@@ -32,7 +50,7 @@ export function addEslintConfigPrettier({
 			el.argument.object.property.type === 'Identifier' &&
 			el.argument.object.property.name === 'configs' &&
 			el.argument.object.object.type === 'Identifier' &&
-			el.argument.object.object.name === 'svelte',
+			el.argument.object.object.name === svelteImportName,
 	);
 
 	if (idx !== -1) {
