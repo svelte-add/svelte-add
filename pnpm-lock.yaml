@@ -213,8 +213,8 @@ importers:
         specifier: workspace:^
         version: link:../core
       create-svelte:
-        specifier: ^6.3.0
-        version: 6.3.2
+        specifier: ^6.3.4
+        version: 6.3.4
       playwright:
         specifier: ^1.44.1
         version: 1.45.0
@@ -1233,8 +1233,8 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
-  create-svelte@6.3.2:
-    resolution: {integrity: sha512-9Ipg3qO9GJWbup2UHhAqL31sT3p8606CIWZBjorq2jNN7cbVdY0MxaghgyG3hZl5zq2NC6QztCGZPJLGVPTjyw==}
+  create-svelte@6.3.4:
+    resolution: {integrity: sha512-QDQJXkkq6SGP//gfjmW0UhGJEgZfYVS8Qy40tKtyt9RClumQjndQjESMNWlisU67CknV6nt6u40lTv0HA+QPkw==}
     hasBin: true
 
   cross-spawn@5.1.0:
@@ -4121,7 +4121,7 @@ snapshots:
 
   cookie@0.6.0: {}
 
-  create-svelte@6.3.2:
+  create-svelte@6.3.4:
     dependencies:
       '@clack/prompts': 0.7.0
       kleur: 4.1.5
