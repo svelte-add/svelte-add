@@ -1,8 +1,8 @@
 import { parse as tsParse } from 'recast/parsers/typescript.js';
 import { parse as recastParse, print as recastPrint } from 'recast';
-import { Document, Element, Text, type ChildNode } from 'domhandler';
+import { Document, Element, type ChildNode } from 'domhandler';
 import { ElementType, parseDocument } from 'htmlparser2';
-import { appendChild, prependChild, removeElement, textContent } from 'domutils';
+import { removeElement, textContent } from 'domutils';
 import serializeDom from 'dom-serializer';
 import {
 	Root as CssAst,
