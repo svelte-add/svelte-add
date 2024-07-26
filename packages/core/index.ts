@@ -21,3 +21,5 @@ export {
 	log,
 	colors,
 };
+
+export type * from './files/processors.js';

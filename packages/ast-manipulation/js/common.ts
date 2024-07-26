@@ -13,11 +13,13 @@ export function addJsDocTypeComment(node: AstTypes.Node, type: string) {
 	const comment: AstTypes.CommentBlock = {
 		type: 'CommentBlock',
 		value: `* @type {${type}} `,
+		leading: true,
 	};
 
-	if (!node.comments) node.comments = [];
+	node.comments ??= [];
 
-	node.comments.push(comment);
+	const found = node.comments.find((n) => n.type === 'CommentBlock' && n.value === comment.value);
+	if (!found) node.comments.push(comment);
 }
 
 export function typeAnnotateExpression(node: AstKinds.ExpressionKind, type: string) {

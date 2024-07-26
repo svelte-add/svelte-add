@@ -1,7 +1,7 @@
-import type { AdderCategories } from '../categories';
+import type { AdderCategories } from '../categories.js';
 
 export const adderCategories: AdderCategories = {
-	codeQuality: ['prettier'],
+	codeQuality: ['prettier', 'eslint'],
 	css: ['tailwindcss', 'bulma', 'bootstrap'],
 	db: ['drizzle'],
 	markdown: ['mdsvex'],
