@@ -1,5 +1,11 @@
 # @svelte-add/adders
 
+## 1.3.0
+
+### Minor Changes
+
+- feat: add `tailwind` alias for `tailwindcss` adder ([#512](https://github.com/svelte-add/svelte-add/pull/512))
+
 ## 1.2.0
 
 ### Minor Changes
