@@ -140,7 +140,14 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(
 	const options = program.opts();
 
 	if (multipleAdders) {
-		const selectedAdderIds = program.args ?? [];
+		let selectedAdderIds = program.args ?? [];
+
+		// replace aliases with adder ids
+		selectedAdderIds = selectedAdderIds.map((id) => {
+			const adder = adderDetails.find(({ config }) => config.metadata?.alias === id);
+			return adder ? adder.config.metadata.id : id;
+		});
+
 		validateAdders(adderDetails, selectedAdderIds);
 
 		options.adder = selectedAdderIds;
