@@ -30,6 +30,7 @@ export type AdderConfigEnvironments = {
 
 export type AdderConfigMetadata = {
 	id: string;
+	alias?: string;
 	name: string;
 	description: string;
 	environments: AdderConfigEnvironments;
