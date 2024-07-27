@@ -1,5 +1,15 @@
 # @svelte-add/core
 
+## 2.10.0
+
+### Minor Changes
+
+- feat: support adder aliases ([#512](https://github.com/svelte-add/svelte-add/pull/512))
+
+### Patch Changes
+
+- chore: add new lines at the end of files ([#511](https://github.com/svelte-add/svelte-add/pull/511))
+
 ## 2.9.7
 
 ### Patch Changes
