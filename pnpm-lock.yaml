@@ -219,6 +219,9 @@ importers:
         specifier: ^1.44.1
         version: 1.45.0
     devDependencies:
+      promise-parallel-throttle:
+        specifier: ^3.5.0
+        version: 3.5.0
       terminate:
         specifier: ^2.6.1
         version: 2.6.1
@@ -2531,6 +2534,9 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
+
+  promise-parallel-throttle@3.5.0:
+    resolution: {integrity: sha512-PXqj8TEaYMV6pQd6IVPoMjRrOHh2o/vxbWbt5eUxPuuAplrLgcdzo3KGqh2aT0A4Se6JSQxoGnB8CSIXeAOLvQ==}
 
   promise-retry@2.0.1:
     resolution: {integrity: sha512-y+WKFlBR8BGXnsNlIHFGPZmyDf3DFMoLhaflAnyZgV6rG6xu+JwesTo2Q9R6XwYmtmwAFCkAk3e35jEdoeh/3g==}
@@ -5676,6 +5682,8 @@ snapshots:
   progress@2.0.3: {}
 
   promise-inflight@1.0.1: {}
+
+  promise-parallel-throttle@3.5.0: {}
 
   promise-retry@2.0.1:
     dependencies:
