@@ -1,8 +1,7 @@
 import { join } from 'node:path';
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, rm } from 'node:fs/promises';
 import { executeCli } from '@svelte-add/core';
 import type { TestOptions } from '..';
-import type { OptionValues, Question } from '@svelte-add/core/adder/options';
 import { downloadProjectTemplates } from './create-project';
 
 const templatesDirectory = 'templates';
@@ -32,14 +31,6 @@ export async function prepareWorkspaceWithTemplate(
 	await cp(templateDirectory, output, { recursive: true });
 
 	return output;
-}
-
-export async function saveOptionsFile(
-	workingDirectory: string,
-	options: OptionValues<Record<string, Question>>,
-) {
-	const json = JSON.stringify(options);
-	await writeFile(join(workingDirectory, 'options.json'), json);
 }
 
 export async function prepareTests(options: TestOptions) {

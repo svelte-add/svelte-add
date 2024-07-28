@@ -21,7 +21,6 @@
 		"@vitest/ui": "^1.6.0",
 		"promise-parallel-throttle": "^3.5.0",
 		"terminate": "^2.6.1",
-		"uid": "^2.0.2",
 		"vitest": "^1.6.0"
 	},
 	"bugs": "https://github.com/svelte-add/svelte-add/issues",

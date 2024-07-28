@@ -83,7 +83,6 @@ export default [
 	getConfig('core'),
 	getConfig('cli'),
 	getConfig('testing-library'),
-	getConfig('tests'),
 	getConfig('dev-utils'),
 	...dtsConfigs,
 ];

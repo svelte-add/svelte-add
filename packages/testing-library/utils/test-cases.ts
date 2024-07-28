@@ -2,14 +2,12 @@ import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 import { ProjectTypesList } from './create-project';
 import { runTests } from './test';
-import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
 import { startBrowser, stopBrowser } from './browser-control';
 import {
 	getTemplatesDirectory,
 	installDependencies,
 	prepareWorkspaceWithTemplate,
-	saveOptionsFile,
 } from './workspace';
 import { runAdder } from './adder';
 import { prompts, remoteControl } from '@svelte-add/core/internal';
@@ -71,7 +69,18 @@ export async function runAdderTests(
 
 	remoteControl.enable();
 
-	const output = join(testOptions.outputDirectory, adder.config.metadata.id, template, uid());
+	// generate a unique descriptive folder name if options are present
+	const optionsString = Object.entries(options)
+		.filter((data) => data[1]) // ensure value it not undefined
+		.map(([key, value]) => `${key}=${value as string}`)
+		.join('+');
+
+	const output = join(
+		testOptions.outputDirectory,
+		adder.config.metadata.id,
+		template,
+		optionsString,
+	);
 	await mkdir(output, { recursive: true });
 
 	const workingDirectory = await prepareWorkspaceWithTemplate(
@@ -79,7 +88,6 @@ export async function runAdderTests(
 		template,
 		getTemplatesDirectory(testOptions),
 	);
-	await saveOptionsFile(workingDirectory, options);
 
 	await runAdder(adder, workingDirectory, options);
 
