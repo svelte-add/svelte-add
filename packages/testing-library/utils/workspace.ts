@@ -15,7 +15,7 @@ export async function installDependencies(output: string) {
 	try {
 		// Since tests are executed and installed within this repo (packages/tests/.outputs),
 		// we need to add the `--ignore-workspace` flag so that our root lockfile isn't modified
-		await executeCli('pnpm', ['install', '--ignore-workspace'], output, { stdio: 'pipe' });
+		await executeCli('npm', ['install', '--ignore-workspace'], output, { stdio: 'pipe' });
 	} catch (error) {
 		const typedError = error as Error;
 		throw new Error('unable to install dependencies: ' + typedError.message);
