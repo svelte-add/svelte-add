@@ -1,48 +1,48 @@
 name: Publish Preview Release
 on:
-    pull_request:
+  pull_request:
 
 jobs:
-    preview-release:
-        if: github.repository == 'svelte-add/svelte-add'
-        timeout-minutes: 30
-        runs-on: ubuntu-latest
-        steps:
-            - name: checkout code repository
-              uses: actions/checkout@v4
+  preview-release:
+    if: github.repository == 'svelte-add/svelte-add'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code repository
+        uses: actions/checkout@v4
 
-            - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
 
-            - name: setup node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: pnpm
+      - name: setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
 
-            - name: Run changed-files
-              id: changed-files
-              uses: tj-actions/changed-files@v44
-              with:
-                  separator: " "
-                  dir_names: "true"
-                  dir_names_max_depth: "2" # truncates the path to adders/X
-                  files: |
-                      adders/**
-                      packages/**
-                  files_ignore: |
-                      packages/dev-utils/**
-                      packages/tests/**
-                      packages/website/**
+      - name: Run changed-files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          separator: ' '
+          dir_names: 'true'
+          dir_names_max_depth: '2' # truncates the path to adders/X
+          files: |
+            adders/**
+            packages/**
+          files_ignore: |
+            packages/dev-utils/**
+            packages/tests/**
+            packages/website/**
 
-            - name: install dependencies
-              run: pnpm install
+      - name: install dependencies
+        run: pnpm install
 
-            - name: build
-              run: pnpm build:prod
+      - name: build
+        run: pnpm build
 
-            - name: publish preview
-              if: ${{ steps.changed-files.outputs.all_changed_files_count > 0 }}
-              env:
-                  CHANGED_DIRS: ${{ steps.changed-files.outputs.all_changed_files }}
-              run: |
-                  node scripts/get-deps-to-publish.js
+      - name: publish preview
+        if: ${{ steps.changed-files.outputs.all_changed_files_count > 0 }}
+        env:
+          CHANGED_DIRS: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          node scripts/get-deps-to-publish.js

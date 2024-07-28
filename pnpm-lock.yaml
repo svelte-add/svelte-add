@@ -78,9 +78,12 @@ importers:
   packages/ast-manipulation:
     dependencies:
       '@svelte-add/ast-tooling':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-tooling
     devDependencies:
+      decircular:
+        specifier: ^1.0.0
+        version: 1.0.0
       dedent:
         specifier: ^1.5.3
         version: 1.5.3
@@ -148,14 +151,14 @@ importers:
   packages/cli:
     dependencies:
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
     devDependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       commander:
         specifier: ^12.1.0
@@ -195,13 +198,13 @@ importers:
         version: 16.14.20
     devDependencies:
       '@svelte-add/ast-manipulation':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-manipulation
       '@svelte-add/ast-tooling':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../ast-tooling
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
 
   packages/testing-library:
@@ -210,8 +213,8 @@ importers:
         specifier: workspace:^
         version: link:../core
       create-svelte:
-        specifier: ^6.3.0
-        version: 6.3.2
+        specifier: ^6.3.4
+        version: 6.3.4
       playwright:
         specifier: ^1.44.1
         version: 1.45.0
@@ -226,16 +229,16 @@ importers:
   packages/tests:
     devDependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
       '@svelte-add/testing-library':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../testing-library
       '@vitest/ui':
         specifier: ^1.6.0
@@ -247,13 +250,13 @@ importers:
   packages/website:
     dependencies:
       '@svelte-add/adders':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../adders
       '@svelte-add/config':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../config
       '@svelte-add/core':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../core
     devDependencies:
       '@sveltejs/adapter-static':
@@ -1285,8 +1288,8 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
-  create-svelte@6.3.2:
-    resolution: {integrity: sha512-9Ipg3qO9GJWbup2UHhAqL31sT3p8606CIWZBjorq2jNN7cbVdY0MxaghgyG3hZl5zq2NC6QztCGZPJLGVPTjyw==}
+  create-svelte@6.3.4:
+    resolution: {integrity: sha512-QDQJXkkq6SGP//gfjmW0UhGJEgZfYVS8Qy40tKtyt9RClumQjndQjESMNWlisU67CknV6nt6u40lTv0HA+QPkw==}
     hasBin: true
 
   cross-spawn@5.1.0:
@@ -1320,6 +1323,10 @@ packages:
     peerDependenciesMeta:
       supports-color:
         optional: true
+
+  decircular@1.0.0:
+    resolution: {integrity: sha512-YhCtYW0jQs9+gzL2vDLxanRhMHeKa55kw5z2oheI6D+MQA7KafrqtiGKhhpKCLZQurm2a9h0LkP9T5z5gy+A0A==}
+    engines: {node: '>=18'}
 
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
@@ -4393,7 +4400,7 @@ snapshots:
 
   cookie@0.6.0: {}
 
-  create-svelte@6.3.2:
+  create-svelte@6.3.4:
     dependencies:
       '@clack/prompts': 0.7.0
       kleur: 4.1.5
@@ -4426,6 +4433,8 @@ snapshots:
   debug@4.3.5:
     dependencies:
       ms: 2.1.2
+
+  decircular@1.0.0: {}
 
   decompress-response@6.0.0:
     dependencies:

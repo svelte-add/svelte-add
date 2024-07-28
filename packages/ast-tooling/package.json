@@ -1,33 +1,33 @@
 {
-    "name": "@svelte-add/ast-tooling",
-    "version": "2.1.3",
-    "license": "MIT",
-    "type": "module",
-    "exports": {
-        ".": {
-            "types": "./build/index.d.ts",
-            "default": "./build/index.js"
-        }
-    },
-    "files": [
-        "build"
-    ],
-    "devDependencies": {
-        "@babel/parser": "^7.24.7",
-        "ast-types": "^0.14.2",
-        "dom-serializer": "^2.0.0",
-        "domhandler": "^5.0.3",
-        "domutils": "^3.1.0",
-        "htmlparser2": "^9.1.0",
-        "postcss": "^8.4.38",
-        "recast": "^0.23.7",
-        "silver-fleece": "^1.1.0",
-        "zimmerframe": "^1.1.2"
-    },
-    "bugs": "https://github.com/svelte-add/svelte-add/issues",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-tooling"
-    },
-    "keywords": []
+	"name": "@svelte-add/ast-tooling",
+	"version": "2.1.5",
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./build/index.d.ts",
+			"default": "./build/index.js"
+		}
+	},
+	"files": [
+		"build"
+	],
+	"devDependencies": {
+		"@babel/parser": "^7.24.7",
+		"ast-types": "^0.14.2",
+		"dom-serializer": "^2.0.0",
+		"domhandler": "^5.0.3",
+		"domutils": "^3.1.0",
+		"htmlparser2": "^9.1.0",
+		"postcss": "^8.4.38",
+		"recast": "^0.23.7",
+		"silver-fleece": "^1.1.0",
+		"zimmerframe": "^1.1.2"
+	},
+	"bugs": "https://github.com/svelte-add/svelte-add/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-tooling"
+	},
+	"keywords": []
 }

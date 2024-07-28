@@ -8,20 +8,22 @@ As we have multiple packages in this repo, we are using [pnpm](https://pnpm.io/)
 
 ### Let's go
 
--   clone the repo
--   run `pnpm i` to install all dependencies
--   transpile typescript to javascript with `pnpm build:prod`
--   execute whatever program you want.
+@svelte-add/testing-library
 
-If you want to do multiple changes to the projects, consider replacing `pnpm build:prod` with `pnpm build:dev` to start the typescript transpiler in watch mode.
+- clone the repo
+- run `pnpm i` to install all dependencies
+- transpile typescript to javascript with `pnpm build`
+- execute whatever program you want.
+
+If you want to do multiple changes to the projects, consider replacing `pnpm build` with `pnpm dev` to start the typescript transpiler in watch mode.
 
 ### Before you commit
 
 Make sure each of the programs below executes successfully. After that, please check if you need to create a [changeset](#changesets)
 
--   `pnpm eslint:check` (run `pnpm eslint:fix` to potentially fix, manual intervention usually necessary)
--   `pnpm prettier:check` (run `pnpm prettier:fix` to fix)
--   `pnpm test`
+- `pnpm lint` (run `pnpm format` to fix formatting issues. Manual intervention is usually necessary for linting issues though)
+- `pnpm check`
+- `pnpm test`
 
 ### Changesets
 
@@ -33,16 +35,11 @@ pnpm changeset
 
 ## create new adder
 
--   stop development server
--   duplicate existing adder, and make some minor modification (like package name)
--   delete its `node_modules` and `build` folder
--   delete the `CHANGELOG.md` file
--   add the new adders as a peer dependency to `svelte-add`
--   set an appropriate package name & version version in `package.json`
--   run `pnpm install` (ignore the warnings)
--   add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
--   start development server `pnpm build:dev`
--   once you have finished developing your adder, don't forget to generate the readme `pnpm utils:readmes` & the `package.json` with `pnpm utils:packages`
+- stop development server (if running)
+- duplicate existing adder folder, and make some minor modification (like package name)
+- add your adder to one of the categories in [`./packages/config/adders/official.ts`](./packages/config/adders/official.ts)
+- start development server `pnpm dev`
+- You are good to go - you can now change whatever is required for your adder.
 
 ## test a adder
 
@@ -59,3 +56,14 @@ pnpm test -t tailwindcss
 ```
 
 And if you have made changes to the core packages, you should probably run the full test suite for all adders. But keep in mind, this takes time!
+
+## website
+
+Our website depends on our internal packages present in the repo. Please run the following commands to start developing on the website.
+
+```sh
+pnpm build # builds all adders and their dependant projects
+pnpm website:dev # starts the website.
+```
+
+Please don't forget to add a changeset, see [changesets](#changesets)
