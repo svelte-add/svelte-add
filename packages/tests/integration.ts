@@ -56,7 +56,7 @@ async function executeTests() {
 						const content = contentBuffer.toString();
 
 						const snapshotFilePath = path.join(testCaseSnapshotDirectory, filePath);
-						await expect(content).toMatchFileSnapshot(snapshotFilePath);
+						await expect(content).toMatchFileSnapshot(snapshotFilePath, filePath);
 					}
 				});
 			}
