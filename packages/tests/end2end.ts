@@ -39,7 +39,7 @@ async function executeTests() {
 					testName = `${testName} / ${JSON.stringify(testCase.options)}`;
 
 				const testMethod = testCase.runSynchronously ? test : test.concurrent;
-				testMethod.skip(testName, async () => {
+				testMethod(testName, async () => {
 					await runAdderEndToEndTests(
 						testCase.template,
 						testCase.adder,
