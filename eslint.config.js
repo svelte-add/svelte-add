@@ -47,6 +47,7 @@ export default tseslint.config(
 			'packages/dev-utils/build',
 			'packages/testing-library/build',
 			'packages/tests/.outputs',
+			'packages/tests/.snapshots',
 			'packages/tests/build',
 			'packages/website/.svelte-kit',
 			'packages/website/build',
