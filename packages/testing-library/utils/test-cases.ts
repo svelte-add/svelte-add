@@ -12,7 +12,7 @@ import {
 	saveOptionsFile,
 } from './workspace';
 import { runAdder } from './adder';
-import { prompts } from '@svelte-add/core/internal';
+import { prompts, remoteControl } from '@svelte-add/core/internal';
 import * as Throttle from 'promise-parallel-throttle';
 import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
 import type { TestOptions } from '..';
@@ -100,6 +100,8 @@ export async function runAdderTests(
 	} finally {
 		await stopBrowser(browser, page);
 		await stopDevServer(devServer);
+
+		remoteControl.disable();
 	}
 }
 
