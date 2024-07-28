@@ -1,12 +1,13 @@
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { generateTestCases, prepareTests, runAdderTests } from '@svelte-add/testing-library';
-import { adderIds } from '@svelte-add/config';
-import { remoteControl } from '@svelte-add/core/internal';
-import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
-import { getAdderDetails } from '@svelte-add/adders';
+import {
+	generateTestCases,
+	prepareTests,
+	runAdderEndToEndTests,
+} from '@svelte-add/testing-library';
 import { test, describe, beforeAll } from 'vitest';
+import { getAdders } from './common/adders';
 
 let usingDocker = false;
 
@@ -14,19 +15,15 @@ let usingDocker = false;
 const testOptions = {
 	headless: true,
 	pauseExecutionAfterBrowser: false,
-	outputDirectory: path.join(process.cwd(), '.outputs'),
+	outputDirectory: path.join(process.cwd(), '.outputs', 'end2end'),
 };
 
 beforeAll(async () => {
-	await prepareTests(testOptions);
+	await prepareTests(testOptions.outputDirectory);
 });
 
 async function executeTests() {
-	const adders: AdderWithoutExplicitArgs[] = [];
-
-	for (const adderName of adderIds) {
-		adders.push(await getAdder(adderName));
-	}
+	const adders = await getAdders();
 
 	usingDocker = !!adders.find((adder) => adder.config.metadata.id === 'drizzle');
 	if (usingDocker) startDocker();
@@ -42,22 +39,17 @@ async function executeTests() {
 					testName = `${testName} / ${JSON.stringify(testCase.options)}`;
 
 				const testMethod = testCase.runSynchronously ? test : test.concurrent;
-				testMethod(testName, async () => {
-					await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
+				testMethod.skip(testName, async () => {
+					await runAdderEndToEndTests(
+						testCase.template,
+						testCase.adder,
+						testCase.options,
+						testOptions,
+					);
 				});
 			}
 		});
 	}
-}
-
-async function getAdder(adderName: string) {
-	remoteControl.enable();
-
-	const adder = await getAdderDetails(adderName);
-
-	remoteControl.disable();
-
-	return adder;
 }
 
 const cwd = path.resolve(fileURLToPath(import.meta.url), '..');

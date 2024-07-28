@@ -21,11 +21,19 @@ export async function runAdder(
 		adderOptions,
 	};
 
-	await executeAdder(
+	return await executeAdder(
 		{ config: adder.config, checks: adder.checks },
 		{ name: '@svelte-add/testing-library', version: 'latest' },
 		remoteControlOptions,
 	);
+}
+
+export async function runAdderAndPrepareTests(
+	adder: AdderWithoutExplicitArgs,
+	workingDirectory: string,
+	optionValues: OptionValues<Record<string, Question>>,
+) {
+	await runAdder(adder, workingDirectory, optionValues);
 
 	const workspace = createEmptyWorkspace();
 	workspace.cwd = workingDirectory;

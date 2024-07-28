@@ -1,0 +1,22 @@
+{
+  "name": "svelte-js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@types/eslint": "^9.6.0",
+    "eslint": "^9.7.0",
+    "eslint-plugin-svelte": "^2.36.0",
+    "globals": "^15.0.0",
+    "svelte": "^4.2.18",
+    "typescript-eslint": "^8.0.0-alpha.54",
+    "vite": "^5.3.4"
+  }
+}

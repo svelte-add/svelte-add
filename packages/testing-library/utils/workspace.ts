@@ -1,13 +1,12 @@
 import { join } from 'node:path';
 import { cp, mkdir, rm } from 'node:fs/promises';
 import { executeCli } from '@svelte-add/core';
-import type { TestOptions } from '..';
 import { downloadProjectTemplates } from './create-project';
 
 const templatesDirectory = 'templates';
 
-export function getTemplatesDirectory(options: TestOptions) {
-	return join(options.outputDirectory, templatesDirectory);
+export function getTemplatesDirectory(outputDirectory: string) {
+	return join(outputDirectory, templatesDirectory);
 }
 
 export async function installDependencies(output: string) {
@@ -33,11 +32,11 @@ export async function prepareWorkspaceWithTemplate(
 	return output;
 }
 
-export async function prepareTests(options: TestOptions) {
+export async function prepareTests(outputDirectory: string) {
 	console.log('deleting old files');
-	await rm(options.outputDirectory, { recursive: true, force: true });
+	await rm(outputDirectory, { recursive: true, force: true });
 
 	console.log('downloading project templates');
-	const templatesOutputDirectory = getTemplatesDirectory(options);
+	const templatesOutputDirectory = getTemplatesDirectory(outputDirectory);
 	await downloadProjectTemplates(templatesOutputDirectory);
 }

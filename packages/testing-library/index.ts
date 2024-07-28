@@ -1,4 +1,8 @@
-import { generateTestCases, runAdderTests } from './utils/test-cases';
+import {
+	generateTestCases,
+	runAdderEndToEndTests,
+	runAdderIntegrationTests,
+} from './utils/test-cases';
 import { prepareTests } from './utils/workspace';
 
 export type TestOptions = {
@@ -7,4 +11,4 @@ export type TestOptions = {
 	outputDirectory: string;
 };
 
-export { generateTestCases, runAdderTests, prepareTests };
+export { generateTestCases, runAdderEndToEndTests, runAdderIntegrationTests, prepareTests };

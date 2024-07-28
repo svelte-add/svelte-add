@@ -56,7 +56,7 @@ export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
 	return testCases;
 }
 
-export async function runAdderTests(
+export async function runAdderEndToEndTests(
 	template: string,
 	adder: AdderWithoutExplicitArgs,
 	options: OptionValues<Record<string, Question>>,
@@ -69,24 +69,13 @@ export async function runAdderTests(
 
 	remoteControl.enable();
 
-	// generate a unique descriptive folder name if options are present
-	const optionsString = Object.entries(options)
-		.filter((data) => data[1]) // ensure value it not undefined
-		.map(([key, value]) => `${key}=${value as string}`)
-		.join('+');
-
-	const output = join(
-		testOptions.outputDirectory,
-		adder.config.metadata.id,
-		template,
-		optionsString,
-	);
+	const output = generateOutputDirectory(options, testOptions.outputDirectory, adder, template);
 	await mkdir(output, { recursive: true });
 
 	const workingDirectory = await prepareWorkspaceWithTemplate(
 		output,
 		template,
-		getTemplatesDirectory(testOptions),
+		getTemplatesDirectory(testOptions.outputDirectory),
 	);
 
 	await runAdder(adder, workingDirectory, options);
@@ -113,11 +102,48 @@ export async function runAdderTests(
 	}
 }
 
+export async function runAdderIntegrationTests(
+	testCase: TestCase,
+	outputDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+) {
+	const adderOutputDirectory = generateOutputDirectory(
+		testCase.options,
+		outputDirectory,
+		adder,
+		testCase.template,
+	);
+
+	const workingDirectory = await prepareWorkspaceWithTemplate(
+		adderOutputDirectory,
+		testCase.template,
+		getTemplatesDirectory(outputDirectory),
+	);
+
+	return await runAdder(adder, workingDirectory, testCase.options);
+}
+
 export type AdderError = {
 	adder: string;
 	template: string;
 	message: string;
 } & Error;
+
+export function generateOutputDirectory(
+	options: OptionValues<Record<string, Question>>,
+	outputDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+	template: string,
+) {
+	// generate a unique descriptive folder name if options are present
+	const optionsString = Object.entries(options)
+		.filter((data) => data[1]) // ensure value it not undefined
+		.map(([key, value]) => `${key}=${value as string}`)
+		.join('+');
+
+	const output = join(outputDirectory, adder.config.metadata.id, template, optionsString);
+	return output;
+}
 
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
 	const asyncTasks: Array<() => Promise<void>> = [];
@@ -128,7 +154,12 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 		for (const testCase of values) {
 			const taskExecutor = async () => {
 				try {
-					await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
+					await runAdderEndToEndTests(
+						testCase.template,
+						testCase.adder,
+						testCase.options,
+						testOptions,
+					);
 				} catch (e) {
 					const error = e as Error;
 					const adderError: AdderError = {

@@ -10,7 +10,7 @@
 		"@svelte-add/config": "workspace:*",
 		"@svelte-add/core": "workspace:*",
 		"@svelte-add/testing-library": "workspace:*",
-		"@vitest/ui": "^1.6.0",
-		"vitest": "^1.6.0"
+		"@vitest/ui": "^2.0.4",
+		"vitest": "^2.0.4"
 	}
 }
