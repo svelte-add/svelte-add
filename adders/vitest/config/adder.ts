@@ -101,7 +101,6 @@ export const adder = defineAdderConfig({
 				} else {
 					// unexpected config shape
 					log.warn('Unexpected vite config for vitest adder. Skipping initialization.');
-					return;
 				}
 			},
 		},
