@@ -30,7 +30,7 @@ export const adder = defineAdderConfig({
 			},
 		},
 		{
-			name: ({ typescript }) => `tests/sample.${typescript.installed ? 'ts' : 'js'}`,
+			name: ({ typescript }) => `tests/demo.test.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
 			content: ({ content }) => {
 				if (content) return content;
