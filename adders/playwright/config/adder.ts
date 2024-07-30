@@ -24,7 +24,7 @@ export const adder = defineAdderConfig({
 				data.scripts ??= {};
 				const scripts: Record<string, string> = data.scripts;
 				const TEST_CMD = 'playwright test';
-				scripts['test:integration'] ??= TEST_CMD;
+				scripts['test:e2e'] ??= TEST_CMD;
 				scripts['test'] ??= TEST_CMD;
 				if (!scripts['test'].includes(TEST_CMD)) scripts['test'] += ` && ${TEST_CMD}`;
 			},
