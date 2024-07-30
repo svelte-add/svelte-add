@@ -30,7 +30,7 @@ export const adder = defineAdderConfig({
 			},
 		},
 		{
-			name: ({ typescript }) => `tests/demo.test.${typescript.installed ? 'ts' : 'js'}`,
+			name: ({ typescript }) => `e2e/demo.test.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
 			content: ({ content }) => {
 				if (content) return content;
@@ -56,7 +56,7 @@ export const adder = defineAdderConfig({
 						command: common.createLiteral('npm run build && npm run preview'),
 						port: common.expressionFromString('4173'),
 					}),
-					testDir: common.createLiteral('tests'),
+					testDir: common.createLiteral('e2e'),
 				});
 
 				// type annotate config
