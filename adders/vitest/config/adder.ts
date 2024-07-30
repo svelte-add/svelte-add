@@ -100,7 +100,7 @@ export const adder = defineAdderConfig({
 					object.properties(defaultExport.value, { test });
 				} else {
 					// unexpected config shape
-					log.warn('Unexpected vite config for vitest adder. Skipping initialization.');
+					log.warn('Unexpected vite config for vitest adder. Could not update.');
 				}
 			},
 		},
