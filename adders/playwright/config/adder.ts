@@ -57,7 +57,6 @@ export const adder = defineAdderConfig({
 						port: common.expressionFromString('4173'),
 					}),
 					testDir: common.createLiteral('tests'),
-					testMatch: common.expressionFromString('/(.+.)?(test|spec).[jt]s/'),
 				});
 
 				// type annotate config
