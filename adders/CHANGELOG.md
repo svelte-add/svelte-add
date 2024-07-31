@@ -1,5 +1,13 @@
 # @svelte-add/adders
 
+## 1.5.0
+
+### Minor Changes
+
+- feat: playwright adder ([#518](https://github.com/svelte-add/svelte-add/pull/518))
+
+- feat: vitest adder ([#519](https://github.com/svelte-add/svelte-add/pull/519))
+
 ## 1.4.0
 
 ### Minor Changes
