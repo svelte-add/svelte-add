@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import { join } from 'node:path';
 import { dedent, defineAdderConfig, log } from '@svelte-add/core';
 import { options } from './options.js';
 
@@ -33,6 +35,7 @@ export const adder = defineAdderConfig({
 		{
 			name: () => '.gitignore',
 			contentType: 'text',
+			condition: ({ cwd }) => fs.existsSync(join(cwd, '.gitignore')),
 			content: ({ content }) => {
 				if (content.includes('test-results')) return content;
 				return 'test-results\n' + content.trim();
