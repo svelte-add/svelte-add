@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { defineAdderConfig } from '@svelte-add/core';
-import { options } from './options';
+import { options, parseLanguageTagInput } from './options';
 
 const DEFAULT_INLANG_PROJECT = {
 	$schema: 'https://inlang.com/schema/project-settings',
-	sourceLanguageTag: 'en',
-	languageTags: ['en'],
+	// sourceLanguageTag: 'en',
+	// languageTags: ['en'],
 	modules: [
 		'https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-empty-pattern@latest/dist/index.js',
 		'https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-identical-pattern@latest/dist/index.js',
@@ -21,11 +21,7 @@ const DEFAULT_INLANG_PROJECT = {
 	},
 };
 
-/**
- * If some parts of the automated setup fail we need to tell the user to do it manually.
- */
-const manualSteps: string[] = [];
-
+const warnings: string[] = [];
 export const adder = defineAdderConfig({
 	metadata: {
 		id: 'paraglide',
@@ -68,14 +64,11 @@ export const adder = defineAdderConfig({
 				for (const key in DEFAULT_INLANG_PROJECT) {
 					data[key] = DEFAULT_INLANG_PROJECT[key];
 				}
-
-				const availableLanguageTags = options.availableLanguageTags
-					.split(',')
-					.map((tag) => tag.trim());
-				const sourceLanguageTag = availableLanguageTags[0];
+				const { validLanguageTags } = parseLanguageTagInput(options.availableLanguageTags);
+				const sourceLanguageTag = validLanguageTags[0];
 
 				data.sourceLanguageTag = sourceLanguageTag;
-				data.availableLanguageTags = availableLanguageTags;
+				data.availableLanguageTags = validLanguageTags;
 			},
 		},
 		{
@@ -84,7 +77,9 @@ export const adder = defineAdderConfig({
 			contentType: 'script',
 			content: ({ ast, array, object, functions, common, imports, exports }) => {
 				const vitePluginName = 'paraglide';
-				imports.addDefault(ast, '@inlang/paraglide-sveltekit/vite', vitePluginName);
+				imports.addNamed(ast, '@inlang/paraglide-sveltekit/vite', {
+					paraglide: vitePluginName,
+				});
 
 				const { value: rootObject } = exports.defaultExport(
 					ast,
@@ -115,7 +110,7 @@ export const adder = defineAdderConfig({
 
 				const existingExport = exports.namedExport(ast, 'i18n', i18n);
 				if (existingExport) {
-					manualSteps.push(
+					warnings.push(
 						'⚠️ Setting up $lib/i18n failed because it aleady exports an i18n function. Check that it is correct',
 					);
 				}
@@ -135,7 +130,7 @@ export const adder = defineAdderConfig({
 
 				const existingExport = exports.namedExport(ast, 'reroute', rerouteIdentifier);
 				if (existingExport) {
-					manualSteps.push('⚠️ Adding the reroute hook automatically failed. Add it manually');
+					warnings.push('⚠️ Adding the reroute hook automatically failed. Add it manually');
 				}
 			},
 		},
@@ -152,7 +147,7 @@ export const adder = defineAdderConfig({
 				const rerouteIdentifier = variables.declaration(ast, 'const', 'handle', expression);
 				const existingExport = exports.namedExport(ast, 'handle', rerouteIdentifier);
 				if (existingExport) {
-					manualSteps.push('⚠️ Adding the handle hook automatically failed. Add it manually');
+					warnings.push('⚠️ Adding the handle hook automatically failed. Add it manually');
 
 					// TODO automatically apply the sequence to merge the hooks
 					/*
@@ -190,18 +185,23 @@ export const adder = defineAdderConfig({
 				html.ast.children = [root];
 			},
 		},
-		// add the langauge file
 		{
-			name: ({ options }) => `messages/${options.sourceLanguageTag}.json`,
+			// add an example langauge file
+			name: ({ options }) => {
+				const { validLanguageTags } = parseLanguageTagInput(options.sourceLanguageTag);
+				const sourceLanguageTag = validLanguageTags[0];
+				if (!sourceLanguageTag) throw new Error('No language tags'); // this should be unreachable
+				return `messages/${sourceLanguageTag}.json`;
+			},
 			contentType: 'json',
 			content: ({ data }) => {
 				data['$schema'] = 'https://inlang.com/schema/inlang-message-format';
-				data.hello_world = 'Hello, World!';
+				data.hello_world = 'Hello, {name}!';
 			},
 		},
 	],
-	nextSteps: () => [
-		...manualSteps,
+	nextSteps: ({ colors }) => [
+		...warnings.map(colors.yellow),
 		'Edit your messages in `messages/en.json`',
 		'Consider installing the Sherlock IDE Extension',
 	],
