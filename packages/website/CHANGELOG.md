@@ -1,5 +1,15 @@
 # @svelte-add/website
 
+## 2.3.16
+
+### Patch Changes
+
+- fix: undefined on website ([#523](https://github.com/svelte-add/svelte-add/pull/523))
+
+- Updated dependencies [[`196c49fb904158b6083a4d5b0e686029a5ad80df`](https://github.com/svelte-add/svelte-add/commit/196c49fb904158b6083a4d5b0e686029a5ad80df), [`1dba081f3320817c06946731121208c0702e3d57`](https://github.com/svelte-add/svelte-add/commit/1dba081f3320817c06946731121208c0702e3d57), [`5e0eb2d3ef029baa26acf9ac4cd281d747eeb9ec`](https://github.com/svelte-add/svelte-add/commit/5e0eb2d3ef029baa26acf9ac4cd281d747eeb9ec)]:
+  - @svelte-add/config@1.4.0
+  - @svelte-add/adders@1.5.0
+
 ## 2.3.15
 
 ### Patch Changes

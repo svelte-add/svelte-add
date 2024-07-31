@@ -1,7 +1,7 @@
 {
 	"name": "@svelte-add/adders",
 	"private": true,
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"type": "module",
 	"exports": {
 		".": {
