@@ -68,7 +68,7 @@ export const adder = defineAdderConfig({
 				const sourceLanguageTag = validLanguageTags[0];
 
 				data.sourceLanguageTag = sourceLanguageTag;
-				data.availableLanguageTags = validLanguageTags;
+				data.languageTags = validLanguageTags;
 			},
 		},
 		{
@@ -206,6 +206,7 @@ export const adder = defineAdderConfig({
 		},
 		{
 			// add an example langauge file
+			// TODO: Expand this for all languages
 			name: ({ options }) => {
 				const { validLanguageTags } = parseLanguageTagInput(options.availableLanguageTags);
 				const sourceLanguageTag = validLanguageTags[0];
