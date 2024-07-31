@@ -10,11 +10,15 @@ export type BooleanQuestion = {
 export type StringQuestion = {
 	type: 'string';
 	default: string;
+	validate?: (value: string) => string | undefined;
+	placeholder?: string;
 };
 
 export type NumberQuestion = {
 	type: 'number';
 	default: number;
+	validate?: (value: string) => string | undefined;
+	placeholder?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -283,26 +287,39 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
 			// if the option already has an value, ignore it and continue
 			if (optionValue !== undefined) continue;
 
-			if (option.type == 'number' || option.type == 'string') {
-				optionValue = await textPrompt(
-					questionPrefix + option.question,
-					'Not sure',
-					option.default.toString(),
-				);
-			} else if (option.type == 'boolean') {
-				optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
-			} else if (option.type == 'select') {
-				optionValue = await selectPrompt(
-					questionPrefix + option.question,
-					option.default,
-					option.options,
-				);
-			}
-
-			if (optionValue === 'true') optionValue = true;
-			if (optionValue === 'false') optionValue = false;
-
+			optionValue = await promptOptionValue({ option, questionPrefix });
 			selectedValues[optionKey] = optionValue;
 		}
 	}
+}
+
+async function promptOptionValue({
+	option,
+	questionPrefix,
+}: {
+	option: Question;
+	questionPrefix: string;
+}): Promise<unknown> {
+	let optionValue: unknown = undefined;
+	if (option.type == 'number' || option.type == 'string') {
+		optionValue = await textPrompt(
+			questionPrefix + option.question,
+			option.placeholder ?? 'Not sure',
+			option.default.toString(),
+			option.validate,
+		);
+	} else if (option.type == 'boolean') {
+		optionValue = await booleanPrompt(questionPrefix + option.question, option.default);
+	} else if (option.type == 'select') {
+		optionValue = await selectPrompt(
+			questionPrefix + option.question,
+			option.default,
+			option.options,
+		);
+	}
+
+	if (optionValue === 'true') optionValue = true;
+	if (optionValue === 'false') optionValue = false;
+
+	return optionValue;
 }

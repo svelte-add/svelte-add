@@ -56,11 +56,13 @@ export async function textPrompt(
 	question: string,
 	placeholder: string = '',
 	initialValue: string = '',
+	validate?: (value: string) => string | undefined,
 ) {
 	const value = await text({
 		message: question,
 		placeholder,
 		initialValue,
+		validate,
 	});
 
 	const result = cancelIfRequired(value);
