@@ -99,7 +99,6 @@ export const adder = defineAdderConfig({
 					outdir: common.createLiteral('./src/lib/paraglide'),
 				});
 				functions.argumentByIndex(pluginFunctionCall, 0, pluginConfig);
-
 				array.push(pluginsArray, pluginFunctionCall);
 			},
 		},
@@ -201,7 +200,7 @@ export const adder = defineAdderConfig({
 			},
 		},
 	],
-	nextSteps: ({ options }) => [
+	nextSteps: () => [
 		...manualSteps,
 		'Edit your messages in `messages/en.json`',
 		'Consider installing the Sherlock IDE Extension',
