@@ -152,6 +152,7 @@ export const adder = defineAdderConfig({
 				);
 				const existingExport = exports.namedExport(ast, 'handle', rerouteIdentifier);
 				if (existingExport) {
+					// if there is an existing `handle` hook, use the `sequence` function to add i18n.handle to it
 					imports.addNamed(ast, '@sveltejs/kit/hooks', {
 						sequence: 'sequence',
 					});
@@ -187,8 +188,9 @@ export const adder = defineAdderConfig({
 					i18n: 'i18n',
 				});
 
+			
 				// wrap the HTML in a ParaglideJS instance
-				// TODO: Skip if this is already done
+				// TODO if (alreadyContainsParaglideJS(html.ast)) return;
 				const rootChildren = html.ast.children;
 				if (rootChildren.length === 0) {
 					const slot = html.element('slot');
