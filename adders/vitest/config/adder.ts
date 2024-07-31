@@ -24,9 +24,11 @@ export const adder = defineAdderConfig({
 				data.scripts ??= {};
 				const scripts: Record<string, string> = data.scripts;
 				const TEST_CMD = 'vitest';
+				// we use `--run` so that vitest doesn't run in watch mode when running `npm run test`
+				const RUN_TEST = 'npm run test:unit -- --run';
 				scripts['test:unit'] ??= TEST_CMD;
-				scripts['test'] ??= TEST_CMD;
-				if (!scripts['test'].includes(TEST_CMD)) scripts['test'] += ` && ${TEST_CMD}`;
+				scripts['test'] ??= RUN_TEST;
+				if (!scripts['test'].includes(RUN_TEST)) scripts['test'] += ` && ${RUN_TEST}`;
 			},
 		},
 		{
