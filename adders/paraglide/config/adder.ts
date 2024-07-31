@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineAdderConfig } from '@svelte-add/core';
 import { options, parseLanguageTagInput } from './options';
+import { HtmlElement, HtmlElementType } from '../../../packages/ast-tooling';
 
 const DEFAULT_INLANG_PROJECT = {
 	$schema: 'https://inlang.com/schema/project-settings',
@@ -188,7 +189,6 @@ export const adder = defineAdderConfig({
 					i18n: 'i18n',
 				});
 
-			
 				// wrap the HTML in a ParaglideJS instance
 				// TODO if (alreadyContainsParaglideJS(html.ast)) return;
 				const rootChildren = html.ast.children;
@@ -202,6 +202,28 @@ export const adder = defineAdderConfig({
 				};
 				root.children = rootChildren;
 				html.ast.children = [root];
+			},
+		},
+		{
+			// add the text-direction and lang attribute placeholders to app.html
+			name: () => `src/app.html`,
+			contentType: 'html',
+			content(editor) {
+				const htmlNode = editor.ast.children.find(
+					(child): child is HtmlElement =>
+						child.type === HtmlElementType.Tag && child.name === 'html',
+				);
+				if (!htmlNode) {
+					warnings.push(
+						"⚠️ Could not find <html> node in app.html. You'll need to add the language placeholder manually",
+					);
+					return;
+				}
+				htmlNode.attribs = {
+					...htmlNode.attribs,
+					lang: '%paraglide.lang%',
+					dir: '%paraglide.textDirection%',
+				};
 			},
 		},
 		{
