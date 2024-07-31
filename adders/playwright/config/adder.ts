@@ -24,9 +24,18 @@ export const adder = defineAdderConfig({
 				data.scripts ??= {};
 				const scripts: Record<string, string> = data.scripts;
 				const TEST_CMD = 'playwright test';
+				const RUN_TEST = 'npm run test:e2e';
 				scripts['test:e2e'] ??= TEST_CMD;
-				scripts['test'] ??= TEST_CMD;
-				if (!scripts['test'].includes(TEST_CMD)) scripts['test'] += ` && ${TEST_CMD}`;
+				scripts['test'] ??= RUN_TEST;
+				if (!scripts['test'].includes(RUN_TEST)) scripts['test'] += ` && ${RUN_TEST}`;
+			},
+		},
+		{
+			name: () => '.gitignore',
+			contentType: 'text',
+			content: ({ content }) => {
+				if (content.includes('test-results')) return content;
+				return 'test-results\n' + content.trim();
 			},
 		},
 		{
@@ -76,7 +85,6 @@ export const adder = defineAdderConfig({
 				// if it's not the config we created, then we'll leave it alone and exit out
 				if (defaultExport.value !== config) {
 					log.warn('A playwright config is already defined. Skipping initialization.');
-					return;
 				}
 			},
 		},
