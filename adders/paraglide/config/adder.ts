@@ -138,23 +138,40 @@ export const adder = defineAdderConfig({
 			// handle hook
 			name: ({ typescript }) => `src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content({ ast, imports, exports, variables, common }) {
+			content({ ast, imports, exports, functions, variables, common }) {
 				imports.addNamed(ast, '$lib/i18n', {
 					i18n: 'i18n',
 				});
 
-				const expression = common.expressionFromString('i18n.handle()');
-				const rerouteIdentifier = variables.declaration(ast, 'const', 'handle', expression);
+				const i18nHandleExpression = common.expressionFromString('i18n.handle()');
+				const rerouteIdentifier = variables.declaration(
+					ast,
+					'const',
+					'handle',
+					i18nHandleExpression,
+				);
 				const existingExport = exports.namedExport(ast, 'handle', rerouteIdentifier);
 				if (existingExport) {
-					warnings.push('⚠️ Adding the handle hook automatically failed. Add it manually');
-
-					// TODO automatically apply the sequence to merge the hooks
-					/*
 					imports.addNamed(ast, '@sveltejs/kit/hooks', {
 						sequence: 'sequence',
 					});
-					*/
+
+					const existingHandle = existingExport.declaration;
+					if (!existingHandle || existingHandle.type !== 'VariableDeclaration') {
+						warnings.push('⚠️ Adding the handle hook automatically failed. Add it manually');
+						return;
+					}
+
+					const sequenceExpression = functions.call('sequence', []);
+					sequenceExpression.arguments = [
+						i18nHandleExpression,
+						...existingHandle.declarations
+							.filter((decl) => decl.type === 'VariableDeclarator')
+							.map((decl) => decl.init),
+					];
+
+					const newHandle = variables.declaration(ast, 'const', 'handle', sequenceExpression);
+					existingExport.declaration = newHandle;
 				}
 			},
 		},
@@ -188,7 +205,7 @@ export const adder = defineAdderConfig({
 		{
 			// add an example langauge file
 			name: ({ options }) => {
-				const { validLanguageTags } = parseLanguageTagInput(options.sourceLanguageTag);
+				const { validLanguageTags } = parseLanguageTagInput(options.availableLanguageTags);
 				const sourceLanguageTag = validLanguageTags[0];
 				if (!sourceLanguageTag) throw new Error('No language tags'); // this should be unreachable
 				return `messages/${sourceLanguageTag}.json`;
