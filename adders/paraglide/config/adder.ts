@@ -24,7 +24,7 @@ const DEFAULT_INLANG_PROJECT = {
 /**
  * If some parts of the automated setup fail we need to tell the user to do it manually.
  */
-const manualSteps : string[] = [];
+const manualSteps: string[] = [];
 
 export const adder = defineAdderConfig({
 	metadata: {
@@ -52,19 +52,15 @@ export const adder = defineAdderConfig({
 	integrationType: 'inline',
 	packages: [
 		{
-			name: '@inlang/paraglide-js',
-			version: '*',
-			dev: true,
-		},
-		{
 			name: '@inlang/paraglide-sveltekit',
-			version: '*',
+			version: '^0.11.0',
 			dev: false,
 		},
 	],
 	files: [
 		{
 			// create an inlang project if it doesn't exist yet
+			// TODO Scan for & use existing projects
 			name: () => 'project.inlang/settings.json',
 			condition: ({ cwd }) => !fs.existsSync(path.join(cwd, 'project.inlang')),
 			contentType: 'json',
@@ -111,7 +107,7 @@ export const adder = defineAdderConfig({
 			// src/lib/i18n file
 			name: ({ typescript }) => `src/lib/i18n.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content({ ast, imports, exports, functions, variables, common }) {
+			content({ ast, imports, exports, variables, common }) {
 				imports.addNamed(ast, '@inlang/paraglide-sveltekit', { createI18n: 'createI18n' });
 				imports.addDefault(ast, '$lib/paraglide/runtime', '* as runtime');
 
@@ -128,9 +124,9 @@ export const adder = defineAdderConfig({
 		},
 		{
 			// reroute hook
-			name: () => 'src/hooks.js',
+			name: ({ typescript }) => `src/hooks.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content({ ast, imports, exports, functions, variables, common }) {
+			content({ ast, imports, exports, variables, common }) {
 				imports.addNamed(ast, '$lib/i18n', {
 					i18n: 'i18n',
 				});
@@ -140,9 +136,31 @@ export const adder = defineAdderConfig({
 
 				const existingExport = exports.namedExport(ast, 'reroute', rerouteIdentifier);
 				if (existingExport) {
-					manualSteps.push(
-						'⚠️ Adding the reroute hook automatically failed. You need to do it manually',
-					);
+					manualSteps.push('⚠️ Adding the reroute hook automatically failed. Add it manually');
+				}
+			},
+		},
+		{
+			// handle hook
+			name: ({ typescript }) => `src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'script',
+			content({ ast, imports, exports, variables, common }) {
+				imports.addNamed(ast, '$lib/i18n', {
+					i18n: 'i18n',
+				});
+
+				const expression = common.expressionFromString('i18n.handle()');
+				const rerouteIdentifier = variables.declaration(ast, 'const', 'handle', expression);
+				const existingExport = exports.namedExport(ast, 'handle', rerouteIdentifier);
+				if (existingExport) {
+					manualSteps.push('⚠️ Adding the handle hook automatically failed. Add it manually');
+
+					// TODO automatically apply the sequence to merge the hooks
+					/*
+					imports.addNamed(ast, '@sveltejs/kit/hooks', {
+						sequence: 'sequence',
+					});
+					*/
 				}
 			},
 		},
@@ -158,13 +176,13 @@ export const adder = defineAdderConfig({
 					i18n: 'i18n',
 				});
 
+				// wrap the HTML in a ParaglideJS instance
+				// TODO: Skip if this is already done
 				const rootChildren = html.ast.children;
 				if (rootChildren.length === 0) {
 					const slot = html.element('slot');
 					rootChildren.push(slot);
 				}
-
-				//wrap the HTML in a ParaglideJS instance
 				const root = html.element('ParaglideJS', {});
 				root.attribs = {
 					'{i18n}': '',
@@ -173,8 +191,17 @@ export const adder = defineAdderConfig({
 				html.ast.children = [root];
 			},
 		},
+		// add the langauge file
+		{
+			name: ({ options }) => `messages/${options.sourceLanguageTag}.json`,
+			contentType: 'json',
+			content: ({ data }) => {
+				data['$schema'] = 'https://inlang.com/schema/inlang-message-format';
+				data.hello_world = 'Hello, World!';
+			},
+		},
 	],
-	nextSteps: () => [
+	nextSteps: ({ options }) => [
 		...manualSteps,
 		'Edit your messages in `messages/en.json`',
 		'Consider installing the Sherlock IDE Extension',
