@@ -6,3 +6,4 @@ packages/tests/.outputs
 temp/
 coverage/
 .rollup.cache
+playground

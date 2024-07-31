@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineAdderConfig } from '@svelte-add/core';
 import { options } from './options';
 
@@ -18,6 +20,11 @@ const DEFAULT_INLANG_PROJECT = {
 		pathPattern: './messages/{languageTag}.json',
 	},
 };
+
+/**
+ * If some parts of the automated setup fail we need to tell the user to do it manually.
+ */
+const manualSteps : string[] = [];
 
 export const adder = defineAdderConfig({
 	metadata: {
@@ -57,10 +64,15 @@ export const adder = defineAdderConfig({
 	],
 	files: [
 		{
-			// create an inlang project
+			// create an inlang project if it doesn't exist yet
 			name: () => 'project.inlang/settings.json',
+			condition: ({ cwd }) => !fs.existsSync(path.join(cwd, 'project.inlang')),
 			contentType: 'json',
 			content: ({ options, data }) => {
+				for (const key in DEFAULT_INLANG_PROJECT) {
+					data[key] = DEFAULT_INLANG_PROJECT[key];
+				}
+
 				const availableLanguageTags = options.availableLanguageTags
 					.split(',')
 					.map((tag) => tag.trim());
@@ -96,13 +108,42 @@ export const adder = defineAdderConfig({
 			},
 		},
 		{
+			// src/lib/i18n file
+			name: ({ typescript }) => `src/lib/i18n.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'script',
+			content({ ast, imports, exports, functions, variables, common }) {
+				imports.addNamed(ast, '@inlang/paraglide-sveltekit', { createI18n: 'createI18n' });
+				imports.addDefault(ast, '$lib/paraglide/runtime', '* as runtime');
+
+				const createI18nExpression = common.expressionFromString('createI18n(runtime)');
+				const i18n = variables.declaration(ast, 'const', 'i18n', createI18nExpression);
+
+				const existingExport = exports.namedExport(ast, 'i18n', i18n);
+				if (existingExport) {
+					manualSteps.push(
+						'⚠️ Setting up $lib/i18n failed because it aleady exports an i18n function. Check that it is correct',
+					);
+				}
+			},
+		},
+		{
 			// reroute hook
 			name: () => 'src/hooks.js',
 			contentType: 'script',
-			content({ ast, imports }) {
+			content({ ast, imports, exports, functions, variables, common }) {
 				imports.addNamed(ast, '$lib/i18n', {
 					i18n: 'i18n',
 				});
+
+				const expression = common.expressionFromString('i18n.reroute()');
+				const rerouteIdentifier = variables.declaration(ast, 'const', 'reroute', expression);
+
+				const existingExport = exports.namedExport(ast, 'reroute', rerouteIdentifier);
+				if (existingExport) {
+					manualSteps.push(
+						'⚠️ Adding the reroute hook automatically failed. You need to do it manually',
+					);
+				}
 			},
 		},
 		{
@@ -126,18 +167,15 @@ export const adder = defineAdderConfig({
 				//wrap the HTML in a ParaglideJS instance
 				const root = html.element('ParaglideJS', {});
 				root.attribs = {
-					i18n: '{i18n}',
+					'{i18n}': '',
 				};
-				root.attributes.push({
-					name: 'i18n',
-					value: 'i18n',
-				});
 				root.children = rootChildren;
 				html.ast.children = [root];
 			},
 		},
 	],
 	nextSteps: () => [
+		...manualSteps,
 		'Edit your messages in `messages/en.json`',
 		'Consider installing the Sherlock IDE Extension',
 	],
