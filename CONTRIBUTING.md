@@ -46,7 +46,7 @@ pnpm changeset
 The easiest way to test a adder is to run it's cli directly.
 
 ```sh
-node ./packages/cli/build/index.js tailwindcss
+pnpm svelte-add tailwindcss
 ```
 
 Alternatively you can also run the testsuite of a adder with this command:

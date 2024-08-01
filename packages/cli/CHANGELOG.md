@@ -1,5 +1,11 @@
 # svelte-add
 
+## 2.5.2
+
+### Patch Changes
+
+- feat: generate `.env.example` file for drizzle adder ([#516](https://github.com/svelte-add/svelte-add/pull/516))
+
 ## 2.5.1
 
 ### Patch Changes

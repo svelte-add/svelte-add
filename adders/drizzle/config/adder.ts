@@ -1,5 +1,5 @@
-import { defineAdderConfig, dedent } from '@svelte-add/core';
-import { options } from './options';
+import { defineAdderConfig, dedent, type TextFileEditorArgs } from '@svelte-add/core';
+import { options as availableOptions } from './options';
 
 const PORTS = {
 	mysql: '3306',
@@ -19,7 +19,7 @@ export const adder = defineAdderConfig({
 			documentation: 'https://orm.drizzle.team/docs/overview',
 		},
 	},
-	options,
+	options: availableOptions,
 	integrationType: 'inline',
 	packages: [
 		{ name: 'drizzle-orm', version: '^0.31.2', dev: false },
@@ -74,40 +74,12 @@ export const adder = defineAdderConfig({
 		{
 			name: () => `.env`,
 			contentType: 'text',
-			content: ({ content, options }) => {
-				const DB_URL_KEY = 'DATABASE_URL';
-				if (options.docker) {
-					// we'll prefill with the default docker db credentials
-					const protocol = options.database === 'mysql' ? 'mysql' : 'postgres';
-					const port = PORTS[options.database];
-					content = addEnvVar(
-						content,
-						DB_URL_KEY,
-						`"${protocol}://root:mysecretpassword@localhost:${port}/local"`,
-					);
-					return content;
-				}
-				if (options.sqlite === 'better-sqlite3' || options.sqlite === 'libsql') {
-					const dbFile = options.sqlite === 'libsql' ? 'file:local.db' : 'local.db';
-					content = addEnvVar(content, DB_URL_KEY, dbFile);
-					return content;
-				}
-
-				content = addEnvComment(content, 'Replace with your DB credentials!');
-				if (options.sqlite === 'turso') {
-					content = addEnvVar(content, DB_URL_KEY, `"libsql://db-name-user.turso.io"`);
-					content = addEnvVar(content, 'DATABASE_AUTH_TOKEN', `""`);
-					content = addEnvComment(content, 'A local DB can also be used in dev as well');
-					content = addEnvComment(content, `${DB_URL_KEY}="file:local.db"`);
-				}
-				if (options.database === 'mysql') {
-					content = addEnvVar(content, DB_URL_KEY, `"mysql://user:password@host:port/db-name"`);
-				}
-				if (options.database === 'postgresql') {
-					content = addEnvVar(content, DB_URL_KEY, `"postgres://user:password@host:port/db-name"`);
-				}
-				return content;
-			},
+			content: generateEnvFileContent,
+		},
+		{
+			name: () => `.env.example`,
+			contentType: 'text',
+			content: generateEnvFileContent,
 		},
 		{
 			name: () => `docker-compose.yml`,
@@ -364,6 +336,41 @@ export const adder = defineAdderConfig({
 		return steps;
 	},
 });
+
+function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof availableOptions>) {
+	const DB_URL_KEY = 'DATABASE_URL';
+	if (options.docker) {
+		// we'll prefill with the default docker db credentials
+		const protocol = options.database === 'mysql' ? 'mysql' : 'postgres';
+		const port = PORTS[options.database];
+		content = addEnvVar(
+			content,
+			DB_URL_KEY,
+			`"${protocol}://root:mysecretpassword@localhost:${port}/local"`,
+		);
+		return content;
+	}
+	if (options.sqlite === 'better-sqlite3' || options.sqlite === 'libsql') {
+		const dbFile = options.sqlite === 'libsql' ? 'file:local.db' : 'local.db';
+		content = addEnvVar(content, DB_URL_KEY, dbFile);
+		return content;
+	}
+
+	content = addEnvComment(content, 'Replace with your DB credentials!');
+	if (options.sqlite === 'turso') {
+		content = addEnvVar(content, DB_URL_KEY, `"libsql://db-name-user.turso.io"`);
+		content = addEnvVar(content, 'DATABASE_AUTH_TOKEN', `""`);
+		content = addEnvComment(content, 'A local DB can also be used in dev as well');
+		content = addEnvComment(content, `${DB_URL_KEY}="file:local.db"`);
+	}
+	if (options.database === 'mysql') {
+		content = addEnvVar(content, DB_URL_KEY, `"mysql://user:password@host:port/db-name"`);
+	}
+	if (options.database === 'postgresql') {
+		content = addEnvVar(content, DB_URL_KEY, `"postgres://user:password@host:port/db-name"`);
+	}
+	return content;
+}
 
 function addEnvVar(content: string, key: string, value: string) {
 	if (!content.includes(key + '=')) {
