@@ -9,7 +9,7 @@ import {
 	installDependencies,
 	prepareWorkspaceWithTemplate,
 } from './workspace';
-import { runAdder } from './adder';
+import { runAdder, runAdderAndPrepareTests } from './adder';
 import { prompts, remoteControl } from '@svelte-add/core/internal';
 import * as Throttle from 'promise-parallel-throttle';
 import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
@@ -78,7 +78,7 @@ export async function runAdderEndToEndTests(
 		getTemplatesDirectory(testOptions.outputDirectory),
 	);
 
-	await runAdder(adder, workingDirectory, options);
+	await runAdderAndPrepareTests(adder, workingDirectory, options);
 
 	await installDependencies(workingDirectory);
 
