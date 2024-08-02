@@ -63,7 +63,7 @@ export const adder = defineAdderConfig({
 			contentType: 'json',
 			content: ({ options, data }) => {
 				for (const key in DEFAULT_INLANG_PROJECT) {
-					data[key] = DEFAULT_INLANG_PROJECT[key];
+					data[key] = DEFAULT_INLANG_PROJECT[key as keyof typeof DEFAULT_INLANG_PROJECT];
 				}
 				const { validLanguageTags } = parseLanguageTagInput(options.availableLanguageTags);
 				const sourceLanguageTag = validLanguageTags[0];
@@ -112,7 +112,7 @@ export const adder = defineAdderConfig({
 				const existingExport = exports.namedExport(ast, 'i18n', i18n);
 				if (existingExport) {
 					warnings.push(
-						'⚠️ Setting up $lib/i18n failed because it aleady exports an i18n function. Check that it is correct',
+						'Setting up $lib/i18n failed because it aleady exports an i18n function. Check that it is correct',
 					);
 				}
 			},
@@ -131,7 +131,7 @@ export const adder = defineAdderConfig({
 
 				const existingExport = exports.namedExport(ast, 'reroute', rerouteIdentifier);
 				if (existingExport) {
-					warnings.push('⚠️ Adding the reroute hook automatically failed. Add it manually');
+					warnings.push('Adding the reroute hook automatically failed. Add it manually');
 				}
 			},
 		},
@@ -160,16 +160,24 @@ export const adder = defineAdderConfig({
 
 					const existingHandle = existingExport.declaration;
 					if (!existingHandle || existingHandle.type !== 'VariableDeclaration') {
-						warnings.push('⚠️ Adding the handle hook automatically failed. Add it manually');
+						warnings.push('Adding the handle hook automatically failed. Add it manually');
 						return;
 					}
 
 					const sequenceExpression = functions.call('sequence', []);
+
+					type VariableDeclarator = Extract<
+						(typeof existingHandle.declarations)[number],
+						{ type: 'VariableDeclarator' }
+					>;
+					type ExpressionKind = Exclude<VariableDeclarator['init'], null | undefined>;
+
 					sequenceExpression.arguments = [
 						i18nHandleExpression,
 						...existingHandle.declarations
 							.filter((decl) => decl.type === 'VariableDeclarator')
-							.map((decl) => decl.init),
+							.map((decl) => decl.init)
+							.filter((exp): exp is ExpressionKind => !!exp),
 					];
 
 					const newHandle = variables.declaration(ast, 'const', 'handle', sequenceExpression);
@@ -215,7 +223,7 @@ export const adder = defineAdderConfig({
 				);
 				if (!htmlNode) {
 					warnings.push(
-						"⚠️ Could not find <html> node in app.html. You'll need to add the language placeholder manually",
+						"Could not find <html> node in app.html. You'll need to add the language placeholder manually",
 					);
 					return;
 				}
