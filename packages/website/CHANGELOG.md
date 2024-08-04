@@ -1,5 +1,12 @@
 # @svelte-add/website
 
+## 2.3.17
+
+### Patch Changes
+
+- Updated dependencies [[`e2aafc0a6e62c7b9d44d5e2eefb50c2074433384`](https://github.com/svelte-add/svelte-add/commit/e2aafc0a6e62c7b9d44d5e2eefb50c2074433384)]:
+  - @svelte-add/adders@1.5.1
+
 ## 2.3.16
 
 ### Patch Changes

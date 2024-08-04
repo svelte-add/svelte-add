@@ -1,5 +1,11 @@
 # svelte-add
 
+## 2.6.1
+
+### Patch Changes
+
+- chore: upgrade to typescript-eslint v8 final ([#525](https://github.com/svelte-add/svelte-add/pull/525))
+
 ## 2.6.0
 
 ### Minor Changes
