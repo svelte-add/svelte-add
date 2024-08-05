@@ -58,7 +58,7 @@ export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
 	return testCases;
 }
 
-export async function runAdderTests(
+export async function setupAdder(
 	template: string,
 	adder: AdderWithoutExplicitArgs,
 	options: OptionValues<Record<string, Question>>,
@@ -81,9 +81,16 @@ export async function runAdderTests(
 
 	await runAdder(adder, workingDirectory, options);
 
-	await installDependencies(workingDirectory);
+	return workingDirectory;
+}
 
-	const { url, devServer } = await startDevServer(workingDirectory, adder.tests.command ?? 'dev');
+export async function executeAdderTests(
+	workingDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+	options: OptionValues<Record<string, Question>>,
+	testOptions: TestOptions,
+) {
+	const { url, devServer } = await startDevServer(workingDirectory, adder.tests?.command ?? 'dev');
 	const { browser, page } = await startBrowser(url, testOptions.headless);
 
 	try {
@@ -112,11 +119,32 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const syncTasks: Array<() => Promise<void>> = [];
 	const asyncTestCaseInputs: TestCase[] = [];
 	const syncTestCaseInputs: TestCase[] = [];
+	const cwds: string[] = [];
+
+	console.log('executing adders');
+	for (const values of testCases.values()) {
+		for (const testCase of values) {
+			const cwd = await setupAdder(
+				testCase.template,
+				testCase.adder,
+				testCase.options,
+				testOptions,
+			);
+
+			cwds.push(cwd);
+		}
+	}
+
+	console.log('installing dependencies');
+	await installDependencies(testOptions.outputDirectory);
+
+	console.log('running tests');
 	for (const values of testCases.values()) {
 		for (const testCase of values) {
 			const taskExecutor = async () => {
 				try {
-					await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					await executeAdderTests(cwds.shift()!, testCase.adder, testCase.options, testOptions);
 				} catch (e) {
 					const error = e as Error;
 					const adderError: AdderError = {
