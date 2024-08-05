@@ -1,7 +1,12 @@
-import { chromium, type Browser, type Page } from 'playwright';
+import { chromium, type Browser } from 'playwright';
 
-export async function startBrowser(url: string, headless: boolean) {
-	const browser = await chromium.launch({ headless });
+let browser: Browser;
+
+export async function startBrowser(headless: boolean) {
+	browser = await chromium.launch({ headless });
+}
+
+export async function openPage(url: string) {
 	const page = await browser.newPage();
 
 	await page.goto(url, { timeout: 60_000 });
@@ -11,10 +16,9 @@ export async function startBrowser(url: string, headless: boolean) {
 	// of each developer and thus leads to inconsistent test results.
 	await page.emulateMedia({ colorScheme: 'light' });
 
-	return { browser, page };
+	return { page };
 }
 
-export async function stopBrowser(browser: Browser, page: Page) {
-	await page.close();
+export async function stopBrowser() {
 	await browser.close();
 }

@@ -4,7 +4,7 @@ import { ProjectTypesList } from './create-project';
 import { runTests } from './test';
 import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
-import { startBrowser, stopBrowser } from './browser-control';
+import { openPage, startBrowser, stopBrowser } from './browser-control';
 import {
 	getTemplatesDirectory,
 	installDependencies,
@@ -91,7 +91,7 @@ export async function executeAdderTests(
 	testOptions: TestOptions,
 ) {
 	const { url, devServer } = await startDevServer(workingDirectory, adder.tests?.command ?? 'dev');
-	const { browser, page } = await startBrowser(url, testOptions.headless);
+	const { page } = await openPage(url);
 
 	try {
 		const errorOcurred = await page.$('vite-error-overlay');
@@ -103,7 +103,7 @@ export async function executeAdderTests(
 
 		await runTests(page, adder, options);
 	} finally {
-		await stopBrowser(browser, page);
+		await page.close();
 		await stopDevServer(devServer);
 	}
 }
@@ -137,6 +137,8 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
+
+	await startBrowser(testOptions.headless);
 
 	console.log('running tests');
 	for (const { cwd, testCase } of tests) {
@@ -197,6 +199,8 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 			);
 		},
 	});
+
+	await stopBrowser();
 
 	const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>(
 		(x) => allAsyncResults.taskResults[x] as unknown as AdderError,
