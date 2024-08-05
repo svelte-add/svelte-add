@@ -119,7 +119,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const syncTasks: Array<() => Promise<void>> = [];
 	const asyncTestCaseInputs: TestCase[] = [];
 	const syncTestCaseInputs: TestCase[] = [];
-	const cwds: string[] = [];
+	const tests: { testCase: TestCase; cwd: string }[] = [];
 
 	console.log('executing adders');
 	for (const values of testCases.values()) {
@@ -131,7 +131,7 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 				testOptions,
 			);
 
-			cwds.push(cwd);
+			tests.push({ testCase, cwd });
 		}
 	}
 
@@ -139,31 +139,28 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	await installDependencies(testOptions.outputDirectory);
 
 	console.log('running tests');
-	for (const values of testCases.values()) {
-		for (const testCase of values) {
-			const taskExecutor = async () => {
-				try {
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					await executeAdderTests(cwds.shift()!, testCase.adder, testCase.options, testOptions);
-				} catch (e) {
-					const error = e as Error;
-					const adderError: AdderError = {
-						name: 'AdderError',
-						adder: testCase.adder.config.metadata.id,
-						template: testCase.template,
-						message: error.message,
-					};
-					throw adderError;
-				}
-			};
-
-			if (testCase.runSynchronously) {
-				syncTasks.push(taskExecutor);
-				syncTestCaseInputs.push(testCase);
-			} else {
-				asyncTasks.push(taskExecutor);
-				asyncTestCaseInputs.push(testCase);
+	for (const { cwd, testCase } of tests) {
+		const taskExecutor = async () => {
+			try {
+				await executeAdderTests(cwd, testCase.adder, testCase.options, testOptions);
+			} catch (e) {
+				const error = e as Error;
+				const adderError: AdderError = {
+					name: 'AdderError',
+					adder: testCase.adder.config.metadata.id,
+					template: testCase.template,
+					message: error.message,
+				};
+				throw adderError;
 			}
+		};
+
+		if (testCase.runSynchronously) {
+			syncTasks.push(taskExecutor);
+			syncTestCaseInputs.push(testCase);
+		} else {
+			asyncTasks.push(taskExecutor);
+			asyncTestCaseInputs.push(testCase);
 		}
 	}
 
