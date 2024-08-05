@@ -9,8 +9,14 @@ export const options = defineAdderOptions({
 		validate(input) {
 			const { invalidLanguageTags, validLanguageTags } = parseLanguageTagInput(input);
 
-			if (invalidLanguageTags.length > 0)
-				return `Please enter a series of valid BCP47 language tags. Eg: en, de-ch, ar`;
+			if (invalidLanguageTags.length > 0) {
+				if (invalidLanguageTags.length === 1) {
+					return `The input "${invalidLanguageTags[0]}" is not a valid BCP47 language tag`;
+				} else {
+					const listFormat = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+					return `The inputs ${listFormat.format(invalidLanguageTags.map((x) => `"${x}"`))} are not valid BCP47 language tags`;
+				}
+			}
 			if (validLanguageTags.length === 0)
 				return `Please enter at least one valid BCP47 language tag. Eg: en`;
 
