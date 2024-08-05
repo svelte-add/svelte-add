@@ -30,9 +30,9 @@ export function parseLanguageTagInput(input: string): {
 	invalidLanguageTags: string[];
 } {
 	const probablyLanguageTags = input
-		.replace(/[,:\s]/g, ' ') //replace common separators with spaces
+		.replace(/[,:\s]/g, ' ') // replace common separators with spaces
 		.split(' ')
-		.filter(Boolean) //remove empty segments
+		.filter(Boolean) // remove empty segments
 		.map((tag) => tag.toLowerCase());
 
 	const validLanguageTags: string[] = [];
