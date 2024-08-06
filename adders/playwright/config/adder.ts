@@ -60,34 +60,31 @@ export const adder = defineAdderConfig({
 		{
 			name: ({ typescript }) => `playwright.config.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content: ({ ast, imports, exports, common, typescript, object }) => {
-				let config;
+			content: ({ ast, imports, exports, common, object }) => {
+				const defineConfig = common.expressionFromString('defineConfig({})');
+				const defaultExport = exports.defaultExport(ast, defineConfig);
 
-				config = object.create({
+				const config = {
 					webServer: object.create({
 						command: common.createLiteral('npm run build && npm run preview'),
 						port: common.expressionFromString('4173'),
 					}),
 					testDir: common.createLiteral('e2e'),
-				});
+				};
 
-				// type annotate config
-				if (typescript.installed) {
-					imports.addNamed(
-						ast,
-						'@playwright/test',
-						{ PlaywrightTestConfig: 'PlaywrightTestConfig' },
-						true,
-					);
-					config = common.typeAnnotateExpression(config, 'PlaywrightTestConfig');
+				if (
+					defaultExport.value.type === 'CallExpression' &&
+					defaultExport.value.arguments[0].type === 'ObjectExpression'
+				) {
+					// uses the `defineConfig` helper
+					imports.addNamed(ast, '@playwright/test', { defineConfig: 'defineConfig' });
+					object.properties(defaultExport.value.arguments[0], config);
+				} else if (defaultExport.value.type === 'ObjectExpression') {
+					// if the config is just an object expression, just add the property
+					object.properties(defaultExport.value, config);
 				} else {
-					common.addJsDocTypeComment(config, "import('@playwright/test').PlaywrightTestConfig");
-				}
-
-				const defaultExport = exports.defaultExport(ast, config);
-				// if it's not the config we created, then we'll leave it alone and exit out
-				if (defaultExport.value !== config) {
-					log.warn('A playwright config is already defined. Skipping initialization.');
+					// unexpected config shape
+					log.warn('Unexpected playwright config for playwright adder. Could not update.');
 				}
 			},
 		},
