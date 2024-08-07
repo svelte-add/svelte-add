@@ -1,5 +1,11 @@
 # @svelte-add/testing-library
 
+## 2.1.13
+
+### Patch Changes
+
+- chore: restructured execution order of tests ([#527](https://github.com/svelte-add/svelte-add/pull/527))
+
 ## 2.1.12
 
 ### Patch Changes
