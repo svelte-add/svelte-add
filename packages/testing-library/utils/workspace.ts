@@ -19,15 +19,6 @@ export async function installDependencies(output: string) {
 	}
 }
 
-export async function buildProjects(output: string) {
-	try {
-		await executeCli('pnpm', ['--parallel', 'run', 'build'], output, { stdio: 'pipe' });
-	} catch (error) {
-		const typedError = error as Error;
-		throw new Error('unable to build projects: ' + typedError.message);
-	}
-}
-
 export async function prepareWorkspaceWithTemplate(
 	output: string,
 	template: string,

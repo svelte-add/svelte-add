@@ -10,16 +10,7 @@ export const tests = defineAdderTests({
 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 		return `storybook -p ${port++} --ci`;
 	},
-	files: [
-		// hack to prevent this build script from running
-		{
-			name: () => 'package.json',
-			contentType: 'json',
-			content: ({ data }) => {
-				delete data.scripts.build;
-			},
-		},
-	],
+	files: [],
 	tests: [
 		{
 			name: 'storybook loaded',

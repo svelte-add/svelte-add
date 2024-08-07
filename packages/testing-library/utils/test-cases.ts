@@ -6,7 +6,6 @@ import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
 import { openPage, startBrowser, stopBrowser } from './browser-control';
 import {
-	buildProjects,
 	getTemplatesDirectory,
 	installDependencies,
 	prepareWorkspaceWithTemplate,
@@ -93,7 +92,7 @@ export async function executeAdderTests(
 ) {
 	if (!adder.tests) return;
 
-	const cmd = adder.tests.command ?? 'preview';
+	const cmd = adder.tests.command ?? 'dev';
 	const { url, devServer } = await startDevServer(workingDirectory, cmd);
 	const page = await openPage(url);
 
@@ -148,9 +147,6 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
-
-	console.log('building projects');
-	await buildProjects(testOptions.outputDirectory);
 
 	await startBrowser(testOptions.headless);
 
