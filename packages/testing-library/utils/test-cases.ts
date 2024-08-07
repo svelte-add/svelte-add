@@ -2,17 +2,15 @@ import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 import { ProjectTypesList } from './create-project';
 import { runTests } from './test';
-import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
 import { startBrowser, stopBrowser } from './browser-control';
 import {
 	getTemplatesDirectory,
 	installDependencies,
 	prepareWorkspaceWithTemplate,
-	saveOptionsFile,
 } from './workspace';
-import { runAdder } from './adder';
-import { prompts } from '@svelte-add/core/internal';
+import { runAdder, runAdderAndPrepareTests } from './adder';
+import { prompts, remoteControl } from '@svelte-add/core/internal';
 import * as Throttle from 'promise-parallel-throttle';
 import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
 import type { TestOptions } from '..';
@@ -58,7 +56,7 @@ export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
 	return testCases;
 }
 
-export async function runAdderTests(
+export async function runAdderEndToEndTests(
 	template: string,
 	adder: AdderWithoutExplicitArgs,
 	options: OptionValues<Record<string, Question>>,
@@ -69,17 +67,18 @@ export async function runAdderTests(
 			'The adder is not exporting any tests. Please make sure to properly define your tests while calling `defineAdder`',
 		);
 
-	const output = join(testOptions.outputDirectory, adder.config.metadata.id, template, uid());
+	remoteControl.enable();
+
+	const output = generateOutputDirectory(options, testOptions.outputDirectory, adder, template);
 	await mkdir(output, { recursive: true });
 
 	const workingDirectory = await prepareWorkspaceWithTemplate(
 		output,
 		template,
-		getTemplatesDirectory(testOptions),
+		getTemplatesDirectory(testOptions.outputDirectory),
 	);
-	await saveOptionsFile(workingDirectory, options);
 
-	await runAdder(adder, workingDirectory, options);
+	await runAdderAndPrepareTests(adder, workingDirectory, options);
 
 	await installDependencies(workingDirectory);
 
@@ -98,7 +97,30 @@ export async function runAdderTests(
 	} finally {
 		await stopBrowser(browser, page);
 		await stopDevServer(devServer);
+
+		remoteControl.disable();
 	}
+}
+
+export async function runAdderIntegrationTests(
+	testCase: TestCase,
+	outputDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+) {
+	const adderOutputDirectory = generateOutputDirectory(
+		testCase.options,
+		outputDirectory,
+		adder,
+		testCase.template,
+	);
+
+	const workingDirectory = await prepareWorkspaceWithTemplate(
+		adderOutputDirectory,
+		testCase.template,
+		getTemplatesDirectory(outputDirectory),
+	);
+
+	return await runAdder(adder, workingDirectory, testCase.options);
 }
 
 export type AdderError = {
@@ -106,6 +128,22 @@ export type AdderError = {
 	template: string;
 	message: string;
 } & Error;
+
+export function generateOutputDirectory(
+	options: OptionValues<Record<string, Question>>,
+	outputDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+	template: string,
+) {
+	// generate a unique descriptive folder name if options are present
+	const optionsString = Object.entries(options)
+		.filter((data) => data[1]) // ensure value it not undefined
+		.map(([key, value]) => `${key}=${value as string}`)
+		.join('+');
+
+	const output = join(outputDirectory, adder.config.metadata.id, template, optionsString);
+	return output;
+}
 
 export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
 	const asyncTasks: Array<() => Promise<void>> = [];
@@ -116,7 +154,12 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 		for (const testCase of values) {
 			const taskExecutor = async () => {
 				try {
-					await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
+					await runAdderEndToEndTests(
+						testCase.template,
+						testCase.adder,
+						testCase.options,
+						testOptions,
+					);
 				} catch (e) {
 					const error = e as Error;
 					const adderError: AdderError = {

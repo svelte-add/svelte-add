@@ -2,6 +2,8 @@
 /.changeset/
 CHANGELOG.md
 packages/website/.svelte-kit/
+packages/tests/.snapshots/
+packages/tests/.outputs/
 adders/*/README.md
 adders/*/package.json
 temp/

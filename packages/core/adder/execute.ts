@@ -60,12 +60,18 @@ export type AddersExecutionPlan = {
 	selectAddersToApply?: AddersToApplySelector;
 };
 
+export type AddersExecutionResult = {
+	success: boolean;
+	outputDirectory: string;
+	changedFiles?: Set<string>;
+};
+
 export async function executeAdder<Args extends OptionDefinition>(
 	adderDetails: AdderDetails<Args>,
 	executingAdderInfo: ExecutingAdderInfo,
 	remoteControlOptions: RemoteControlOptions | undefined = undefined,
 ) {
-	await executeAdders([adderDetails], executingAdderInfo, remoteControlOptions);
+	return await executeAdders([adderDetails], executingAdderInfo, remoteControlOptions);
 }
 
 export async function executeAdders<Args extends OptionDefinition>(
@@ -104,7 +110,7 @@ export async function executeAdders<Args extends OptionDefinition>(
 			selectAddersToApply,
 		};
 
-		await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
+		return await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
 	} catch (e) {
 		if (e instanceof Error) cancel(e.message);
 		else cancel('Something went wrong.');
@@ -273,6 +279,13 @@ async function executePlan<Args extends OptionDefinition>(
 		displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
 		endPrompts("You're all set!");
 	}
+
+	const executionResult: AddersExecutionResult = {
+		success: true,
+		changedFiles: filesToFormat,
+		outputDirectory: executionPlan.workingDirectory,
+	};
+	return executionResult;
 }
 
 async function processInlineAdder<Args extends OptionDefinition>(
