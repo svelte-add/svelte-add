@@ -1,5 +1,11 @@
 # @svelte-add/adders
 
+## 1.5.2
+
+### Patch Changes
+
+- chore: use `defineConfig` helper for `playwright` ([#528](https://github.com/svelte-add/svelte-add/pull/528))
+
 ## 1.5.1
 
 ### Patch Changes
