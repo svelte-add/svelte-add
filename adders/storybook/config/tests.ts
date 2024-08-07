@@ -8,9 +8,18 @@ export const tests = defineAdderTests({
 	optionValues: [],
 	get command() {
 		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-		return `storybook -p ${port++}`;
+		return `storybook -p ${port++} --ci`;
 	},
-	files: [],
+	files: [
+		// hack to prevent this build script from running
+		{
+			name: () => 'package.json',
+			contentType: 'json',
+			content: ({ data }) => {
+				delete data.scripts.build;
+			},
+		},
+	],
 	tests: [
 		{
 			name: 'storybook loaded',

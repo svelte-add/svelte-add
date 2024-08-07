@@ -6,6 +6,7 @@ import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
 import { openPage, startBrowser, stopBrowser } from './browser-control';
 import {
+	buildProjects,
 	getTemplatesDirectory,
 	installDependencies,
 	prepareWorkspaceWithTemplate,
@@ -90,7 +91,10 @@ export async function executeAdderTests(
 	options: OptionValues<Record<string, Question>>,
 	testOptions: TestOptions,
 ) {
-	const { url, devServer } = await startDevServer(workingDirectory, adder.tests?.command ?? 'dev');
+	if (!adder.tests) return;
+
+	const cmd = adder.tests.command ?? 'preview';
+	const { url, devServer } = await startDevServer(workingDirectory, cmd);
 	const page = await openPage(url);
 
 	try {
@@ -122,21 +126,31 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const tests: { testCase: TestCase; cwd: string }[] = [];
 
 	console.log('executing adders');
+	const setups = [];
 	for (const values of testCases.values()) {
 		for (const testCase of values) {
-			const cwd = await setupAdder(
-				testCase.template,
-				testCase.adder,
-				testCase.options,
-				testOptions,
-			);
+			if (testCase.adder.tests?.tests.length === 0) continue;
+			const task = async () => {
+				const cwd = await setupAdder(
+					testCase.template,
+					testCase.adder,
+					testCase.options,
+					testOptions,
+				);
+				tests.push({ testCase, cwd });
+			};
 
-			tests.push({ testCase, cwd });
+			setups.push(task());
 		}
 	}
 
+	await Promise.all(setups);
+
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
+
+	console.log('building projects');
+	await buildProjects(testOptions.outputDirectory);
 
 	await startBrowser(testOptions.headless);
 
