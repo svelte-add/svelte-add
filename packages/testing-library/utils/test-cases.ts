@@ -91,7 +91,7 @@ export async function executeAdderTests(
 	testOptions: TestOptions,
 ) {
 	const { url, devServer } = await startDevServer(workingDirectory, adder.tests?.command ?? 'dev');
-	const { page } = await openPage(url);
+	const page = await openPage(url);
 
 	try {
 		const errorOcurred = await page.$('vite-error-overlay');

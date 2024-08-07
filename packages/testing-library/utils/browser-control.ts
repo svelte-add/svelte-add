@@ -16,7 +16,7 @@ export async function openPage(url: string) {
 	// of each developer and thus leads to inconsistent test results.
 	await page.emulateMedia({ colorScheme: 'light' });
 
-	return { page };
+	return page;
 }
 
 export async function stopBrowser() {
