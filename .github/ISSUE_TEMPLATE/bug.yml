@@ -9,7 +9,7 @@ body:
       label: Topic
       description: >-
         Please enter the adder or project you are having an issue with. (i.e.
-        bulma, tailwindcss, cli, website, etc)
+        tailwindcss, cli, website, etc)
     validations:
       required: true
   - type: input
