@@ -125,11 +125,10 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const tests: { testCase: TestCase; cwd: string }[] = [];
 
 	console.log('executing adders');
-	const setups = [];
-	for (const values of testCases.values()) {
-		for (const testCase of values) {
-			if (testCase.adder.tests?.tests.length === 0) continue;
+	const setups = Array.from(testCases.values()).flatMap((values) =>
+		values.map((testCase) => {
 			const task = async () => {
+				if (testCase.adder.tests?.tests.length === 0) return;
 				const cwd = await setupAdder(
 					testCase.template,
 					testCase.adder,
@@ -138,10 +137,9 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 				);
 				tests.push({ testCase, cwd });
 			};
-
-			setups.push(task());
-		}
-	}
+			return task();
+		}),
+	);
 
 	await Promise.all(setups);
 
