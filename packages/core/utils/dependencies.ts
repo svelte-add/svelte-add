@@ -15,8 +15,8 @@ export async function suggestInstallingDependencies(
 	workingDirectory: string,
 ): Promise<'installed' | 'skipped'> {
 	const detectedPm = await detect({ cwd: workingDirectory });
-	let selectedPm: keyof typeof COMMANDS | undefined;
-	if (!detectedPm) {
+	let selectedPm = detectedPm.agent;
+	if (!selectedPm) {
 		selectedPm = await selectPrompt(
 			'Which package manager do you want to install dependencies with?',
 			undefined,
@@ -30,22 +30,19 @@ export async function suggestInstallingDependencies(
 				}),
 			],
 		);
-	} else {
-		selectedPm = detectedPm.agent;
 	}
 
 	if (!selectedPm || !COMMANDS[selectedPm]) {
 		return 'skipped';
 	}
 
-	const selectedCommand = COMMANDS[selectedPm].install;
-	const args = selectedCommand.split(' ');
-	const command = args[0];
-	args.splice(0, 1);
-
 	const loadingSpinner = spinner();
 	loadingSpinner.start('Installing dependencies...');
-	await installDependencies(command, args, workingDirectory);
+
+	const installCommand = COMMANDS[selectedPm].install;
+	const [pm, install] = installCommand.split(' ');
+	await installDependencies(pm, [install], workingDirectory);
+
 	loadingSpinner.stop('Successfully installed dependencies');
 	return 'installed';
 }
