@@ -1,5 +1,21 @@
 # svelte-add
 
+## 2.7.0
+
+### Minor Changes
+
+- feat: remove bulma and bootstrap adders ([#533](https://github.com/svelte-add/svelte-add/pull/533))
+
+### Patch Changes
+
+- fix: removed `postcss` install from `tailwindcss` adder ([#532](https://github.com/svelte-add/svelte-add/pull/532))
+
+- chore: replace `preferred-pm` with `package-manager-detector` ([#535](https://github.com/svelte-add/svelte-add/pull/535))
+
+- Updated dependencies [[`4fbcb78be02a454999e4c82c0112b6d4b3807c34`](https://github.com/svelte-add/svelte-add/commit/4fbcb78be02a454999e4c82c0112b6d4b3807c34), [`c134afadd514b9887eaa3a59b4fbda5adda288fb`](https://github.com/svelte-add/svelte-add/commit/c134afadd514b9887eaa3a59b4fbda5adda288fb)]:
+  - @svelte-add/config@1.5.0
+  - @svelte-add/core@2.10.1
+
 ## 2.6.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @svelte-add/config
 
+## 1.5.0
+
+### Minor Changes
+
+- feat: remove bulma and bootstrap adders ([#533](https://github.com/svelte-add/svelte-add/pull/533))
+
 ## 1.4.0
 
 ### Minor Changes

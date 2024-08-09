@@ -1,5 +1,17 @@
 # @svelte-add/adders
 
+## 1.6.0
+
+### Minor Changes
+
+- feat: remove bulma and bootstrap adders ([#533](https://github.com/svelte-add/svelte-add/pull/533))
+
+### Patch Changes
+
+- fix: removed `postcss` install from `tailwindcss` adder ([#532](https://github.com/svelte-add/svelte-add/pull/532))
+
+- fix: pinned `storybook` cli version ([#531](https://github.com/svelte-add/svelte-add/pull/531))
+
 ## 1.5.2
 
 ### Patch Changes
