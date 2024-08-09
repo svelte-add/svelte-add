@@ -1,5 +1,12 @@
 # svelte-add
 
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`04fd3bad9e3b205e7eed770dd5f2dbf53b427190`](https://github.com/svelte-add/svelte-add/commit/04fd3bad9e3b205e7eed770dd5f2dbf53b427190)]:
+  - @svelte-add/core@2.10.2
+
 ## 2.7.0
 
 ### Minor Changes
