@@ -1,5 +1,15 @@
 # svelte-add
 
+## 2.7.2
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
+- Updated dependencies [[`30f4056e6253c633672039cef05dbc8445fe00b6`](https://github.com/svelte-add/svelte-add/commit/30f4056e6253c633672039cef05dbc8445fe00b6)]:
+  - @svelte-add/config@1.5.1
+  - @svelte-add/core@2.10.3
+
 ## 2.7.1
 
 ### Patch Changes
