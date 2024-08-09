@@ -75,4 +75,6 @@ export function namedExport(
 		declaration: fallback,
 	};
 	ast.body.push(namedExport);
+
+	return namedExport;
 }
