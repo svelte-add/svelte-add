@@ -23,3 +23,4 @@ export {
 };
 
 export type * from './files/processors.js';
+export { Walker, type AstTypes, type AstKinds } from '@svelte-add/ast-tooling';
