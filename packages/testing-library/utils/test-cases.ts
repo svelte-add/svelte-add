@@ -125,23 +125,18 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const tests: { testCase: TestCase; cwd: string }[] = [];
 
 	console.log('executing adders');
-	const setups = Array.from(testCases.values()).flatMap((values) =>
-		values.map((testCase) => {
-			const task = async () => {
-				if (testCase.adder.tests?.tests.length === 0) return;
-				const cwd = await setupAdder(
-					testCase.template,
-					testCase.adder,
-					testCase.options,
-					testOptions,
-				);
-				tests.push({ testCase, cwd });
-			};
-			return task();
-		}),
-	);
-
-	await Promise.all(setups);
+	for (const cases of testCases.values()) {
+		for (const testCase of cases) {
+			if (testCase.adder.tests?.tests.length === 0) continue;
+			const cwd = await setupAdder(
+				testCase.template,
+				testCase.adder,
+				testCase.options,
+				testOptions,
+			);
+			tests.push({ testCase, cwd });
+		}
+	}
 
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
