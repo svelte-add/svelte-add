@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.10.1
+
+### Patch Changes
+
+- chore: replace `preferred-pm` with `package-manager-detector` ([#535](https://github.com/svelte-add/svelte-add/pull/535))
+
 ## 2.10.0
 
 ### Minor Changes

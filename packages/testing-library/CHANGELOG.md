@@ -1,5 +1,14 @@
 # @svelte-add/testing-library
 
+## 2.1.14
+
+### Patch Changes
+
+- fix: empty test cases are no longer needed ([#531](https://github.com/svelte-add/svelte-add/pull/531))
+
+- Updated dependencies [[`c134afadd514b9887eaa3a59b4fbda5adda288fb`](https://github.com/svelte-add/svelte-add/commit/c134afadd514b9887eaa3a59b4fbda5adda288fb)]:
+  - @svelte-add/core@2.10.1
+
 ## 2.1.13
 
 ### Patch Changes
