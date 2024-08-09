@@ -1,4 +1,4 @@
-import { defineAdderConfig, log, Walker, type AstTypes } from '@svelte-add/core';
+import { defineAdderConfig, log, Walker, type AstKinds, type AstTypes } from '@svelte-add/core';
 import { options } from './options.js';
 
 const LUCIA_ADAPTER = {
@@ -62,8 +62,8 @@ export const adder = defineAdderConfig({
 			name: () => schemaPath,
 			contentType: 'script',
 			content: ({ ast, common, exports, imports, object, variables }) => {
-				let userInit;
-				let sessionInit;
+				let userInit: AstKinds.ExpressionKind | undefined;
+				let sessionInit: AstKinds.ExpressionKind | undefined;
 				if (drizzleDialect === 'sqlite') {
 					imports.addNamed(ast, 'drizzle-orm/sqlite-core', {
 						sqliteTable: 'sqliteTable',
@@ -114,6 +114,11 @@ export const adder = defineAdderConfig({
 							userId: text("user_id").notNull().references(() => user.id),
 							expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull()
 						});`);
+				}
+
+				if (!userInit || !sessionInit) {
+					// TODO: invalid dialects
+					return;
 				}
 
 				const userDecl = variables.declaration(ast, 'const', 'user', userInit);
