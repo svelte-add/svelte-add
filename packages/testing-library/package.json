@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/testing-library",
-	"version": "2.1.14",
+	"version": "2.1.15",
 	"type": "module",
 	"license": "MIT",
 	"exports": {
