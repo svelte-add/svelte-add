@@ -13,5 +13,8 @@
 	"devDependencies": {
 		"@svelte-add/adders": "workspace:*",
 		"commander": "^12.1.0"
+	},
+	"publishConfig": {
+		"provenance": true
 	}
 }

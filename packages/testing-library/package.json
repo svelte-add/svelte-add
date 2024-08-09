@@ -34,5 +34,8 @@
 		"svelte",
 		"kit",
 		"svelte-kit"
-	]
+	],
+	"publishConfig": {
+		"provenance": true
+	}
 }
