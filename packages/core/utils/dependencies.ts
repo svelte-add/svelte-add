@@ -1,7 +1,11 @@
 import { selectPrompt } from './prompts';
-import preferredPackageManager from 'preferred-pm';
+import { detect } from 'package-manager-detector';
+import { COMMANDS } from 'package-manager-detector/agents';
 import { spinner } from '@svelte-add/clack-prompts';
 import { executeCli } from './cli.js';
+
+type PackageManager = (typeof packageManagers)[number] | undefined;
+const packageManagers = ['npm', 'pnpm', 'yarn', 'bun'] as const;
 
 /**
  * @param workingDirectory
@@ -10,18 +14,9 @@ import { executeCli } from './cli.js';
 export async function suggestInstallingDependencies(
 	workingDirectory: string,
 ): Promise<'installed' | 'skipped'> {
-	type PackageManager = keyof typeof packageManagers | undefined;
-	const packageManagers = {
-		npm: 'npm install',
-		pnpm: 'pnpm install',
-		yarn: 'yarn',
-		bun: 'bun install',
-	};
-
-	// Note: The return type for this is incorrect. If a PM is not found, it returns `null`.
-	const detectedPm = await preferredPackageManager(workingDirectory);
-	let selectedPm: PackageManager;
-	if (!detectedPm) {
+	const detectedPm = await detect({ cwd: workingDirectory });
+	let selectedPm = detectedPm.agent;
+	if (!selectedPm) {
 		selectedPm = await selectPrompt(
 			'Which package manager do you want to install dependencies with?',
 			undefined,
@@ -30,27 +25,24 @@ export async function suggestInstallingDependencies(
 					label: 'None',
 					value: undefined,
 				},
-				...Object.keys(packageManagers).map((x) => {
+				...packageManagers.map((x) => {
 					return { label: x, value: x as PackageManager };
 				}),
 			],
 		);
-	} else {
-		selectedPm = detectedPm.name;
 	}
 
-	if (!selectedPm || !packageManagers[selectedPm]) {
+	if (!selectedPm || !COMMANDS[selectedPm]) {
 		return 'skipped';
 	}
 
-	const selectedCommand = packageManagers[selectedPm];
-	const args = selectedCommand.split(' ');
-	const command = args[0];
-	args.splice(0, 1);
-
 	const loadingSpinner = spinner();
 	loadingSpinner.start('Installing dependencies...');
-	await installDependencies(command, args, workingDirectory);
+
+	const installCommand = COMMANDS[selectedPm].install;
+	const [pm, install] = installCommand.split(' ');
+	await installDependencies(pm, [install], workingDirectory);
+
 	loadingSpinner.stop('Successfully installed dependencies');
 	return 'installed';
 }
