@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/ast-manipulation",
-	"version": "2.2.2",
+	"version": "2.2.3",
 	"license": "MIT",
 	"type": "module",
 	"exports": {
@@ -24,5 +24,8 @@
 		"type": "git",
 		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/ast-manipulation"
 	},
-	"keywords": []
+	"keywords": [],
+	"publishConfig": {
+		"provenance": true
+	}
 }

@@ -1,5 +1,11 @@
 # @svelte-add/config
 
+## 1.5.1
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
 ## 1.5.0
 
 ### Minor Changes

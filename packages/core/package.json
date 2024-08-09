@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/core",
-	"version": "2.10.1",
+	"version": "2.10.3",
 	"type": "module",
 	"license": "MIT",
 	"exports": {
@@ -38,5 +38,8 @@
 		"svelte",
 		"kit",
 		"svelte-kit"
-	]
+	],
+	"publishConfig": {
+		"provenance": true
+	}
 }

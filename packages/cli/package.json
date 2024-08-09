@@ -1,6 +1,6 @@
 {
 	"name": "svelte-add",
-	"version": "2.7.0",
+	"version": "2.7.2",
 	"bin": "build/index.js",
 	"type": "module",
 	"files": [
@@ -13,5 +13,8 @@
 	"devDependencies": {
 		"@svelte-add/adders": "workspace:*",
 		"commander": "^12.1.0"
+	},
+	"publishConfig": {
+		"provenance": true
 	}
 }

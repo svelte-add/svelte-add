@@ -16,21 +16,20 @@ export async function suggestInstallingDependencies(
 ): Promise<'installed' | 'skipped'> {
 	const detectedPm = await detect({ cwd: workingDirectory });
 	let selectedPm = detectedPm.agent;
-	if (!selectedPm) {
-		selectedPm = await selectPrompt(
-			'Which package manager do you want to install dependencies with?',
-			undefined,
-			[
-				{
-					label: 'None',
-					value: undefined,
-				},
-				...packageManagers.map((x) => {
-					return { label: x, value: x as PackageManager };
-				}),
-			],
-		);
-	}
+
+	selectedPm ??= await selectPrompt(
+		'Which package manager do you want to install dependencies with?',
+		undefined,
+		[
+			{
+				label: 'None',
+				value: undefined,
+			},
+			...packageManagers.map((x) => {
+				return { label: x, value: x as PackageManager };
+			}),
+		],
+	);
 
 	if (!selectedPm || !COMMANDS[selectedPm]) {
 		return 'skipped';
