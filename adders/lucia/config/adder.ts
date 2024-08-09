@@ -250,31 +250,7 @@ export const adder = defineAdderConfig({
 			name: ({ typescript }) => `src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
 			content: ({ ast, imports, exports, common, object }) => {
-				const defineConfig = common.expressionFromString('defineConfig({})');
-				const defaultExport = exports.defaultExport(ast, defineConfig);
-
-				const config = {
-					webServer: object.create({
-						command: common.createLiteral('npm run build && npm run preview'),
-						port: common.expressionFromString('4173'),
-					}),
-					testDir: common.createLiteral('e2e'),
-				};
-
-				if (
-					defaultExport.value.type === 'CallExpression' &&
-					defaultExport.value.arguments[0].type === 'ObjectExpression'
-				) {
-					// uses the `defineConfig` helper
-					imports.addNamed(ast, '@playwright/test', { defineConfig: 'defineConfig' });
-					object.properties(defaultExport.value.arguments[0], config);
-				} else if (defaultExport.value.type === 'ObjectExpression') {
-					// if the config is just an object expression, just add the property
-					object.properties(defaultExport.value, config);
-				} else {
-					// unexpected config shape
-					log.warn('Unexpected playwright config for playwright adder. Could not update.');
-				}
+				// TODO
 			},
 		},
 	],

@@ -5,6 +5,7 @@ export const adderCategories: AdderCategories = {
 	testing: ['vitest', 'playwright'],
 	css: ['tailwindcss'],
 	db: ['drizzle'],
+	auth: ['lucia'],
 	additional: ['storybook', 'mdsvex', 'routify'],
 };
 
