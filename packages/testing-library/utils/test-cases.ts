@@ -90,7 +90,10 @@ export async function executeAdderTests(
 	options: OptionValues<Record<string, Question>>,
 	testOptions: TestOptions,
 ) {
-	const { url, devServer } = await startDevServer(workingDirectory, adder.tests?.command ?? 'dev');
+	if (!adder.tests) return;
+
+	const cmd = adder.tests.command ?? 'dev';
+	const { url, devServer } = await startDevServer(workingDirectory, cmd);
 	const page = await openPage(url);
 
 	try {
@@ -122,18 +125,23 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const tests: { testCase: TestCase; cwd: string }[] = [];
 
 	console.log('executing adders');
-	for (const values of testCases.values()) {
-		for (const testCase of values) {
-			const cwd = await setupAdder(
-				testCase.template,
-				testCase.adder,
-				testCase.options,
-				testOptions,
-			);
+	const setups = Array.from(testCases.values()).flatMap((values) =>
+		values.map((testCase) => {
+			const task = async () => {
+				if (testCase.adder.tests?.tests.length === 0) return;
+				const cwd = await setupAdder(
+					testCase.template,
+					testCase.adder,
+					testCase.options,
+					testOptions,
+				);
+				tests.push({ testCase, cwd });
+			};
+			return task();
+		}),
+	);
 
-			tests.push({ testCase, cwd });
-		}
-	}
+	await Promise.all(setups);
 
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
