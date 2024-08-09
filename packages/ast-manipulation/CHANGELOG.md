@@ -1,5 +1,14 @@
 # @svelte-add/ast-manipulation
 
+## 2.2.3
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
+- Updated dependencies [[`30f4056e6253c633672039cef05dbc8445fe00b6`](https://github.com/svelte-add/svelte-add/commit/30f4056e6253c633672039cef05dbc8445fe00b6)]:
+  - @svelte-add/ast-tooling@2.1.6
+
 ## 2.2.2
 
 ### Patch Changes
