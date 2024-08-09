@@ -1,5 +1,14 @@
 # @svelte-add/testing-library
 
+## 2.1.15
+
+### Patch Changes
+
+- fix: execute adders in order ([#539](https://github.com/svelte-add/svelte-add/pull/539))
+
+- Updated dependencies [[`04fd3bad9e3b205e7eed770dd5f2dbf53b427190`](https://github.com/svelte-add/svelte-add/commit/04fd3bad9e3b205e7eed770dd5f2dbf53b427190)]:
+  - @svelte-add/core@2.10.2
+
 ## 2.1.14
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @svelte-add/core
 
+## 2.10.2
+
+### Patch Changes
+
+- chore: upgrade to package-manager-detector 0.1.0 ([#537](https://github.com/svelte-add/svelte-add/pull/537))
+
 ## 2.10.1
 
 ### Patch Changes
