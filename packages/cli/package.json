@@ -6,6 +6,10 @@
 	"files": [
 		"build"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/testing-library"
+	},
 	"dependencies": {
 		"@svelte-add/config": "workspace:*",
 		"@svelte-add/core": "workspace:*"
