@@ -1,5 +1,11 @@
 # @svelte-add/ast-tooling
 
+## 2.1.7
+
+### Patch Changes
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
 ## 2.1.6
 
 ### Patch Changes
