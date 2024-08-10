@@ -3,62 +3,44 @@
 import * as path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { testAdders } from '@svelte-add/testing-library';
-import { adderIds } from '@svelte-add/config';
-import { remoteControl } from '@svelte-add/core/internal';
-import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
-import { getAdderDetails } from '@svelte-add/adders';
+import {
+	finalizeTests,
+	generateTestCases,
+	prepareTests,
+	runTestCases,
+} from '@svelte-add/testing-library';
+import { describe, test, beforeAll, afterAll } from 'vitest';
+import { getAllAdders } from './common/adder.js';
 
 let usingDocker = false;
+const cwd = path.resolve(fileURLToPath(import.meta.url), '..');
 
 /** @type {import("../testing-library/index.js").TestOptions} */
 const testOptions = {
 	headless: true,
 	pauseExecutionAfterBrowser: false,
-	outputDirectory: path.join(process.cwd(), 'packages', 'tests', '.outputs'),
+	outputDirectory: path.join(process.cwd(), '.outputs'),
 };
 
-void test();
+const adders = await getAllAdders();
+const testCasesPerAdder = generateTestCases(adders);
 
-async function test() {
-	const addersToTest = process.argv.slice(2);
-	if (addersToTest.length > 0) console.log('Only testing the following adders', addersToTest);
+beforeAll(async () => {
+	await prepareTests(testOptions, adders, testCasesPerAdder, testOptions);
+});
 
-	await executeTests(addersToTest);
-}
+afterAll(async () => {
+	await finalizeTests();
+});
 
-/**
- * Executes the tests
- * @param {string[]} addersToTest
- */
-async function executeTests(addersToTest: string[]) {
-	const filterAdders = addersToTest.length > 0;
+executeTests();
 
-	const adders: AdderWithoutExplicitArgs[] = [];
-
-	for (const adderName of adderIds) {
-		if (filterAdders && !addersToTest.includes(adderName)) continue;
-
-		adders.push(await getAdder(adderName));
-	}
-
+function executeTests() {
 	usingDocker = !!adders.find((adder) => adder.config.metadata.id === 'drizzle');
 	if (usingDocker) startDocker();
 
-	await testAdders(adders, testOptions);
+	runTestCases(testCasesPerAdder, testOptions, describe, test.concurrent);
 }
-
-async function getAdder(adderName: string) {
-	remoteControl.enable();
-
-	const adder = await getAdderDetails(adderName);
-
-	remoteControl.disable();
-
-	return adder;
-}
-
-const cwd = path.resolve(fileURLToPath(import.meta.url), '..');
 
 // We're using `execSync` instead of our `executeCli` because we need the cleanup to be synchronous
 function startDocker() {

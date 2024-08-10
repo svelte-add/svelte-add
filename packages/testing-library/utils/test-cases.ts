@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { mkdir } from 'node:fs/promises';
-import { ProjectTypesList } from './create-project';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { downloadProjectTemplates, ProjectTypes, ProjectTypesList } from './create-project';
 import { runTests } from './test';
 import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
@@ -11,18 +11,18 @@ import {
 	prepareWorkspaceWithTemplate,
 	saveOptionsFile,
 } from './workspace';
-import { runAdder } from './adder';
-import { prompts } from '@svelte-add/core/internal';
-import * as Throttle from 'promise-parallel-throttle';
+import { prompts, remoteControl } from '@svelte-add/core/internal';
 import type { AdderWithoutExplicitArgs } from '@svelte-add/core/adder/config';
 import type { TestOptions } from '..';
 import type { OptionValues, Question } from '@svelte-add/core/adder/options';
+import { runAdder } from './adder';
 
 export type TestCase = {
 	template: string;
 	adder: AdderWithoutExplicitArgs;
 	options: OptionValues<Record<string, Question>>;
 	runSynchronously: boolean;
+	cwd?: string;
 };
 
 export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
@@ -58,7 +58,7 @@ export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
 	return testCases;
 }
 
-export async function setupAdder(
+export async function prepareAdder(
 	template: string,
 	adder: AdderWithoutExplicitArgs,
 	options: OptionValues<Record<string, Question>>,
@@ -78,8 +78,6 @@ export async function setupAdder(
 		getTemplatesDirectory(testOptions),
 	);
 	await saveOptionsFile(workingDirectory, options);
-
-	await runAdder(adder, workingDirectory, options);
 
 	return workingDirectory;
 }
@@ -117,130 +115,111 @@ export type AdderError = {
 	message: string;
 } & Error;
 
-export async function runTestCases(testCases: Map<string, TestCase[]>, testOptions: TestOptions) {
-	const asyncTasks: Array<() => Promise<void>> = [];
-	const syncTasks: Array<() => Promise<void>> = [];
-	const asyncTestCaseInputs: TestCase[] = [];
-	const syncTestCaseInputs: TestCase[] = [];
-	const tests: { testCase: TestCase; cwd: string }[] = [];
+export function runTestCases(
+	testCases: Map<string, TestCase[]>,
+	testOptions: TestOptions,
+	testGroup: (name: string, testFactory: () => void) => {},
+	test: (name: string, testFunction: () => Promise<void> | void) => void,
+) {
+	const tests: Map<string, TestCase[]> = new Map();
+	remoteControl.enable();
 
-	console.log('executing adders');
-	for (const cases of testCases.values()) {
+	for (const [adderId, cases] of testCases.entries()) {
 		for (const testCase of cases) {
 			if (testCase.adder.tests?.tests.length === 0) continue;
-			const cwd = await setupAdder(
+
+			let adderTests = tests.get(adderId);
+			if (!adderTests) {
+				adderTests = [];
+			}
+
+			adderTests.push(testCase);
+
+			tests.set(adderId, adderTests);
+		}
+	}
+
+	for (const adderId of tests.keys()) {
+		testGroup(adderId, () => {
+			for (const testCase of tests.get(adderId) ?? []) {
+				let testName = `${adderId} / ${testCase.template}`;
+
+				// only add options to name, if the test case has options
+				if (testCase.options && Object.keys(testCase.options).length > 0)
+					testName = `${testName} / ${JSON.stringify(testCase.options)}`;
+
+				test(testName, async () => {
+					try {
+						if (!testCase.cwd) throw new Error('TestCase working directory not set');
+
+						await executeAdderTests(testCase.cwd, testCase.adder, testCase.options, testOptions);
+					} catch (e) {
+						const error = e as Error;
+						const adderError: AdderError = {
+							name: 'AdderError',
+							adder: testCase.adder.config.metadata.id,
+							template: testCase.template,
+							message: error.message,
+						};
+						throw adderError;
+					}
+				});
+			}
+		});
+	}
+}
+
+export async function prepareTests(
+	options: TestOptions,
+	adders: AdderWithoutExplicitArgs[],
+	testCasesPerAdder: Map<string, TestCase[]>,
+	testOptions: TestOptions,
+) {
+	console.log('deleting old files');
+	await rm(options.outputDirectory, { recursive: true, force: true });
+
+	console.log('downloading project templates');
+	const templatesOutputDirectory = getTemplatesDirectory(options);
+	await downloadProjectTemplates(templatesOutputDirectory);
+
+	const dirs: string[] = [];
+	for (const type of Object.values(ProjectTypes)) {
+		dirs.push(...adders.map((a) => `  - '${a.config.metadata.id}/${type}/*'`));
+	}
+
+	const pnpmWorkspace = `packages:\n${dirs.join('\n')}\n`;
+	await writeFile(join(options.outputDirectory, 'pnpm-workspace.yaml'), pnpmWorkspace, {
+		encoding: 'utf8',
+	});
+
+	const testRootPkgJson = JSON.stringify({ name: 'test-root', version: '0.0.0', type: 'module' });
+	await writeFile(join(options.outputDirectory, 'package.json'), testRootPkgJson, {
+		encoding: 'utf8',
+	});
+
+	console.log('executing adders');
+	for (const testCases of testCasesPerAdder.values()) {
+		for (const testCase of testCases) {
+			testCase.cwd = await prepareAdder(
 				testCase.template,
 				testCase.adder,
 				testCase.options,
 				testOptions,
 			);
-			tests.push({ testCase, cwd });
+			await runAdder(testCase.adder, testCase.cwd, testCase.options);
 		}
 	}
 
 	console.log('installing dependencies');
 	await installDependencies(testOptions.outputDirectory);
 
-	await startBrowser(testOptions.headless);
+	await startBrowser(options.headless);
+	remoteControl.enable();
 
-	console.log('running tests');
-	for (const { cwd, testCase } of tests) {
-		const taskExecutor = async () => {
-			try {
-				await executeAdderTests(cwd, testCase.adder, testCase.options, testOptions);
-			} catch (e) {
-				const error = e as Error;
-				const adderError: AdderError = {
-					name: 'AdderError',
-					adder: testCase.adder.config.metadata.id,
-					template: testCase.template,
-					message: error.message,
-				};
-				throw adderError;
-			}
-		};
-
-		if (testCase.runSynchronously) {
-			syncTasks.push(taskExecutor);
-			syncTestCaseInputs.push(testCase);
-		} else {
-			asyncTasks.push(taskExecutor);
-			asyncTestCaseInputs.push(testCase);
-		}
-	}
-
-	let testProgressCount = 0;
-	const overallTaskCount = asyncTasks.length + syncTasks.length;
-	const parallelTasks = testOptions.pauseExecutionAfterBrowser ? 1 : ProjectTypesList.length;
-
-	const allAsyncResults = await Throttle.raw(asyncTasks, {
-		failFast: false,
-		maxInProgress: parallelTasks,
-		progressCallback: (result) => {
-			testProgressCount++;
-			logTestProgress(
-				testProgressCount,
-				overallTaskCount,
-				result.amountResolved,
-				result.amountRejected,
-				asyncTestCaseInputs[result.lastCompletedIndex],
-			);
-		},
-	});
-
-	const allSyncResults = await Throttle.raw(syncTasks, {
-		failFast: false,
-		maxInProgress: 1,
-		progressCallback: (result) => {
-			testProgressCount++;
-			logTestProgress(
-				testProgressCount,
-				overallTaskCount,
-				allAsyncResults.amountResolved + result.amountResolved,
-				allAsyncResults.amountRejected + result.amountRejected,
-				syncTestCaseInputs[result.lastCompletedIndex],
-			);
-		},
-	});
-
-	await stopBrowser();
-
-	const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>(
-		(x) => allAsyncResults.taskResults[x] as unknown as AdderError,
-	);
-	const rejectedSyncPromisesResult = allSyncResults.rejectedIndexes.map<AdderError>(
-		(x) => allSyncResults.taskResults[x] as unknown as AdderError,
-	);
-
-	const rejectedPromisesResult = [...rejectedAsyncPromisesResult, ...rejectedSyncPromisesResult];
-	for (const error of rejectedPromisesResult) {
-		console.log(`${error.adder} (${error.template}): ${error.message}`);
-	}
-
-	if (rejectedPromisesResult.length > 0) {
-		console.log('At least one test failed. Exiting.');
-		process.exit(1);
-	}
-
-	if (testProgressCount != overallTaskCount) {
-		console.log(
-			`Number of executed tests (${testProgressCount.toString()}) does not match number of expected tests (${overallTaskCount.toString()}). Tests failed!`,
-		);
-		process.exit(1);
-	}
+	console.log('start testing');
 }
 
-function logTestProgress(
-	current: number,
-	total: number,
-	success: number,
-	failed: number,
-	testCaseInput: TestCase,
-) {
-	const length = total.toString().length;
-	const zeroPad = (num: number) => String(num).padStart(length, '0');
-
-	console.log(
-		`Total: ${zeroPad(current)} / ${total.toString()} Success: ${zeroPad(success)} Failed: ${zeroPad(failed)} (${testCaseInput.adder.config.metadata.id} / ${testCaseInput.template})`,
-	);
+export async function finalizeTests() {
+	await stopBrowser();
+	remoteControl.disable();
 }

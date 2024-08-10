@@ -12,7 +12,8 @@
 		"website:dev": "pnpm -C ./packages/website dev",
 		"website:build": "pnpm -C ./packages/website build",
 		"website:preview": "pnpm -C ./packages/website preview",
-		"test": "node ./packages/tests/build/index.js",
+		"test": "pnpm -F @svelte-add/tests exec vitest",
+		"test:ui": "pnpm -F @svelte-add/tests exec vitest --ui",
 		"check": "tsc --project tsconfig.json --noEmit",
 		"utils:dependencies": "node ./packages/dev-utils/build/index.js dependencies && pnpm prettier:fix",
 		"postinstall": "pnpm -F @svelte-add/testing-library exec playwright install chromium"

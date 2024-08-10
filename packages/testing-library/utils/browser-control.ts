@@ -20,5 +20,6 @@ export async function openPage(url: string) {
 }
 
 export async function stopBrowser() {
+	if (!browser) return;
 	await browser.close();
 }
