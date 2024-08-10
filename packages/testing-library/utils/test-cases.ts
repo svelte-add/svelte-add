@@ -199,6 +199,7 @@ export async function prepareTests(
 
 	console.log('executing adders');
 	for (const testCases of testCasesPerAdder.values()) {
+		const applyAdderTasks = [];
 		for (const testCase of testCases) {
 			testCase.cwd = await prepareAdder(
 				testCase.template,
@@ -206,8 +207,10 @@ export async function prepareTests(
 				testCase.options,
 				testOptions,
 			);
-			await runAdder(testCase.adder, testCase.cwd, testCase.options);
+			applyAdderTasks.push(runAdder(testCase.adder, testCase.cwd, testCase.options));
 		}
+
+		await Promise.all(applyAdderTasks);
 	}
 
 	console.log('installing dependencies');
