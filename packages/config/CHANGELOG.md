@@ -1,5 +1,11 @@
 # @svelte-add/config
 
+## 1.5.2
+
+### Patch Changes
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
 ## 1.5.1
 
 ### Patch Changes

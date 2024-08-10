@@ -1,5 +1,17 @@
 # svelte-add
 
+## 2.7.3
+
+### Patch Changes
+
+- chore: add cli repository details ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- Updated dependencies [[`22a34b97c90b3f43f16dc32ca59aa93f187e5edc`](https://github.com/svelte-add/svelte-add/commit/22a34b97c90b3f43f16dc32ca59aa93f187e5edc)]:
+  - @svelte-add/config@1.5.2
+  - @svelte-add/core@2.10.4
+
 ## 2.7.2
 
 ### Patch Changes
