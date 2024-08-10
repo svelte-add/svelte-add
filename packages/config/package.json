@@ -12,7 +12,7 @@
 	"bugs": "https://github.com/svelte-add/svelte-add/issues",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/config"
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/packages/config"
 	},
 	"keywords": [],
 	"publishConfig": {
