@@ -254,46 +254,54 @@ export const adder = defineAdderConfig({
 					imports.addNamed(ast, '@sveltejs/kit', { Handle: 'Handle' }, true);
 				}
 
-				let isSpecifier = false;
+				let isSpecifier: boolean = false;
 				let handleName = 'handle';
 				let exportDecl: AstTypes.ExportNamedDeclaration | undefined;
 				let originalHandleDecl: AstKinds.DeclarationKind | undefined;
+
+				// We'll first visit all of the named exports and grab their references if they export `handle`.
+				// This will grab export references for:
+				// `export { handle }` & `export { foo as handle }`
+				// `export const handle = ...`, & `export function handle() {...}`
 				// prettier-ignore
 				Walker.walk(ast as AstTypes.ASTNode, {}, {
 					ExportNamedDeclaration(node) {
-						// `export { handle }`
+						let maybeHandleDecl: AstKinds.DeclarationKind | undefined;
+
+						// `export { handle }` & `export { foo as handle }`
 						const handleSpecifier = node.specifiers?.find((s) => s.exported.name === 'handle');
 						if (handleSpecifier) {
-							// used later for when we add the declaration
 							isSpecifier = true;
-
-							// we'll search for the local name in case it's aliased
+							// we'll search for the local name in case it's aliased (e.g. `export { foo as handle }`)
 							handleName = handleSpecifier.local?.name ?? handleSpecifier.exported.name;
 
 							// find the definition
 							const handleFunc = ast.body.find((n) => isFunctionDeclarationHandle(n, handleName));
 							const handleVar = ast.body.find((n) => isVariableDeclarationHandle(n, handleName));
 
-							originalHandleDecl = handleFunc ?? handleVar;
+							maybeHandleDecl = handleFunc ?? handleVar;
 						}
 
-						originalHandleDecl ??= node.declaration ?? undefined;
+						maybeHandleDecl ??= node.declaration ?? undefined;
 
 						// `export const handle`
-						if (originalHandleDecl && isVariableDeclarationHandle(originalHandleDecl, handleName)) {
+						if (maybeHandleDecl && isVariableDeclarationHandle(maybeHandleDecl, handleName)) {
 							exportDecl = node;
+							originalHandleDecl = maybeHandleDecl;
 						}
 
 						// `export function handle`
-						if (originalHandleDecl && isFunctionDeclarationHandle(originalHandleDecl, handleName)) {
+						if (maybeHandleDecl && isFunctionDeclarationHandle(maybeHandleDecl, handleName)) {
 							exportDecl = node;
+							originalHandleDecl = maybeHandleDecl;
 						}
 					},
 				});
 
 				const authHandle = common.expressionFromString(getAuthHandleContent());
 
-				// easiest case, if there's no existing handle, just add it and exit early
+				// This is the straightforward case. If there's no existing `handle`, we'll just add one
+				// with the `auth` handle's definition and exit
 				if (!originalHandleDecl || !exportDecl) {
 					// handle declaration doesn't exist, so we'll just create it with the hook
 					const authDecl = variables.declaration(ast, 'const', handleName, authHandle);
@@ -325,7 +333,9 @@ export const adder = defineAdderConfig({
 					sequence = handle?.init as AstTypes.CallExpression;
 				}
 
-				// if there's an existing sequence, add the `auth` handle and append the `auth` to sequence
+				// If there's an existing `sequence`, then we'll define and add the `auth` handle and
+				// append `auth` to the args of `sequence` and exit
+				// e.g. `const handle = sequence(some, other, handles, auth);`
 				if (sequence) {
 					const hasAuthArg = sequence.arguments.some(
 						(arg) => arg.type === 'Identifier' && arg.name === authName,
@@ -348,35 +358,38 @@ export const adder = defineAdderConfig({
 					return;
 				}
 
-				// Rename the original `handle`
+				// At this point, the existing `handle` doesn't call `sequence`, so we'll need to rename the original
+				// `handle` and create a new `handle` that uses `sequence`
+				// e.g. `const handle = sequence(originalHandle, auth);`
 				const NEW_HANDLE_NAME = 'originalHandle';
+				const sequenceCall = functions.callByIdentifier('sequence', [NEW_HANDLE_NAME, authName]);
+				const newHandleDecl = variables.declaration(ast, 'const', handleName, sequenceCall);
 
-				// `export const handle`
+				imports.addNamed(ast, '@sveltejs/kit/hooks', { sequence: 'sequence' });
+
+				// rename `export const handle`
 				if (originalHandleDecl && isVariableDeclarationHandle(originalHandleDecl, handleName)) {
 					const handle = getVariableDeclarator(originalHandleDecl, handleName);
 					if (handle && handle.id.type === 'Identifier') {
 						handle.id.name = NEW_HANDLE_NAME;
 					}
 				}
-				// `export function handle`
+				// rename `export function handle`
 				if (originalHandleDecl && isFunctionDeclarationHandle(originalHandleDecl, handleName)) {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					originalHandleDecl.id!.name = NEW_HANDLE_NAME;
 				}
 
-				// if no `sequence` is present, we'll add it
-				imports.addNamed(ast, '@sveltejs/kit/hooks', { sequence: 'sequence' });
-				const sequenceCall = functions.callByIdentifier('sequence', [NEW_HANDLE_NAME, authName]);
-				const newHandleDecl = variables.declaration(ast, 'const', handleName, sequenceCall);
-
+				ast.body = ast.body.filter(
+					(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
+				);
 				if (isSpecifier) {
-					ast.body = ast.body.filter(
-						(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
-					);
 					ast.body.push(originalHandleDecl, authDecl, newHandleDecl, exportDecl);
-				} else if (exportDecl.declaration) {
+				}
+
+				if (exportDecl.declaration) {
 					// removes the `export` keyword from original `handle` declaration
-					ast.body = ast.body.filter((n) => n !== exportDecl && n !== authDecl);
+					// ast.body = ast.body.filter((n) => n !== exportDecl && n !== authDecl);
 					ast.body.push(exportDecl.declaration, authDecl);
 					exports.namedExport(ast, handleName, newHandleDecl);
 				}
