@@ -7,6 +7,12 @@ const LUCIA_ADAPTER = {
 	sqlite: 'DrizzleSQLiteAdapter',
 } as const;
 
+const TABLE_TYPE = {
+	mysql: 'mysqlTable',
+	postgresql: 'pgTable',
+	sqlite: 'sqliteTable',
+};
+
 type Dialect = keyof typeof LUCIA_ADAPTER;
 
 let drizzleDialect: Dialect;
@@ -62,25 +68,54 @@ export const adder = defineAdderConfig({
 		{
 			name: () => schemaPath,
 			contentType: 'script',
-			content: ({ ast, common, exports, imports, variables }) => {
-				let userInit: AstKinds.ExpressionKind | undefined;
-				let sessionInit: AstKinds.ExpressionKind | undefined;
+			content: ({ ast, common, exports, imports, variables, object, functions }) => {
+				const createTable = (name: string) => functions.call(TABLE_TYPE[drizzleDialect], [name]);
+
+				const userDecl = variables.declaration(ast, 'const', 'user', createTable('user'));
+				const sessionDecl = variables.declaration(ast, 'const', 'session', createTable('session'));
+
+				const user = exports.namedExport(ast, 'user', userDecl);
+				const session = exports.namedExport(ast, 'session', sessionDecl);
+
+				const userTable = getCallExpression(user);
+				const sessionTable = getCallExpression(session);
+
+				if (!userTable || !sessionTable) {
+					throw new Error('failed to find call expression of `user` or `session`');
+				}
+
+				if (userTable.arguments.length === 1) {
+					userTable.arguments.push(object.createEmpty());
+				}
+				if (sessionTable.arguments.length === 1) {
+					sessionTable.arguments.push(object.createEmpty());
+				}
+
+				const userAttributes = userTable.arguments[1];
+				const sessionAttributes = sessionTable.arguments[1];
+				if (
+					userAttributes.type !== 'ObjectExpression' ||
+					sessionAttributes.type !== 'ObjectExpression'
+				) {
+					throw new Error('unexpected shape of `user` or `session` table definition');
+				}
+
 				if (drizzleDialect === 'sqlite') {
 					imports.addNamed(ast, 'drizzle-orm/sqlite-core', {
 						sqliteTable: 'sqliteTable',
 						text: 'text',
 						integer: 'integer',
 					});
-					userInit = common.expressionFromString(`
-						sqliteTable('user', {
-							id: text('id').primaryKey(),
-						});`);
-					sessionInit = common.expressionFromString(`
-						sqliteTable('session', {
-							id: text('id').primaryKey(),
-							userId: text("user_id").notNull().references(() => user.id),
-							expiresAt: integer("expires_at").notNull()
-						});`);
+					object.overrideProperties(userAttributes, {
+						id: common.expressionFromString(`text('id').primaryKey()`),
+					});
+					object.overrideProperties(sessionAttributes, {
+						id: common.expressionFromString(`text('id').primaryKey()`),
+						userId: common.expressionFromString(
+							`text("user_id").notNull().references(() => user.id)`,
+						),
+						expiresAt: common.expressionFromString(`integer("expires_at").notNull()`),
+					});
 				}
 				if (drizzleDialect === 'mysql') {
 					imports.addNamed(ast, 'drizzle-orm/mysql-core', {
@@ -88,16 +123,16 @@ export const adder = defineAdderConfig({
 						varchar: 'varchar',
 						datetime: 'datetime',
 					});
-					userInit = common.expressionFromString(`
-						mysqlTable('user', {
-							id: varchar('id', { length: 255 }).primaryKey(),
-						});`);
-					sessionInit = common.expressionFromString(`
-						mysqlTable('session', {
-							id: varchar('id', { length: 255 }).primaryKey(),
-							userId: varchar('id', { length: 255 }).notNull().references(() => user.id),
-							expiresAt: datetime("expires_at").notNull()
-						});`);
+					object.overrideProperties(userAttributes, {
+						id: common.expressionFromString(`varchar('id', { length: 255 }).primaryKey()`),
+					});
+					object.overrideProperties(sessionAttributes, {
+						id: common.expressionFromString(`varchar('id', { length: 255 }).primaryKey()`),
+						userId: common.expressionFromString(
+							`varchar('id', { length: 255 }).notNull().references(() => user.id)`,
+						),
+						expiresAt: common.expressionFromString(`datetime("expires_at").notNull()`),
+					});
 				}
 				if (drizzleDialect === 'postgresql') {
 					imports.addNamed(ast, 'drizzle-orm/pg-core', {
@@ -105,39 +140,19 @@ export const adder = defineAdderConfig({
 						text: 'text',
 						timestamp: 'timestamp',
 					});
-					userInit = common.expressionFromString(`
-						pgTable('user', {
-							id: text('id').primaryKey(),
-						});`);
-					sessionInit = common.expressionFromString(`
-						pgTable('session', {
-							id: text('id').primaryKey(),
-							userId: text("user_id").notNull().references(() => user.id),
-							expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull()
-						});`);
+					object.overrideProperties(userAttributes, {
+						id: common.expressionFromString(`text('id').primaryKey()`),
+					});
+					object.overrideProperties(sessionAttributes, {
+						id: common.expressionFromString(`text('id').primaryKey()`),
+						userId: common.expressionFromString(
+							`text("user_id").notNull().references(() => user.id)`,
+						),
+						expiresAt: common.expressionFromString(
+							`timestamp("expires_at", { withTimezone: true, mode: "date" }).notNull()`,
+						),
+					});
 				}
-
-				if (!userInit || !sessionInit) {
-					// TODO: invalid dialects
-					return;
-				}
-
-				const userDecl = variables.declaration(ast, 'const', 'user', userInit);
-				const sessionDecl = variables.declaration(ast, 'const', 'session', sessionInit);
-				const user = exports.namedExport(ast, 'user', userDecl);
-				const session = exports.namedExport(ast, 'session', sessionDecl);
-
-				// if (drizzleDialect === 'sqlite') {
-				// 	user.declaration?.type === 'VariableDeclaration' &&
-				// 		user.declaration.declarations[0].type === 'VariableDeclarator' &&
-				// 		user.declaration.declarations[0].object.properties(user, {
-				// 			id: common.expressionFromString(''),
-				// 		});
-				// 	object.properties(session, {
-				// 		id: common.expressionFromString(''),
-				// 		userId: common.expressionFromString(''),
-				// 	});
-				// }
 			},
 		},
 		{
@@ -509,4 +524,17 @@ function getAuthHandleContent() {
 			event.locals.session = session;
 			return resolve(event);
 		};`;
+}
+
+function getCallExpression(ast: AstTypes.ASTNode): AstTypes.CallExpression | undefined {
+	let callExpression;
+
+	// prettier-ignore
+	Walker.walk(ast, {}, {
+		CallExpression(node) {
+			callExpression ??= node;
+		},
+	});
+
+	return callExpression;
 }
