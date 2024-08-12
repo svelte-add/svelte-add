@@ -30,6 +30,7 @@ export const adder = defineAdderConfig({
 		{ name: 'lucia', version: '^3.2.0', dev: false },
 		{ name: '@lucia-auth/adapter-drizzle', version: '^1.1.0', dev: false },
 	],
+	runsAfter: ['drizzle'],
 	files: [
 		{
 			name: ({ typescript }) => `drizzle.config.${typescript.installed ? 'ts' : 'js'}`,
