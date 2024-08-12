@@ -24,8 +24,5 @@
 		"type": "git",
 		"url": "https://github.com/svelte-add/svelte-add/tree/main/packages/ast-manipulation"
 	},
-	"keywords": [],
-	"publishConfig": {
-		"provenance": true
-	}
+	"keywords": []
 }
