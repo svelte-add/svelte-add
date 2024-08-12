@@ -175,7 +175,7 @@ function handleSvelteFile<Args extends OptionDefinition>(
 	const { jsAst, htmlAst, cssAst } = parseSvelteFile(content);
 
 	fileDetails.content({
-		js: getJsAstEditor(jsAst),
+		js: getJsAstEditor(jsAst, content),
 		html: getHtmlAstEditor(htmlAst),
 		css: getCssAstEditor(cssAst),
 		...workspace,
@@ -201,7 +201,7 @@ function handleScriptFile<Args extends OptionDefinition>(
 	const ast = parseScript(content);
 
 	fileDetails.content({
-		...getJsAstEditor(ast),
+		...getJsAstEditor(ast, content),
 		...workspace,
 	});
 	content = serializeScript(ast);

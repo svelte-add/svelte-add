@@ -23,6 +23,7 @@ async function updateAdderDependencies() {
 		const content = (await readFile(filePath)).toString();
 		const { ast, exports, functions, object, array, variables, common } = getJsAstEditor(
 			parseScript(content),
+			content,
 		);
 
 		const defineAdderConfig = functions.call('defineAdderConfig', []);

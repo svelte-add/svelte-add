@@ -107,7 +107,7 @@ export async function parseSvelteConfigIntoWorkspace(workspace: WorkspaceWithout
 	if (!workspace.kit.installed) return;
 	const configText = await readFile(workspace, commonFilePaths.svelteConfigFilePath);
 	const ast = parseScript(configText);
-	const editor = getJsAstEditor(ast);
+	const editor = getJsAstEditor(ast, configText);
 
 	const defaultExport = ast.body.find((s) => s.type === 'ExportDefaultDeclaration');
 	if (!defaultExport) throw Error('Missing default export in `svelte.config.js`');
