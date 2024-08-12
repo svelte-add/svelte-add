@@ -380,17 +380,21 @@ export const adder = defineAdderConfig({
 					originalHandleDecl.id!.name = NEW_HANDLE_NAME;
 				}
 
+				// removes all declarations so that we can re-append them in the correct order
 				ast.body = ast.body.filter(
 					(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
 				);
+
 				if (isSpecifier) {
 					ast.body.push(originalHandleDecl, authDecl, newHandleDecl, exportDecl);
 				}
 
 				if (exportDecl.declaration) {
-					// removes the `export` keyword from original `handle` declaration
-					// ast.body = ast.body.filter((n) => n !== exportDecl && n !== authDecl);
+					// when we re-append the declarations, we only want to add the declaration
+					// of the (now renamed) original `handle` _without_ the `export` keyword:
+					// e.g. `const originalHandle = ...;`
 					ast.body.push(exportDecl.declaration, authDecl);
+					// `export const handle = sequence(originalHandle, auth);`
 					exports.namedExport(ast, handleName, newHandleDecl);
 				}
 			},
