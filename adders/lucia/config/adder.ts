@@ -61,7 +61,7 @@ export const adder = defineAdderConfig({
 		{
 			name: () => schemaPath,
 			contentType: 'script',
-			content: ({ ast, common, exports, imports, object, variables }) => {
+			content: ({ ast, common, exports, imports, variables }) => {
 				let userInit: AstKinds.ExpressionKind | undefined;
 				let sessionInit: AstKinds.ExpressionKind | undefined;
 				if (drizzleDialect === 'sqlite') {
@@ -143,7 +143,7 @@ export const adder = defineAdderConfig({
 			name: ({ kit, typescript }) =>
 				`${kit.libDirectory}/server/auth.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content: ({ ast, imports, common, exports, typescript, variables }) => {
+			content: ({ ast, imports, common, exports, source, typescript, variables }) => {
 				const adapter = LUCIA_ADAPTER[drizzleDialect];
 
 				imports.addNamed(ast, '$lib/server/db/schema.js', { user: 'user', session: 'session' });
@@ -171,16 +171,14 @@ export const adder = defineAdderConfig({
 				exports.namedExport(ast, 'lucia', luciaDecl);
 
 				// module declaration
-				if (typescript.installed) {
+				if (typescript.installed && !/declare module ["']lucia["']/.test(source)) {
 					const moduleDecl = common.statementFromString(`
 						declare module "lucia" {
 							interface Register {
 								Lucia: typeof lucia;
 							}
 						}`);
-					if (!common.hasNode(ast, moduleDecl)) {
-						common.addStatement(ast, moduleDecl);
-					}
+					common.addStatement(ast, moduleDecl);
 				}
 			},
 		},
@@ -249,8 +247,139 @@ export const adder = defineAdderConfig({
 		{
 			name: ({ typescript }) => `src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content: ({ ast, imports, exports, common, object }) => {
-				// TODO
+			content: ({ ast, imports, exports, common, typescript, variables, functions }) => {
+				imports.addNamed(ast, '$lib/server/auth.js', { lucia: 'lucia' });
+
+				if (typescript.installed) {
+					imports.addNamed(ast, '@sveltejs/kit', { Handle: 'Handle' }, true);
+				}
+
+				let isSpecifier = false;
+				let handleName = 'handle';
+				let exportDecl: AstTypes.ExportNamedDeclaration | undefined;
+				let originalHandleDecl: AstKinds.DeclarationKind | undefined;
+				// prettier-ignore
+				Walker.walk(ast as AstTypes.ASTNode, {}, {
+					ExportNamedDeclaration(node) {
+						// `export { handle }`
+						const handleSpecifier = node.specifiers?.find((s) => s.exported.name === 'handle');
+						if (handleSpecifier) {
+							// used later for when we add the declaration
+							isSpecifier = true;
+
+							// we'll search for the local name in case it's aliased
+							handleName = handleSpecifier.local?.name ?? handleSpecifier.exported.name;
+
+							// find the definition
+							const handleFunc = ast.body.find((n) => isFunctionDeclarationHandle(n, handleName));
+							const handleVar = ast.body.find((n) => isVariableDeclarationHandle(n, handleName));
+
+							originalHandleDecl = handleFunc ?? handleVar;
+						}
+
+						originalHandleDecl ??= node.declaration ?? undefined;
+
+						// `export const handle`
+						if (originalHandleDecl && isVariableDeclarationHandle(originalHandleDecl, handleName)) {
+							exportDecl = node;
+						}
+
+						// `export function handle`
+						if (originalHandleDecl && isFunctionDeclarationHandle(originalHandleDecl, handleName)) {
+							exportDecl = node;
+						}
+					},
+				});
+
+				const authHandle = common.expressionFromString(getAuthHandleContent());
+
+				// easiest case, if there's no existing handle, just add it and exit early
+				if (!originalHandleDecl || !exportDecl) {
+					// handle declaration doesn't exist, so we'll just create it with the hook
+					const authDecl = variables.declaration(ast, 'const', handleName, authHandle);
+					if (typescript.installed) {
+						const declarator = authDecl.declarations[0] as AstTypes.VariableDeclarator;
+						variables.typeAnnotateDeclarator(declarator, 'Handle');
+					}
+
+					exports.namedExport(ast, handleName, authDecl);
+
+					return;
+				}
+
+				// add the `auth` handle
+				const authName = 'auth';
+				const authDecl = variables.declaration(ast, 'const', authName, authHandle);
+				if (typescript.installed) {
+					const declarator = authDecl.declarations[0] as AstTypes.VariableDeclarator;
+					variables.typeAnnotateDeclarator(declarator, 'Handle');
+				}
+
+				// check if `handle` is using a sequence
+				let sequence: AstTypes.CallExpression | undefined;
+				if (originalHandleDecl.type === 'VariableDeclaration') {
+					const handle = originalHandleDecl.declarations.find(
+						(d) => d.type === 'VariableDeclarator' && usingSequence(d, handleName),
+					) as AstTypes.VariableDeclarator | undefined;
+
+					sequence = handle?.init as AstTypes.CallExpression;
+				}
+
+				// if there's an existing sequence, add the `auth` handle and append the `auth` to sequence
+				if (sequence) {
+					const hasAuthArg = sequence.arguments.some(
+						(arg) => arg.type === 'Identifier' && arg.name === authName,
+					);
+					if (!hasAuthArg) {
+						sequence.arguments.push(variables.identifier(authName));
+					}
+
+					// remove declarations so we can append them in the correct order,
+					// moving the `handle` declaration to the end (as well as any potential export specifiers)
+					ast.body = ast.body.filter(
+						(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
+					);
+					if (isSpecifier) {
+						ast.body.push(authDecl, originalHandleDecl, exportDecl);
+					} else {
+						ast.body.push(authDecl, exportDecl);
+					}
+
+					return;
+				}
+
+				// Rename the original `handle`
+				const NEW_HANDLE_NAME = 'originalHandle';
+
+				// `export const handle`
+				if (originalHandleDecl && isVariableDeclarationHandle(originalHandleDecl, handleName)) {
+					const handle = getVariableDeclarator(originalHandleDecl, handleName);
+					if (handle && handle.id.type === 'Identifier') {
+						handle.id.name = NEW_HANDLE_NAME;
+					}
+				}
+				// `export function handle`
+				if (originalHandleDecl && isFunctionDeclarationHandle(originalHandleDecl, handleName)) {
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					originalHandleDecl.id!.name = NEW_HANDLE_NAME;
+				}
+
+				// if no `sequence` is present, we'll add it
+				imports.addNamed(ast, '@sveltejs/kit/hooks', { sequence: 'sequence' });
+				const sequenceCall = functions.callByIdentifier('sequence', [NEW_HANDLE_NAME, authName]);
+				const newHandleDecl = variables.declaration(ast, 'const', handleName, sequenceCall);
+
+				if (isSpecifier) {
+					ast.body = ast.body.filter(
+						(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
+					);
+					ast.body.push(originalHandleDecl, authDecl, newHandleDecl, exportDecl);
+				} else if (exportDecl.declaration) {
+					// removes the `export` keyword from original `handle` declaration
+					ast.body = ast.body.filter((n) => n !== exportDecl && n !== authDecl);
+					ast.body.push(exportDecl.declaration, authDecl);
+					exports.namedExport(ast, handleName, newHandleDecl);
+				}
 			},
 		},
 	],
@@ -290,4 +419,75 @@ function hasTypeProp(name: string, node: AstTypes.TSInterfaceDeclaration['body']
 	return (
 		node.type === 'TSPropertySignature' && node.key.type === 'Identifier' && node.key.name === name
 	);
+}
+
+function usingSequence(node: AstTypes.VariableDeclarator, handleName: string) {
+	return (
+		node.id.type === 'Identifier' &&
+		node.id.name === handleName &&
+		node.init?.type === 'CallExpression' &&
+		node.init.callee.type === 'Identifier' &&
+		node.init.callee.name === 'sequence'
+	);
+}
+
+function isVariableDeclarationHandle(
+	node: AstTypes.ASTNode,
+	handleName: string,
+): node is AstTypes.VariableDeclaration {
+	return (
+		node.type === 'VariableDeclaration' &&
+		node.declarations.some(
+			(d) =>
+				d.type === 'VariableDeclarator' && d.id.type === 'Identifier' && d.id.name === handleName,
+		)
+	);
+}
+
+function getVariableDeclarator(
+	node: AstTypes.VariableDeclaration,
+	handleName: string,
+): AstTypes.VariableDeclarator | undefined {
+	return node.declarations.find(
+		(d) =>
+			d.type === 'VariableDeclarator' && d.id.type === 'Identifier' && d.id.name === handleName,
+	) as AstTypes.VariableDeclarator | undefined;
+}
+
+function isFunctionDeclarationHandle(
+	node: AstTypes.ASTNode,
+	handleName: string,
+): node is AstTypes.FunctionDeclaration {
+	return node.type === 'FunctionDeclaration' && node.id?.name === handleName;
+}
+
+function getAuthHandleContent() {
+	return `
+		async ({ event, resolve }) => {
+			const sessionId = event.cookies.get(lucia.sessionCookieName);
+			if (!sessionId) {
+				event.locals.user = null;
+				event.locals.session = null;
+				return resolve(event);
+			}
+
+			const { session, user } = await lucia.validateSession(sessionId);
+			if (session && session.fresh) {
+				const sessionCookie = lucia.createSessionCookie(session.id);
+				event.cookies.set(sessionCookie.name, sessionCookie.value, {
+					path: ".",
+					...sessionCookie.attributes
+				});
+			}
+			if (!session) {
+				const sessionCookie = lucia.createBlankSessionCookie();
+				event.cookies.set(sessionCookie.name, sessionCookie.value, {
+					path: ".",
+					...sessionCookie.attributes
+				});
+			}
+			event.locals.user = user;
+			event.locals.session = session;
+			return resolve(event);
+		};`;
 }
