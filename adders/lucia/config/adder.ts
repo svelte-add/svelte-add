@@ -315,7 +315,7 @@ export const adder = defineAdderConfig({
 					return;
 				}
 
-				// add the `auth` handle
+				// create the `auth` handle
 				const authName = 'auth';
 				const authDecl = variables.declaration(ast, 'const', authName, authHandle);
 				if (typescript.installed) {
@@ -333,9 +333,9 @@ export const adder = defineAdderConfig({
 					sequence = handle?.init as AstTypes.CallExpression;
 				}
 
-				// If there's an existing `sequence`, then we'll define and add the `auth` handle and
-				// append `auth` to the args of `sequence` and exit
-				// e.g. `const handle = sequence(some, other, handles, auth);`
+				// If `handle` is already using a `sequence`, then we'll just create the `auth` handle and
+				// append `auth` to the args of `sequence`
+				// e.g. `export const handle = sequence(some, other, handles, auth);`
 				if (sequence) {
 					const hasAuthArg = sequence.arguments.some(
 						(arg) => arg.type === 'Identifier' && arg.name === authName,
@@ -344,12 +344,13 @@ export const adder = defineAdderConfig({
 						sequence.arguments.push(variables.identifier(authName));
 					}
 
-					// remove declarations so we can append them in the correct order,
-					// moving the `handle` declaration to the end (as well as any potential export specifiers)
+					// removes the declarations so we can append them in the correct order
 					ast.body = ast.body.filter(
 						(n) => n !== originalHandleDecl && n !== exportDecl && n !== authDecl,
 					);
 					if (isSpecifier) {
+						// if export specifiers are being used (e.g. `export { handle }`), then we'll want
+						// need to also append original handle declaration as it's not part of the export declaration
 						ast.body.push(authDecl, originalHandleDecl, exportDecl);
 					} else {
 						ast.body.push(authDecl, exportDecl);
