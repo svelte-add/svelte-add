@@ -315,6 +315,7 @@ export const adder = defineAdderConfig({
 				});
 
 				const authHandle = common.expressionFromString(getAuthHandleContent());
+				if (common.hasNode(ast, authHandle)) return;
 
 				// This is the straightforward case. If there's no existing `handle`, we'll just add one
 				// with the `auth` handle's definition and exit
