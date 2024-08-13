@@ -54,6 +54,7 @@ export default tseslint.config(
 			'packages/website',
 			'packages/clack-core',
 			'packages/clack-prompts',
+			'packages/tests/**/{input,output}.js',
 			'temp',
 		],
 	},

@@ -9,7 +9,9 @@
 		"@svelte-add/adders": "workspace:*",
 		"@svelte-add/config": "workspace:*",
 		"@svelte-add/core": "workspace:*",
-		"@svelte-add/testing-library": "workspace:*"
+		"@svelte-add/testing-library": "workspace:*",
+		"@svelte-add/ast-manipulation": "workspace:*",
+		"@svelte-add/ast-tooling": "workspace:*"
 	},
 	"dependencies": {
 		"@vitest/ui": "^2.0.4",

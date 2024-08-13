@@ -241,6 +241,12 @@ importers:
       '@svelte-add/adders':
         specifier: workspace:*
         version: link:../../adders
+      '@svelte-add/ast-manipulation':
+        specifier: workspace:*
+        version: link:../ast-manipulation
+      '@svelte-add/ast-tooling':
+        specifier: workspace:*
+        version: link:../ast-tooling
       '@svelte-add/config':
         specifier: workspace:*
         version: link:../config
