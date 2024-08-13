@@ -56,28 +56,28 @@ export function addNamed(
 		return specifier;
 	});
 
-	let declaration: AstTypes.ImportDeclaration | undefined;
+	let importDecl: AstTypes.ImportDeclaration | undefined;
 	// prettier-ignore
 	Walker.walk(ast as AstTypes.ASTNode, {}, {
 		ImportDeclaration(node) {
-			if (node.source.type === 'StringLiteral' && node.source.value === importFrom) {
-				declaration = node;
+			if (node.source.type === 'StringLiteral' && node.source.value === importFrom && node.specifiers) {
+				importDecl = node;
 			}
 		},
 	});
 
 	// merge the specifiers into a single import declaration if they share a source
-	if (declaration) {
-		specifiers.forEach((s) => {
+	if (importDecl) {
+		specifiers.forEach((specifierToAdd) => {
 			if (
-				declaration?.specifiers?.every(
-					(sp) =>
-						sp.type === 'ImportSpecifier' &&
-						sp.local?.name !== s.local?.name &&
-						sp.imported.name !== s.imported.name,
+				importDecl?.specifiers?.every(
+					(existingSpecifier) =>
+						existingSpecifier.type === 'ImportSpecifier' &&
+						existingSpecifier.local?.name !== specifierToAdd.local?.name &&
+						existingSpecifier.imported.name !== specifierToAdd.imported.name,
 				)
 			) {
-				declaration?.specifiers?.push(s);
+				importDecl?.specifiers?.push(specifierToAdd);
 			}
 		});
 		return;
