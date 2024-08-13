@@ -1,4 +1,4 @@
-import type { AstTypes } from '@svelte-add/ast-tooling';
+import { Walker, type AstTypes } from '@svelte-add/ast-tooling';
 import { areNodesEqual } from './common.js';
 
 export function addEmpty(ast: AstTypes.Program, importFrom: string) {
@@ -56,6 +56,33 @@ export function addNamed(
 		return specifier;
 	});
 
+	let declaration: AstTypes.ImportDeclaration | undefined;
+	// prettier-ignore
+	Walker.walk(ast as AstTypes.ASTNode, {}, {
+		ImportDeclaration(node) {
+			if (node.source.type === 'StringLiteral' && node.source.value === importFrom) {
+				declaration = node;
+			}
+		},
+	});
+
+	// merge the specifiers into a single import declaration if they share a source
+	if (declaration) {
+		specifiers.forEach((s) => {
+			if (
+				declaration?.specifiers?.every(
+					(sp) =>
+						sp.type === 'ImportSpecifier' &&
+						sp.local?.name !== s.local?.name &&
+						sp.imported.name !== s.imported.name,
+				)
+			) {
+				declaration?.specifiers?.push(s);
+			}
+		});
+		return;
+	}
+
 	const expectedImportDeclaration: AstTypes.ImportDeclaration = {
 		type: 'ImportDeclaration',
 		source: {
@@ -66,7 +93,7 @@ export function addNamed(
 		importKind: isType ? 'type' : undefined,
 	};
 
-	addImportIfNecessary(ast, expectedImportDeclaration);
+	ast.body.unshift(expectedImportDeclaration);
 }
 
 function addImportIfNecessary(
