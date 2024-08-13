@@ -4,7 +4,8 @@
 		"**/temp/**",
 		"**/website/**",
 		"**/coverage/**",
-		"**/tests/**/{input,output}.js"
+		"**/tests/**/output.js",
+		"**/tests/**/input.js"
 	],
 	"compilerOptions": {
 		"checkJs": true,
