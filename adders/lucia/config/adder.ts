@@ -170,7 +170,7 @@ export const adder = defineAdderConfig({
 
 				// adapter
 				const adapterDecl = common.statementFromString(
-					`const adapter = new ${adapter}(db, user, session);`,
+					`const adapter = new ${adapter}(db, session, user);`,
 				);
 				common.addStatement(ast, adapterDecl);
 
