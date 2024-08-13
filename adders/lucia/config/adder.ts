@@ -202,6 +202,7 @@ export const adder = defineAdderConfig({
 			// TODO: comments aren't preserved for some reason
 			// TODO: replace console logs for errors or warnings
 			name: () => `src/app.d.ts`,
+			condition: ({ typescript }) => typescript.installed,
 			contentType: 'script',
 			content: ({ ast, common }) => {
 				const global = ast.body
