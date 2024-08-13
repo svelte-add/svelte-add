@@ -22,12 +22,12 @@ export const adder = defineAdderConfig({
 	options: availableOptions,
 	integrationType: 'inline',
 	packages: [
-		{ name: 'drizzle-orm', version: '^0.31.2', dev: false },
-		{ name: 'drizzle-kit', version: '^0.22.0', dev: true },
+		{ name: 'drizzle-orm', version: "^0.33.0", dev: false },
+		{ name: 'drizzle-kit', version: "^0.24.0", dev: true },
 		// MySQL
 		{
 			name: 'mysql2',
-			version: '^3.9.8',
+			version: "^3.11.0",
 			dev: false,
 			condition: ({ options }) => options.mysql === 'mysql2',
 		},
@@ -40,7 +40,7 @@ export const adder = defineAdderConfig({
 		// PostgreSQL
 		{
 			name: '@neondatabase/serverless',
-			version: '^0.9.3',
+			version: "^0.9.4",
 			dev: false,
 			condition: ({ options }) => options.postgresql === 'neon',
 		},
@@ -53,19 +53,19 @@ export const adder = defineAdderConfig({
 		// SQLite
 		{
 			name: 'better-sqlite3',
-			version: '^10.0.0',
+			version: "^11.1.2",
 			dev: false,
 			condition: ({ options }) => options.sqlite === 'better-sqlite3',
 		},
 		{
 			name: '@types/better-sqlite3',
-			version: '^7.6.10',
+			version: "^7.6.11",
 			dev: true,
 			condition: ({ options }) => options.sqlite === 'better-sqlite3',
 		},
 		{
 			name: '@libsql/client',
-			version: '^0.6.1',
+			version: "^0.9.0",
 			dev: false,
 			condition: ({ options }) => options.sqlite === 'libsql' || options.sqlite === 'turso',
 		},
