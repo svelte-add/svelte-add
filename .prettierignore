@@ -5,3 +5,5 @@ packages/website/.svelte-kit/
 adders/*/README.md
 adders/*/package.json
 temp/
+packages/tests/**/input.js
+packages/tests/**/output.js

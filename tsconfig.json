@@ -1,5 +1,11 @@
 {
-	"exclude": ["**/build/**", "**/temp/**", "**/website/**", "**/coverage/**", "**/tests/**/{input,output}.js"],
+	"exclude": [
+		"**/build/**",
+		"**/temp/**",
+		"**/website/**",
+		"**/coverage/**",
+		"**/tests/**/{input,output}.js"
+	],
 	"compilerOptions": {
 		"checkJs": true,
 		"module": "es2022",
