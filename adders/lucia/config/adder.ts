@@ -292,8 +292,8 @@ export const adder = defineAdderConfig({
 							handleName = handleSpecifier.local?.name ?? handleSpecifier.exported.name;
 
 							// find the definition
-							const handleFunc = ast.body.find((n) => isFunctionDeclarationHandle(n, handleName));
-							const handleVar = ast.body.find((n) => isVariableDeclarationHandle(n, handleName));
+							const handleFunc = ast.body.find((n) => isFunctionDeclaration(n, handleName));
+							const handleVar = ast.body.find((n) => isVariableDeclaration(n, handleName));
 
 							maybeHandleDecl = handleFunc ?? handleVar;
 						}
@@ -301,13 +301,13 @@ export const adder = defineAdderConfig({
 						maybeHandleDecl ??= node.declaration ?? undefined;
 
 						// `export const handle`
-						if (maybeHandleDecl && isVariableDeclarationHandle(maybeHandleDecl, handleName)) {
+						if (maybeHandleDecl && isVariableDeclaration(maybeHandleDecl, handleName)) {
 							exportDecl = node;
 							originalHandleDecl = maybeHandleDecl;
 						}
 
 						// `export function handle`
-						if (maybeHandleDecl && isFunctionDeclarationHandle(maybeHandleDecl, handleName)) {
+						if (maybeHandleDecl && isFunctionDeclaration(maybeHandleDecl, handleName)) {
 							exportDecl = node;
 							originalHandleDecl = maybeHandleDecl;
 						}
@@ -386,14 +386,14 @@ export const adder = defineAdderConfig({
 				imports.addNamed(ast, '@sveltejs/kit/hooks', { sequence: 'sequence' });
 
 				// rename `export const handle`
-				if (originalHandleDecl && isVariableDeclarationHandle(originalHandleDecl, handleName)) {
+				if (originalHandleDecl && isVariableDeclaration(originalHandleDecl, handleName)) {
 					const handle = getVariableDeclarator(originalHandleDecl, handleName);
 					if (handle && handle.id.type === 'Identifier') {
 						handle.id.name = NEW_HANDLE_NAME;
 					}
 				}
 				// rename `export function handle`
-				if (originalHandleDecl && isFunctionDeclarationHandle(originalHandleDecl, handleName)) {
+				if (originalHandleDecl && isFunctionDeclaration(originalHandleDecl, handleName)) {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					originalHandleDecl.id!.name = NEW_HANDLE_NAME;
 				}
@@ -466,16 +466,12 @@ function usingSequence(node: AstTypes.VariableDeclarator, handleName: string) {
 	);
 }
 
-function isVariableDeclarationHandle(
+function isVariableDeclaration(
 	node: AstTypes.ASTNode,
-	handleName: string,
+	variableName: string,
 ): node is AstTypes.VariableDeclaration {
 	return (
-		node.type === 'VariableDeclaration' &&
-		node.declarations.some(
-			(d) =>
-				d.type === 'VariableDeclarator' && d.id.type === 'Identifier' && d.id.name === handleName,
-		)
+		node.type === 'VariableDeclaration' && getVariableDeclarator(node, variableName) !== undefined
 	);
 }
 
@@ -489,11 +485,11 @@ function getVariableDeclarator(
 	) as AstTypes.VariableDeclarator | undefined;
 }
 
-function isFunctionDeclarationHandle(
+function isFunctionDeclaration(
 	node: AstTypes.ASTNode,
-	handleName: string,
+	funcName: string,
 ): node is AstTypes.FunctionDeclaration {
-	return node.type === 'FunctionDeclaration' && node.id?.name === handleName;
+	return node.type === 'FunctionDeclaration' && node.id?.name === funcName;
 }
 
 function getAuthHandleContent() {
