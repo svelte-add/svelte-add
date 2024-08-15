@@ -1,4 +1,11 @@
-import { defineAdderConfig, Walker, type AstKinds, type AstTypes } from '@svelte-add/core';
+import {
+	dedent,
+	defineAdderConfig,
+	log,
+	Walker,
+	type AstKinds,
+	type AstTypes,
+} from '@svelte-add/core';
 import { options } from './options.js';
 
 const LUCIA_ADAPTER = {
@@ -35,8 +42,17 @@ export const adder = defineAdderConfig({
 	packages: [
 		{ name: 'lucia', version: '^3.2.0', dev: false },
 		{ name: '@lucia-auth/adapter-drizzle', version: '^1.1.0', dev: false },
+		// password hashing for demo
+		// TODO: review if we really need this for a demo
+		{
+			name: '@node-rs/argon2',
+			version: '^1.1.0',
+			condition: ({ options }) => options.demo,
+			dev: false,
+		},
 	],
 	runsAfter: ['drizzle'],
+	dependsOn: ['drizzle'],
 	files: [
 		{
 			name: ({ typescript }) => `drizzle.config.${typescript.installed ? 'ts' : 'js'}`,
@@ -68,7 +84,7 @@ export const adder = defineAdderConfig({
 		{
 			name: () => schemaPath,
 			contentType: 'script',
-			content: ({ ast, common, exports, imports, variables, object, functions }) => {
+			content: ({ ast, common, exports, imports, variables, object, functions, options }) => {
 				const createTable = (name: string) => functions.call(TABLE_TYPE[drizzleDialect], [name]);
 
 				const userDecl = variables.declaration(ast, 'const', 'user', createTable('user'));
@@ -109,6 +125,12 @@ export const adder = defineAdderConfig({
 					object.overrideProperties(userAttributes, {
 						id: common.expressionFromString(`text('id').primaryKey()`),
 					});
+					if (options.demo) {
+						object.overrideProperties(userAttributes, {
+							username: common.expressionFromString(`text("username").notNull().unique()`),
+							passwordHash: common.expressionFromString(`text("password_hash").notNull()`),
+						});
+					}
 					object.overrideProperties(sessionAttributes, {
 						id: common.expressionFromString(`text('id').primaryKey()`),
 						userId: common.expressionFromString(
@@ -126,6 +148,16 @@ export const adder = defineAdderConfig({
 					object.overrideProperties(userAttributes, {
 						id: common.expressionFromString(`varchar('id', { length: 255 }).primaryKey()`),
 					});
+					if (options.demo) {
+						object.overrideProperties(userAttributes, {
+							username: common.expressionFromString(
+								`varchar('username', { length: 32 }).notNull().unique()`,
+							),
+							passwordHash: common.expressionFromString(
+								`varchar('password_hash', { length: 255 }).notNull()`,
+							),
+						});
+					}
 					object.overrideProperties(sessionAttributes, {
 						id: common.expressionFromString(`varchar('id', { length: 255 }).primaryKey()`),
 						userId: common.expressionFromString(
@@ -143,6 +175,12 @@ export const adder = defineAdderConfig({
 					object.overrideProperties(userAttributes, {
 						id: common.expressionFromString(`text('id').primaryKey()`),
 					});
+					if (options.demo) {
+						object.overrideProperties(userAttributes, {
+							username: common.expressionFromString(`text("username").notNull().unique()`),
+							passwordHash: common.expressionFromString(`text("password_hash").notNull()`),
+						});
+					}
 					object.overrideProperties(sessionAttributes, {
 						id: common.expressionFromString(`text('id').primaryKey()`),
 						userId: common.expressionFromString(
@@ -159,7 +197,7 @@ export const adder = defineAdderConfig({
 			name: ({ kit, typescript }) =>
 				`${kit.libDirectory}/server/auth.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'script',
-			content: ({ ast, imports, common, exports, source, typescript, variables }) => {
+			content: ({ ast, imports, common, exports, source, typescript, variables, options }) => {
 				const adapter = LUCIA_ADAPTER[drizzleDialect];
 
 				imports.addNamed(ast, '$lib/server/db/schema.js', { user: 'user', session: 'session' });
@@ -181,7 +219,8 @@ export const adder = defineAdderConfig({
 							attributes: {
 								secure: !dev
 							}
-						}
+						},
+						${options.demo ? `getUserAttributes: (attributes) => ({ username: attributes.username })` : ''}
 					})`);
 				const luciaDecl = variables.declaration(ast, 'const', 'lucia', luciaInit);
 				exports.namedExport(ast, 'lucia', luciaDecl);
@@ -192,8 +231,9 @@ export const adder = defineAdderConfig({
 						declare module "lucia" {
 							interface Register {
 								Lucia: typeof lucia;
-								DatabaseUserAttributes: typeof user.$inferSelect;
-								DatabaseSessionAttributes: typeof session.$inferSelect;
+								// attributes that are already included are omitted
+								DatabaseUserAttributes: Omit<typeof user.$inferSelect, "id">;
+								DatabaseSessionAttributes: Omit<typeof session.$inferSelect, "id" | "userId" | "expiresAt">;
 							}
 						}`);
 					common.addStatement(ast, moduleDecl);
@@ -420,7 +460,267 @@ export const adder = defineAdderConfig({
 				}
 			},
 		},
+		// DEMO
+		// login/register
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/demo/login/+page.server.${typescript.installed ? 'ts' : 'js'}`,
+			condition: ({ options }) => options.demo,
+			contentType: 'text',
+			content({ content, typescript }) {
+				if (content) {
+					log.warn('Existing `/demo/login/+page.server.js/ts` file. Could not update.'); // TODO: cleanup
+					return content;
+				}
+
+				const ts = (str: string, opt = '') => (typescript.installed ? str : opt);
+				return dedent`
+					import { fail, redirect } from "@sveltejs/kit";
+					import { hash, verify } from "@node-rs/argon2";
+					import { eq } from "drizzle-orm";
+					import { generateId } from "lucia";
+					import { lucia } from "$lib/server/auth";
+					import { db } from "$lib/server/db";
+					import { user } from "$lib/server/db/schema.js";
+					${ts(`import type { Actions, PageServerLoad } from "./$types";`)}
+
+					export const load${ts(`: PageServerLoad`)} = async (event) => {
+						if (event.locals.user) {
+							return redirect(302, "/demo");
+						}
+						return {};
+					};
+
+					export const actions${ts(`: Actions`)} = {
+						login: async (event) => {
+							const formData = await event.request.formData();
+							const username = formData.get("username");
+							const password = formData.get("password");
+
+							if (!validateUsername(username)) {
+								return fail(400, {
+									message: "Invalid username",
+								});
+							}
+							if (!validatePassword(password)) {
+								return fail(400, {
+									message: "Invalid password",
+								});
+							}
+
+							const results = await db
+								.select()
+								.from(user)
+								.where(eq(user.username, username));
+
+							const existingUser = results.at(0);
+							if (!existingUser) {
+								return fail(400, {
+									message: "Incorrect username or password",
+								});
+							}
+
+							const validPassword = await verify(existingUser.passwordHash, password, {
+								memoryCost: 19456,
+								timeCost: 2,
+								outputLen: 32,
+								parallelism: 1,
+							});
+							if (!validPassword) {
+								return fail(400, {
+									message: "Incorrect username or password",
+								});
+							}
+
+							const session = await lucia.createSession(existingUser.id, {});
+							const sessionCookie = lucia.createSessionCookie(session.id);
+							event.cookies.set(sessionCookie.name, sessionCookie.value, {
+								path: ".",
+								...sessionCookie.attributes,
+							});
+
+							return redirect(302, "/demo");
+						},
+						register: async (event) => {
+							const formData = await event.request.formData();
+							const username = formData.get("username");
+							const password = formData.get("password");
+
+							if (!validateUsername(username)) {
+								return fail(400, {
+									message: "Invalid username",
+								});
+							}
+							if (!validatePassword(password)) {
+								return fail(400, {
+									message: "Invalid password",
+								});
+							}
+
+							const passwordHash = await hash(password, {
+								// recommended minimum parameters
+								memoryCost: 19456,
+								timeCost: 2,
+								outputLen: 32,
+								parallelism: 1,
+							});
+							const userId = generateId(15);
+
+							try {
+								await db.insert(user).values({
+									id: userId,
+									username,
+									passwordHash,
+								});
+
+								const session = await lucia.createSession(userId, {});
+								const sessionCookie = lucia.createSessionCookie(session.id);
+								event.cookies.set(sessionCookie.name, sessionCookie.value, {
+									path: ".",
+									...sessionCookie.attributes,
+								});
+							} catch (e) {
+								return fail(500, {
+									message: "An error has occurred",
+								});
+							}
+							return redirect(302, "/demo");
+						},
+					};
+
+					function validateUsername(username${ts(`: unknown): username is string`, ')')} {
+						return (
+							typeof username === "string" &&
+							username.length >= 3 &&
+							username.length <= 31 &&
+							/^[a-z0-9_-]+$/.test(username)
+						);
+					}
+
+					function validatePassword(password${ts(`: unknown): password is string`, ')')} {
+						return (
+							typeof password === "string" &&
+							password.length >= 6 &&
+							password.length <= 255
+						);
+					}
+				`;
+			},
+		},
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/demo/login/+page.svelte`,
+			condition: ({ options }) => options.demo,
+			contentType: 'text',
+			content({ content, typescript }) {
+				if (content) {
+					log.warn('Existing `/demo/login/+page.svelte` file. Could not update.'); // TODO: cleanup
+					return content;
+				}
+
+				const ts = (str: string) => (typescript.installed ? str : '');
+				return dedent`
+					<script ${ts(`lang="ts"`)}>
+						import { enhance } from "$app/forms";
+						${ts(`import type { ActionData } from "./$types";`)}
+
+						export let form${ts(`: ActionData`)};
+					</script>
+
+					<h1>Login/Register</h1>
+					<form method="post" action="?/login" use:enhance>
+						<label>
+							Username
+							<input name="username" />
+						</label>
+						<label>
+							Password
+							<input type="password" name="password" />
+						</label>
+						<button>Login</button>
+						<button formaction="?/register">Register</button>
+					</form>
+					<p style="color: red">{form?.message ?? ""}</p>
+				`;
+			},
+		},
+		// logout
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/demo/+page.server.${typescript.installed ? 'ts' : 'js'}`,
+			condition: ({ options }) => options.demo,
+			contentType: 'text',
+			content({ content, typescript }) {
+				if (content) {
+					log.warn('Existing `/demo/+page.server.js/ts` file. Could not update.');
+					return content;
+				}
+
+				const ts = (str: string) => (typescript.installed ? str : '');
+				return dedent`
+					import { lucia } from "$lib/server/auth";
+					import { fail, redirect } from "@sveltejs/kit";
+					${ts(`import type { Actions, PageServerLoad } from "./$types";`)}
+					
+					export const load${ts(`: PageServerLoad`)} = async (event) => {
+						if (!event.locals.user) {
+							return redirect(302, "/demo/login");
+						}
+						return {
+							user: event.locals.user,
+						};
+					};
+
+					export const actions${ts(`: Actions`)} = {
+						logout: async (event) => {
+							if (!event.locals.session) {
+								return fail(401);
+							}
+							await lucia.invalidateSession(event.locals.session.id);
+							const sessionCookie = lucia.createBlankSessionCookie();
+							event.cookies.set(sessionCookie.name, sessionCookie.value, {
+								path: ".",
+								...sessionCookie.attributes,
+							});
+							return redirect(302, "/demo/login");
+						},
+					};
+				`;
+			},
+		},
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/demo/+page.svelte`,
+			condition: ({ options }) => options.demo,
+			contentType: 'text',
+			content({ content, typescript }) {
+				if (content) {
+					log.warn('Existing `/demo/+page.svelte` file. Could not update.');
+					return content;
+				}
+
+				const ts = (str: string) => (typescript.installed ? str : '');
+				return dedent`
+					<script ${ts(`lang="ts"`)}>
+						import { enhance } from "$app/forms";
+						${ts(`import type { PageServerData } from "./$types";`)}
+
+						export let data${ts(`: PageServerData`)};
+					</script>
+
+					<h1>Hi, {data.user.username}!</h1>
+					<p>Your user ID is {data.user.id}.</p>
+					<form method="post" action="?/logout" use:enhance>
+						<button>Sign out</button>
+					</form>
+				`;
+			},
+		},
 	],
+	nextSteps: ({ colors, options }) => {
+		const steps = [`Run ${colors.cyan('npm run db:push')} to update your database`];
+		if (options.demo) steps.push(`Visit ${colors.white('/demo')} route to view the demo`);
+
+		return steps;
+	},
 });
 
 function createLuciaType(name: string): AstTypes.TSInterfaceBody['body'][number] {
