@@ -1,4 +1,4 @@
-import { defineAdderConfig, log, Walker, type AstKinds, type AstTypes } from '@svelte-add/core';
+import { defineAdderConfig, Walker, type AstKinds, type AstTypes } from '@svelte-add/core';
 import { options } from './options.js';
 
 const LUCIA_ADAPTER = {
@@ -192,6 +192,8 @@ export const adder = defineAdderConfig({
 						declare module "lucia" {
 							interface Register {
 								Lucia: typeof lucia;
+								DatabaseUserAttributes: typeof user.$inferSelect;
+								DatabaseSessionAttributes: typeof session.$inferSelect;
 							}
 						}`);
 					common.addStatement(ast, moduleDecl);
