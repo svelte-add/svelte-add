@@ -211,7 +211,6 @@ export const adder = defineAdderConfig({
 
 					userSchemaExpression = common.expressionFromString(`sqliteTable('user', {
                         id: integer('id').primaryKey(),
-                        name: text('name').notNull(),
                         age: integer('age')
                     })`);
 				}
@@ -225,7 +224,6 @@ export const adder = defineAdderConfig({
 
 					userSchemaExpression = common.expressionFromString(`mysqlTable('user', {
                         id: serial("id").primaryKey(),
-                        name: text('name').notNull(),
                         age: int('age'),
                     })`);
 				}
@@ -239,7 +237,6 @@ export const adder = defineAdderConfig({
 
 					userSchemaExpression = common.expressionFromString(`pgTable('user', {
                         id: serial('id').primaryKey(),
-                        name: text('name').notNull(),
                         age: integer('age'),
                     })`);
 				}
