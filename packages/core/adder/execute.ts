@@ -30,7 +30,7 @@ import type {
 import type { RemoteControlOptions } from './remoteControl.js';
 import { suggestInstallingDependencies } from '../utils/dependencies.js';
 import { validatePreconditions } from './preconditions.js';
-import { endPrompts, startPrompts } from '../utils/prompts.js';
+import { endPrompts, startPrompts, booleanPrompt } from '../utils/prompts.js';
 import { checkPostconditions, printUnmetPostconditions } from './postconditions.js';
 import { displayNextSteps } from './nextSteps.js';
 import { spinner, log, cancel } from '@svelte-add/clack-prompts';
@@ -164,9 +164,16 @@ async function executePlan<Args extends OptionDefinition>(
 	// add inter-adder dependencies
 	for (const adder of userSelectedAdders) {
 		const details = adderDetails.find((a) => a.config.metadata.id === adder);
-		const deps =
+		const dependentAdders =
 			details?.config.dependsOn?.filter((dep) => !userSelectedAdders.includes(dep)) ?? [];
-		userSelectedAdders.push(...deps);
+
+		for (const dep of dependentAdders) {
+			const install = await booleanPrompt(
+				`The ${pc.bold(pc.cyan(adder))} adder requires ${pc.bold(pc.cyan(dep))} to also be installed. ${pc.green('Install it?')}`,
+				true,
+			);
+			if (install) userSelectedAdders.push(dep);
+		}
 	}
 
 	// remove unselected adder data
