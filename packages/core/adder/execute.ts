@@ -161,6 +161,14 @@ async function executePlan<Args extends OptionDefinition>(
 	}
 	const isApplyingMultipleAdders = userSelectedAdders.length > 1;
 
+	// add inter-adder dependencies
+	for (const adder of userSelectedAdders) {
+		const details = adderDetails.find((a) => a.config.metadata.id === adder);
+		const deps =
+			details?.config.dependsOn?.filter((dep) => !userSelectedAdders.includes(dep)) ?? [];
+		userSelectedAdders.push(...deps);
+	}
+
 	// remove unselected adder data
 	const addersToRemove = adderDetails.filter(
 		(x) => !userSelectedAdders.includes(x.config.metadata.id),

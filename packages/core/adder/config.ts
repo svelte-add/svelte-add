@@ -48,6 +48,7 @@ export type BaseAdderConfig<Args extends OptionDefinition> = {
 	metadata: AdderConfigMetadata;
 	options: Args;
 	runsAfter?: string[];
+	dependsOn?: string[];
 	integrationType: string;
 };
 

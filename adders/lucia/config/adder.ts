@@ -52,6 +52,7 @@ export const adder = defineAdderConfig({
 		},
 	],
 	runsAfter: ['drizzle'],
+	dependsOn: ['drizzle'],
 	files: [
 		{
 			name: ({ typescript }) => `drizzle.config.${typescript.installed ? 'ts' : 'js'}`,
@@ -240,8 +241,6 @@ export const adder = defineAdderConfig({
 			},
 		},
 		{
-			// TODO: comments aren't preserved for some reason
-			// TODO: replace console logs for errors or warnings
 			name: () => `src/app.d.ts`,
 			condition: ({ typescript }) => typescript.installed,
 			contentType: 'script',
