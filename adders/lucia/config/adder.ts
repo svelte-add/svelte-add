@@ -160,7 +160,7 @@ export const adder = defineAdderConfig({
 					object.overrideProperties(sessionAttributes, {
 						id: common.expressionFromString(`varchar('id', { length: 255 }).primaryKey()`),
 						userId: common.expressionFromString(
-							`varchar('id', { length: 255 }).notNull().references(() => user.id)`,
+							`varchar('user_id', { length: 255 }).notNull().references(() => user.id)`,
 						),
 						expiresAt: common.expressionFromString(`datetime("expires_at").notNull()`),
 					});
