@@ -52,7 +52,6 @@ export const adder = defineAdderConfig({
 		},
 	],
 	runsAfter: ['drizzle'],
-	dependsOn: ['drizzle'],
 	files: [
 		{
 			name: ({ typescript }) => `drizzle.config.${typescript.installed ? 'ts' : 'js'}`,
@@ -74,10 +73,10 @@ export const adder = defineAdderConfig({
 				})
 
 				if (!drizzleDialect) {
-					// TODO: failed to find dialect
+					throw new Error('Failed to detect DB dialect in your `drizzle.config.js/ts` file');
 				}
 				if (!schemaPath) {
-					// TODO: failed to find schema path
+					throw new Error('Failed to find schema path in your `drizzle.config.js/ts` file');
 				}
 			},
 		},
@@ -247,11 +246,25 @@ export const adder = defineAdderConfig({
 			condition: ({ typescript }) => typescript.installed,
 			contentType: 'script',
 			content: ({ ast, common }) => {
-				const global = ast.body
+				const globalDecl = ast.body
 					.filter((n) => n.type === 'TSModuleDeclaration')
 					.find((m) => m.global && m.declare);
-				if (!global) {
-					console.log('failed to find `declare global`');
+
+				if (globalDecl?.body?.type !== 'TSModuleBlock') {
+					throw new Error('Unexpected body type of `declare global` in `src/app.d.ts`');
+				}
+
+				if (!globalDecl) {
+					const decl = common.statementFromString(`
+						declare global {
+							namespace App {
+								interface Locals {
+									user: import('lucia').User | null;
+									session: import('lucia').Session | null;
+								}
+							}
+						}`);
+					ast.body.push(decl);
 					return;
 				}
 
@@ -259,8 +272,7 @@ export const adder = defineAdderConfig({
 				let locals: AstTypes.TSInterfaceDeclaration | undefined;
 
 				// prettier-ignore
-				// get off my back, prettier
-				Walker.walk(global as AstTypes.ASTNode, {}, {
+				Walker.walk(globalDecl as AstTypes.ASTNode, {}, {
 					TSModuleDeclaration(node, { next }) {
 						if (node.id.type === 'Identifier' && node.id.name === 'App') {
 							app = node;
@@ -275,13 +287,19 @@ export const adder = defineAdderConfig({
 				});
 
 				if (!app) {
-					console.log('missing `namespace App` declaration');
+					app ??= common.statementFromString(`
+						namespace App {
+							interface Locals {
+								user: import('lucia').User | null;
+								session: import('lucia').Session | null;
+							}
+						}`) as AstTypes.TSModuleDeclaration;
+					globalDecl.body.body.push(app);
 					return;
 				}
 
 				if (app.body?.type !== 'TSModuleBlock') {
-					console.log('unexpected body type of `namespace App`');
-					return;
+					throw new Error('Unexpected body type of `namespace App` in `src/app.d.ts`');
 				}
 
 				if (!locals) {
@@ -469,7 +487,7 @@ export const adder = defineAdderConfig({
 			contentType: 'text',
 			content({ content, typescript }) {
 				if (content) {
-					log.warn('Existing `/demo/login/+page.server.js/ts` file. Could not update.'); // TODO: cleanup
+					log.warn('Existing `/demo/login/+page.server.js/ts` file. Could not update.');
 					return content;
 				}
 
@@ -613,7 +631,7 @@ export const adder = defineAdderConfig({
 			contentType: 'text',
 			content({ content, typescript }) {
 				if (content) {
-					log.warn('Existing `/demo/login/+page.svelte` file. Could not update.'); // TODO: cleanup
+					log.warn('Existing `/demo/login/+page.svelte` file. Could not update.');
 					return content;
 				}
 
