@@ -125,14 +125,10 @@ export function prepareAndParseCliOptions<Args extends OptionDefinition>(
 		for (const optionKey of Object.keys(config.options)) {
 			const option = config.options[optionKey];
 
-			let optionString;
-			if (multipleAdders) {
-				optionString = `--${config.metadata.id}-${optionKey} [${option.type}]`;
-			} else {
-				optionString = `--${optionKey} [${option.type}]`;
-			}
-
-			program.option(optionString, option.question);
+			program.option(
+				`--${config.metadata.id}-${optionKey}, --${optionKey} [${option.type}]`,
+				option.question,
+			);
 		}
 	}
 
