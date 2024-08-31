@@ -20,6 +20,7 @@ import { format, resolveConfig } from 'prettier';
 		'@iconify/json': 'Full Collection (~120MB)',
 	};
 
+	/** @type {Array<{ name: string, version?: string, label?: string }>} */
 	const collections = [
 		{
 			name: 'none',
