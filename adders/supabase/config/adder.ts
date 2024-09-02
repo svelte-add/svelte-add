@@ -1,4 +1,4 @@
-import { defineAdderConfig, dedent, type TextFileEditorArgs } from '@svelte-add/core';
+import { defineAdderConfig, dedent, type TextFileEditorArgs, colors } from '@svelte-add/core';
 import { options as availableOptions } from './options';
 
 export const adder = defineAdderConfig({
@@ -364,10 +364,20 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		},
 	],
 	nextSteps: ({ options }) => {
-		const steps = ['Visit the Supabase docs: https://supabase.com/docs'];
+		const steps = [
+			'Visit the Supabase docs: https://supabase.com/docs',
+			'Update the authGuard server hook function with your protected routes',
+		];
 
 		if (options.cli) {
-			steps.push('Read the Supabase CLI Docs: https://supabase.com/docs/reference/cli');
+			steps.push(
+				dedent`Local development environment:
+
+					1. Initialize the local development environment: ${colors.yellow('pnpm supabase init')}
+					2. Start the local development services: ${colors.yellow('pnpm supabase start')}. This may take a while the first time you run it
+					3. Depending on your Auth selections, you may need to configure local email templates and modify ${colors.green('./supabase/config.toml')}
+					`,
+			);
 		}
 
 		return steps;
