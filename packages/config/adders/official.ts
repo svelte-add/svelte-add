@@ -6,6 +6,7 @@ export const adderCategories: AdderCategories = {
 	css: ['tailwindcss'],
 	db: ['drizzle'],
 	additional: ['storybook', 'mdsvex', 'routify'],
+	baas: ['supabase'],
 };
 
 export const adderIds = Object.values(adderCategories).flatMap((x) => x);
