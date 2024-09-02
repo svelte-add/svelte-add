@@ -1,6 +1,11 @@
 import { colors, defineAdderOptions } from '@svelte-add/core';
 
 export const options = defineAdderOptions({
+	demo: {
+		question: 'Do you want to include demo routes to show protected routes?',
+		type: 'boolean',
+		default: false,
+	},
 	admin: {
 		question: `Do you want to add an Supabase admin client? ${colors.red('Warning: This client bypasses row level security, only use server side.')}`,
 		type: 'boolean',

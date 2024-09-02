@@ -41,7 +41,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		{
 			name: ({ typescript }) => `./src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
-			content: ({ typescript }) => {
+			content: ({ options, typescript }) => {
 				return dedent`
 					import { createServerClient } from '@supabase/ssr'
 					import {${typescript.installed ? ' type Handle,' : ''} redirect } from '@sveltejs/kit'
@@ -91,7 +91,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						const { session, user } = await event.locals.safeGetSession()
 						event.locals.session = session
 						event.locals.user = user
-
+						${
+							options.demo
+								? `
 						if (!event.locals.session && event.url.pathname.startsWith('/private')) {
 							redirect(303, '/auth')
 						}
@@ -99,7 +101,11 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						if (event.locals.session && event.url.pathname === '/auth') {
 							redirect(303, '/private')
 						}
-
+						`
+								: `
+						// Add authentication guards here
+						`
+						}
 						return resolve(event)
 					}
 
@@ -362,6 +368,157 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			},
 			condition: ({ options }) => options.helpers,
 		},
+		// Demo routes
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/private/+layout.server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			content: () => {
+				return dedent`
+					/**
+					* This file is necessary to ensure protection of all routes in the \`private\`
+					* directory. It makes the routes in this directory _dynamic_ routes, which
+					* send a server request, and thus trigger \`hooks.server.ts\`.
+					**/
+					`;
+			},
+			condition: ({ options }) => options.demo,
+		},
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/private/+layout.svelte`,
+			contentType: 'text',
+			content: () => {
+				return dedent`
+					<script>
+						export let data;
+						$: ({ supabase } = data);
+
+						$: logout = async () => {
+							const { error } = await supabase.auth.signOut();
+							if (error) {
+								console.error(error);
+							}
+						};
+					</script>
+
+					<header>
+						<nav>
+							<a href="/">Home</a>
+						</nav>
+						<button on:click={logout}>Logout</button>
+					</header>
+					<main>
+						<slot />
+					</main>
+					`;
+			},
+			condition: ({ options }) => options.demo,
+		},
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/private/+page.svelte`,
+			contentType: 'text',
+			content: ({ options, typescript }) => {
+				return dedent`
+					<script${typescript.installed ? ' lang="ts"' : ''}>
+						import { invalidate } from '$app/navigation'
+						${typescript.installed ? `import type { EventHandler } from 'svelte/elements'\n` : ''}
+						${typescript.installed ? `import type { PageData } from './$types'\n` : ''}
+						export let data${typescript.installed ? ': PageData' : ''}
+
+						$: ({ ${options.cli ? 'notes, supabase, user' : 'user'} } = data)
+						${
+							options.cli
+								? `
+						let handleSubmit${typescript.installed ? ': EventHandler<SubmitEvent, HTMLFormElement>' : ''}
+						$: handleSubmit = async (evt) => {
+							evt.preventDefault();
+							if (!evt.target) return;
+
+							const form = evt.target${typescript.installed ? ' as HTMLFormElement' : ''}
+
+							const note = (new FormData(form).get('note') ?? '')${typescript.installed ? ' as string' : ''}
+							if (!note) return;
+
+							const { error } = await supabase.from('notes').insert({ note });
+							if (error) console.error(error);
+
+							invalidate('supabase:db:notes');
+							form.reset();
+						}
+							`
+								: ''
+						}
+					</script>
+
+					<h1>Private page for user: {user?.email}</h1>
+					${
+						options.cli
+							? `
+					<h2>Notes</h2>
+					<ul>
+						{#each notes as note}
+							<li>{note.note}</li>
+						{/each}
+					</ul>
+					<form on:submit={handleSubmit}>
+						<label>
+							Add a note
+							<input name="note" type="text" />
+						</label>
+					</form>
+							`
+							: ''
+					}
+					`;
+			},
+			condition: ({ options }) => options.demo,
+		},
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/private/+page.server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			content: ({ typescript }) => {
+				return dedent`
+					${typescript.installed ? `import type { PageServerLoad } from './$types'\n` : ''}
+					export const load${typescript.installed ? ': PageServerLoad' : ''} = async ({ depends, locals: { supabase } }) => {
+						depends('supabase:db:notes')
+						const { data: notes } = await supabase.from('notes').select('id,note').order('id')
+						return { notes: notes ?? [] }
+					}
+					`;
+			},
+			condition: ({ options }) => options.demo && options.cli,
+		},
+		{
+			name: () => './supabase/migrations/00000000000000_demo.sql',
+			contentType: 'text',
+			content: () => {
+				return dedent`
+					create table notes (
+						id bigint primary key generated always as identity,
+						created_at timestamp with time zone not null default now(),
+						user_id uuid references auth.users on delete cascade not null default auth.uid(),
+						note text not null
+					);
+
+					alter table notes enable row level security;
+
+					revoke all on table notes from authenticated;
+					revoke all on table notes from anon;
+
+					grant all (note) on table notes to authenticated;
+					grant select (id) on table notes to authenticated;
+					grant delete on table notes to authenticated;
+
+					create policy "Users can access and modify their own notes"
+					on notes
+					for all
+					to authenticated
+					using ((select auth.uid()) = user_id);
+					`;
+			},
+			condition: ({ options }) => options.demo && options.cli,
+		},
 	],
 	nextSteps: ({ options }) => {
 		const steps = [
@@ -375,7 +532,8 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 					1. Initialize the local development environment: ${colors.yellow('pnpm supabase init')}
 					2. Start the local development services: ${colors.yellow('pnpm supabase start')}. This may take a while the first time you run it
-					3. Depending on your Auth selections, you may need to configure local email templates and modify ${colors.green('./supabase/config.toml')}
+					3. Update ${colors.green('./supabase/config.toml')} [auth] section \`site_url\` and \`additional_redirect_urls\` to use port 5173
+					4. Depending on your Auth selections, you may need to create local email templates and update ${colors.green('./supabase/config.toml')}
 					`,
 			);
 		}
