@@ -322,6 +322,31 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			},
 		},
 		{
+			name: ({ kit, typescript }) =>
+				`${kit.libDirectory}/server/supabase-admin.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			content: ({ options, typescript }) => {
+				return dedent`
+					import { PUBLIC_SUPABASE_URL } from '$env/static/public'
+					import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
+					${typescript && options.cli && options.helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
+					import { createClient } from '@supabase/supabase-js'
+
+					export const supabaseAdmin = createClient${typescript && options.cli && options.helpers ? '<Database>' : ''}(
+						PUBLIC_SUPABASE_URL,
+						SUPABASE_SERVICE_ROLE_KEY,
+						{
+							auth: {
+								autoRefreshToken: false,
+								persistSession: false,
+							},
+						},
+					);
+					`;
+			},
+			condition: ({ options }) => options.admin,
+		},
+		{
 			name: () => `package.json`,
 			contentType: 'json',
 			content: ({ data, typescript }) => {
@@ -350,18 +375,32 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 });
 
 function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof availableOptions>) {
-	if (options.cli) {
-		// Local development CLI always has the same credentials
-		content = addEnvVar(content, 'PUBLIC_SUPABASE_URL', '"http://127.0.0.1:54321"');
-		content = addEnvVar(
-			content,
-			'PUBLIC_SUPABASE_ANON_KEY',
-			'"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"',
-		);
-	} else {
-		content = addEnvVar(content, 'PUBLIC_SUPABASE_URL', '"<your_supabase_project_url>"');
-		content = addEnvVar(content, 'PUBLIC_SUPABASE_ANON_KEY', '"<your_supabase_anon_key>"');
-	}
+	content = addEnvVar(
+		content,
+		'PUBLIC_SUPABASE_URL',
+		// Local development env always has the same credentials, prepopulate the local dev env file
+		options.cli ? '"http://127.0.0.1:54321"' : '"<your_supabase_project_url>"',
+	);
+	content = addEnvVar(
+		content,
+		'PUBLIC_SUPABASE_ANON_KEY',
+		// Local development env always has the same credentials, prepopulate the local dev env file
+		options.cli
+			? '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"'
+			: '"<your_supabase_anon_key>"',
+	);
+
+	content = options.admin
+		? addEnvVar(
+				content,
+				'SUPABASE_SERVICE_ROLE_KEY',
+				// Local development env always has the same credentials, prepopulate the local dev env file
+				options.cli
+					? '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"'
+					: '"<your_supabase_service_role_key>"',
+			)
+		: content;
+
 	return content;
 }
 
