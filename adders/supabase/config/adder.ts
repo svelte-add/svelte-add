@@ -111,15 +111,15 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: () => './src/app.d.ts',
 			contentType: 'text',
 			condition: ({ typescript }) => typescript.installed,
-			content: () => {
+			content: ({ options }) => {
 				return dedent`
 					import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
-
+					${options.cli && options.helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
 					declare global {
 						namespace App {
 							// interface Error {}
 							interface Locals {
-								supabase: SupabaseClient
+								supabase: SupabaseClient${options.cli && options.helpers ? `<Database>` : ''}
 								safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
 								session: Session | null
 								user: User | null
@@ -320,6 +320,22 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					}
 					`;
 			},
+		},
+		{
+			name: () => `package.json`,
+			contentType: 'json',
+			content: ({ data, typescript }) => {
+				data.scripts ??= {};
+				const scripts: Record<string, string> = data.scripts;
+				scripts['db:migration'] ??= 'supabase migration new';
+				scripts['db:migration:up'] ??= 'supabase migration up --local';
+				scripts['db:reset'] ??= 'supabase db reset';
+				if (typescript.installed) {
+					scripts['db:types'] ??=
+						'supabase gen types typescript --local > src/lib/supabase-types.ts';
+				}
+			},
+			condition: ({ options }) => options.helpers,
 		},
 	],
 	nextSteps: ({ options }) => {
