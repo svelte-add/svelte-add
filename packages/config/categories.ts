@@ -35,9 +35,4 @@ export const categories: CategoryDetails = {
 		name: 'Database',
 		description: '',
 	},
-	baas: {
-		id: 'baas',
-		name: 'Backend as a Service',
-		description: 'Services that provide database, Auth, storage, etc.',
-	},
 };
