@@ -7,7 +7,7 @@ export const options = defineAdderOptions({
 		default: false,
 	},
 	admin: {
-		question: `Do you want to add an Supabase admin client? ${colors.red('Warning: This client bypasses row level security, only use server side.')}`,
+		question: `Do you want to add a Supabase admin client? ${colors.red('Warning: This client bypasses row level security, only use server side.')}`,
 		type: 'boolean',
 		default: false,
 	},

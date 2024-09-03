@@ -4,7 +4,7 @@ export type CategoryInfo = {
 	description: string;
 };
 
-export type CategoryKeys = 'codeQuality' | 'css' | 'db' | 'testing' | 'additional' | 'baas';
+export type CategoryKeys = 'codeQuality' | 'css' | 'db' | 'testing' | 'additional';
 export type CategoryDetails = Record<CategoryKeys, CategoryInfo>;
 
 export type AdderCategories = Record<CategoryKeys, string[]>;
