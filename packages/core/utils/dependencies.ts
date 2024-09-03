@@ -4,8 +4,20 @@ import { COMMANDS } from 'package-manager-detector/agents';
 import { spinner } from '@svelte-add/clack-prompts';
 import { executeCli } from './cli.js';
 
-type PackageManager = (typeof packageManagers)[number] | undefined;
+export type PackageManager = (typeof packageManagers)[number];
 const packageManagers = ['npm', 'pnpm', 'yarn', 'bun'] as const;
+
+/**
+ * @param workingDirectory
+ * @returns the package manager
+ */
+export async function detectPackageManager(
+	workingDirectory: string,
+): Promise<PackageManager | undefined> {
+	const detectedPm = await detect({ cwd: workingDirectory });
+	const pm = normalizePackageManager(detectedPm.agent);
+	return pm;
+}
 
 /**
  * @param workingDirectory
@@ -14,22 +26,23 @@ const packageManagers = ['npm', 'pnpm', 'yarn', 'bun'] as const;
 export async function suggestInstallingDependencies(
 	workingDirectory: string,
 ): Promise<'installed' | 'skipped'> {
-	const detectedPm = await detect({ cwd: workingDirectory });
-	let selectedPm = detectedPm.agent;
+	let selectedPm = await detectPackageManager(workingDirectory);
 
-	selectedPm ??= await selectPrompt(
-		'Which package manager do you want to install dependencies with?',
-		undefined,
-		[
-			{
-				label: 'None',
-				value: undefined,
-			},
-			...packageManagers.map((x) => {
-				return { label: x, value: x as PackageManager };
-			}),
-		],
-	);
+	if (!selectedPm) {
+		selectedPm = await selectPrompt(
+			'Which package manager do you want to install dependencies with?',
+			undefined,
+			[
+				{
+					label: 'None',
+					value: undefined,
+				},
+				...packageManagers.map((x) => {
+					return { label: x, value: x };
+				}),
+			],
+		);
+	}
 
 	if (!selectedPm || !COMMANDS[selectedPm]) {
 		return 'skipped';
@@ -53,4 +66,10 @@ async function installDependencies(command: string, args: string[], workingDirec
 		const typedError = error as Error;
 		throw new Error('unable to install dependencies: ' + typedError.message);
 	}
+}
+
+function normalizePackageManager(pm: string | undefined): PackageManager | undefined {
+	if (pm === 'yarn@berry' || pm === 'yarn') return 'yarn';
+	if (pm === 'pnpm@6' || pm === 'pnpm') return 'pnpm';
+	return pm as PackageManager;
 }

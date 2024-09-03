@@ -520,7 +520,7 @@ Start your project with a Postgres database, authentication, instant APIs, edge 
 			condition: ({ options }) => options.demo && options.cli,
 		},
 	],
-	nextSteps: ({ options }) => {
+	nextSteps: ({ options, packageManager }) => {
 		const steps = [
 			'Visit the Supabase docs: https://supabase.com/docs',
 			'Update the authGuard server hook function with your protected routes',
@@ -530,8 +530,8 @@ Start your project with a Postgres database, authentication, instant APIs, edge 
 			steps.push(
 				dedent`Local development environment:
 
-					1. Initialize the local development environment: ${colors.yellow('pnpm supabase init')}
-					2. Start the local development services: ${colors.yellow('pnpm supabase start')}. This may take a while the first time you run it
+					1. Initialize the local development environment: ${colors.yellow(`${packageManager} supabase init`)}
+					2. Start the local development services: ${colors.yellow(`${packageManager} supabase start`)}. This may take a while the first time you run it
 					3. Update ${colors.green('./supabase/config.toml')} [auth] section \`site_url\` and \`additional_redirect_urls\` to use port 5173
 					4. Depending on your Auth selections, you may need to create local email templates and update ${colors.green('./supabase/config.toml')}
 					`,

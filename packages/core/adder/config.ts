@@ -9,6 +9,7 @@ import type { FileTypes } from '../files/processors.js';
 import type { Workspace } from '../utils/workspace.js';
 import type { Postcondition } from './postconditions.js';
 import type { Colors } from 'picocolors/types.js';
+import type { PackageManager } from '../utils/dependencies.js';
 
 export type { CssAstEditor, HtmlAstEditor, JsAstEditor, SvelteAstEditor };
 
@@ -60,6 +61,7 @@ export type InlineAdderConfig<Args extends OptionDefinition> = BaseAdderConfig<A
 		cwd: string;
 		colors: Colors;
 		docs: string | undefined;
+		packageManager: PackageManager;
 	}) => string[];
 	installHook?: (workspace: Workspace<Args>) => Promise<void>;
 	uninstallHook?: (workspace: Workspace<Args>) => Promise<void>;

@@ -270,7 +270,7 @@ async function executePlan<Args extends OptionDefinition>(
 	}
 
 	if (!isTesting) {
-		displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
+		await displayNextSteps(adderDetails, isApplyingMultipleAdders, executionPlan);
 		endPrompts("You're all set!");
 	}
 }

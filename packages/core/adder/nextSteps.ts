@@ -1,14 +1,18 @@
+import { detectPackageManager } from '../utils/dependencies';
 import { messagePrompt } from '../utils/prompts';
 import type { InlineAdderConfig } from './config';
 import type { AdderDetails, AddersExecutionPlan } from './execute';
 import type { OptionDefinition, OptionValues } from './options';
 import pc from 'picocolors';
 
-export function displayNextSteps<Args extends OptionDefinition>(
+export async function displayNextSteps<Args extends OptionDefinition>(
 	adderDetails: AdderDetails<Args>[],
 	multipleAdders: boolean,
 	executionPlan: AddersExecutionPlan,
 ) {
+	const packageManager = await detectPackageManager(executionPlan.workingDirectory);
+	if (!packageManager) throw new Error('Unable to detect package manager');
+
 	const allAddersMessage = adderDetails
 		.filter((x) => x.config.integrationType == 'inline' && x.config.nextSteps)
 		.map((x) => x.config as InlineAdderConfig<Args>)
@@ -28,6 +32,7 @@ export function displayNextSteps<Args extends OptionDefinition>(
 				cwd: executionPlan.workingDirectory,
 				colors: pc,
 				docs: x.metadata.website?.documentation,
+				packageManager,
 			});
 			adderMessage += `- ${adderNextSteps.join('\n- ')}`;
 			return adderMessage;
