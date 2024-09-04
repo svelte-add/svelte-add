@@ -46,11 +46,7 @@ export async function suggestInstallingDependencies(
 	return 'installed';
 }
 
-export async function installDependencies(
-	command: string,
-	args: string[],
-	workingDirectory: string,
-) {
+async function installDependencies(command: string, args: string[], workingDirectory: string) {
 	try {
 		await executeCli(command, args, workingDirectory);
 	} catch (error) {
