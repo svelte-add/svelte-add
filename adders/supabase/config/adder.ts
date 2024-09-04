@@ -234,22 +234,39 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/auth/+page.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
-			content: ({ typescript }) => {
+			content: ({ options, typescript }) => {
 				return dedent`
 					import { redirect } from '@sveltejs/kit'
-					${typescript.installed ? `import type { Actions } from './$types'` : ''}
+					import { PUBLIC_BASE_URL } from '$env/static/public'
+					${typescript.installed ? `import type { Actions } from './$types'\n` : ''}
 					export const actions${typescript.installed ? `: Actions` : ''} = {
 						signup: async ({ request, locals: { supabase } }) => {
 							const formData = await request.formData()
 							const email = formData.get('email')${typescript.installed ? ' as string' : ''}
 							const password = formData.get('password')${typescript.installed ? ' as string' : ''}
 
-							const { error } = await supabase.auth.signUp({ email, password })
+							const { error } = await supabase.auth.signUp(${
+								options.demo
+									? `
+								{
+									email,
+									password,
+									options: {
+										emailRedirectTo: \`\${PUBLIC_BASE_URL}/private\`,
+									}
+								}`
+									: '{ email, password }'
+							})
 							if (error) {
 								console.error(error)
-								redirect(303, '/auth/error')
+								return { message: 'Something went wrong, please try again.' }
 							} else {
-								redirect(303, '/')
+								${
+									options.demo
+										? `// Redirect to local Inbucket for demo purposes
+								redirect(303, \`http://localhost:54324/m/\${email}\`)`
+										: `return { message: 'Sign up succeeded! Please check your email inbox.' }`
+								}
 							}
 						},
 						login: async ({ request, locals: { supabase } }) => {
@@ -260,7 +277,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							const { error } = await supabase.auth.signInWithPassword({ email, password })
 							if (error) {
 								console.error(error)
-								redirect(303, '/auth/error')
+								return { message: 'Something went wrong, please try again.' }
 							} else {
 								redirect(303, '/private')
 							}
@@ -272,9 +289,15 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/auth/+page.svelte`,
 			contentType: 'text',
-			content: () => {
+			content: ({ typescript }) => {
 				return dedent`
-					<form method="POST" action="?/login">
+					<script lang="ts">
+						import { enhance } from '$app/forms'
+						${typescript.installed ? `import type { ActionData } from './$types'\n` : ''}
+						export let form${typescript.installed ? ': ActionData' : ''}
+					</script>
+
+					<form method="POST" action="?/login" use:enhance>
 						<label>
 							Email
 							<input name="email" type="email" />
@@ -286,14 +309,11 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						<button>Login</button>
 						<button formaction="?/signup">Sign up</button>
 					</form>
+
+					{#if form?.message}
+						<p>{form.message}</p>
+					{/if}
 					`;
-			},
-		},
-		{
-			name: ({ kit }) => `${kit.routesDirectory}/auth/error/+page.svelte`,
-			contentType: 'text',
-			content: () => {
-				return '<p>Login error</p>';
 			},
 		},
 		{
@@ -302,33 +322,30 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			contentType: 'text',
 			content: ({ typescript }) => {
 				return dedent`
-					import { redirect } from '@sveltejs/kit'
+					import { error, redirect } from '@sveltejs/kit'
+					import { PUBLIC_BASE_URL } from '$env/static/public'
 					${
 						typescript.installed
 							? dedent`import type { EmailOtpType } from '@supabase/supabase-js'
-							         import type { RequestHandler } from './$types'
-									 `
+							         import type { RequestHandler } from './$types'\n`
 							: ''
 					}
 					export const GET${typescript.installed ? ': RequestHandler' : ''} = async ({ url, locals: { supabase } }) => {
 						const token_hash = url.searchParams.get('token_hash')
 						const type = url.searchParams.get('type')${typescript.installed ? ' as EmailOtpType | null' : ''}
-						const next = url.searchParams.get('next') ?? '/'
+						const next = url.searchParams.get('next') ?? \`\${PUBLIC_BASE_URL}/\`
 
-						const redirectTo = new URL(url)
-						redirectTo.pathname = next
-						redirectTo.searchParams.delete('token_hash')
-						redirectTo.searchParams.delete('type')
+						const redirectTo = new URL(next)
 
-						if (token_hash && type) {
-							const { error } = await supabase.auth.verifyOtp({ type, token_hash })
-							if (!error) {
-								redirectTo.searchParams.delete('next')
-								redirect(303, redirectTo)
-							}
+						if (!token_hash || !type) {
+							error(400, 'Bad Request');
 						}
 
-						redirectTo.pathname = '/auth/error'
+						const { error: authError } = await supabase.auth.verifyOtp({ type, token_hash })
+						if (authError) {
+							error(401, 'Unauthorized');
+						}
+							
 						redirect(303, redirectTo)
 					}
 					`;
@@ -376,6 +393,27 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.helpers,
 		},
 		// Demo routes
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
+			contentType: 'text',
+			content: ({ typescript }) => {
+				return dedent`
+					<script${typescript.installed ? ' lang="ts"' : ''}>
+						import { page } from "$app/stores";
+					</script>
+
+					<h1>Welcome to SvelteKit with Supabase</h1>
+					<ul>
+					  <li><a href="/auth">Login</a></li>
+					  <li><a href="/private">Protected page</a></li>
+					</ul>
+					<pre>
+						User: {JSON.stringify($page.data.user, null, 2)}
+					</pre>
+					`;
+			},
+			condition: ({ options }) => options.demo,
+		},
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/private/+layout.server.${typescript.installed ? 'ts' : 'js'}`,
@@ -526,6 +564,47 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			},
 			condition: ({ options }) => options.demo && options.cli,
 		},
+		{
+			name: () => './supabase/config.toml',
+			contentType: 'text',
+			content: ({ content }) => {
+				content = content.replace('"http://127.0.0.1:3000"', '"http://localhost:5173"');
+				content = content.replace('"https://127.0.0.1:3000"', '"https://localhost:5173/*"');
+				content = content.replace('enable_confirmations = false', 'enable_confirmations = true');
+
+				content = appendContent(
+					content,
+					dedent`
+						\n# Custom email confirmation template
+						[auth.email.template.confirmation]
+						subject = "Confirm Your Signup"
+						content_path = "./supabase/templates/confirmation.html"
+						`,
+				);
+
+				return content;
+			},
+			condition: ({ options }) => options.cli,
+		},
+		{
+			name: () => './supabase/templates/confirmation.html',
+			contentType: 'text',
+			content: () => {
+				return dedent`
+					<html>
+						<body>
+							<h2>Confirm your signup</h2>
+							<p>Follow this link to confirm your user:</p>
+							<p><a
+								href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+								>Confirm your email</a
+							></p>
+						</body>
+					</html>
+					`;
+			},
+			condition: ({ options }) => options.cli,
+		},
 	],
 	nextSteps: ({ options, packageManager }) => {
 		const steps = [
@@ -550,6 +629,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 });
 
 function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof availableOptions>) {
+	content = addEnvVar(content, 'PUBLIC_BASE_URL', '"http://localhost:5173"');
 	content = addEnvVar(
 		content,
 		'PUBLIC_SUPABASE_URL',
@@ -581,12 +661,12 @@ function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof 
 
 function addEnvVar(content: string, key: string, value: string) {
 	if (!content.includes(key + '=')) {
-		content = appendEnvContent(content, `${key}=${value}`);
+		content = appendContent(content, `${key}=${value}`);
 	}
 	return content;
 }
 
-function appendEnvContent(existing: string, content: string) {
+function appendContent(existing: string, content: string) {
 	const withNewLine = !existing.length || existing.endsWith('\n') ? existing : existing + '\n';
 	return withNewLine + content + '\n';
 }
