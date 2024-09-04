@@ -27,6 +27,13 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.cli,
 		},
 	],
+	scripts: [
+		{
+			description: 'Supabase CLI initialization',
+			args: ['supabase', 'init', '--with-intellij-settings false', '--with-vscode-settings false'],
+			condition: ({ options }) => options.cli,
+		},
+	],
 	files: [
 		{
 			name: () => `.env`,

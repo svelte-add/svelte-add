@@ -3,7 +3,7 @@ import * as pc from 'picocolors';
 import { serializeJson } from '@svelte-add/ast-tooling';
 import { commonFilePaths, format, writeFile } from '../files/utils.js';
 import { type ProjectType, createProject, detectSvelteDirectory } from '../utils/create-project.js';
-import { createOrUpdateFiles } from '../files/processors.js';
+import { createOrUpdateFiles, executeScripts } from '../files/processors.js';
 import { getPackageJson } from '../utils/common.js';
 import {
 	type Workspace,
@@ -281,10 +281,11 @@ async function processInlineAdder<Args extends OptionDefinition>(
 	isInstall: boolean,
 ) {
 	const pkgPath = await installPackages(config, workspace);
+	const scriptsExecuted = await executeScripts(config.scripts, workspace);
 	const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
 	await runHooks(config, workspace, isInstall);
 
-	const changedFiles = [pkgPath, ...updatedOrCreatedFiles];
+	const changedFiles = [pkgPath, ...scriptsExecuted, ...updatedOrCreatedFiles];
 	return changedFiles;
 }
 

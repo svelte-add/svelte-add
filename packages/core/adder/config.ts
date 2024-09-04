@@ -45,6 +45,12 @@ export type PackageDefinition<Args extends OptionDefinition> = {
 	condition?: ConditionDefinition<Args>;
 };
 
+export type Scripts<Args extends OptionDefinition> = {
+	description: string;
+	args: string[];
+	condition?: ConditionDefinition<Args>;
+};
+
 export type BaseAdderConfig<Args extends OptionDefinition> = {
 	metadata: AdderConfigMetadata;
 	options: Args;
@@ -55,6 +61,7 @@ export type BaseAdderConfig<Args extends OptionDefinition> = {
 export type InlineAdderConfig<Args extends OptionDefinition> = BaseAdderConfig<Args> & {
 	integrationType: 'inline';
 	packages: PackageDefinition<Args>[];
+	scripts: Scripts<Args>[];
 	files: FileTypes<Args>[];
 	nextSteps?: (data: {
 		options: OptionValues<Args>;

@@ -32,6 +32,7 @@ export const adder = defineAdderConfig({
 			condition: ({ prettier }) => prettier.installed,
 		},
 	],
+	scripts: [],
 	files: [
 		{
 			name: ({ typescript }) => `tailwind.config.${typescript.installed ? 'ts' : 'js'}`,

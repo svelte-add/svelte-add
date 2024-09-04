@@ -36,6 +36,7 @@ export const adder = defineAdderConfig({
 			condition: ({ prettier }) => prettier.installed,
 		},
 	],
+	scripts: [],
 	files: [
 		{
 			name: () => 'package.json',
