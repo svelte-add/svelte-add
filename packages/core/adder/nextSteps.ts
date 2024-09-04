@@ -28,7 +28,6 @@ export function displayNextSteps<Args extends OptionDefinition>(
 				cwd: executionPlan.workingDirectory,
 				colors: pc,
 				docs: x.metadata.website?.documentation,
-				packageManager: executionPlan.packageManager ?? 'pnpm',
 			});
 			adderMessage += `- ${adderNextSteps.join('\n- ')}`;
 			return adderMessage;

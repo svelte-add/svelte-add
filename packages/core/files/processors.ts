@@ -20,12 +20,9 @@ import {
 	serializeSvelteFile,
 } from '@svelte-add/ast-tooling';
 import { fileExistsWorkspace, readFile, writeFile } from './utils.js';
-import type { ConditionDefinition, Scripts } from '../adder/config.js';
+import type { ConditionDefinition } from '../adder/config.js';
 import type { OptionDefinition } from '../adder/options.js';
 import type { Workspace } from '../utils/workspace.js';
-import { executeCli } from '../utils/cli.js';
-import { COMMANDS } from 'package-manager-detector/agents';
-import { installDependencies } from '../utils/dependencies.js';
 
 export type BaseFile<Args extends OptionDefinition> = {
 	name: (options: Workspace<Args>) => string;
@@ -84,34 +81,6 @@ export type FileTypes<Args extends OptionDefinition> =
 	| JsonFile<Args>
 	| HtmlFile<Args>
 	| CssFile<Args>;
-
-export async function executeScripts<Args extends OptionDefinition>(
-	scripts: Scripts<Args>[],
-	workspace: Workspace<Args>,
-): Promise<string[]> {
-	const scriptsExecuted = [];
-
-	if (scripts.length === 0) return [];
-	if (!workspace.packageManager) return [];
-
-	const installCommand = COMMANDS[workspace.packageManager].install;
-	await installDependencies(workspace.packageManager, [installCommand], workspace.cwd);
-
-	for (const script of scripts) {
-		if (script.condition && !script.condition(workspace)) {
-			continue;
-		}
-		try {
-			await executeCli(workspace.packageManager, script.args, workspace.cwd);
-		} catch (error) {
-			const typedError = error as Error;
-			throw new Error('Failed to execute package scripts: ' + typedError.message);
-		}
-		scriptsExecuted.push(script.description);
-	}
-
-	return scriptsExecuted;
-}
 
 /**
  * @param files

@@ -3,7 +3,7 @@ import * as pc from 'picocolors';
 import { serializeJson } from '@svelte-add/ast-tooling';
 import { commonFilePaths, format, writeFile } from '../files/utils.js';
 import { type ProjectType, createProject, detectSvelteDirectory } from '../utils/create-project.js';
-import { createOrUpdateFiles, executeScripts } from '../files/processors.js';
+import { createOrUpdateFiles } from '../files/processors.js';
 import { getPackageJson } from '../utils/common.js';
 import {
 	type Workspace,
@@ -28,7 +28,7 @@ import type {
 	InlineAdderConfig,
 } from './config.js';
 import type { RemoteControlOptions } from './remoteControl.js';
-import { suggestInstallingDependencies, type PackageManager } from '../utils/dependencies.js';
+import { suggestInstallingDependencies } from '../utils/dependencies.js';
 import { validatePreconditions } from './preconditions.js';
 import { endPrompts, startPrompts } from '../utils/prompts.js';
 import { checkPostconditions, printUnmetPostconditions } from './postconditions.js';
@@ -57,7 +57,6 @@ export type AddersExecutionPlan = {
 	commonCliOptions: AvailableCliOptionValues;
 	cliOptionsByAdderId: Record<string, Record<string, unknown>>;
 	workingDirectory: string;
-	packageManager: PackageManager | undefined;
 	selectAddersToApply?: AddersToApplySelector;
 };
 
@@ -103,7 +102,6 @@ export async function executeAdders<Args extends OptionDefinition>(
 			commonCliOptions,
 			cliOptionsByAdderId,
 			selectAddersToApply,
-			packageManager: undefined,
 		};
 
 		await executePlan(executionPlan, executingAdder, adderDetails, remoteControlOptions);
@@ -135,14 +133,9 @@ async function executePlan<Args extends OptionDefinition>(
 		const cwd = executionPlan.commonCliOptions.path ?? executionPlan.workingDirectory;
 		const supportKit = adderDetails.some((x) => x.config.metadata.environments.kit);
 		const supportSvelte = adderDetails.some((x) => x.config.metadata.environments.svelte);
-		const { projectCreated, directory, packageManager } = await createProject(
-			cwd,
-			supportKit,
-			supportSvelte,
-		);
+		const { projectCreated, directory } = await createProject(cwd, supportKit, supportSvelte);
 		if (!projectCreated) return;
 		executionPlan.workingDirectory = directory;
-		executionPlan.packageManager = packageManager;
 	}
 
 	const workspace = createEmptyWorkspace();
@@ -262,10 +255,7 @@ async function executePlan<Args extends OptionDefinition>(
 
 	let installStatus;
 	if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
-		installStatus = await suggestInstallingDependencies(
-			executionPlan.packageManager,
-			executionPlan.workingDirectory,
-		);
+		installStatus = await suggestInstallingDependencies(executionPlan.workingDirectory);
 
 	if (installStatus === 'installed' && workspace.prettier.installed) {
 		const formatSpinner = spinner();
@@ -291,11 +281,6 @@ async function processInlineAdder<Args extends OptionDefinition>(
 	isInstall: boolean,
 ) {
 	const pkgPath = await installPackages(config, workspace);
-
-	if (config.scripts && config.scripts.length > 0) {
-		await executeScripts(config.scripts, workspace);
-	}
-
 	const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
 	await runHooks(config, workspace, isInstall);
 
