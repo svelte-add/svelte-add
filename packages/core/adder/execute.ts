@@ -281,11 +281,15 @@ async function processInlineAdder<Args extends OptionDefinition>(
 	isInstall: boolean,
 ) {
 	const pkgPath = await installPackages(config, workspace);
-	const scriptsExecuted = await executeScripts(config.scripts, workspace);
+
+	if (config.scripts && config.scripts.length > 0) {
+		await executeScripts(config.scripts, workspace);
+	}
+
 	const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
 	await runHooks(config, workspace, isInstall);
 
-	const changedFiles = [pkgPath, ...scriptsExecuted, ...updatedOrCreatedFiles];
+	const changedFiles = [pkgPath, ...updatedOrCreatedFiles];
 	return changedFiles;
 }
 

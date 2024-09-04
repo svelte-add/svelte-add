@@ -18,7 +18,6 @@ export const adder = defineAdderConfig({
 	options,
 	integrationType: 'inline',
 	packages: [{ name: '@playwright/test', version: '^1.45.3', dev: true }],
-	scripts: [],
 	files: [
 		{
 			name: () => 'package.json',

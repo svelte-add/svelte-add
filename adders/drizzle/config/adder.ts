@@ -70,7 +70,6 @@ export const adder = defineAdderConfig({
 			condition: ({ options }) => options.sqlite === 'libsql' || options.sqlite === 'turso',
 		},
 	],
-	scripts: [],
 	files: [
 		{
 			name: () => `.env`,

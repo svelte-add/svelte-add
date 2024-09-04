@@ -61,7 +61,7 @@ export type BaseAdderConfig<Args extends OptionDefinition> = {
 export type InlineAdderConfig<Args extends OptionDefinition> = BaseAdderConfig<Args> & {
 	integrationType: 'inline';
 	packages: PackageDefinition<Args>[];
-	scripts: Scripts<Args>[];
+	scripts?: Scripts<Args>[];
 	files: FileTypes<Args>[];
 	nextSteps?: (data: {
 		options: OptionValues<Args>;

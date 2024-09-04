@@ -26,7 +26,6 @@ export const adder = defineAdderConfig({
 			condition: ({ dependencies }) => hasEslint(dependencies),
 		},
 	],
-	scripts: [],
 	files: [
 		{
 			name: () => `.prettierignore`,

@@ -16,7 +16,6 @@ export const adder = defineAdderConfig({
 	options,
 	integrationType: 'inline',
 	packages: [{ name: 'vitest', version: '^2.0.4', dev: true }],
-	scripts: [],
 	files: [
 		{
 			name: () => 'package.json',
