@@ -11,25 +11,14 @@ const packageManagers = ['npm', 'pnpm', 'yarn', 'bun'] as const;
  * @param workingDirectory
  * @returns the package manager
  */
-export async function detectPackageManager(
+export async function selectPackageManager(
 	workingDirectory: string,
 ): Promise<PackageManager | undefined> {
 	const detectedPm = await detect({ cwd: workingDirectory });
-	const pm = normalizePackageManager(detectedPm.agent);
-	return pm;
-}
+	let pm = normalizePackageManager(detectedPm.agent);
 
-/**
- * @param workingDirectory
- * @returns the install status of dependencies
- */
-export async function suggestInstallingDependencies(
-	workingDirectory: string,
-): Promise<'installed' | 'skipped'> {
-	let selectedPm = await detectPackageManager(workingDirectory);
-
-	if (!selectedPm) {
-		selectedPm = await selectPrompt(
+	if (!pm) {
+		pm = await selectPrompt(
 			'Which package manager do you want to install dependencies with?',
 			undefined,
 			[
@@ -44,14 +33,26 @@ export async function suggestInstallingDependencies(
 		);
 	}
 
-	if (!selectedPm || !COMMANDS[selectedPm]) {
+	return pm;
+}
+
+/**
+ * @param packageManager
+ * @param workingDirectory
+ * @returns the install status of dependencies
+ */
+export async function suggestInstallingDependencies(
+	packageManager: PackageManager | undefined,
+	workingDirectory: string,
+): Promise<'installed' | 'skipped'> {
+	if (!packageManager || !COMMANDS[packageManager]) {
 		return 'skipped';
 	}
 
 	const loadingSpinner = spinner();
 	loadingSpinner.start('Installing dependencies...');
 
-	const installCommand = COMMANDS[selectedPm].install;
+	const installCommand = COMMANDS[packageManager].install;
 	const [pm, install] = installCommand.split(' ');
 	await installDependencies(pm, [install], workingDirectory);
 
@@ -59,7 +60,11 @@ export async function suggestInstallingDependencies(
 	return 'installed';
 }
 
-async function installDependencies(command: string, args: string[], workingDirectory: string) {
+export async function installDependencies(
+	command: string,
+	args: string[],
+	workingDirectory: string,
+) {
 	try {
 		await executeCli(command, args, workingDirectory);
 	} catch (error) {

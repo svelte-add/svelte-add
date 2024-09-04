@@ -98,6 +98,14 @@ export async function createProject(cwd: string, supportKit: boolean, supportSve
 		args = ['init', 'vite@latest', directory, '--', '--template', template];
 	}
 
+	let packageManager = undefined;
+	packageManager = await selectPrompt('Choose package manager', packageManager, [
+		{ label: 'npm', value: 'npm' },
+		{ label: 'pnpm', value: 'pnpm' },
+		{ label: 'yarn', value: 'yarn' },
+		{ label: 'bun', value: 'bun' },
+	]);
+
 	const loadingSpinner = spinner();
 	loadingSpinner.start('Initializing template...');
 
@@ -119,5 +127,6 @@ export async function createProject(cwd: string, supportKit: boolean, supportSve
 	return {
 		projectCreated: true,
 		directory: path.join(process.cwd(), directory),
+		packageManager,
 	};
 }
