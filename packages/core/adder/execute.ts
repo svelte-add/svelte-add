@@ -26,9 +26,15 @@ import type {
 	AdderConfigMetadata,
 	ExternalAdderConfig,
 	InlineAdderConfig,
+	Scripts,
 } from './config.js';
 import type { RemoteControlOptions } from './remoteControl.js';
-import { suggestInstallingDependencies } from '../utils/dependencies.js';
+import {
+	getPackageManager,
+	installDependencies,
+	suggestInstallingDependencies,
+	type PackageManager,
+} from '../utils/dependencies.js';
 import { validatePreconditions } from './preconditions.js';
 import { endPrompts, startPrompts } from '../utils/prompts.js';
 import { checkPostconditions, printUnmetPostconditions } from './postconditions.js';
@@ -57,6 +63,7 @@ export type AddersExecutionPlan = {
 	commonCliOptions: AvailableCliOptionValues;
 	cliOptionsByAdderId: Record<string, Record<string, unknown>>;
 	workingDirectory: string;
+	packageManager: PackageManager;
 	selectAddersToApply?: AddersToApplySelector;
 };
 
@@ -95,12 +102,14 @@ export async function executeAdders<Args extends OptionDefinition>(
 		workingDirectory = await detectSvelteDirectory(workingDirectory);
 		const createProject = workingDirectory == null;
 		if (!workingDirectory) workingDirectory = process.cwd();
+		const packageManager = getPackageManager();
 
 		const executionPlan: AddersExecutionPlan = {
 			workingDirectory,
 			createProject,
 			commonCliOptions,
 			cliOptionsByAdderId,
+			packageManager,
 			selectAddersToApply,
 		};
 
@@ -139,7 +148,11 @@ async function executePlan<Args extends OptionDefinition>(
 	}
 
 	const workspace = createEmptyWorkspace();
-	await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+	await populateWorkspaceDetails(
+		workspace,
+		executionPlan.workingDirectory,
+		executionPlan.packageManager,
+	);
 	const projectType: ProjectType = workspace.kit.installed ? 'kit' : 'svelte';
 
 	// select appropriate adders
@@ -217,7 +230,11 @@ async function executePlan<Args extends OptionDefinition>(
 		const adderId = config.metadata.id;
 
 		const adderWorkspace = createEmptyWorkspace<Args>();
-		await populateWorkspaceDetails(adderWorkspace, executionPlan.workingDirectory);
+		await populateWorkspaceDetails(
+			adderWorkspace,
+			executionPlan.workingDirectory,
+			executionPlan.packageManager,
+		);
 		if (executionPlan.cliOptionsByAdderId) {
 			for (const [key, value] of Object.entries(executionPlan.cliOptionsByAdderId[adderId])) {
 				addPropertyToWorkspaceOption(adderWorkspace, key, value);
@@ -251,11 +268,18 @@ async function executePlan<Args extends OptionDefinition>(
 	}
 
 	// reload workspace as adders might have changed i.e. dependencies
-	await populateWorkspaceDetails(workspace, executionPlan.workingDirectory);
+	await populateWorkspaceDetails(
+		workspace,
+		executionPlan.workingDirectory,
+		executionPlan.packageManager,
+	);
 
 	let installStatus;
 	if (!remoteControlled && !executionPlan.commonCliOptions.skipInstall)
-		installStatus = await suggestInstallingDependencies(executionPlan.workingDirectory);
+		installStatus = await suggestInstallingDependencies(
+			executionPlan.packageManager,
+			executionPlan.workingDirectory,
+		);
 
 	if (installStatus === 'installed' && workspace.prettier.installed) {
 		const formatSpinner = spinner();
@@ -281,6 +305,7 @@ async function processInlineAdder<Args extends OptionDefinition>(
 	isInstall: boolean,
 ) {
 	const pkgPath = await installPackages(config, workspace);
+	if (config.scripts) await runScripts(config.scripts, workspace);
 	const updatedOrCreatedFiles = await createOrUpdateFiles(config.files, workspace);
 	await runHooks(config, workspace, isInstall);
 
@@ -370,4 +395,36 @@ async function runHooks<Args extends OptionDefinition>(
 ) {
 	if (isInstall && config.installHook) await config.installHook(workspace);
 	else if (!isInstall && config.uninstallHook) await config.uninstallHook(workspace);
+}
+
+async function runScripts<Args extends OptionDefinition>(
+	scripts: Scripts<Args>[],
+	workspace: Workspace<Args>,
+) {
+	if (scripts.length < 1) return;
+	if (!workspace.packageManager) return;
+
+	const requiresPackageInstall = scripts.some((script) => script.type === 'dependency');
+	if (requiresPackageInstall) {
+		await installDependencies(workspace.packageManager, workspace.cwd);
+	}
+
+	const loadingSpinner = spinner();
+	loadingSpinner.start('Running scripts...');
+
+	for (const script of scripts) {
+		if (script.condition && !script.condition(workspace)) {
+			continue;
+		}
+		try {
+			let command: string = workspace.packageManager;
+			if (command === 'npm') command = 'npx';
+			await executeCli(command, script.args, workspace.cwd);
+		} catch (error) {
+			const typedError = error as Error;
+			throw new Error('Failed to execute scripts: ' + typedError.message);
+		}
+	}
+
+	loadingSpinner.stop('Successfully executed scripts');
 }

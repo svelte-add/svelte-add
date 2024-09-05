@@ -27,6 +27,14 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.cli,
 		},
 	],
+	scripts: [
+		{
+			description: 'Supabase CLI initialization',
+			args: ['supabase', 'init', '--with-intellij-settings false', '--with-vscode-settings false'],
+			type: 'dependency',
+			condition: ({ options }) => options.cli,
+		},
+	],
 	files: [
 		{
 			name: () => `.env`,
@@ -385,6 +393,47 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			},
 			condition: ({ options }) => options.helpers,
 		},
+		{
+			name: () => './supabase/config.toml',
+			contentType: 'text',
+			content: ({ content }) => {
+				content = content.replace('"http://127.0.0.1:3000"', '"http://localhost:5173"');
+				content = content.replace('"https://127.0.0.1:3000"', '"https://localhost:5173/*"');
+				content = content.replace('enable_confirmations = false', 'enable_confirmations = true');
+
+				content = appendContent(
+					content,
+					dedent`
+						\n# Custom email confirmation template
+						[auth.email.template.confirmation]
+						subject = "Confirm Your Signup"
+						content_path = "./supabase/templates/confirmation.html"
+						`,
+				);
+
+				return content;
+			},
+			condition: ({ options }) => options.cli,
+		},
+		{
+			name: () => './supabase/templates/confirmation.html',
+			contentType: 'text',
+			content: () => {
+				return dedent`
+					<html>
+						<body>
+							<h2>Confirm your signup</h2>
+							<p>Follow this link to confirm your user:</p>
+							<p><a
+								href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+								>Confirm your email</a
+							></p>
+						</body>
+					</html>
+					`;
+			},
+			condition: ({ options }) => options.cli,
+		},
 		// Demo routes
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
@@ -558,22 +607,21 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.demo && options.cli,
 		},
 	],
-	nextSteps: ({ options }) => {
+	nextSteps: ({ options, packageManager }) => {
+		let command: string;
+		if (!packageManager || packageManager === 'npm') {
+			command = 'npx';
+		} else {
+			command = packageManager;
+		}
+
 		const steps = [
 			'Visit the Supabase docs: https://supabase.com/docs',
 			'Update the authGuard server hook function with your protected routes',
 		];
 
 		if (options.cli) {
-			steps.push(
-				dedent`Local development environment:
-
-					1. Initialize the local development environment (E.g., ${colors.yellow(`npx supabase init`)} or ${colors.yellow(`pnpm supabase init`)})
-					2. Start the local development services (E.g., ${colors.yellow(`npx supabase start`)} or ${colors.yellow(`pnpm supabase start`)})
-					3. Update ${colors.green('./supabase/config.toml')} [auth] section \`site_url\` and \`additional_redirect_urls\` to use port http://localhost:5173
-					4. Depending on your Auth selections, you may need to create local email templates and update ${colors.green('./supabase/config.toml')}
-					`,
-			);
+			steps.push(`Start local Supabase services: ${colors.yellow(`${command} supabase start`)}`);
 		}
 
 		return steps;
@@ -613,12 +661,12 @@ function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof 
 
 function addEnvVar(content: string, key: string, value: string) {
 	if (!content.includes(key + '=')) {
-		content = appendEnvContent(content, `${key}=${value}`);
+		content = appendContent(content, `${key}=${value}`);
 	}
 	return content;
 }
 
-function appendEnvContent(existing: string, content: string) {
+function appendContent(existing: string, content: string) {
 	const withNewLine = !existing.length || existing.endsWith('\n') ? existing : existing + '\n';
 	return withNewLine + content + '\n';
 }

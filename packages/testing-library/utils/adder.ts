@@ -31,6 +31,6 @@ export async function runAdder(
 	workspace.cwd = workingDirectory;
 	workspace.options = optionValues;
 
-	await populateWorkspaceDetails(workspace, workingDirectory);
+	await populateWorkspaceDetails(workspace, workingDirectory, 'pnpm');
 	await createOrUpdateFiles(adder.tests?.files ?? [], workspace);
 }

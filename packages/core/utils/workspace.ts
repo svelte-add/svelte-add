@@ -5,6 +5,7 @@ import { getJsAstEditor } from '@svelte-add/ast-manipulation';
 import type { OptionDefinition, OptionValues, Question } from '../adder/options.js';
 import { remoteControl } from '../internal.js';
 import path from 'path';
+import type { PackageManager } from './dependencies.js';
 
 export type PrettierData = {
 	installed: boolean;
@@ -27,6 +28,7 @@ export type Workspace<Args extends OptionDefinition> = {
 	typescript: TypescriptData;
 	kit: SvelteKitData;
 	dependencies: Record<string, string>;
+	packageManager: PackageManager;
 };
 
 export type WorkspaceWithoutExplicitArgs = Workspace<Record<string, Question>>;
@@ -46,6 +48,7 @@ export function createEmptyWorkspace<Args extends OptionDefinition>(): Workspace
 			routesDirectory: 'src/routes',
 			libDirectory: 'src/lib',
 		},
+		packageManager: undefined,
 	} as Workspace<Args>;
 }
 
@@ -73,8 +76,10 @@ export function addPropertyToWorkspaceOption(
 export async function populateWorkspaceDetails(
 	workspace: WorkspaceWithoutExplicitArgs,
 	workingDirectory: string,
+	packageManager: PackageManager,
 ) {
 	workspace.cwd = workingDirectory;
+	workspace.packageManager = packageManager;
 
 	const tsConfigFileName = 'tsconfig.json';
 	const viteConfigFileName = 'vite.config.ts';
