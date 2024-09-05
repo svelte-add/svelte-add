@@ -18,7 +18,12 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 	integrationType: 'inline',
 	packages: [
 		{ name: '@supabase/supabase-js', version: '^2.45.3', dev: false },
-		{ name: '@supabase/ssr', version: '^0.5.1', dev: false },
+		{
+			name: '@supabase/ssr',
+			version: '^0.5.1',
+			dev: false,
+			condition: ({ options }) => options.auth.length > 0,
+		},
 		// Local development CLI
 		{
 			name: 'supabase',
@@ -49,15 +54,18 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		{
 			name: ({ typescript }) => `./src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.auth.length > 0,
 			content: ({ options, typescript }) => {
+				const isTs = typescript.installed;
+
 				return dedent`
 					import { createServerClient } from '@supabase/ssr'
-					import {${typescript.installed ? ' type Handle,' : ''} redirect } from '@sveltejs/kit'
+					import {${isTs ? ' type Handle,' : ''} redirect } from '@sveltejs/kit'
 					import { sequence } from '@sveltejs/kit/hooks'
 
 					import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 
-					const supabase${typescript.installed ? ': Handle' : ''} = async ({ event, resolve }) => {
+					const supabase${isTs ? ': Handle' : ''} = async ({ event, resolve }) => {
 						event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 							cookies: {
 								getAll: () => event.cookies.getAll(),
@@ -95,7 +103,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						})
 					}
 
-					const authGuard${typescript.installed ? ': Handle' : ''} = async ({ event, resolve }) => {
+					const authGuard${isTs ? ': Handle' : ''} = async ({ event, resolve }) => {
 						const { session, user } = await event.locals.safeGetSession()
 						event.locals.session = session
 						event.locals.user = user
@@ -117,23 +125,25 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						return resolve(event)
 					}
 
-					export const handle${typescript.installed ? ': Handle' : ''} = sequence(supabase, authGuard)
+					export const handle${isTs ? ': Handle' : ''} = sequence(supabase, authGuard)
 					`;
 			},
 		},
 		{
 			name: () => './src/app.d.ts',
 			contentType: 'text',
-			condition: ({ typescript }) => typescript.installed,
+			condition: ({ options, typescript }) => typescript.installed && options.auth.length > 0,
 			content: ({ options }) => {
+				const { cli, helpers } = options;
+
 				return dedent`
 					import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
-					${options.cli && options.helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
+					${cli && helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
 					declare global {
 						namespace App {
 							// interface Error {}
 							interface Locals {
-								supabase: SupabaseClient${options.cli && options.helpers ? `<Database>` : ''}
+								supabase: SupabaseClient${cli && helpers ? `<Database>` : ''}
 								safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
 								session: Session | null
 								user: User | null
@@ -154,12 +164,15 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/+layout.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.auth.length > 0,
 			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
 				return dedent`
 					import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr'
 					import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
-					${typescript.installed ? `import type { LayoutLoad } from './$types'\n` : ''}
-					export const load${typescript.installed ? ': LayoutLoad' : ''} = async ({ data, depends, fetch }) => {
+					${isTs ? `import type { LayoutLoad } from './$types'\n` : ''}
+					export const load${isTs ? ': LayoutLoad' : ''} = async ({ data, depends, fetch }) => {
 						depends('supabase:auth')
 
 						const supabase = isBrowser()
@@ -192,10 +205,13 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/+layout.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.auth.length > 0,
 			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
 				return dedent`
-					${typescript.installed ? `import type { LayoutServerLoad } from './$types'\n` : ''}
-					export const load${typescript.installed ? ': LayoutServerLoad' : ''} = async ({ locals: { session }, cookies }) => {
+					${isTs ? `import type { LayoutServerLoad } from './$types'\n` : ''}
+					export const load${isTs ? ': LayoutServerLoad' : ''} = async ({ locals: { session }, cookies }) => {
 						return {
 							session,
 							cookies: cookies.getAll(),
@@ -207,6 +223,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/+layout.svelte`,
 			contentType: 'text',
+			condition: ({ options }) => options.auth.length > 0,
 			content: ({ typescript }) => {
 				return dedent`
 					<script${typescript.installed ? ' lang="ts"' : ''}>
@@ -235,35 +252,49 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/auth/+page.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) =>
+				options.auth.includes('basic') || options.auth.includes('magicLink'),
 			content: ({ options, typescript }) => {
+				const isTs = typescript.installed;
+				const { auth, demo: isDemo } = options;
+
+				const isBasic = auth.includes('basic');
+				const isMagicLink = auth.includes('magicLink');
+
 				return dedent`
-					import { redirect } from '@sveltejs/kit'
-					import { PUBLIC_BASE_URL } from '$env/static/public'
-					${typescript.installed ? `import type { Actions } from './$types'\n` : ''}
-					export const actions${typescript.installed ? `: Actions` : ''} = {
+					${
+						isBasic
+							? `
+						import { redirect } from '@sveltejs/kit'
+						import { PUBLIC_BASE_URL } from '$env/static/public'`
+							: ''
+					}
+					${isTs ? `import type { Actions } from './$types'\n` : ''}
+					export const actions${isTs ? `: Actions` : ''} = {${
+						isBasic
+							? `
 						signup: async ({ request, locals: { supabase } }) => {
 							const formData = await request.formData()
-							const email = formData.get('email')${typescript.installed ? ' as string' : ''}
-							const password = formData.get('password')${typescript.installed ? ' as string' : ''}
+							const email = formData.get('email')${isTs ? ' as string' : ''}
+							const password = formData.get('password')${isTs ? ' as string' : ''}
 
-							const { error } = await supabase.auth.signUp(${
-								options.demo
+							const { error } = await supabase.auth.signUp({${
+								isDemo
 									? `
-								{
-									email,
-									password,
-									options: {
-										emailRedirectTo: \`\${PUBLIC_BASE_URL}/private\`,
-									}
-								}`
-									: '{ email, password }'
-							})
+								email,
+								password,
+								options: {
+									emailRedirectTo: \`\${PUBLIC_BASE_URL}/private\`,
+								}
+							})`
+									: ' email, password })'
+							}
 							if (error) {
 								console.error(error)
 								return { message: 'Something went wrong, please try again.' }
 							} else {
 								${
-									options.demo
+									isDemo
 										? `// Redirect to local Inbucket for demo purposes
 								redirect(303, \`http://localhost:54324/m/\${email}\`)`
 										: `return { message: 'Sign up succeeded! Please check your email inbox.' }`
@@ -272,8 +303,8 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						},
 						login: async ({ request, locals: { supabase } }) => {
 							const formData = await request.formData()
-							const email = formData.get('email')${typescript.installed ? ' as string' : ''}
-							const password = formData.get('password')${typescript.installed ? ' as string' : ''}
+							const email = formData.get('email')${isTs ? ' as string' : ''}
+							const password = formData.get('password')${isTs ? ' as string' : ''}
 
 							const { error } = await supabase.auth.signInWithPassword({ email, password })
 							if (error) {
@@ -282,7 +313,25 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							} else {
 								redirect(303, '/private')
 							}
-						},
+						},`
+							: ''
+					}${
+						isMagicLink
+							? `
+						magic: async ({ request, locals: { supabase } }) => {
+							const formData = await request.formData()
+							const email = formData.get('email')${isTs ? ' as string' : ''}
+
+							const { error } = await supabase.auth.signInWithOtp({ email })
+							if (error) {
+								console.error(error)
+								return { message: 'Something went wrong, please try again.' }
+							} else {
+								return { message: 'Check your email inbox.' }
+							}
+						},`
+							: ''
+					}
 					}
 					`;
 			},
@@ -290,30 +339,73 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/auth/+page.svelte`,
 			contentType: 'text',
-			content: ({ typescript }) => {
+			condition: ({ options }) => options.auth.length > 0,
+			content: ({ options, typescript }) => {
+				const isTs = typescript.installed;
+				const { auth } = options;
+
+				const isBasic = auth.includes('basic');
+				const isMagicLink = auth.includes('magicLink');
+				const isOAuth = auth.includes('oauth');
+
 				return dedent`
-					<script lang="ts">
-						import { enhance } from '$app/forms'
-						${typescript.installed ? `import type { ActionData } from './$types'\n` : ''}
-						export let form${typescript.installed ? ': ActionData' : ''}
+					<script${isTs ? ' lang="ts"' : ''}>
+						${isBasic || isMagicLink ? `import { enhance } from '$app/forms'` : ''}
+						${
+							isOAuth
+								? `import { page } from '$app/stores'
+						import { PUBLIC_BASE_URL } from '$env/static/public'`
+								: ''
+						}
+						${(isBasic || isMagicLink) && isTs ? `import type { ActionData } from './$types'` : ''}
+						${isBasic || isMagicLink ? `export let form${isTs ? ': ActionData' : ''}` : ''}
+						${
+							isOAuth
+								? `
+						async function googleOAuth() {
+							await $page.data.supabase.auth.signInWithOAuth({
+								provider: 'google',
+								options: {
+									redirectTo: \`\${PUBLIC_BASE_URL}/auth/callback\`,
+								},
+							})
+						}`
+								: ''
+						}
 					</script>
 
-					<form method="POST" action="?/login" use:enhance>
+					${
+						isBasic || isMagicLink
+							? `
+					<form method="POST" use:enhance>
 						<label>
 							Email
 							<input name="email" type="email" />
-						</label>
+						</label>`
+							: ''
+					}
+					${
+						isBasic
+							? `
 						<label>
 							Password
 							<input name="password" type="password" />
 						</label>
-						<button>Login</button>
-						<button formaction="?/signup">Sign up</button>
-					</form>
-
+						<button formaction="?/login">Login</button>
+						<button formaction="?/signup">Sign up</button>`
+							: ''
+					}
+					${isMagicLink ? '<button formaction="?/magic">Send Magic Link</button>' : ''}
+					${isBasic || isMagicLink ? `</form>` : ''}
+					${isOAuth ? `<button on:click={googleOAuth}>Sign in with Google</button>` : ''}
+					${
+						isBasic || isMagicLink
+							? `
 					{#if form?.message}
 						<p>{form.message}</p>
-					{/if}
+					{/if}`
+							: ''
+					}
 					`;
 			},
 		},
@@ -321,19 +413,23 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/auth/confirm/+server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) =>
+				options.auth.includes('basic') || options.auth.includes('magicLink'),
 			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
 				return dedent`
 					import { error, redirect } from '@sveltejs/kit'
 					import { PUBLIC_BASE_URL } from '$env/static/public'
 					${
-						typescript.installed
+						isTs
 							? dedent`import type { EmailOtpType } from '@supabase/supabase-js'
 							         import type { RequestHandler } from './$types'\n`
 							: ''
 					}
-					export const GET${typescript.installed ? ': RequestHandler' : ''} = async ({ url, locals: { supabase } }) => {
+					export const GET${isTs ? ': RequestHandler' : ''} = async ({ url, locals: { supabase } }) => {
 						const token_hash = url.searchParams.get('token_hash')
-						const type = url.searchParams.get('type')${typescript.installed ? ' as EmailOtpType | null' : ''}
+						const type = url.searchParams.get('type')${isTs ? ' as EmailOtpType | null' : ''}
 						const next = url.searchParams.get('next') ?? \`\${PUBLIC_BASE_URL}/\`
 
 						const redirectTo = new URL(next)
@@ -354,16 +450,49 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		},
 		{
 			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/auth/callback/+server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			condition: ({ options }) => options.auth.includes('oauth'),
+			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
+				return dedent`
+					import { error, redirect } from '@sveltejs/kit'
+					${isTs ? `import type { RequestHandler } from './$types'` : ''}
+
+					export const GET${isTs ? ': RequestHandler' : ''} = async ({ url, locals: { supabase } }) => {
+						const code = url.searchParams.get('code')${isTs ? ' as string' : ''}
+						const next = url.searchParams.get('next') ?? '/'
+
+						if (code) {
+							const { error: authError } = await supabase.auth.exchangeCodeForSession(code)
+							if (authError) {
+								console.error(authError)
+								error(500, 'Something went wrong, please try again.')
+							}
+						}
+
+						throw redirect(303, \`/\${next.slice(1)}\`)
+					}
+					`;
+			},
+		},
+		{
+			name: ({ kit, typescript }) =>
 				`${kit.libDirectory}/server/supabase-admin.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.admin,
 			content: ({ options, typescript }) => {
+				const isTs = typescript.installed;
+				const { cli: isCli, helpers: isHelpers } = options;
+
 				return dedent`
 					import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 					import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
-					${typescript && options.cli && options.helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
+					${isTs && isCli && isHelpers ? `import type { Database } from '$lib/supabase-types'` : ''}
 					import { createClient } from '@supabase/supabase-js'
 
-					export const supabaseAdmin = createClient${typescript && options.cli && options.helpers ? '<Database>' : ''}(
+					export const supabaseAdmin = createClient${isTs && isCli && isHelpers ? '<Database>' : ''}(
 						PUBLIC_SUPABASE_URL,
 						SUPABASE_SERVICE_ROLE_KEY,
 						{
@@ -375,11 +504,11 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					);
 					`;
 			},
-			condition: ({ options }) => options.admin,
 		},
 		{
 			name: () => `package.json`,
 			contentType: 'json',
+			condition: ({ options }) => options.helpers,
 			content: ({ data, typescript }) => {
 				data.scripts ??= {};
 				const scripts: Record<string, string> = data.scripts;
@@ -391,33 +520,46 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						'supabase gen types typescript --local > src/lib/supabase-types.ts';
 				}
 			},
-			condition: ({ options }) => options.helpers,
 		},
 		{
 			name: () => './supabase/config.toml',
 			contentType: 'text',
-			content: ({ content }) => {
+			condition: ({ options }) => options.cli,
+			content: ({ content, options }) => {
 				content = content.replace('"http://127.0.0.1:3000"', '"http://localhost:5173"');
 				content = content.replace('"https://127.0.0.1:3000"', '"https://localhost:5173/*"');
-				content = content.replace('enable_confirmations = false', 'enable_confirmations = true');
 
-				content = appendContent(
-					content,
-					dedent`
-						\n# Custom email confirmation template
-						[auth.email.template.confirmation]
-						subject = "Confirm Your Signup"
-						content_path = "./supabase/templates/confirmation.html"
-						`,
-				);
+				if (options.auth.includes('basic')) {
+					content = content.replace('enable_confirmations = false', 'enable_confirmations = true');
+					content = appendContent(
+						content,
+						dedent`
+							\n# Custom email confirmation template
+							[auth.email.template.confirmation]
+							subject = "Confirm Your Signup"
+							content_path = "./supabase/templates/confirmation.html"
+							`,
+					);
+				}
+				if (options.auth.includes('magicLink')) {
+					content = appendContent(
+						content,
+						dedent`
+							\n# Custom magic link template
+							[auth.email.template.magic_link]
+							subject = "Your Magic Link"
+							content_path = "./supabase/templates/magic_link.html"
+							`,
+					);
+				}
 
 				return content;
 			},
-			condition: ({ options }) => options.cli,
 		},
 		{
 			name: () => './supabase/templates/confirmation.html',
 			contentType: 'text',
+			condition: ({ options }) => options.cli && options.auth.includes('basic'),
 			content: () => {
 				return dedent`
 					<html>
@@ -432,12 +574,30 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					</html>
 					`;
 			},
-			condition: ({ options }) => options.cli,
 		},
-		// Demo routes
+		{
+			name: () => './supabase/templates/magic_link.html',
+			contentType: 'text',
+			condition: ({ options }) => options.cli && options.auth.includes('magicLink'),
+			content: () => {
+				return dedent`
+					<html>
+						<body>
+							<h2>Follow this link to login:</h2>
+							<p><a
+								href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next={{ .RedirectTo }}"
+								>Log in</a
+							></p>
+						</body>
+					</html>
+					`;
+			},
+		},
+		// Demo routes when user has selected Basic Auth
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
 			contentType: 'text',
+			condition: ({ options }) => options.demo,
 			content: ({ typescript }) => {
 				return dedent`
 					<script${typescript.installed ? ' lang="ts"' : ''}>
@@ -454,12 +614,12 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					</pre>
 					`;
 			},
-			condition: ({ options }) => options.demo,
 		},
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/private/+layout.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.demo,
 			content: () => {
 				return dedent`
 					/**
@@ -469,11 +629,11 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					**/
 					`;
 			},
-			condition: ({ options }) => options.demo,
 		},
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/private/+layout.svelte`,
 			contentType: 'text',
+			condition: ({ options }) => options.demo,
 			content: () => {
 				return dedent`
 					<script>
@@ -499,31 +659,34 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					</main>
 					`;
 			},
-			condition: ({ options }) => options.demo,
 		},
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/private/+page.svelte`,
 			contentType: 'text',
+			condition: ({ options }) => options.demo,
 			content: ({ options, typescript }) => {
-				return dedent`
-					<script${typescript.installed ? ' lang="ts"' : ''}>
-						import { invalidate } from '$app/navigation'
-						${typescript.installed ? `import type { EventHandler } from 'svelte/elements'\n` : ''}
-						${typescript.installed ? `import type { PageData } from './$types'\n` : ''}
-						export let data${typescript.installed ? ': PageData' : ''}
+				const isTs = typescript.installed;
+				const { cli } = options;
 
-						$: ({ ${options.cli ? 'notes, supabase, user' : 'user'} } = data)
+				return dedent`
+					<script${isTs ? ' lang="ts"' : ''}>
+						import { invalidate } from '$app/navigation'
+						${isTs ? `import type { EventHandler } from 'svelte/elements'\n` : ''}
+						${isTs ? `import type { PageData } from './$types'\n` : ''}
+						export let data${isTs ? ': PageData' : ''}
+
+						$: ({ ${cli ? 'notes, supabase, user' : 'user'} } = data)
 						${
-							options.cli
+							cli
 								? `
-						let handleSubmit${typescript.installed ? ': EventHandler<SubmitEvent, HTMLFormElement>' : ''}
+						let handleSubmit${isTs ? ': EventHandler<SubmitEvent, HTMLFormElement>' : ''}
 						$: handleSubmit = async (evt) => {
 							evt.preventDefault();
 							if (!evt.target) return;
 
-							const form = evt.target${typescript.installed ? ' as HTMLFormElement' : ''}
+							const form = evt.target${isTs ? ' as HTMLFormElement' : ''}
 
-							const note = (new FormData(form).get('note') ?? '')${typescript.installed ? ' as string' : ''}
+							const note = (new FormData(form).get('note') ?? '')${isTs ? ' as string' : ''}
 							if (!note) return;
 
 							const { error } = await supabase.from('notes').insert({ note });
@@ -539,7 +702,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 					<h1>Private page for user: {user?.email}</h1>
 					${
-						options.cli
+						cli
 							? `
 					<h2>Notes</h2>
 					<ul>
@@ -558,27 +721,29 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					}
 					`;
 			},
-			condition: ({ options }) => options.demo,
 		},
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/private/+page.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
+			condition: ({ options }) => options.demo && options.cli,
 			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
 				return dedent`
-					${typescript.installed ? `import type { PageServerLoad } from './$types'\n` : ''}
-					export const load${typescript.installed ? ': PageServerLoad' : ''} = async ({ depends, locals: { supabase } }) => {
+					${isTs ? `import type { PageServerLoad } from './$types'\n` : ''}
+					export const load${isTs ? ': PageServerLoad' : ''} = async ({ depends, locals: { supabase } }) => {
 						depends('supabase:db:notes')
 						const { data: notes } = await supabase.from('notes').select('id,note').order('id')
 						return { notes: notes ?? [] }
 					}
 					`;
 			},
-			condition: ({ options }) => options.demo && options.cli,
 		},
 		{
 			name: () => './supabase/migrations/00000000000000_demo.sql',
 			contentType: 'text',
+			condition: ({ options }) => options.demo && options.cli,
 			content: () => {
 				return dedent`
 					create table notes (
@@ -604,7 +769,6 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					using ((select auth.uid()) = user_id);
 					`;
 			},
-			condition: ({ options }) => options.demo && options.cli,
 		},
 	],
 	nextSteps: ({ options, packageManager }) => {
@@ -615,13 +779,47 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			command = packageManager;
 		}
 
-		const steps = [
-			'Visit the Supabase docs: https://supabase.com/docs',
-			'Update the authGuard server hook function with your protected routes',
-		];
+		const { auth, cli: isCli, helpers: isHelpers } = options;
+		const isBasic = auth.includes('basic');
+		const isMagicLink = auth.includes('magicLink');
+		const isOAuth = auth.includes('oauth');
 
-		if (options.cli) {
+		const steps = ['Visit the Supabase docs: https://supabase.com/docs'];
+
+		if (isCli) {
 			steps.push(`Start local Supabase services: ${colors.yellow(`${command} supabase start`)}`);
+			steps.push(`
+				Changes to local Supabase config require a restart of the local services: ${colors.yellow(`${command} supabase stop`)} and ${colors.yellow(`${command} supabase start`)}`);
+		}
+
+		if (isHelpers) {
+			steps.push(`
+				Check out ${colors.green(`package.json`)} for the helper scripts. Remember to generate your database types`);
+		}
+
+		if (isBasic || isMagicLink || isOAuth) {
+			steps.push(`
+				Update authGuard in ${colors.green(`./src/hooks.server.js/ts`)} with your protected routes`);
+		}
+
+		if (isBasic || isMagicLink) {
+			steps.push(`Remember to update your hosted project's email templates`);
+
+			if (isCli) {
+				steps.push(`Local email templates are located in ${colors.green(`./supabase/templates`)}`);
+			}
+		}
+
+		if (isOAuth) {
+			steps.push(`
+				'Login with Google' OAuth by default. Update ${colors.green(`src/routes/auth/+page.server.js/ts`)} with chosen provider(s)`);
+			steps.push(`
+				There are additional steps required for each OAuth provider: https://supabase.com/docs/guides/auth/social-login`);
+
+			if (isCli) {
+				steps.push(`
+					Update ${colors.green(`./supabase/config.toml`)} with your chosen OAuth provider(s) details. Look for ${colors.blue(`[auth.external.apple]`)} as an example`);
+			}
 		}
 
 		return steps;

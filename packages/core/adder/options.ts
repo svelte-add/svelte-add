@@ -1,5 +1,11 @@
 import { type OptionValues as CliOptionValues, program } from 'commander';
-import { booleanPrompt, selectPrompt, textPrompt, type PromptOption } from '../utils/prompts.js';
+import {
+	booleanPrompt,
+	multiSelectPrompt,
+	selectPrompt,
+	textPrompt,
+	type PromptOption,
+} from '../utils/prompts.js';
 import type { AdderDetails, AddersExecutionPlan } from './execute.js';
 
 export type BooleanQuestion = {
@@ -24,6 +30,14 @@ export type SelectQuestion<Value = any> = {
 	options: PromptOption<Value>[];
 };
 
+type MultiSelectOption = { value: string; label: string; hint: string };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type MultiSelectQuestion<Values = any[]> = {
+	type: 'multiselect';
+	default: Values;
+	options: MultiSelectOption[];
+};
+
 export type BaseQuestion = {
 	question: string;
 	// TODO: we want this to be akin to OptionValues<Args> so that the options can be inferred
@@ -32,7 +46,7 @@ export type BaseQuestion = {
 };
 
 export type Question = BaseQuestion &
-	(BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion);
+	(BooleanQuestion | StringQuestion | NumberQuestion | SelectQuestion | MultiSelectQuestion);
 
 export type OptionDefinition = Record<string, Question>;
 export type OptionValues<Args extends OptionDefinition> = {
@@ -44,7 +58,9 @@ export type OptionValues<Args extends OptionDefinition> = {
 				? number
 				: Args[K] extends SelectQuestion<infer Value>
 					? Value
-					: never;
+					: Args[K] extends MultiSelectQuestion<infer Value>
+						? Value
+						: never;
 };
 
 export type AvailableCliOptionKeys = keyof AvailableCliOptionKeyTypes;
@@ -203,6 +219,8 @@ export function ensureCorrectOptionTypes<Args extends OptionDefinition>(
 				continue;
 			} else if (option.type === 'select') {
 				continue;
+			} else if (option.type === 'multiselect') {
+				continue;
 			}
 
 			foundInvalidType = true;
@@ -297,6 +315,8 @@ export async function requestMissingOptionsFromUser<Args extends OptionDefinitio
 					option.default,
 					option.options,
 				);
+			} else if (option.type == 'multiselect') {
+				optionValue = await multiSelectPrompt(questionPrefix + option.question, option.options);
 			}
 
 			if (optionValue === 'true') optionValue = true;
