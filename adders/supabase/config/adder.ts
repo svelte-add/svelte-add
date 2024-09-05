@@ -788,17 +788,17 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 		if (isCli) {
 			steps.push(`Start local Supabase services: ${colors.yellow(`${command} supabase start`)}`);
-			steps.push(`
+			steps.push(dedent`
 				Changes to local Supabase config require a restart of the local services: ${colors.yellow(`${command} supabase stop`)} and ${colors.yellow(`${command} supabase start`)}`);
 		}
 
 		if (isHelpers) {
-			steps.push(`
+			steps.push(dedent`
 				Check out ${colors.green(`package.json`)} for the helper scripts. Remember to generate your database types`);
 		}
 
 		if (isBasic || isMagicLink || isOAuth) {
-			steps.push(`
+			steps.push(dedent`
 				Update authGuard in ${colors.green(`./src/hooks.server.js/ts`)} with your protected routes`);
 		}
 
@@ -811,13 +811,13 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		}
 
 		if (isOAuth) {
-			steps.push(`
-				'Login with Google' OAuth by default. Update ${colors.green(`src/routes/auth/+page.server.js/ts`)} with chosen provider(s)`);
-			steps.push(`
+			steps.push(dedent`
+				OAuth added 'Login with Google' by default. Update ${colors.green(`src/routes/auth/+page.server.js/ts`)} with chosen provider(s)`);
+			steps.push(dedent`
 				There are additional steps required for each OAuth provider: https://supabase.com/docs/guides/auth/social-login`);
 
 			if (isCli) {
-				steps.push(`
+				steps.push(dedent`
 					Update ${colors.green(`./supabase/config.toml`)} with your chosen OAuth provider(s) details. Look for ${colors.blue(`[auth.external.apple]`)} as an example`);
 			}
 		}
