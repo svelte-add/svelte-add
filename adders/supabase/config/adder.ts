@@ -35,7 +35,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 	scripts: [
 		{
 			description: 'Supabase CLI initialization',
-			args: ['supabase', 'init', '--with-intellij-settings false', '--with-vscode-settings false'],
+			args: ['supabase', 'init', '--with-intellij-settings=false', '--with-vscode-settings=false'],
 			type: 'dependency',
 			condition: ({ options }) => options.cli,
 		},
@@ -51,6 +51,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			contentType: 'text',
 			content: generateEnvFileContent,
 		},
+		// Common to all Auth options
 		{
 			name: ({ typescript }) => `./src/hooks.server.${typescript.installed ? 'ts' : 'js'}`,
 			contentType: 'text',
@@ -398,6 +399,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					}
 					${isMagicLink ? '<button formaction="?/magic">Send Magic Link</button>' : ''}
 					${isBasic || isMagicLink ? `</form>` : ''}
+					${isBasic ? `<a href="/auth/forgot-password">Forgot password?</a>` : ''}
 					${isOAuth ? `<button on:click={googleOAuth}>Sign in with Google</button>` : ''}
 					${
 						isBasic || isMagicLink
@@ -410,6 +412,128 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					`;
 			},
 		},
+		// Basic auth specific
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/auth/forgot-password/+page.svelte`,
+			contentType: 'text',
+			condition: ({ options }) => options.auth.includes('basic'),
+			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
+				return dedent`
+					<script${isTs ? ' lang="ts"' : ''}>
+						import { enhance } from '$app/forms'
+						
+						${isTs ? `import type { ActionData } from './$types'` : ''}
+
+						export let form${isTs ? ': ActionData' : ''}
+					</script>
+
+					<form method="POST" use:enhance>
+						<label>
+							Email
+							<input name="email" type="email" />
+						</label>
+						<button>Request password reset</button>
+					</form>
+
+					{#if form?.message}
+						<p>{form.message}</p>
+					{/if}
+					`;
+			},
+		},
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/auth/forgot-password/+page.server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			condition: ({ options }) => options.auth.includes('basic'),
+			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
+				return dedent`
+						import { PUBLIC_BASE_URL } from '$env/static/public'
+						${isTs ? `import type { Actions } from './$types'` : ''}
+
+						export const actions${isTs ? `: Actions` : ''} = {
+							default: async ({ request, locals: { supabase } }) => {
+								const formData = await request.formData()
+								const email = formData.get('email')${isTs ? ' as string' : ''}
+
+								const { error } = await supabase.auth.resetPasswordForEmail(
+									email,
+									{ redirectTo: \`\${PUBLIC_BASE_URL}/auth/reset-password\` }
+								)
+								if (error) {
+									console.error(error)
+									return { message: 'Something went wrong, please try again.' }
+								} else {
+									return { message: 'Please check your email inbox.' }
+								}
+							},
+						}
+					`;
+			},
+		},
+		{
+			name: ({ kit, typescript }) =>
+				`${kit.routesDirectory}/auth/reset-password/+page.server.${typescript.installed ? 'ts' : 'js'}`,
+			contentType: 'text',
+			condition: ({ options }) => options.auth.includes('basic'),
+			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
+				return dedent`
+					${isTs ? `import type { Actions } from './$types'` : ''}
+
+					export const actions${isTs ? `: Actions` : ''} = {
+						default: async ({ request, locals: { supabase } }) => {
+							const formData = await request.formData()
+							const password = formData.get('password')${isTs ? ' as string' : ''}
+
+							const { error } = await supabase.auth.updateUser({ password })
+							if (error) {
+								console.error(error)
+								return { message: 'Something went wrong, please try again.' }
+							} else {
+								return { message: 'Password has been reset' }
+							}
+						},
+					}
+					`;
+			},
+		},
+		{
+			name: ({ kit }) => `${kit.routesDirectory}/auth/reset-password/+page.svelte`,
+			contentType: 'text',
+			condition: ({ options }) => options.auth.includes('basic'),
+			content: ({ typescript }) => {
+				const isTs = typescript.installed;
+
+				return dedent`
+					<script${isTs ? ' lang="ts"' : ''}>
+						import { enhance } from '$app/forms'
+						
+						${isTs ? `import type { ActionData } from './$types'` : ''}
+
+						export let form${isTs ? ': ActionData' : ''}
+					</script>
+
+					<form method="POST" use:enhance>
+						<label>
+							New Password
+							<input name="password" type="password" />
+						</label>
+						<button>Reset password</button>
+					</form>
+
+					{#if form?.message}
+						<p>{form.message}</p>
+					{/if}
+					`;
+			},
+		},
+		// Basic auth and/or magic link
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/auth/confirm/+server.${typescript.installed ? 'ts' : 'js'}`,
@@ -449,6 +573,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					`;
 			},
 		},
+		// OAuth only
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.routesDirectory}/auth/callback/+server.${typescript.installed ? 'ts' : 'js'}`,
@@ -478,6 +603,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					`;
 			},
 		},
+		// Admin client helper
 		{
 			name: ({ kit, typescript }) =>
 				`${kit.libDirectory}/server/supabase-admin.${typescript.installed ? 'ts' : 'js'}`,
@@ -506,6 +632,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					`;
 			},
 		},
+		// Helper scripts
 		{
 			name: () => `package.json`,
 			contentType: 'json',
@@ -522,6 +649,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 				}
 			},
 		},
+		// CLI local development configuration
 		{
 			name: () => './supabase/config.toml',
 			contentType: 'text',
@@ -539,6 +667,11 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							[auth.email.template.confirmation]
 							subject = "Confirm Your Signup"
 							content_path = "./supabase/templates/confirmation.html"
+
+							# Custom password reset request template
+							[auth.email.template.recovery]
+							subject = "Reset Your Password"
+							content_path = "./supabase/templates/recovery.html"
 							`,
 					);
 				}
@@ -594,7 +727,26 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					`;
 			},
 		},
-		// Demo routes when user has selected Basic Auth
+		{
+			name: () => './supabase/templates/recovery.html',
+			contentType: 'text',
+			condition: ({ options }) => options.cli && options.auth.includes('basic'),
+			content: () => {
+				return dedent`
+					<html>
+						<body>
+							<h2>Reset Password</h2>
+							<p>Follow this link to reset your password:</p>
+							<p><a
+								href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next={{ .RedirectTo }}"
+								>Reset Password</a
+							></p>
+						</body>
+					</html>
+					`;
+			},
+		},
+		// Demo routes when user has selected Basic Auth and/or Magic Link
 		{
 			name: ({ kit }) => `${kit.routesDirectory}/+page.svelte`,
 			contentType: 'text',
@@ -610,6 +762,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 					  <li><a href="/auth">Login</a></li>
 					  <li><a href="/private">Protected page</a></li>
 					</ul>
+					{#if $page.data.user}
+						<a href="/" on:click={logout} data-sveltekit-reload>Logout</a>
+					{/if}
 					<pre>
 						User: {JSON.stringify($page.data.user, null, 2)}
 					</pre>
@@ -653,7 +808,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						<nav>
 							<a href="/">Home</a>
 						</nav>
-						<button on:click={logout}>Logout</button>
+						<a href="/" on:click={logout} data-sveltekit-reload>Logout</a>
 					</header>
 					<main>
 						<slot />
