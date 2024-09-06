@@ -57,6 +57,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.auth.length > 0,
 			content: ({ options, typescript }) => {
 				const isTs = typescript.installed;
+				const { demo: isDemo } = options;
 
 				return dedent`
 					import { createServerClient } from '@supabase/ssr'
@@ -108,7 +109,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						event.locals.session = session
 						event.locals.user = user
 						${
-							options.demo
+							isDemo
 								? `
 						if (!event.locals.session && event.url.pathname.startsWith('/private')) {
 							redirect(303, '/auth')
@@ -134,16 +135,16 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			contentType: 'text',
 			condition: ({ options, typescript }) => typescript.installed && options.auth.length > 0,
 			content: ({ options }) => {
-				const { cli, helpers } = options;
+				const { cli: isCli, helpers: isHelpers } = options;
 
 				return dedent`
 					import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
-					${cli && helpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
+					${isCli && isHelpers ? `import type { Database } from '$lib/supabase-types'\n` : ''}
 					declare global {
 						namespace App {
 							// interface Error {}
 							interface Locals {
-								supabase: SupabaseClient${cli && helpers ? `<Database>` : ''}
+								supabase: SupabaseClient${isCli && isHelpers ? `<Database>` : ''}
 								safeGetSession: () => Promise<{ session: Session | null; user: User | null }>
 								session: Session | null
 								user: User | null
@@ -666,7 +667,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			condition: ({ options }) => options.demo,
 			content: ({ options, typescript }) => {
 				const isTs = typescript.installed;
-				const { cli } = options;
+				const { cli: isCli } = options;
 
 				return dedent`
 					<script${isTs ? ' lang="ts"' : ''}>
@@ -675,9 +676,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						${isTs ? `import type { PageData } from './$types'\n` : ''}
 						export let data${isTs ? ': PageData' : ''}
 
-						$: ({ ${cli ? 'notes, supabase, user' : 'user'} } = data)
+						$: ({ ${isCli ? 'notes, supabase, user' : 'user'} } = data)
 						${
-							cli
+							isCli
 								? `
 						let handleSubmit${isTs ? ': EventHandler<SubmitEvent, HTMLFormElement>' : ''}
 						$: handleSubmit = async (evt) => {
@@ -702,7 +703,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 					<h1>Private page for user: {user?.email}</h1>
 					${
-						cli
+						isCli
 							? `
 					<h2>Notes</h2>
 					<ul>
