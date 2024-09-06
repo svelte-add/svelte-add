@@ -35,26 +35,20 @@ export async function suggestInstallingDependencies(
 		return 'skipped';
 	}
 
-	await installDependencies(selectedPm, workingDirectory);
+	const loadingSpinner = spinner();
+	loadingSpinner.start('Installing dependencies...');
 
+	const installCommand = COMMANDS[selectedPm].install;
+	const [pm, install] = installCommand.split(' ');
+	await installDependencies(pm, [install], workingDirectory);
+
+	loadingSpinner.stop('Successfully installed dependencies');
 	return 'installed';
 }
 
-export async function installDependencies(
-	packageManager: PackageManager,
-	workingDirectory: string,
-) {
-	if (!packageManager) throw new Error('unable to install dependencies: No package manager found');
+async function installDependencies(command: string, args: string[], workingDirectory: string) {
 	try {
-		const installCommand = COMMANDS[packageManager].install;
-		const [pm, install] = installCommand.split(' ');
-
-		const loadingSpinner = spinner();
-		loadingSpinner.start('Installing dependencies...');
-
-		await executeCli(pm, [install], workingDirectory);
-
-		loadingSpinner.stop('Successfully installed dependencies');
+		await executeCli(command, args, workingDirectory);
 	} catch (error) {
 		const typedError = error as Error;
 		throw new Error('unable to install dependencies: ' + typedError.message);

@@ -31,7 +31,6 @@ import type {
 import type { RemoteControlOptions } from './remoteControl.js';
 import {
 	getPackageManager,
-	installDependencies,
 	suggestInstallingDependencies,
 	type PackageManager,
 } from '../utils/dependencies.js';
@@ -41,6 +40,7 @@ import { checkPostconditions, printUnmetPostconditions } from './postconditions.
 import { displayNextSteps } from './nextSteps.js';
 import { spinner, log, cancel } from '@svelte-add/clack-prompts';
 import { executeCli } from '../utils/cli.js';
+import { COMMANDS } from 'package-manager-detector/agents';
 
 export type AdderDetails<Args extends OptionDefinition> = {
 	config: AdderConfig<Args>;
@@ -404,11 +404,6 @@ async function runScripts<Args extends OptionDefinition>(
 	if (scripts.length < 1) return;
 	if (!workspace.packageManager) return;
 
-	const requiresPackageInstall = scripts.some((script) => script.type === 'dependency');
-	if (requiresPackageInstall) {
-		await installDependencies(workspace.packageManager, workspace.cwd);
-	}
-
 	const loadingSpinner = spinner();
 	loadingSpinner.start('Running scripts...');
 
@@ -417,9 +412,9 @@ async function runScripts<Args extends OptionDefinition>(
 			continue;
 		}
 		try {
-			let command: string = workspace.packageManager;
-			if (command === 'npm') command = 'npx';
-			await executeCli(command, script.args, workspace.cwd);
+			const executeCommand = COMMANDS[workspace.packageManager].execute;
+			const [pm, execute] = executeCommand.split(' ');
+			await executeCli(pm, [execute === '{0}' ? '' : execute, ...script.args], workspace.cwd);
 		} catch (error) {
 			const typedError = error as Error;
 			throw new Error('Failed to execute scripts: ' + typedError.message);
