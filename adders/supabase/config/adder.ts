@@ -262,6 +262,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 				const isBasic = auth.includes('basic');
 				const isMagicLink = auth.includes('magicLink');
+				const isOAuth = auth.includes('oauth');
 
 				return dedent`
 					${
@@ -271,7 +272,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 						import { PUBLIC_BASE_URL } from '$env/static/public'`
 							: ''
 					}
-					${isTs ? `import type { Actions } from './$types'\n` : ''}
+					${isTs ? `import type { Actions } from './$types'` : ''}
+					${isTs && isOAuth ? `import type { Provider } from '@supabase/supabase-js'` : ''}
+					
 					export const actions${isTs ? `: Actions` : ''} = {${
 						isBasic
 							? `
@@ -312,9 +315,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							if (error) {
 								console.error(error)
 								return { message: 'Something went wrong, please try again.' }
-							} else {
-								redirect(303, '/private')
 							}
+							
+							redirect(303, '${isDemo ? '/private' : '/'}')
 						},`
 							: ''
 					}${
@@ -328,9 +331,32 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							if (error) {
 								console.error(error)
 								return { message: 'Something went wrong, please try again.' }
-							} else {
-								return { message: 'Check your email inbox.' }
 							}
+							
+							return { message: 'Check your email inbox.' }
+							
+						},`
+							: ''
+					}
+					${
+						isOAuth
+							? `
+						oauth: async ({ request, locals: { supabase } }) => {
+							const formData = await request.formData()
+							const provider = formData.get('provider')${isTs ? ' as Provider' : ''}
+
+							const { data, error } = await supabase.auth.signInWithOAuth({
+								provider,
+								options: {
+									redirectTo: \`\${PUBLIC_BASE_URL}/auth/callback\`,
+								}
+							})
+							if (error) {
+								console.error(error)
+								return { message: 'Something went wrong, please try again.' }
+							}
+							
+							redirect(303, data.url)
 						},`
 							: ''
 					}
@@ -360,26 +386,15 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 								: ''
 						}
 						${(isBasic || isMagicLink) && isTs ? `import type { ActionData } from './$types'` : ''}
+
 						${isBasic || isMagicLink ? `export let form${isTs ? ': ActionData' : ''}` : ''}
-						${
-							isOAuth
-								? `
-						async function googleOAuth() {
-							await $page.data.supabase.auth.signInWithOAuth({
-								provider: 'google',
-								options: {
-									redirectTo: \`\${PUBLIC_BASE_URL}/auth/callback\`,
-								},
-							})
-						}`
-								: ''
-						}
+						${isOAuth ? `let provider = ''` : ''}
 					</script>
 
+					<form method="POST" use:enhance>
 					${
 						isBasic || isMagicLink
 							? `
-					<form method="POST" use:enhance>
 						<label>
 							Email
 							<input name="email" type="email" />
@@ -393,22 +408,27 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							Password
 							<input name="password" type="password" />
 						</label>
+						<a href="/auth/forgot-password">Forgot password?</a>
+
 						<button formaction="?/login">Login</button>
 						<button formaction="?/signup">Sign up</button>`
 							: ''
 					}
 					${isMagicLink ? '<button formaction="?/magic">Send Magic Link</button>' : ''}
-					${isBasic || isMagicLink ? `</form>` : ''}
-					${isBasic ? `<a href="/auth/forgot-password">Forgot password?</a>` : ''}
-					${isOAuth ? `<button on:click={googleOAuth}>Sign in with Google</button>` : ''}
 					${
-						isBasic || isMagicLink
+						isOAuth
 							? `
-					{#if form?.message}
-						<p>{form.message}</p>
-					{/if}`
+							<input type="hidden" name="provider" id="provider" bind:value={provider} />
+							<button formaction="?/oauth" id="google" on:click={() => (provider = 'google')}>Sign in with Google</button>
+							`
 							: ''
 					}
+					</form>
+					
+					
+					{#if form?.message}
+						<p>{form.message}</p>
+					{/if}
 					`;
 			},
 		},
@@ -655,10 +675,14 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 			contentType: 'text',
 			condition: ({ options }) => options.cli,
 			content: ({ content, options }) => {
+				const isBasic = options.auth.includes('basic');
+				const isMagicLink = options.auth.includes('magicLink');
+				const isOAuth = options.auth.includes('oauth');
+
 				content = content.replace('"http://127.0.0.1:3000"', '"http://localhost:5173"');
 				content = content.replace('"https://127.0.0.1:3000"', '"https://localhost:5173/*"');
 
-				if (options.auth.includes('basic')) {
+				if (isBasic) {
 					content = content.replace('enable_confirmations = false', 'enable_confirmations = true');
 					content = appendContent(
 						content,
@@ -675,7 +699,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							`,
 					);
 				}
-				if (options.auth.includes('magicLink')) {
+				if (isMagicLink) {
 					content = appendContent(
 						content,
 						dedent`
@@ -683,6 +707,20 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 							[auth.email.template.magic_link]
 							subject = "Your Magic Link"
 							content_path = "./supabase/templates/magic_link.html"
+							`,
+					);
+				}
+				if (isOAuth) {
+					content = appendContent(
+						content,
+						dedent`
+							\n# Local Google auth configuration
+							[auth.external.google]
+							enabled = true
+							client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+							secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+							redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"
+							skip_nonce_check = true
 							`,
 					);
 				}
@@ -755,6 +793,13 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 				return dedent`
 					<script${typescript.installed ? ' lang="ts"' : ''}>
 						import { page } from "$app/stores";
+
+						$: logout = async () => {
+							const { error } = await $page.data.supabase.auth.signOut();
+							if (error) {
+								console.error(error);
+							}
+						};
 					</script>
 
 					<h1>Welcome to SvelteKit with Supabase</h1>
@@ -959,7 +1004,7 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 		}
 
 		if (isBasic || isMagicLink) {
-			steps.push(`Remember to update your hosted project's email templates`);
+			steps.push(`Update your hosted project's email templates`);
 
 			if (isCli) {
 				steps.push(`Local email templates are located in ${colors.green(`./supabase/templates`)}`);
@@ -968,13 +1013,15 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 		if (isOAuth) {
 			steps.push(dedent`
-				OAuth added 'Login with Google' by default. Update ${colors.green(`src/routes/auth/+page.server.js/ts`)} with chosen provider(s)`);
+				${colors.bold(`OAuth:`)} Refer to the docs for other OAuth providers: https://supabase.com/docs/guides/auth/social-login`);
 			steps.push(dedent`
-				There are additional steps required for each OAuth provider: https://supabase.com/docs/guides/auth/social-login`);
+				${colors.bold(`OAuth:`)} Enable Google in your hosted project dashboard and populate with your application's Google OAuth credentials. Create them via: https://console.cloud.google.com/apis/credentials/consent`);
 
 			if (isCli) {
 				steps.push(dedent`
-					Update ${colors.green(`./supabase/config.toml`)} with your chosen OAuth provider(s) details. Look for ${colors.blue(`[auth.external.apple]`)} as an example`);
+					${colors.bold(`OAuth (Local Dev):`)} Add your application's Google OAuth credentials to ${colors.green(`.env`)}. Create them via: https://console.cloud.google.com/apis/credentials/consent`);
+				steps.push(dedent`
+					${colors.bold(`OAuth (Local Dev):`)} To enable other local providers (or disable Google) update ${colors.green(`./supabase/config.toml`)} and restart the local Supabase services`);
 			}
 		}
 
@@ -983,18 +1030,21 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 });
 
 function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof availableOptions>) {
+	const isCli = options.cli;
+	const isOAuth = options.auth.includes('oauth');
+
 	content = addEnvVar(content, 'PUBLIC_BASE_URL', '"http://localhost:5173"');
 	content = addEnvVar(
 		content,
 		'PUBLIC_SUPABASE_URL',
 		// Local development env always has the same credentials, prepopulate the local dev env file
-		options.cli ? '"http://127.0.0.1:54321"' : '"<your_supabase_project_url>"',
+		isCli ? '"http://127.0.0.1:54321"' : '"<your_supabase_project_url>"',
 	);
 	content = addEnvVar(
 		content,
 		'PUBLIC_SUPABASE_ANON_KEY',
 		// Local development env always has the same credentials, prepopulate the local dev env file
-		options.cli
+		isCli
 			? '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"'
 			: '"<your_supabase_anon_key>"',
 	);
@@ -1004,11 +1054,24 @@ function generateEnvFileContent({ content, options }: TextFileEditorArgs<typeof 
 				content,
 				'SUPABASE_SERVICE_ROLE_KEY',
 				// Local development env always has the same credentials, prepopulate the local dev env file
-				options.cli
+				isCli
 					? '"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"'
 					: '"<your_supabase_service_role_key>"',
 			)
 		: content;
+
+	if (isOAuth) {
+		content = addEnvVar(
+			content,
+			'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID',
+			'"<your_google_oauth_client_id"',
+		);
+		content = addEnvVar(
+			content,
+			'SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET',
+			'"<your_google_oauth_secret"',
+		);
+	}
 
 	return content;
 }
