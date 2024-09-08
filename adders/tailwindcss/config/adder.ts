@@ -17,17 +17,23 @@ export const adder = defineAdderConfig({
 	options,
 	integrationType: 'inline',
 	packages: [
-		{ name: 'tailwindcss', version: '^3.4.9', dev: true },
+		{ name: 'tailwindcss', version: '^3.4.10', dev: true },
 		{ name: 'autoprefixer', version: '^10.4.20', dev: true },
 		{
 			name: '@tailwindcss/typography',
-			version: '^0.5.14',
+			version: '^0.5.15',
 			dev: true,
 			condition: ({ options }) => options.typography,
 		},
 		{
+			name: '@tailwindcss/forms',
+			version: '^0.5.9',
+			dev: true,
+			condition: ({ options }) => options.forms,
+		},
+		{
 			name: 'prettier-plugin-tailwindcss',
-			version: '^0.6.5',
+			version: '^0.6.6',
 			dev: true,
 			condition: ({ prettier }) => prettier.installed,
 		},
@@ -69,6 +75,10 @@ export const adder = defineAdderConfig({
 
 				if (options.typography) {
 					const requireCall = functions.call('require', ['@tailwindcss/typography']);
+					array.push(pluginsArray, requireCall);
+				}
+				if (options.forms) {
+					const requireCall = functions.call('require', ['@tailwindcss/forms']);
 					array.push(pluginsArray, requireCall);
 				}
 			},

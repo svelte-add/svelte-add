@@ -5,6 +5,9 @@ import type { SvelteFileEditorArgs } from '@svelte-add/core/files/processors.js'
 
 const divId = 'myDiv';
 const typographyDivId = 'myTypographyDiv';
+const formsInputId = 'myFormInput';
+
+const defaultOptions = { forms: false, typography: false };
 
 export const tests = defineAdderTests({
 	files: [
@@ -14,6 +17,7 @@ export const tests = defineAdderTests({
 			content: (editor) => {
 				prepareCoreTest(editor);
 				if (editor.options.typography) prepareTypographyTest(editor);
+				if (editor.options.forms) prepareFormsTest(editor);
 			},
 			condition: ({ kit }) => kit.installed,
 		},
@@ -23,12 +27,17 @@ export const tests = defineAdderTests({
 			content: (editor) => {
 				prepareCoreTest(editor);
 				if (editor.options.typography) prepareTypographyTest(editor);
+				if (editor.options.forms) prepareFormsTest(editor);
 			},
 			condition: ({ kit }) => !kit.installed,
 		},
 	],
 	options,
-	optionValues: [{ typography: false }, { typography: true }],
+	optionValues: [
+		defaultOptions,
+		{ ...defaultOptions, forms: true },
+		{ ...defaultOptions, typography: true },
+	],
 	tests: [
 		{
 			name: 'core properties',
@@ -51,6 +60,17 @@ export const tests = defineAdderTests({
 				await expectProperty(selector, 'text-decoration-line', 'line-through');
 			},
 		},
+		{
+			name: 'forms properties',
+			condition: ({ forms }) => forms,
+			run: async ({ expectProperty }) => {
+				const selector = '#' + formsInputId;
+				await expectProperty(selector, 'padding-top', '8px');
+				await expectProperty(selector, 'padding-left', '12px');
+				await expectProperty(selector, 'font-size', '18px');
+				await expectProperty(selector, 'line-height', '28px');
+			},
+		},
 	],
 });
 
@@ -64,4 +84,9 @@ function prepareTypographyTest<Args extends OptionDefinition>({
 }: SvelteFileEditorArgs<Args>) {
 	const div = html.element('p', { class: 'text-lg text-right line-through', id: typographyDivId });
 	html.appendElement(html.ast.childNodes, div);
+}
+
+function prepareFormsTest<Args extends OptionDefinition>({ html }: SvelteFileEditorArgs<Args>) {
+	const input = html.element('input', { type: 'email', class: 'text-lg', id: formsInputId });
+	html.appendElement(html.ast.childNodes, input);
 }

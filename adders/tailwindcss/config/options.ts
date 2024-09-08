@@ -6,4 +6,9 @@ export const options = defineAdderOptions({
 		default: false,
 		type: 'boolean',
 	},
+	forms: {
+		question: 'Do you want to use forms plugin?',
+		default: false,
+		type: 'boolean',
+	},
 });
