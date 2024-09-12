@@ -62,7 +62,9 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 
 				return dedent`
 					import { createServerClient } from '@supabase/ssr'
-					import {${isTs ? ' type Handle,' : ''} redirect } from '@sveltejs/kit'
+					${!isTs && isDemo ? `import { redirect } from '@sveltejs/kit'` : ''}
+					${isTs && isDemo ? `import { type Handle, redirect } from '@sveltejs/kit'` : ''}
+					${isTs && !isDemo ? `import type { Handle } from '@sveltejs/kit'` : ''}
 					import { sequence } from '@sveltejs/kit/hooks'
 
 					import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
@@ -265,13 +267,8 @@ Start your project with a Postgres database, Authentication, instant APIs, Edge 
 				const isOAuth = auth.includes('oauth');
 
 				return dedent`
-					${
-						isBasic
-							? `
-						import { redirect } from '@sveltejs/kit'
-						import { PUBLIC_BASE_URL } from '$env/static/public'`
-							: ''
-					}
+					${isBasic || isOAuth ? `import { redirect } from '@sveltejs/kit'` : ''}
+					${isDemo || isOAuth ? `import { PUBLIC_BASE_URL } from '$env/static/public'` : ''}
 					${isTs ? `import type { Actions } from './$types'` : ''}
 					${isTs && isOAuth ? `import type { Provider } from '@supabase/supabase-js'` : ''}
 					
