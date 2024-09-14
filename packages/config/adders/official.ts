@@ -2,10 +2,10 @@ import type { AdderCategories } from '../categories.js';
 
 export const adderCategories: AdderCategories = {
 	codeQuality: ['prettier', 'eslint'],
-	css: ['tailwindcss', 'bulma', 'bootstrap'],
+	testing: ['vitest', 'playwright'],
+	css: ['tailwindcss'],
 	db: ['drizzle'],
-	markdown: ['mdsvex'],
-	tools: ['storybook', 'routify', 'paraglide'],
+	additional: ['storybook', 'mdsvex', 'paraglide', 'routify'],
 };
 
 export const adderIds = Object.values(adderCategories).flatMap((x) => x);

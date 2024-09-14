@@ -1,5 +1,5 @@
 import { defineAdderTests } from '@svelte-add/core';
-import { options } from './options';
+import { options } from './options.js';
 
 export const tests = defineAdderTests({
 	files: [],

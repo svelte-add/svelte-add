@@ -1,5 +1,81 @@
 # svelte-add
 
+## 2.7.3
+
+### Patch Changes
+
+- chore: add cli repository details ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- Updated dependencies [[`22a34b97c90b3f43f16dc32ca59aa93f187e5edc`](https://github.com/svelte-add/svelte-add/commit/22a34b97c90b3f43f16dc32ca59aa93f187e5edc)]:
+  - @svelte-add/config@1.5.2
+  - @svelte-add/core@2.10.4
+
+## 2.7.2
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
+- Updated dependencies [[`30f4056e6253c633672039cef05dbc8445fe00b6`](https://github.com/svelte-add/svelte-add/commit/30f4056e6253c633672039cef05dbc8445fe00b6)]:
+  - @svelte-add/config@1.5.1
+  - @svelte-add/core@2.10.3
+
+## 2.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`04fd3bad9e3b205e7eed770dd5f2dbf53b427190`](https://github.com/svelte-add/svelte-add/commit/04fd3bad9e3b205e7eed770dd5f2dbf53b427190)]:
+  - @svelte-add/core@2.10.2
+
+## 2.7.0
+
+### Minor Changes
+
+- feat: remove bulma and bootstrap adders ([#533](https://github.com/svelte-add/svelte-add/pull/533))
+
+### Patch Changes
+
+- fix: removed `postcss` install from `tailwindcss` adder ([#532](https://github.com/svelte-add/svelte-add/pull/532))
+
+- chore: replace `preferred-pm` with `package-manager-detector` ([#535](https://github.com/svelte-add/svelte-add/pull/535))
+
+- Updated dependencies [[`4fbcb78be02a454999e4c82c0112b6d4b3807c34`](https://github.com/svelte-add/svelte-add/commit/4fbcb78be02a454999e4c82c0112b6d4b3807c34), [`c134afadd514b9887eaa3a59b4fbda5adda288fb`](https://github.com/svelte-add/svelte-add/commit/c134afadd514b9887eaa3a59b4fbda5adda288fb)]:
+  - @svelte-add/config@1.5.0
+  - @svelte-add/core@2.10.1
+
+## 2.6.2
+
+### Patch Changes
+
+- chore: use `defineConfig` helper for `playwright` ([#528](https://github.com/svelte-add/svelte-add/pull/528))
+
+## 2.6.1
+
+### Patch Changes
+
+- chore: upgrade to typescript-eslint v8 final ([#525](https://github.com/svelte-add/svelte-add/pull/525))
+
+## 2.6.0
+
+### Minor Changes
+
+- feat: playwright adder ([#518](https://github.com/svelte-add/svelte-add/pull/518))
+
+- feat: vitest adder ([#519](https://github.com/svelte-add/svelte-add/pull/519))
+
+### Patch Changes
+
+- Updated dependencies [[`196c49fb904158b6083a4d5b0e686029a5ad80df`](https://github.com/svelte-add/svelte-add/commit/196c49fb904158b6083a4d5b0e686029a5ad80df), [`1dba081f3320817c06946731121208c0702e3d57`](https://github.com/svelte-add/svelte-add/commit/1dba081f3320817c06946731121208c0702e3d57), [`5e0eb2d3ef029baa26acf9ac4cd281d747eeb9ec`](https://github.com/svelte-add/svelte-add/commit/5e0eb2d3ef029baa26acf9ac4cd281d747eeb9ec)]:
+  - @svelte-add/config@1.4.0
+
+## 2.5.2
+
+### Patch Changes
+
+- feat: generate `.env.example` file for drizzle adder ([#516](https://github.com/svelte-add/svelte-add/pull/516))
+
 ## 2.5.1
 
 ### Patch Changes

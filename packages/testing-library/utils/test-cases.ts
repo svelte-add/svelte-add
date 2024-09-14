@@ -4,7 +4,7 @@ import { ProjectTypesList } from './create-project';
 import { runTests } from './test';
 import { uid } from 'uid';
 import { startDevServer, stopDevServer } from './dev-server';
-import { startBrowser, stopBrowser } from './browser-control';
+import { openPage, startBrowser, stopBrowser } from './browser-control';
 import {
 	getTemplatesDirectory,
 	installDependencies,
@@ -58,7 +58,7 @@ export function generateTestCases(adders: AdderWithoutExplicitArgs[]) {
 	return testCases;
 }
 
-export async function runAdderTests(
+export async function setupAdder(
 	template: string,
 	adder: AdderWithoutExplicitArgs,
 	options: OptionValues<Record<string, Question>>,
@@ -81,10 +81,20 @@ export async function runAdderTests(
 
 	await runAdder(adder, workingDirectory, options);
 
-	await installDependencies(workingDirectory);
+	return workingDirectory;
+}
 
-	const { url, devServer } = await startDevServer(workingDirectory, adder.tests.command ?? 'dev');
-	const { browser, page } = await startBrowser(url, testOptions.headless);
+export async function executeAdderTests(
+	workingDirectory: string,
+	adder: AdderWithoutExplicitArgs,
+	options: OptionValues<Record<string, Question>>,
+	testOptions: TestOptions,
+) {
+	if (!adder.tests) return;
+
+	const cmd = adder.tests.command ?? 'dev';
+	const { url, devServer } = await startDevServer(workingDirectory, cmd);
+	const page = await openPage(url);
 
 	try {
 		const errorOcurred = await page.$('vite-error-overlay');
@@ -96,7 +106,7 @@ export async function runAdderTests(
 
 		await runTests(page, adder, options);
 	} finally {
-		await stopBrowser(browser, page);
+		await page.close();
 		await stopDevServer(devServer);
 	}
 }
@@ -112,30 +122,50 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 	const syncTasks: Array<() => Promise<void>> = [];
 	const asyncTestCaseInputs: TestCase[] = [];
 	const syncTestCaseInputs: TestCase[] = [];
-	for (const values of testCases.values()) {
-		for (const testCase of values) {
-			const taskExecutor = async () => {
-				try {
-					await runAdderTests(testCase.template, testCase.adder, testCase.options, testOptions);
-				} catch (e) {
-					const error = e as Error;
-					const adderError: AdderError = {
-						name: 'AdderError',
-						adder: testCase.adder.config.metadata.id,
-						template: testCase.template,
-						message: error.message,
-					};
-					throw adderError;
-				}
-			};
+	const tests: { testCase: TestCase; cwd: string }[] = [];
 
-			if (testCase.runSynchronously) {
-				syncTasks.push(taskExecutor);
-				syncTestCaseInputs.push(testCase);
-			} else {
-				asyncTasks.push(taskExecutor);
-				asyncTestCaseInputs.push(testCase);
+	console.log('executing adders');
+	for (const cases of testCases.values()) {
+		for (const testCase of cases) {
+			if (testCase.adder.tests?.tests.length === 0) continue;
+			const cwd = await setupAdder(
+				testCase.template,
+				testCase.adder,
+				testCase.options,
+				testOptions,
+			);
+			tests.push({ testCase, cwd });
+		}
+	}
+
+	console.log('installing dependencies');
+	await installDependencies(testOptions.outputDirectory);
+
+	await startBrowser(testOptions.headless);
+
+	console.log('running tests');
+	for (const { cwd, testCase } of tests) {
+		const taskExecutor = async () => {
+			try {
+				await executeAdderTests(cwd, testCase.adder, testCase.options, testOptions);
+			} catch (e) {
+				const error = e as Error;
+				const adderError: AdderError = {
+					name: 'AdderError',
+					adder: testCase.adder.config.metadata.id,
+					template: testCase.template,
+					message: error.message,
+				};
+				throw adderError;
 			}
+		};
+
+		if (testCase.runSynchronously) {
+			syncTasks.push(taskExecutor);
+			syncTestCaseInputs.push(testCase);
+		} else {
+			asyncTasks.push(taskExecutor);
+			asyncTestCaseInputs.push(testCase);
 		}
 	}
 
@@ -172,6 +202,8 @@ export async function runTestCases(testCases: Map<string, TestCase[]>, testOptio
 			);
 		},
 	});
+
+	await stopBrowser();
 
 	const rejectedAsyncPromisesResult = allAsyncResults.rejectedIndexes.map<AdderError>(
 		(x) => allAsyncResults.taskResults[x] as unknown as AdderError,

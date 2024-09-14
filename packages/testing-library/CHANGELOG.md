@@ -1,5 +1,47 @@
 # @svelte-add/testing-library
 
+## 2.1.17
+
+### Patch Changes
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- Updated dependencies [[`22a34b97c90b3f43f16dc32ca59aa93f187e5edc`](https://github.com/svelte-add/svelte-add/commit/22a34b97c90b3f43f16dc32ca59aa93f187e5edc)]:
+  - @svelte-add/core@2.10.4
+
+## 2.1.16
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
+- Updated dependencies [[`30f4056e6253c633672039cef05dbc8445fe00b6`](https://github.com/svelte-add/svelte-add/commit/30f4056e6253c633672039cef05dbc8445fe00b6)]:
+  - @svelte-add/core@2.10.3
+
+## 2.1.15
+
+### Patch Changes
+
+- fix: execute adders in order ([#539](https://github.com/svelte-add/svelte-add/pull/539))
+
+- Updated dependencies [[`04fd3bad9e3b205e7eed770dd5f2dbf53b427190`](https://github.com/svelte-add/svelte-add/commit/04fd3bad9e3b205e7eed770dd5f2dbf53b427190)]:
+  - @svelte-add/core@2.10.2
+
+## 2.1.14
+
+### Patch Changes
+
+- fix: empty test cases are no longer needed ([#531](https://github.com/svelte-add/svelte-add/pull/531))
+
+- Updated dependencies [[`c134afadd514b9887eaa3a59b4fbda5adda288fb`](https://github.com/svelte-add/svelte-add/commit/c134afadd514b9887eaa3a59b4fbda5adda288fb)]:
+  - @svelte-add/core@2.10.1
+
+## 2.1.13
+
+### Patch Changes
+
+- chore: restructured execution order of tests ([#527](https://github.com/svelte-add/svelte-add/pull/527))
+
 ## 2.1.12
 
 ### Patch Changes

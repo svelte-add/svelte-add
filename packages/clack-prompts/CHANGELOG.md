@@ -1,5 +1,11 @@
 # @clack/prompts
 
+## 0.9.1
+
+### Patch Changes
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
 ## 0.9.0
 
 ### Minor Changes

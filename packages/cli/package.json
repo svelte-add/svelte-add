@@ -1,11 +1,15 @@
 {
 	"name": "svelte-add",
-	"version": "2.5.1",
+	"version": "2.7.3",
 	"bin": "build/index.js",
 	"type": "module",
 	"files": [
 		"build"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/packages/cli"
+	},
 	"dependencies": {
 		"@svelte-add/config": "workspace:*",
 		"@svelte-add/core": "workspace:*"

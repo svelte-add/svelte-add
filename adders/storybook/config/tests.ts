@@ -1,14 +1,15 @@
 import { defineAdderTests } from '@svelte-add/core';
 import { options } from './options.js';
 
+let port = 6006;
+
 export const tests = defineAdderTests({
 	options,
 	optionValues: [],
-	// If you run multiple of these tests in parallel, most of the times randomly one test
-	// will fail while executing some npx command with an exit code of 7.
-	// In order to get consistent results, we execute those tests one after the other.
-	runSynchronously: true,
-	command: 'storybook',
+	get command() {
+		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+		return `storybook -p ${port++} --ci`;
+	},
 	files: [],
 	tests: [
 		{

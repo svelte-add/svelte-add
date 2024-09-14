@@ -1,6 +1,6 @@
 {
 	"name": "@svelte-add/testing-library",
-	"version": "2.1.12",
+	"version": "2.1.17",
 	"type": "module",
 	"license": "MIT",
 	"exports": {
@@ -25,7 +25,7 @@
 	"bugs": "https://github.com/svelte-add/svelte-add/issues",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/svelte-add/svelte-add/tree/main/projects/testing-library"
+		"url": "https://github.com/svelte-add/svelte-add/tree/main/packages/testing-library"
 	},
 	"keywords": [
 		"adders",

@@ -40,8 +40,9 @@
 		"rollup-plugin-dts": "^6.1.1",
 		"rollup-plugin-esbuild": "^6.1.1",
 		"rollup-plugin-preserve-shebangs": "^0.2.0",
+		"svelte-add": "workspace:*",
 		"typescript": "^5.5.2",
-		"typescript-eslint": "8.0.0-alpha.37"
+		"typescript-eslint": "^8.0.0"
 	},
 	"packageManager": "pnpm@9.3.0"
 }

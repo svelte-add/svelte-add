@@ -24,7 +24,7 @@ export const adder = defineAdderConfig({
 		{ name: 'globals', version: '^15.0.0', dev: true },
 		{
 			name: 'typescript-eslint',
-			version: '^8.0.0-alpha.54',
+			version: '^8.0.0',
 			dev: true,
 			condition: ({ typescript }) => typescript.installed,
 		},

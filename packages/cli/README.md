@@ -2,7 +2,7 @@
 
 > This is the main cli for [svelte-add](https://svelte-add.com) and is used to add different tools to your svelte/kit project.
 
-You can find all available adders and their respective options on [this site](https://svelte-add.com/adder/bootstrap). We will only provide a short breakdown of the cli features here.
+You can find all available adders and their respective options on [this site](https://svelte-add.com). We will only provide a short breakdown of the cli features here.
 
 Basic usage (fully interactive)
 

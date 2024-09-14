@@ -1,5 +1,37 @@
 # @svelte-add/core
 
+## 2.10.4
+
+### Patch Changes
+
+- chore: fix repository urls ([#545](https://github.com/svelte-add/svelte-add/pull/545))
+
+- Updated dependencies [[`22a34b97c90b3f43f16dc32ca59aa93f187e5edc`](https://github.com/svelte-add/svelte-add/commit/22a34b97c90b3f43f16dc32ca59aa93f187e5edc)]:
+  - @svelte-add/ast-manipulation@2.2.4
+  - @svelte-add/ast-tooling@2.1.7
+
+## 2.10.3
+
+### Patch Changes
+
+- chore: publish package provenance info ([#541](https://github.com/svelte-add/svelte-add/pull/541))
+
+- Updated dependencies [[`30f4056e6253c633672039cef05dbc8445fe00b6`](https://github.com/svelte-add/svelte-add/commit/30f4056e6253c633672039cef05dbc8445fe00b6)]:
+  - @svelte-add/ast-manipulation@2.2.3
+  - @svelte-add/ast-tooling@2.1.6
+
+## 2.10.2
+
+### Patch Changes
+
+- chore: upgrade to package-manager-detector 0.1.0 ([#537](https://github.com/svelte-add/svelte-add/pull/537))
+
+## 2.10.1
+
+### Patch Changes
+
+- chore: replace `preferred-pm` with `package-manager-detector` ([#535](https://github.com/svelte-add/svelte-add/pull/535))
+
 ## 2.10.0
 
 ### Minor Changes
