@@ -13,7 +13,7 @@
         availableCliOptions: AvailableCliOptions;
     }
 
-    let { adders = [], availableCliOptions }: Props = $props();
+    let { adders = $bindable([]), availableCliOptions }: Props = $props();
 
     type AdderId = string;
     type OptionId = string;
