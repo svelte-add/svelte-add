@@ -39,17 +39,17 @@
         const multipleAdders = argumentEntries.length > 1;
         const firstAdderId = Object.keys(args)[0];
 
-        command = "npx ";
+        let tempCommand = "npx ";
         if (!firstAdderId) {
-            command += "svelte-add@latest";
+            tempCommand += "svelte-add@latest";
             return;
         }
 
         if (multipleAdders) {
             const adderIds = Object.keys(args).join(" ");
-            command += `svelte-add@latest ${adderIds}`;
+            tempCommand += `svelte-add@latest ${adderIds}`;
         } else {
-            command += "svelte-add@latest " + firstAdderId;
+            tempCommand += "svelte-add@latest " + firstAdderId;
         }
 
         for (const [adderId, options] of argumentEntries) {
@@ -61,12 +61,14 @@
                 if (typeof condition === "function" && condition(options) === false) continue;
 
                 if (multipleAdders) {
-                    command += ` --${adderId}-${key} ${optionValue}`;
+                    tempCommand += ` --${adderId}-${key} ${optionValue}`;
                 } else {
-                    command += ` --${key} ${optionValue}`;
+                    tempCommand += ` --${key} ${optionValue}`;
                 }
             }
         }
+
+        command = tempCommand;
     }
 
     /**
