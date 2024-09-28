@@ -1,7 +1,11 @@
 <script lang="ts">
-    export let title: string;
-    export let description: string;
-    export let keywords: string[] | undefined = undefined;
+    interface Props {
+        title: string;
+        description: string;
+        keywords?: string[] | undefined;
+    }
+
+    let { title, description, keywords = undefined }: Props = $props();
 </script>
 
 <svelte:head>

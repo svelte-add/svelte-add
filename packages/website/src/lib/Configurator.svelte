@@ -1,24 +1,27 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { browser } from "$app/environment";
     import type { AvailableCliOptions } from "@svelte-add/core/internal";
     import type { AdderMetadataWithOptions } from "./adder.js";
     import Box from "./Box.svelte";
     import CopyCommand from "./CopyCommand.svelte";
 
-    export let adders: AdderMetadataWithOptions[] = [];
 
-    export let availableCliOptions: AvailableCliOptions;
+    interface Props {
+        adders?: AdderMetadataWithOptions[];
+        availableCliOptions: AvailableCliOptions;
+    }
+
+    let { adders = [], availableCliOptions }: Props = $props();
 
     type AdderId = string;
     type OptionId = string;
     type OptionValue = unknown;
     type SelectedOptions = Record<AdderId, Record<OptionId, OptionValue>>;
-    const selectedOptions: SelectedOptions = {};
-    let command = "";
+    const selectedOptions: SelectedOptions = $state({});
+    let command = $state("");
 
-    $: if (browser) deserializeConditions(adders);
-    $: generateCommandArgs(selectedOptions);
-    $: prepareDefaultValues(adders);
 
     function deserializeConditions(adders: AdderMetadataWithOptions[]) {
         for (const adder of adders) {
@@ -106,6 +109,15 @@
 
         generateCommandArgs(selectedOptions);
     }
+    run(() => {
+        if (browser) deserializeConditions(adders);
+    });
+    run(() => {
+        generateCommandArgs(selectedOptions);
+    });
+    run(() => {
+        prepareDefaultValues(adders);
+    });
 </script>
 
 <h1 class="text-xl">Configurator</h1>

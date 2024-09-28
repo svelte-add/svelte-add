@@ -1,5 +1,9 @@
 <script lang="ts">
-    export let command: string;
+    interface Props {
+        command: string;
+    }
+
+    let { command }: Props = $props();
 
     function copy() {
         navigator.clipboard.writeText(command);
@@ -11,7 +15,7 @@
         {command}
     </div>
     <div>
-        <button class="button is-primary" on:click={copy}>Copy</button>
+        <button class="button is-primary" onclick={copy}>Copy</button>
     </div>
 </div>
 

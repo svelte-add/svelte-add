@@ -6,13 +6,17 @@
     import type { AdderMetadataWithOptions } from "$lib/adder.js";
     import type { PageData } from "./$types.js";
 
-    export let data: PageData;
+    interface Props {
+        data: PageData;
+    }
+
+    let { data }: Props = $props();
 
     const adderCategories = data.adderCategories;
     const category = data.category;
     const availableCliOptions = data.availableCliOptions;
 
-    let selectedAdders: AdderMetadataWithOptions[] = [];
+    let selectedAdders: AdderMetadataWithOptions[] = $state([]);
 </script>
 
 <Seo title={category.name} description="Add {category.name} to your svelte project" keywords={data.keywords} />

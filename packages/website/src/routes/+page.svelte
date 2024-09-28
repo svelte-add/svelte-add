@@ -5,12 +5,16 @@
     import type { AdderMetadataWithOptions } from "$lib/adder.js";
     import type { PageData } from "./$types.js";
 
-    export let data: PageData;
+    interface Props {
+        data: PageData;
+    }
+
+    let { data }: Props = $props();
 
     const adderCategories = data.adderCategories;
     const availableCliOptions = data.availableCliOptions;
 
-    let selectedAdders: AdderMetadataWithOptions[] = [];
+    let selectedAdders: AdderMetadataWithOptions[] = $state([]);
 </script>
 
 <Seo title="Home" description="Add tools to your project" keywords={data.keywords} />

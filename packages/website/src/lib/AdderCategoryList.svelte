@@ -6,12 +6,16 @@
     import type { CategoryInfo } from "@svelte-add/config";
     import type { AdderMetadataWithOptions } from "./adder.js";
 
-    export let adderCategories = new Map<CategoryInfo, AdderMetadataWithOptions[]>();
 
-    export let selectedAdders: AdderMetadataWithOptions[] = [];
-    export let linkCategories = false;
+    interface Props {
+        adderCategories?: any;
+        selectedAdders?: AdderMetadataWithOptions[];
+        linkCategories?: boolean;
+    }
 
-    let selectedAdderIds: string[] = [];
+    let { adderCategories = new Map<CategoryInfo, AdderMetadataWithOptions[]>(), selectedAdders = $bindable([]), linkCategories = false }: Props = $props();
+
+    let selectedAdderIds: string[] = $state([]);
 
     /**
      * Selects or deselects a adder given it's id
@@ -59,7 +63,7 @@
                         <SupportedEnvironments svelte={metadata.environments.svelte} kit={metadata.environments.kit} />
 
                         <div class="button-wrapper">
-                            <button class="button is-primary" on:click={() => selectOrDeselectAdder(metadata.id)}>
+                            <button class="button is-primary" onclick={() => selectOrDeselectAdder(metadata.id)}>
                                 {#if !selectedAdderIds.includes(metadata.id)}
                                     +
                                 {:else}

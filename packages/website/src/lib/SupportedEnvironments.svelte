@@ -1,6 +1,10 @@
 <script lang="ts">
-    export let svelte = false;
-    export let kit = false;
+    interface Props {
+        svelte?: boolean;
+        kit?: boolean;
+    }
+
+    let { svelte = false, kit = false }: Props = $props();
 </script>
 
 <div>
