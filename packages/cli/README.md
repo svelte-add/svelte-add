@@ -1,5 +1,7 @@
 # svelte-add
+> IMPORTANT `svelte-add` has be merged together with `create-svelte` to become the Svelte CLI `sv`. The work continues in the `sv` repo over at [`@sveltejs/cli`](https://github.com/sveltejs/cli)
 
+# Readme
 > This is the main cli for [svelte-add](https://svelte-add.com) and is used to add different tools to your svelte/kit project.
 
 You can find all available adders and their respective options on [this site](https://svelte-add.com). We will only provide a short breakdown of the cli features here.
